@@ -7,8 +7,10 @@ import net.minecraft.util.ResourceLocation
 import net.minecraftforge.common.capabilities.CapabilityManager
 import net.minecraftforge.event.AttachCapabilitiesEvent
 import net.minecraftforge.event.entity.player.PlayerEvent
+import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 
+@Mod.EventBusSubscriber
 object CapabilityHandler {
 
     val vampirismResourceLocation = ResourceLocation(Haema.MODID, "vampirism")
@@ -28,9 +30,10 @@ object CapabilityHandler {
     @JvmStatic
     fun onPlayerClone(event: PlayerEvent.Clone) {
         val player = event.entityPlayer
-        val vampirism = player.getCapability(VampirismProvider.vampirism!!, null)
+        val vampirism = player.getCapability(VampirismProvider.vampirism!!, null)!!
         val oldVampirism = event.original.getCapability(VampirismProvider.vampirism, null)
 
-        vampirism!!.setBloodthirst(oldVampirism?.getBloodthirst() ?: 0.0f)
+        vampirism.setBloodthirst(oldVampirism?.getBloodthirst() ?: 0.0f)
+        vampirism.setIsVampire(oldVampirism?.isVampire() ?: false)
     }
 }
