@@ -1,8 +1,7 @@
 package com.williambl.haema.common.capability
 
 import net.minecraft.nbt.NBTBase
-import net.minecraft.nbt.NBTPrimitive
-import net.minecraft.nbt.NBTTagFloat
+import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.EnumFacing
 import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.CapabilityInject
@@ -12,11 +11,15 @@ interface ICapabilityVampirism {
     fun getBloodthirst(): Float
     fun setBloodthirst(input: Float)
     fun addBloodthirst(input: Float)
+
+    fun isVampire(): Boolean
+    fun setIsVampire(input: Boolean)
 }
 
 class CapabilityVampirismImpl: ICapabilityVampirism {
 
     private var bloodthirst: Float = 0.0f
+    private var vampire: Boolean = false
 
     override fun getBloodthirst(): Float {
         return bloodthirst
@@ -31,16 +34,31 @@ class CapabilityVampirismImpl: ICapabilityVampirism {
         bloodthirst += input
         if (bloodthirst < 0.0f) bloodthirst = 0.0f
     }
+
+    override fun isVampire(): Boolean {
+        return vampire
+    }
+
+    override fun setIsVampire(input: Boolean) {
+        vampire = input
+    }
 }
 
 class VampirismStorage: Capability.IStorage<ICapabilityVampirism> {
 
     override fun readNBT(capability: Capability<ICapabilityVampirism>?, instance: ICapabilityVampirism?, side: EnumFacing?, nbt: NBTBase?) {
-        instance?.setBloodthirst((nbt as NBTPrimitive).float)
+        nbt as NBTTagCompound
+        instance?.setBloodthirst(nbt.getFloat("bloodthirst"))
+        instance?.setIsVampire(nbt.getBoolean("isVampire"))
     }
 
     override fun writeNBT(capability: Capability<ICapabilityVampirism>?, instance: ICapabilityVampirism?, side: EnumFacing?): NBTBase? {
-        return instance?.getBloodthirst()?.let { NBTTagFloat(it) }
+        instance ?: return null
+
+        val compound = NBTTagCompound()
+        compound.setFloat("bloodthirst", instance.getBloodthirst())
+        compound.setBoolean("isVampire", instance.isVampire())
+        return compound
     }
 
 }
