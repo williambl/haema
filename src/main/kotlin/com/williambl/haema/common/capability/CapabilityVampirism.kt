@@ -6,6 +6,7 @@ import net.minecraft.util.EnumFacing
 import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.CapabilityInject
 import net.minecraftforge.common.capabilities.ICapabilitySerializable
+import kotlin.math.pow
 
 interface ICapabilityVampirism {
     fun getBloodthirst(): Float
@@ -14,6 +15,8 @@ interface ICapabilityVampirism {
 
     fun isVampire(): Boolean
     fun setIsVampire(input: Boolean)
+
+    fun getPowerMultiplier(): Float
 }
 
 class CapabilityVampirismImpl: ICapabilityVampirism {
@@ -42,6 +45,14 @@ class CapabilityVampirismImpl: ICapabilityVampirism {
     override fun setIsVampire(input: Boolean) {
         vampire = input
     }
+
+    override fun getPowerMultiplier(): Float {
+        return if (bloodthirst > 0.1f)
+            (0.1f / bloodthirst.pow(2))
+        else
+            10.0f
+    }
+
 }
 
 class VampirismStorage: Capability.IStorage<ICapabilityVampirism> {
