@@ -21,9 +21,9 @@ object VampireEventHandler {
         val entity = e.entity as EntityPlayer
         val world = entity.world
 
-        if (world.rand.nextDouble() > 0.8 && entity.getActivePotionEffect(Potion.getPotionFromResourceLocation("minecraft:hunger")!!) == null) {
+        if (world.rand.nextDouble() > 0.8 && entity.getActivePotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_weakness")!!) == null) {
             if (world.isDaytime && world.canSeeSky(BlockPos(entity.posX, entity.posY + entity.eyeHeight, entity.posZ))) {
-                entity.addPotionEffect(PotionEffect(Potion.getPotionFromResourceLocation("minecraft:hunger")!!, 200, 1))
+                entity.addPotionEffect(PotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_weakness")!!, 200, 1))
             }
         }
     }
