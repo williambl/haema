@@ -6,6 +6,7 @@ import net.minecraft.potion.Potion
 import net.minecraft.potion.PotionEffect
 import net.minecraft.util.math.BlockPos
 import net.minecraftforge.event.entity.living.LivingEvent
+import net.minecraftforge.event.entity.living.LivingHealEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 
@@ -15,7 +16,7 @@ object VampireEventHandler {
     @SubscribeEvent
     @JvmStatic
     fun vampireLivingEvent(e: LivingEvent.LivingUpdateEvent) {
-        if (e.entity.world.isRemote || e.entity !is EntityPlayer || !(e.entity.hasCapability(VampirismProvider.vampirism!!, null)))
+        if (e.entity.world.isRemote || e.entity !is EntityPlayer || !(e.entity.hasCapability(VampirismProvider.vampirism!!, null)) || !(e.entity.getCapability(VampirismProvider.vampirism, null)!!.isVampire()))
             return
 
         val entity = e.entity as EntityPlayer
