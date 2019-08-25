@@ -9,6 +9,7 @@ import net.minecraftforge.event.entity.living.LivingEvent
 import net.minecraftforge.event.entity.living.LivingHealEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+import kotlin.math.roundToInt
 
 @Mod.EventBusSubscriber
 object VampireEventHandler {
@@ -21,12 +22,14 @@ object VampireEventHandler {
 
         val entity = e.entity as EntityPlayer
         val world = entity.world
+        val cap = entity.getCapability(VampirismProvider.vampirism, null)!!
 
-        if (world.rand.nextDouble() > 0.8 && entity.getActivePotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_weakness")!!) == null) {
+        if (entity.getActivePotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_weakness")!!) == null) {
             if (world.isDaytime && world.canSeeSky(BlockPos(entity.posX, entity.posY + entity.eyeHeight, entity.posZ))) {
-                entity.addPotionEffect(PotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_weakness")!!, 200, 1))
+                entity.addPotionEffect(PotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_weakness")!!, 200, cap.getPowerMultiplier().roundToInt()))
             }
         }
+
     }
 
     @SubscribeEvent
@@ -37,11 +40,12 @@ object VampireEventHandler {
 
         val entity = e.entity as EntityPlayer
         val world = entity.world
+        val cap = entity.getCapability(VampirismProvider.vampirism, null)!!
 
         if (entity.getActivePotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_weakness")!!) != null) {
             e.isCanceled = true
         } else if (!world.isDaytime) {
-            e.amount *= 1.6f
+            e.amount *= 1.6f * cap.getPowerMultiplier()
         }
     }
 
