@@ -29,4 +29,20 @@ object VampireEventHandler {
         }
     }
 
+    @SubscribeEvent
+    @JvmStatic
+    fun vampireHealEvent(e: LivingHealEvent) {
+        if (e.entity.world.isRemote || e.entity !is EntityPlayer || !(e.entity.hasCapability(VampirismProvider.vampirism!!, null)) || !(e.entity.getCapability(VampirismProvider.vampirism, null)!!.isVampire()))
+            return
+
+        val entity = e.entity as EntityPlayer
+        val world = entity.world
+
+        if (entity.getActivePotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_weakness")!!) != null) {
+            e.isCanceled = true
+        } else if (!world.isDaytime) {
+            e.amount *= 1.6f
+        }
+    }
+
 }
