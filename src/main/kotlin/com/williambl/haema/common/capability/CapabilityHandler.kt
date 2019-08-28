@@ -33,7 +33,7 @@ object CapabilityHandler {
         val vampirism = player.getCapability(VampirismProvider.vampirism!!, null)!!
         val oldVampirism = event.original.getCapability(VampirismProvider.vampirism, null)
 
-        vampirism.setBloodthirst(oldVampirism?.getBloodthirst() ?: 0.0f)
+        vampirism.setBloodLevel(oldVampirism?.getBloodLevel() ?: 0.0f)
         vampirism.setIsVampire(oldVampirism?.isVampire() ?: false)
     }
 }

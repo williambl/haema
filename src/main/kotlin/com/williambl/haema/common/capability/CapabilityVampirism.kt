@@ -9,9 +9,9 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable
 import kotlin.math.pow
 
 interface ICapabilityVampirism {
-    fun getBloodthirst(): Float
-    fun setBloodthirst(input: Float)
-    fun addBloodthirst(input: Float)
+    fun getBloodLevel(): Float
+    fun setBloodLevel(input: Float)
+    fun addBloodLevel(input: Float)
 
     fun isVampire(): Boolean
     fun setIsVampire(input: Boolean)
@@ -21,21 +21,23 @@ interface ICapabilityVampirism {
 
 class CapabilityVampirismImpl: ICapabilityVampirism {
 
-    private var bloodthirst: Float = 0.0f
+    private var bloodLevel: Float = 0.0f
     private var vampire: Boolean = false
 
-    override fun getBloodthirst(): Float {
-        return bloodthirst
+    override fun getBloodLevel(): Float {
+        return bloodLevel
     }
 
-    override fun setBloodthirst(input: Float) {
-        bloodthirst = input
-        if (bloodthirst < 0.0f) bloodthirst = 0.0f
+    override fun setBloodLevel(input: Float) {
+        bloodLevel = input
+        bloodLevel = min(bloodLevel, 1.0f)
+        bloodLevel = max(bloodLevel, 0.0f)
     }
 
-    override fun addBloodthirst(input: Float) {
-        bloodthirst += input
-        if (bloodthirst < 0.0f) bloodthirst = 0.0f
+    override fun addBloodLevel(input: Float) {
+        bloodLevel += input
+        bloodLevel = min(bloodLevel, 1.0f)
+        bloodLevel = max(bloodLevel, 0.0f)
     }
 
     override fun isVampire(): Boolean {
@@ -47,8 +49,8 @@ class CapabilityVampirismImpl: ICapabilityVampirism {
     }
 
     override fun getPowerMultiplier(): Float {
-        return if (bloodthirst > 0.1f)
-            (0.1f / bloodthirst.pow(2))
+        return if (bloodLevel > 0.1f)
+            (0.1f / bloodLevel.pow(2))
         else
             10.0f
     }
@@ -59,7 +61,7 @@ class VampirismStorage: Capability.IStorage<ICapabilityVampirism> {
 
     override fun readNBT(capability: Capability<ICapabilityVampirism>?, instance: ICapabilityVampirism?, side: EnumFacing?, nbt: NBTBase?) {
         nbt as NBTTagCompound
-        instance?.setBloodthirst(nbt.getFloat("bloodthirst"))
+        instance?.setBloodLevel(nbt.getFloat("bloodLevel"))
         instance?.setIsVampire(nbt.getBoolean("isVampire"))
     }
 
@@ -67,7 +69,7 @@ class VampirismStorage: Capability.IStorage<ICapabilityVampirism> {
         instance ?: return null
 
         val compound = NBTTagCompound()
-        compound.setFloat("bloodthirst", instance.getBloodthirst())
+        compound.setFloat("bloodLevel", instance.getBloodLevel())
         compound.setBoolean("isVampire", instance.isVampire())
         return compound
     }
