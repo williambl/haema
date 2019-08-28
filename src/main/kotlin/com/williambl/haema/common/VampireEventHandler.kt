@@ -26,7 +26,7 @@ object VampireEventHandler {
 
         if (entity.getActivePotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_weakness")!!) == null) {
             if (world.isDaytime && world.canSeeSky(BlockPos(entity.posX, entity.posY + entity.eyeHeight, entity.posZ))) {
-                entity.addPotionEffect(PotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_weakness")!!, 200, cap.getPowerMultiplier().roundToInt()))
+                entity.addPotionEffect(PotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_weakness")!!, 200, cap.getInversePowerMultiplier().roundToInt()))
             }
         }
 

@@ -6,6 +6,8 @@ import net.minecraft.util.EnumFacing
 import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.CapabilityInject
 import net.minecraftforge.common.capabilities.ICapabilitySerializable
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.pow
 
 interface ICapabilityVampirism {
@@ -17,6 +19,7 @@ interface ICapabilityVampirism {
     fun setIsVampire(input: Boolean)
 
     fun getPowerMultiplier(): Float
+    fun getInversePowerMultiplier(): Float
 }
 
 class CapabilityVampirismImpl: ICapabilityVampirism {
@@ -49,6 +52,10 @@ class CapabilityVampirismImpl: ICapabilityVampirism {
     }
 
     override fun getPowerMultiplier(): Float {
+        return 10.0f * bloodLevel.pow(2)
+    }
+
+    override fun getInversePowerMultiplier(): Float {
         return if (bloodLevel > 0.1f)
             (0.1f / bloodLevel.pow(2))
         else
