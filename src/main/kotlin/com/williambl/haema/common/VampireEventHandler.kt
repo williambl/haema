@@ -3,6 +3,7 @@ package com.williambl.haema.common
 import com.williambl.haema.common.capability.VampirismProvider
 import com.williambl.haema.common.networking.ModPackets
 import com.williambl.haema.common.networking.SyncVampirismMessage
+import com.williambl.haema.common.util.*
 import net.minecraft.entity.EntityLiving
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
@@ -35,7 +36,7 @@ object VampireEventHandler {
 
         if (entity.getActivePotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_weakness")!!) == null) {
             if (world.isDaytime && world.canSeeSky(BlockPos(entity.posX, entity.posY + entity.eyeHeight, entity.posZ))) {
-                entity.addPotionEffect(PotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_weakness")!!, 200, cap.getInversePowerMultiplier().roundToInt()))
+                entity.giveVampiricWeakness(200, cap.getInversePowerMultiplier().roundToInt())
             }
         }
 
@@ -75,9 +76,7 @@ object VampireEventHandler {
         val world = entityPlayer.world
         val cap = entityPlayer.getCapability(VampirismProvider.vampirism, null)!!
 
-        cap.addBloodLevel(0.1f)
-        ModPackets.instance.sendTo(SyncVampirismMessage(cap), entityPlayer as EntityPlayerMP)
-        entityPlayer.addPotionEffect(PotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_strength")!!))
+        entityPlayer.addBlood(0.01f)
 
     }
 
