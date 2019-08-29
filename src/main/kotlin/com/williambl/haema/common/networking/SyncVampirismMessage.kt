@@ -37,7 +37,6 @@ class SyncVampirismMessage(var bloodLevel: Float = 0.0f, var isVampire: Boolean 
                 Minecraft.getMinecraft().player.getCapability(VampirismProvider.vampirism!!, null)?.let {
                     it.setBloodLevel(message.bloodLevel)
                     it.setIsVampire(message.isVampire)
-                    println(it.isVampire())
                 }
             }
 

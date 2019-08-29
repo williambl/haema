@@ -1,14 +1,23 @@
 package com.williambl.haema.common
 
 import com.williambl.haema.common.capability.VampirismProvider
+import com.williambl.haema.common.networking.ModPackets
+import com.williambl.haema.common.networking.SyncVampirismMessage
+import net.minecraft.entity.EntityLiving
+import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.entity.player.EntityPlayerMP
 import net.minecraft.potion.Potion
 import net.minecraft.potion.PotionEffect
+import net.minecraft.util.EnumHand
 import net.minecraft.util.math.BlockPos
 import net.minecraftforge.event.entity.living.LivingEvent
 import net.minecraftforge.event.entity.living.LivingHealEvent
+import net.minecraftforge.event.entity.player.PlayerInteractEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+import net.minecraftforge.fml.common.network.NetworkRegistry
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper
 import kotlin.math.roundToInt
 
 @Mod.EventBusSubscriber
@@ -47,6 +56,29 @@ object VampireEventHandler {
         } else if (!world.isDaytime) {
             e.amount *= 1.6f * cap.getPowerMultiplier()
         }
+    }
+
+    @SubscribeEvent
+    @JvmStatic
+    fun vampireDrainBloodRightClickEvent(e: PlayerInteractEvent.EntityInteract) {
+        if (
+                e.entityPlayer.world.isRemote
+                || e.hand != EnumHand.MAIN_HAND
+                || !(e.entityPlayer.hasCapability(VampirismProvider.vampirism!!, null))
+                || !(e.entityPlayer.getCapability(VampirismProvider.vampirism, null)!!.isVampire())
+                || e.target !is EntityLivingBase
+        )
+            return
+
+        val entityPlayer = e.entityPlayer
+        val target = e.target
+        val world = entityPlayer.world
+        val cap = entityPlayer.getCapability(VampirismProvider.vampirism, null)!!
+
+        cap.addBloodLevel(0.1f)
+        ModPackets.instance.sendTo(SyncVampirismMessage(cap), entityPlayer as EntityPlayerMP)
+        entityPlayer.addPotionEffect(PotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_strength")!!))
+
     }
 
 }
