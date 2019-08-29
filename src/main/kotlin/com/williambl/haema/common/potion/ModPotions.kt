@@ -12,7 +12,8 @@ object ModPotions {
     @JvmStatic
     fun registerPotions(event: RegistryEvent.Register<Potion>) {
         event.registry.registerAll(
-                PotionVampiricWeakness()
+                PotionVampiricWeakness(),
+                PotionVampiricStrength()
         )
     }
 }
