@@ -1,6 +1,7 @@
 package com.williambl.haema
 
 import com.williambl.haema.common.capability.CapabilityHandler
+import com.williambl.haema.common.networking.ModPackets
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.FMLInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent
@@ -23,6 +24,7 @@ object Haema {
     @Mod.EventHandler
     fun init(event: FMLInitializationEvent) {
         CapabilityHandler.registerCapabilities()
+        ModPackets.registerPackets()
     }
 
     @Mod.EventHandler
