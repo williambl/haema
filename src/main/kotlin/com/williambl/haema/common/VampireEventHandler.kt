@@ -1,25 +1,21 @@
 package com.williambl.haema.common
 
 import com.williambl.haema.common.capability.VampirismProvider
-import com.williambl.haema.common.networking.ModPackets
-import com.williambl.haema.common.networking.SyncVampirismMessage
-import com.williambl.haema.common.util.*
-import net.minecraft.entity.EntityLiving
+import com.williambl.haema.common.util.addBlood
+import com.williambl.haema.common.util.giveVampiricWeakness
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.entity.player.EntityPlayerMP
+import net.minecraft.init.Items
 import net.minecraft.potion.Potion
-import net.minecraft.potion.PotionEffect
 import net.minecraft.util.DamageSource
 import net.minecraft.util.EnumHand
 import net.minecraft.util.math.BlockPos
 import net.minecraftforge.event.entity.living.LivingEvent
 import net.minecraftforge.event.entity.living.LivingHealEvent
+import net.minecraftforge.event.entity.living.LivingHurtEvent
 import net.minecraftforge.event.entity.player.PlayerInteractEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
-import net.minecraftforge.fml.common.network.NetworkRegistry
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper
 import kotlin.math.roundToInt
 
 @Mod.EventBusSubscriber
@@ -83,6 +79,27 @@ object VampireEventHandler {
         if (!target.isEntityUndead) {
             target.attackEntityFrom(DamageSource.causePlayerDamage(entityPlayer).setDamageBypassesArmor().setMagicDamage(), 0.5f)
             entityPlayer.addBlood(0.01f)
+        }
+
+    }
+
+    @SubscribeEvent
+    @JvmStatic
+    fun vampireHurtEvent(e: LivingHurtEvent) {
+        if (e.entity.world.isRemote || e.entity !is EntityPlayer || !(e.entity.hasCapability(VampirismProvider.vampirism!!, null)) || !(e.entity.getCapability(VampirismProvider.vampirism, null)!!.isVampire()))
+            return
+
+        val entity = e.entity as EntityPlayer
+        val source = e.source
+        val cap = entity.getCapability(VampirismProvider.vampirism, null)!!
+
+        if (source.isFireDamage)
+            e.amount *= (cap.getInversePowerMultiplier()/5)+1
+
+        if (source.trueSource is EntityLivingBase) {
+            if ((source.trueSource as EntityLivingBase).heldItemMainhand.item == Items.WOODEN_SWORD) {
+                e.amount *= (cap.getInversePowerMultiplier()/2)+1
+            }
         }
 
     }
