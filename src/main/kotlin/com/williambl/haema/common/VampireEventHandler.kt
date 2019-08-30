@@ -97,7 +97,7 @@ object VampireEventHandler {
             e.amount *= (cap.getInversePowerMultiplier()/5)+1
 
         if (source.trueSource is EntityLivingBase) {
-            if ((source.trueSource as EntityLivingBase).heldItemMainhand.item == Items.WOODEN_SWORD) {
+            if ((source.trueSource as EntityLivingBase).heldItemMainhand.item in arrayOf(Items.WOODEN_SWORD, Items.STICK)) {
                 e.amount *= (cap.getInversePowerMultiplier()/2)+1
             }
         }
