@@ -74,8 +74,11 @@ object VampireEventHandler {
 
         val entityPlayer = e.entityPlayer
         val target = e.target as EntityLivingBase
-        val world = entityPlayer.world
-        val cap = entityPlayer.getCapability(VampirismProvider.vampirism, null)!!
+
+        val dist = entityPlayer.positionVector.distanceTo(target.positionVector)
+
+        if (dist > 1.5)
+            return
 
         if (!target.isEntityUndead) {
             target.attackEntityFrom(DamageSource.causePlayerDamage(entityPlayer).setDamageBypassesArmor().setMagicDamage(), 0.5f)
