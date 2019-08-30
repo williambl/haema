@@ -1,14 +1,17 @@
 package com.williambl.haema.common.capability
 
 import com.williambl.haema.Haema
+import com.williambl.haema.common.util.syncVampirismCapability
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.common.capabilities.CapabilityManager
 import net.minecraftforge.event.AttachCapabilitiesEvent
+import net.minecraftforge.event.entity.EntityJoinWorldEvent
 import net.minecraftforge.event.entity.player.PlayerEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent
 
 @Mod.EventBusSubscriber
 object CapabilityHandler {
@@ -33,7 +36,23 @@ object CapabilityHandler {
         val vampirism = player.getCapability(VampirismProvider.vampirism!!, null)!!
         val oldVampirism = event.original.getCapability(VampirismProvider.vampirism, null)
 
-        vampirism.setBloodLevel(oldVampirism?.getBloodLevel() ?: 0.0f)
+        if (!event.isWasDeath)
+            vampirism.setBloodLevel(oldVampirism?.getBloodLevel() ?: 0.0f)
         vampirism.setIsVampire(oldVampirism?.isVampire() ?: false)
+    }
+
+    @SubscribeEvent
+    @JvmStatic
+    fun onPlayerRespawn(event: PlayerRespawnEvent) {
+        event.player.syncVampirismCapability()
+    }
+
+    @SubscribeEvent
+    @JvmStatic
+    fun onPlayerJoinWorld(event: EntityJoinWorldEvent) {
+        if (event.world.isRemote || event.entity !is EntityPlayer)
+            return
+
+        (event.entity as EntityPlayer).syncVampirismCapability()
     }
 }
