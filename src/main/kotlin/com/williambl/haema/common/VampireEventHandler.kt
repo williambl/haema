@@ -102,6 +102,8 @@ object VampireEventHandler {
             }
         }
 
+        entity.addBlood((-0.05 * e.amount).toFloat())
+
     }
 
 }
