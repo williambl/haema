@@ -1,12 +1,15 @@
 package com.williambl.haema.common
 
 import com.williambl.haema.common.capability.VampirismProvider
+import com.williambl.haema.common.util.VampireAbilities
 import com.williambl.haema.common.util.addBlood
+import com.williambl.haema.common.util.giveVampiricStrength
 import com.williambl.haema.common.util.giveVampiricWeakness
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Items
 import net.minecraft.potion.Potion
+import net.minecraft.potion.PotionEffect
 import net.minecraft.util.DamageSource
 import net.minecraft.util.EnumHand
 import net.minecraft.util.math.BlockPos
@@ -32,11 +35,31 @@ object VampireEventHandler {
         val cap = entity.getCapability(VampirismProvider.vampirism, null)!!
 
         if (entity.getActivePotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_weakness")!!) == null) {
-            if (world.isDaytime && world.canSeeSky(BlockPos(entity.posX, entity.posY + entity.eyeHeight, entity.posZ))) {
+            if (
+                    world.isDaytime && world.canSeeSky(BlockPos(entity.posX, entity.posY + entity.eyeHeight, entity.posZ))
+                    || (cap.getAbilities() and VampireAbilities.WEAKNESS.flag) != 0
+            ) {
                 entity.giveVampiricWeakness(200, cap.getInversePowerMultiplier().roundToInt())
             }
         }
 
+        if (entity.getActivePotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_strength")!!) == null) {
+            if ((cap.getAbilities() and VampireAbilities.STRENGTH.flag) != 0) {
+                entity.giveVampiricStrength(200, cap.getPowerMultiplier().roundToInt())
+            }
+        }
+
+        if (entity.getActivePotionEffect(Potion.getPotionFromResourceLocation("minecraft:night_vision")!!) == null) {
+            if ((cap.getAbilities() and VampireAbilities.VISION.flag) != 0) {
+                entity.addPotionEffect(PotionEffect(Potion.getPotionFromResourceLocation("minecraft:night_vision")!!, 200, cap.getPowerMultiplier().roundToInt()))
+            }
+        }
+
+        if (entity.getActivePotionEffect(Potion.getPotionFromResourceLocation("minecraft:invisibility")!!) == null) {
+            if ((cap.getAbilities() and VampireAbilities.INVISIBILITY.flag) != 0) {
+                entity.addPotionEffect(PotionEffect(Potion.getPotionFromResourceLocation("minecraft:invisibility")!!, 200, cap.getPowerMultiplier().roundToInt()))
+            }
+        }
     }
 
     @SubscribeEvent
