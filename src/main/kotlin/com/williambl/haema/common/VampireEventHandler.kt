@@ -1,10 +1,7 @@
 package com.williambl.haema.common
 
 import com.williambl.haema.common.capability.VampirismProvider
-import com.williambl.haema.common.util.VampireAbilities
-import com.williambl.haema.common.util.addBlood
-import com.williambl.haema.common.util.giveVampiricStrength
-import com.williambl.haema.common.util.giveVampiricWeakness
+import com.williambl.haema.common.util.*
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Items
@@ -27,14 +24,14 @@ object VampireEventHandler {
     @SubscribeEvent
     @JvmStatic
     fun vampireLivingEvent(e: LivingEvent.LivingUpdateEvent) {
-        if (e.entity.world.isRemote || e.entity !is EntityPlayer || !(e.entity.hasCapability(VampirismProvider.vampirism!!, null)) || !(e.entity.getCapability(VampirismProvider.vampirism, null)!!.isVampire()))
+        if (e.entity.world.isRemote || e.entity !is EntityPlayer || !(e.entity as EntityPlayer).hasVampirismCapability() || !(e.entity as EntityPlayer).isVampire())
             return
 
         val entity = e.entity as EntityPlayer
         val world = entity.world
-        val cap = entity.getCapability(VampirismProvider.vampirism, null)!!
+        val cap = entity.getVampirismCapability()
 
-        if (entity.getActivePotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_weakness")!!) == null) {
+        if (entity.hasPotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_weakness")!!)) {
             if (
                     world.isDaytime && world.canSeeSky(BlockPos(entity.posX, entity.posY + entity.eyeHeight, entity.posZ))
                     || (cap.getAbilities() and VampireAbilities.WEAKNESS.flag) != 0
@@ -43,19 +40,19 @@ object VampireEventHandler {
             }
         }
 
-        if (entity.getActivePotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_strength")!!) == null) {
+        if (entity.hasPotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_strength")!!)) {
             if ((cap.getAbilities() and VampireAbilities.STRENGTH.flag) != 0) {
                 entity.giveVampiricStrength(200, cap.getPowerMultiplier().roundToInt())
             }
         }
 
-        if (entity.getActivePotionEffect(Potion.getPotionFromResourceLocation("minecraft:night_vision")!!) == null) {
+        if (entity.hasPotionEffect(Potion.getPotionFromResourceLocation("minecraft:night_vision")!!)) {
             if ((cap.getAbilities() and VampireAbilities.VISION.flag) != 0) {
                 entity.addPotionEffect(PotionEffect(Potion.getPotionFromResourceLocation("minecraft:night_vision")!!, 200, cap.getPowerMultiplier().roundToInt()))
             }
         }
 
-        if (entity.getActivePotionEffect(Potion.getPotionFromResourceLocation("minecraft:invisibility")!!) == null) {
+        if (entity.hasPotionEffect(Potion.getPotionFromResourceLocation("minecraft:invisibility")!!)) {
             if ((cap.getAbilities() and VampireAbilities.INVISIBILITY.flag) != 0) {
                 entity.addPotionEffect(PotionEffect(Potion.getPotionFromResourceLocation("minecraft:invisibility")!!, 200, cap.getPowerMultiplier().roundToInt()))
             }
@@ -65,14 +62,14 @@ object VampireEventHandler {
     @SubscribeEvent
     @JvmStatic
     fun vampireHealEvent(e: LivingHealEvent) {
-        if (e.entity.world.isRemote || e.entity !is EntityPlayer || !(e.entity.hasCapability(VampirismProvider.vampirism!!, null)) || !(e.entity.getCapability(VampirismProvider.vampirism, null)!!.isVampire()))
+        if (e.entity.world.isRemote || e.entity !is EntityPlayer || !(e.entity as EntityPlayer).hasVampirismCapability() || !((e.entity as EntityPlayer).getVampirismCapability().isVampire()))
             return
 
         val entity = e.entity as EntityPlayer
         val world = entity.world
-        val cap = entity.getCapability(VampirismProvider.vampirism, null)!!
+        val cap = entity.getVampirismCapability()
 
-        if (entity.getActivePotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_weakness")!!) != null) {
+        if (entity.hasPotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_weakness")!!)) {
             e.isCanceled = true
         } else if (!world.isDaytime) {
             e.amount *= 1.6f * cap.getPowerMultiplier()
@@ -109,12 +106,12 @@ object VampireEventHandler {
     @SubscribeEvent
     @JvmStatic
     fun vampireHurtEvent(e: LivingHurtEvent) {
-        if (e.entity.world.isRemote || e.entity !is EntityPlayer || !(e.entity.hasCapability(VampirismProvider.vampirism!!, null)) || !(e.entity.getCapability(VampirismProvider.vampirism, null)!!.isVampire()))
+        if (e.entity.world.isRemote || e.entity !is EntityPlayer || !(e.entity as EntityPlayer).hasVampirismCapability() || !((e.entity as EntityPlayer).getVampirismCapability().isVampire()))
             return
 
         val entity = e.entity as EntityPlayer
         val source = e.source
-        val cap = entity.getCapability(VampirismProvider.vampirism, null)!!
+        val cap = entity.getVampirismCapability()
 
         if (source.isFireDamage)
             e.amount *= (cap.getInversePowerMultiplier()/5)+1
