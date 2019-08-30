@@ -31,7 +31,7 @@ object VampireEventHandler {
         val world = entity.world
         val cap = entity.getVampirismCapability()
 
-        if (entity.hasPotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_weakness")!!)) {
+        if (!entity.hasPotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_weakness")!!)) {
             if (
                     world.isDaytime && world.canSeeSky(BlockPos(entity.posX, entity.posY + entity.eyeHeight, entity.posZ))
                     || (cap.getAbilities() and VampireAbilities.WEAKNESS.flag) != 0
@@ -40,19 +40,19 @@ object VampireEventHandler {
             }
         }
 
-        if (entity.hasPotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_strength")!!)) {
+        if (!entity.hasPotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_strength")!!)) {
             if ((cap.getAbilities() and VampireAbilities.STRENGTH.flag) != 0) {
                 entity.giveVampiricStrength(200, cap.getPowerMultiplier().roundToInt())
             }
         }
 
-        if (entity.hasPotionEffect(Potion.getPotionFromResourceLocation("minecraft:night_vision")!!)) {
+        if (!entity.hasPotionEffect(Potion.getPotionFromResourceLocation("minecraft:night_vision")!!)) {
             if ((cap.getAbilities() and VampireAbilities.VISION.flag) != 0) {
                 entity.addPotionEffect(PotionEffect(Potion.getPotionFromResourceLocation("minecraft:night_vision")!!, 200, cap.getPowerMultiplier().roundToInt()))
             }
         }
 
-        if (entity.hasPotionEffect(Potion.getPotionFromResourceLocation("minecraft:invisibility")!!)) {
+        if (!entity.hasPotionEffect(Potion.getPotionFromResourceLocation("minecraft:invisibility")!!)) {
             if ((cap.getAbilities() and VampireAbilities.INVISIBILITY.flag) != 0) {
                 entity.addPotionEffect(PotionEffect(Potion.getPotionFromResourceLocation("minecraft:invisibility")!!, 200, cap.getPowerMultiplier().roundToInt()))
             }
