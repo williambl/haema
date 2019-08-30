@@ -1,5 +1,6 @@
 package com.williambl.haema.common.capability
 
+import com.williambl.haema.common.util.VampireAbilities
 import net.minecraft.nbt.NBTBase
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.EnumFacing
@@ -20,6 +21,8 @@ interface ICapabilityVampirism {
 
     fun getPowerMultiplier(): Float
     fun getInversePowerMultiplier(): Float
+
+    fun getAbilities(): Int
 }
 
 class CapabilityVampirismImpl: ICapabilityVampirism {
@@ -60,6 +63,19 @@ class CapabilityVampirismImpl: ICapabilityVampirism {
             (0.1f / bloodLevel.pow(2))
         else
             10.0f
+    }
+
+    override fun getAbilities(): Int {
+        var value = 0
+        when {
+            bloodLevel < 0.1 -> value = value or VampireAbilities.WEAKNESS.flag
+            bloodLevel > 0.5 -> value = value or VampireAbilities.STRENGTH.flag
+            bloodLevel > 0.6 -> value = value or VampireAbilities.VISION.flag
+            bloodLevel > 0.75 -> value = value or VampireAbilities.FLIGHT.flag
+            bloodLevel > 0.95 -> value = value or VampireAbilities.INVISIBILITY.flag
+        }
+
+        return value
     }
 
 }
