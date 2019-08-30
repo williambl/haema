@@ -32,11 +32,10 @@ object VampireEventHandler {
         val cap = entity.getVampirismCapability()
 
         if (!entity.hasPotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_weakness")!!)) {
-            if (
-                    world.isDaytime && world.canSeeSky(BlockPos(entity.posX, entity.posY + entity.eyeHeight, entity.posZ))
-                    || (cap.getAbilities() and VampireAbilities.WEAKNESS.flag) != 0
-            ) {
+            if (world.isDaytime && world.canSeeSky(BlockPos(entity.posX, entity.posY + entity.eyeHeight, entity.posZ))) {
                 entity.giveVampiricWeakness(200, cap.getInversePowerMultiplier().roundToInt())
+            } else if ((cap.getAbilities() and VampireAbilities.WEAKNESS.flag) != 0) {
+                entity.giveVampiricWeakness(200, 1)
             }
         }
 
