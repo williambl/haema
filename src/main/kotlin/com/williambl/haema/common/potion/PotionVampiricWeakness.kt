@@ -5,6 +5,7 @@ import net.minecraft.entity.SharedMonsterAttributes
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.potion.PotionAttackDamage
+import net.minecraft.util.DamageSource
 
 class PotionVampiricWeakness : PotionAttackDamage(true, 3484199, -4.0) {
 
@@ -24,5 +25,7 @@ class PotionVampiricWeakness : PotionAttackDamage(true, 3484199, -4.0) {
 
     override fun performEffect(entityLivingBaseIn: EntityLivingBase, amplifier: Int) {
         (entityLivingBaseIn as EntityPlayer).addExhaustion(0.01F * (amplifier.toFloat() + 1))
+        if (amplifier > 1)
+            entityLivingBaseIn.attackEntityFrom(DamageSource.MAGIC, (1 shl amplifier) * 0.01f)
     }
 }
