@@ -10,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.player.EntityPlayerMP
 import net.minecraft.potion.Potion
 import net.minecraft.potion.PotionEffect
+import net.minecraft.util.DamageSource
 import net.minecraft.util.EnumHand
 import net.minecraft.util.math.BlockPos
 import net.minecraftforge.event.entity.living.LivingEvent
@@ -72,11 +73,14 @@ object VampireEventHandler {
             return
 
         val entityPlayer = e.entityPlayer
-        val target = e.target
+        val target = e.target as EntityLivingBase
         val world = entityPlayer.world
         val cap = entityPlayer.getCapability(VampirismProvider.vampirism, null)!!
 
-        entityPlayer.addBlood(0.01f)
+        if (!target.isEntityUndead) {
+            target.attackEntityFrom(DamageSource.causePlayerDamage(entityPlayer).setDamageBypassesArmor().setMagicDamage(), 0.5f)
+            entityPlayer.addBlood(0.01f)
+        }
 
     }
 
