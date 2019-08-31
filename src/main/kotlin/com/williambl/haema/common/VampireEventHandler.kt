@@ -73,6 +73,10 @@ object VampireEventHandler {
         } else if (!world.isDaytime) {
             e.amount *= 1.6f * cap.getPowerMultiplier()
         }
+        if (entity.hasPotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_strength")!!)) {
+            e.amount *= 1.2f * (entity.getActivePotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_strength")!!)?.amplifier
+                    ?: 0)
+        }
     }
 
     @SubscribeEvent
