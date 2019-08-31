@@ -1,6 +1,8 @@
 package com.williambl.haema.common.item
 
 import com.williambl.haema.common.capability.VampirismProvider
+import com.williambl.haema.common.util.addBlood
+import com.williambl.haema.common.util.giveVampiricStrength
 import net.minecraft.client.util.ITooltipFlag
 import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.entity.player.EntityPlayer
@@ -42,6 +44,8 @@ object ModItems {
                         if (!vampirismCap.isVampire()) {
                             if (playerIn.getActivePotionEffect(Potion.getPotionFromResourceLocation("minecraft:weakness")!!) != null) {
                                 vampirismCap.setIsVampire(true)
+                                playerIn.addBlood(0.5f)
+                                playerIn.giveVampiricStrength(200, 5)
                             } else {
                                 playerIn.attackEntityFrom(DamageSource.MAGIC, 20.0f)
                             }
