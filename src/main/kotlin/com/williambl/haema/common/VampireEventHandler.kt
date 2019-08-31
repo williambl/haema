@@ -100,7 +100,7 @@ object VampireEventHandler {
             return
 
         if (!target.isEntityUndead) {
-            target.attackEntityFrom(DamageSource.causePlayerDamage(entityPlayer).setDamageBypassesArmor().setMagicDamage(), 0.5f)
+            target.attackEntityFrom(DamageSource.MAGIC.setDamageBypassesArmor().setMagicDamage(), 0.5f)
             entityPlayer.addBlood(0.01f)
         }
 
