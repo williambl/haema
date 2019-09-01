@@ -1,6 +1,7 @@
 package com.williambl.haema.common.capability
 
 import com.williambl.haema.Haema
+import com.williambl.haema.common.util.hasVampirismCapability
 import com.williambl.haema.common.util.syncVampirismCapability
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.EntityPlayer
@@ -53,6 +54,7 @@ object CapabilityHandler {
         if (event.world.isRemote || event.entity !is EntityPlayer)
             return
 
-        (event.entity as EntityPlayer).syncVampirismCapability()
+        if ((event.entity as EntityPlayer).hasVampirismCapability())
+            (event.entity as EntityPlayer).syncVampirismCapability()
     }
 }
