@@ -4,6 +4,7 @@ enum class VampireAbilities {
     WEAKNESS,
     STRENGTH,
     VISION,
+    CHARISMA,
     FLIGHT,
     INVISIBILITY;
 

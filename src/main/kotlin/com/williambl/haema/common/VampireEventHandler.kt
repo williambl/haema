@@ -2,6 +2,7 @@ package com.williambl.haema.common
 
 import com.williambl.haema.common.capability.VampirismProvider
 import com.williambl.haema.common.util.*
+import net.minecraft.entity.EntityLiving
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Items
@@ -13,6 +14,7 @@ import net.minecraft.util.math.BlockPos
 import net.minecraftforge.event.entity.living.LivingEvent
 import net.minecraftforge.event.entity.living.LivingHealEvent
 import net.minecraftforge.event.entity.living.LivingHurtEvent
+import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent
 import net.minecraftforge.event.entity.player.PlayerInteractEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
@@ -127,6 +129,19 @@ object VampireEventHandler {
 
         entity.addBlood((-0.05 * e.amount).toFloat())
 
+    }
+
+    @SubscribeEvent
+    @JvmStatic
+    fun cancelMobTargetingEvent(e: LivingSetAttackTargetEvent) {
+        if (e.entity.world.isRemote || e.target == null || e.target !is EntityPlayer || !(e.target as EntityPlayer).hasVampirismCapability() || !((e.target as EntityPlayer).getVampirismCapability().isVampire()))
+            return
+
+        if ((e.target as EntityPlayer).getVampirismCapability().getAbilities() and VampireAbilities.CHARISMA.flag != 0) {
+            if (e.entity.world.rand.nextBoolean()) {
+                (e.entityLiving as EntityLiving).attackTarget = null
+            }
+        }
     }
 
 }

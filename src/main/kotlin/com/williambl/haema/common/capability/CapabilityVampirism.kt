@@ -70,6 +70,9 @@ class CapabilityVampirismImpl: ICapabilityVampirism {
         if (bloodLevel < 0.1 ) { value = value or VampireAbilities.WEAKNESS.flag }
         if (bloodLevel > 0.5 ) { value = value or VampireAbilities.STRENGTH.flag }
         if (bloodLevel > 0.6 ) { value = value or VampireAbilities.VISION.flag }
+        if (bloodLevel > 0.7) {
+            value = value or VampireAbilities.CHARISMA.flag
+        }
         if (bloodLevel > 0.75 ) { value = value or VampireAbilities.FLIGHT.flag }
         if (bloodLevel > 0.95 ) { value = value or VampireAbilities.INVISIBILITY.flag }
 
