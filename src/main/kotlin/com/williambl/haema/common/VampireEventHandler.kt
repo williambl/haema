@@ -18,6 +18,7 @@ import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent
 import net.minecraftforge.event.entity.player.PlayerInteractEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 @Mod.EventBusSubscriber
@@ -35,7 +36,7 @@ object VampireEventHandler {
 
         if (!entity.hasPotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_weakness")!!)) {
             if (world.isDaytime && world.canSeeSky(BlockPos(entity.posX, entity.posY + entity.eyeHeight, entity.posZ))) {
-                entity.giveVampiricWeakness(200, cap.getInversePowerMultiplier().roundToInt())
+                entity.giveVampiricWeakness(200, max(cap.getInversePowerMultiplier().roundToInt(), 2))
             } else if ((cap.getAbilities() and VampireAbilities.WEAKNESS.flag) != 0) {
                 entity.giveVampiricWeakness(200, 1)
             }
