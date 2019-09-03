@@ -10,6 +10,7 @@ import net.minecraftforge.common.capabilities.CapabilityManager
 import net.minecraftforge.event.AttachCapabilitiesEvent
 import net.minecraftforge.event.entity.EntityJoinWorldEvent
 import net.minecraftforge.event.entity.player.PlayerEvent
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent
@@ -50,11 +51,8 @@ object CapabilityHandler {
 
     @SubscribeEvent
     @JvmStatic
-    fun onPlayerJoinWorld(event: EntityJoinWorldEvent) {
-        if (event.world.isRemote || event.entity !is EntityPlayer)
-            return
-
-        if ((event.entity as EntityPlayer).hasVampirismCapability())
-            (event.entity as EntityPlayer).syncVampirismCapability()
+    fun onPlayerLogIn(event: PlayerLoggedInEvent) {
+        if (event.player.hasVampirismCapability())
+            event.player.syncVampirismCapability()
     }
 }

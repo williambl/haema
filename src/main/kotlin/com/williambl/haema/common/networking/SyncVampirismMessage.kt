@@ -2,6 +2,8 @@ package com.williambl.haema.common.networking
 
 import com.williambl.haema.common.capability.ICapabilityVampirism
 import com.williambl.haema.common.capability.VampirismProvider
+import com.williambl.haema.common.util.getVampirismCapability
+import com.williambl.haema.common.util.hasVampirismCapability
 import io.netty.buffer.ByteBuf
 import net.minecraft.client.Minecraft
 import net.minecraft.network.PacketBuffer
@@ -34,9 +36,11 @@ class SyncVampirismMessage(var bloodLevel: Float = 0.0f, var isVampire: Boolean 
                 return null
 
             if (ctx?.side == Side.CLIENT) {
-                Minecraft.getMinecraft().player.getCapability(VampirismProvider.vampirism!!, null)?.let {
-                    it.setBloodLevel(message.bloodLevel)
-                    it.setIsVampire(message.isVampire)
+                if (Minecraft.getMinecraft().player.hasVampirismCapability()) {
+                    Minecraft.getMinecraft().player.getVampirismCapability().let {
+                        it.setBloodLevel(message.bloodLevel)
+                        it.setIsVampire(message.isVampire)
+                    }
                 }
             }
 
