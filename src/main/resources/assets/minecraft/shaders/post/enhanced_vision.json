@@ -4,52 +4,26 @@
     ],
     "passes": [
         {
-            "name": "color_convolve",
+            "name": "brightify",
             "intarget": "minecraft:main",
             "outtarget": "swap",
             "uniforms": [
                 {
-                    "name": "RedMatrix",
-                    "values": [ 2.0, 0.0, 0.0 ]
+                    "name": "RedBrightnessMap",
+                    "values": [ 5.0, 2.0, 1.0 ]
                 },
                 {
-                    "name": "GreenMatrix",
-                    "values": [ 0.0, 2.0, 0.0 ]
+                    "name": "GreenBrightnessMap",
+                    "values": [ 5.0, 2.0, 1.0 ]
                 },
                 {
-                    "name": "BlueMatrix",
-                    "values": [ 0.0, 0.0, 2.0 ]
+                    "name": "BlueBrightnessMap",
+                    "values": [ 5.0, 2.0, 1.0 ]
                 }
             ]
         },
         {
-            "name": "blit",
-            "intarget": "swap",
-            "outtarget": "minecraft:main"
-        },
-        {
-            "name": "sobel",
-            "intarget": "minecraft:main",
-            "outtarget": "swap"
-        },
-        {
-            "name": "blit",
-            "intarget": "swap",
-            "outtarget": "minecraft:main"
-        },
-        {
-            "name": "invert",
-            "intarget": "minecraft:main",
-            "outtarget": "swap",
-            "uniforms": [
-                {
-                    "name": "InverseAmount",
-                    "values": [ 1.0 ]
-                }
-            ]
-        },
-        {
-            "name": "blit",
+            "name": "bumpy",
             "intarget": "swap",
             "outtarget": "minecraft:main"
         }
