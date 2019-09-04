@@ -50,7 +50,7 @@ object VampireEventHandler {
 
         if (!entity.hasPotionEffect(Potion.getPotionFromResourceLocation("minecraft:night_vision")!!)) {
             if ((cap.getAbilities() and VampireAbilities.VISION.flag) != 0) {
-                entity.addPotionEffect(PotionEffect(Potion.getPotionFromResourceLocation("minecraft:night_vision")!!, 200, cap.getPowerMultiplier().roundToInt()))
+                //entity.addPotionEffect(PotionEffect(Potion.getPotionFromResourceLocation("minecraft:night_vision")!!, 200, cap.getPowerMultiplier().roundToInt()))
             }
         }
 
