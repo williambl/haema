@@ -9,16 +9,8 @@
             "outtarget": "swap",
             "uniforms": [
                 {
-                    "name": "RedBrightnessMap",
-                    "values": [ 5.0, 2.0, 1.0 ]
-                },
-                {
-                    "name": "GreenBrightnessMap",
-                    "values": [ 5.0, 2.0, 1.0 ]
-                },
-                {
-                    "name": "BlueBrightnessMap",
-                    "values": [ 5.0, 2.0, 1.0 ]
+                    "name": "Gamma",
+                    "values": [ 0.5 ]
                 }
             ]
         },
