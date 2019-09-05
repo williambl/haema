@@ -48,12 +48,6 @@ object VampireEventHandler {
             }
         }
 
-        if (!entity.hasPotionEffect(Potion.getPotionFromResourceLocation("minecraft:night_vision")!!)) {
-            if ((cap.getAbilities() and VampireAbilities.VISION.flag) != 0) {
-                //entity.addPotionEffect(PotionEffect(Potion.getPotionFromResourceLocation("minecraft:night_vision")!!, 200, cap.getPowerMultiplier().roundToInt()))
-            }
-        }
-
         if (!entity.hasPotionEffect(Potion.getPotionFromResourceLocation("minecraft:invisibility")!!)) {
             if ((cap.getAbilities() and VampireAbilities.INVISIBILITY.flag) != 0) {
                 entity.addPotionEffect(PotionEffect(Potion.getPotionFromResourceLocation("minecraft:invisibility")!!, 200, cap.getPowerMultiplier().roundToInt()))
