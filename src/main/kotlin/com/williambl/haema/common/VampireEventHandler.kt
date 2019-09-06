@@ -8,7 +8,6 @@ import net.minecraft.entity.EntityLiving
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.player.EntityPlayerMP
-import net.minecraft.init.Items
 import net.minecraft.potion.Potion
 import net.minecraft.potion.PotionEffect
 import net.minecraft.util.DamageSource
@@ -130,7 +129,7 @@ object VampireEventHandler {
             e.amount *= (cap.getInversePowerMultiplier()/5)+1
 
         if (source.trueSource is EntityLivingBase) {
-            if ((source.trueSource as EntityLivingBase).heldItemMainhand.item in arrayOf(Items.WOODEN_SWORD, Items.STICK)) {
+            if ((source.trueSource as EntityLivingBase).heldItemMainhand.item in antiVampireItems) {
                 e.amount *= (cap.getInversePowerMultiplier()/2)+1
             }
         }
