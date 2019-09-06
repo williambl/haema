@@ -39,14 +39,14 @@ minecraft {
 
 repositories {
     jcenter()
-    maven {
-        url "http://maven.shadowfacts.net/"
-    }
+    maven { url "http://maven.shadowfacts.net/" }
+    maven { url "https://maven.blamejared.com" }
 }
 
 dependencies {
     deobfCompile group: "net.shadowfacts", name: "Forgelin", version: forgelin_version
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    compile "vazkii.patchouli:Patchouli:1.0-21.109"
 }
 
 processResources {
