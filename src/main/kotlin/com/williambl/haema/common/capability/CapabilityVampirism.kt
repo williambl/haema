@@ -23,6 +23,7 @@ interface ICapabilityVampirism {
     fun getInversePowerMultiplier(): Float
 
     fun getAbilities(): Int
+    fun hasAbility(ability: VampireAbilities): Boolean
 }
 
 class CapabilityVampirismImpl: ICapabilityVampirism {
@@ -77,6 +78,10 @@ class CapabilityVampirismImpl: ICapabilityVampirism {
         if (bloodLevel > 0.95 ) { value = value or VampireAbilities.INVISIBILITY.flag }
 
         return value
+    }
+
+    override fun hasAbility(ability: VampireAbilities): Boolean {
+        return getAbilities() and ability.flag != 0
     }
 
 }

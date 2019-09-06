@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.player.EntityPlayerMP
 import net.minecraft.potion.Potion
 import net.minecraft.potion.PotionEffect
+import net.minecraft.util.math.BlockPos
 import kotlin.math.ceil
 import kotlin.math.pow
 
@@ -49,4 +50,8 @@ fun EntityPlayer.getVampirismCapability(): ICapabilityVampirism {
 
 fun EntityPlayer.hasVampirismCapability(): Boolean {
     return this.hasCapability(VampirismProvider.vampirism!!, null)
+}
+
+fun EntityPlayer.isInSunlight(): Boolean {
+    return this.world.isDaytime && this.world.canSeeSky(BlockPos(this.posX, this.posY + this.eyeHeight, this.posZ))
 }

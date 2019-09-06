@@ -4,6 +4,7 @@ import com.williambl.haema.common.capability.VampirismProvider
 import com.williambl.haema.common.networking.ModPackets
 import com.williambl.haema.common.networking.SunlightHurtMessage
 import com.williambl.haema.common.util.*
+import com.williambl.haema.objectholder.ModPotionHolder
 import net.minecraft.entity.EntityLiving
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
@@ -12,7 +13,6 @@ import net.minecraft.potion.Potion
 import net.minecraft.potion.PotionEffect
 import net.minecraft.util.DamageSource
 import net.minecraft.util.EnumHand
-import net.minecraft.util.math.BlockPos
 import net.minecraftforge.event.entity.living.*
 import net.minecraftforge.event.entity.player.PlayerInteractEvent
 import net.minecraftforge.fml.common.Mod
@@ -30,30 +30,29 @@ object VampireEventHandler {
             return
 
         val entity = e.entity as EntityPlayer
-        val world = entity.world
         val cap = entity.getVampirismCapability()
 
-        if (!entity.hasPotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_weakness")!!)) {
-            if (world.isDaytime && world.canSeeSky(BlockPos(entity.posX, entity.posY + entity.eyeHeight, entity.posZ))) {
+        if (!entity.hasPotionEffect(ModPotionHolder.vampiric_weakness)) {
+            if (entity.isInSunlight()) {
                 entity.giveVampiricWeakness(200, max(cap.getInversePowerMultiplier().roundToInt(), 2))
-            } else if ((cap.getAbilities() and VampireAbilities.WEAKNESS.flag) != 0) {
+            } else if (cap.hasAbility(VampireAbilities.WEAKNESS)) {
                 entity.giveVampiricWeakness(200, 1)
             }
         }
 
-        if (!entity.hasPotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_strength")!!)) {
-            if ((cap.getAbilities() and VampireAbilities.STRENGTH.flag) != 0) {
+        if (!entity.hasPotionEffect(ModPotionHolder.vampiric_strength)) {
+            if (cap.hasAbility(VampireAbilities.STRENGTH)) {
                 entity.giveVampiricStrength(200, cap.getPowerMultiplier().roundToInt())
             }
         }
 
-        if (!entity.hasPotionEffect(Potion.getPotionFromResourceLocation("minecraft:invisibility")!!)) {
-            if ((cap.getAbilities() and VampireAbilities.INVISIBILITY.flag) != 0) {
+        if (!entity.hasPotionEffect(ModPotionHolder.invisibility)) {
+            if (cap.hasAbility(VampireAbilities.INVISIBILITY)) {
                 entity.addPotionEffect(PotionEffect(Potion.getPotionFromResourceLocation("minecraft:invisibility")!!, 200, cap.getPowerMultiplier().roundToInt()))
             }
         }
 
-        if (world.isDaytime && world.canSeeSky(BlockPos(entity.posX, entity.posY+entity.eyeHeight, entity.posZ))) {
+        if (entity.isInSunlight()) {
             entity.attackEntityFrom(SunlightDamageSource, (1 shl cap.getInversePowerMultiplier().roundToInt()) * 0.1f)
         }
     }
@@ -68,14 +67,13 @@ object VampireEventHandler {
         val world = entity.world
         val cap = entity.getVampirismCapability()
 
-        if (entity.hasPotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_weakness")!!)) {
+        if (entity.hasPotionEffect(ModPotionHolder.vampiric_weakness)) {
             e.isCanceled = true
         } else if (!world.isDaytime) {
             e.amount *= 1.6f * cap.getPowerMultiplier()
         }
-        if (entity.hasPotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_strength")!!)) {
-            e.amount *= 1.2f * (entity.getActivePotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_strength")!!)?.amplifier
-                    ?: 0)
+        if (entity.hasPotionEffect(ModPotionHolder.vampiric_strength)) {
+            e.amount *= 1.2f * (entity.getActivePotionEffect(ModPotionHolder.vampiric_strength)?.amplifier ?: 0)
         }
     }
 
@@ -111,7 +109,7 @@ object VampireEventHandler {
     fun vampireFallEvent(e: LivingFallEvent) {
         if (e.entity.world.isRemote || e.entity !is EntityPlayer || !(e.entity as EntityPlayer).hasVampirismCapability() || !((e.entity as EntityPlayer).getVampirismCapability().isVampire()))
             return
-        if ((e.entity as EntityPlayer).getVampirismCapability().getAbilities() and VampireAbilities.FLIGHT.flag != 0)
+        if ((e.entity as EntityPlayer).getVampirismCapability().hasAbility(VampireAbilities.FLIGHT))
             e.isCanceled = true
     }
 
@@ -149,7 +147,7 @@ object VampireEventHandler {
         if (e.entity.world.isRemote || e.target == null || e.target !is EntityPlayer || !(e.target as EntityPlayer).hasVampirismCapability() || !((e.target as EntityPlayer).getVampirismCapability().isVampire()))
             return
 
-        if ((e.target as EntityPlayer).getVampirismCapability().getAbilities() and VampireAbilities.CHARISMA.flag != 0) {
+        if ((e.target as EntityPlayer).getVampirismCapability().hasAbility(VampireAbilities.CHARISMA)) {
             if (e.entity.world.rand.nextBoolean()) {
                 (e.entityLiving as EntityLiving).attackTarget = null
             }

@@ -5,7 +5,6 @@ import com.williambl.haema.common.capability.VampirismProvider
 import com.williambl.haema.common.util.VampireAbilities
 import com.williambl.haema.common.util.getVampirismCapability
 import net.minecraft.client.Minecraft
-import net.minecraft.util.ResourceLocation
 import net.minecraftforge.client.event.RenderGameOverlayEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
@@ -35,17 +34,18 @@ object ClientEventHandler {
     @SubscribeEvent
     @JvmStatic
     fun applyShaderIfNeeded(e: TickEvent.ClientTickEvent) {
-        if (Minecraft.getMinecraft().player == null)
+        val mc = Minecraft.getMinecraft()
+        if (mc.player == null)
             return
 
-        if (Minecraft.getMinecraft().player.getVampirismCapability().getAbilities() and VampireAbilities.VISION.flag != 0) {
-            if (!shaderApplied || !Minecraft.getMinecraft().entityRenderer.isShaderActive) {
-                Minecraft.getMinecraft().entityRenderer.stopUseShader()
-                Minecraft.getMinecraft().entityRenderer.loadShader(ResourceLocation("shaders/post/enhanced_vision.json"))
+        if (mc.player.getVampirismCapability().getAbilities() and VampireAbilities.VISION.flag != 0) {
+            if (!shaderApplied || !mc.entityRenderer.isShaderActive) {
+                mc.entityRenderer.stopUseShader()
+                mc.entityRenderer.loadShader(enhancedVisionShaderLocation)
                 shaderApplied = true
             }
         } else if (shaderApplied) {
-            Minecraft.getMinecraft().entityRenderer.stopUseShader()
+            mc.entityRenderer.stopUseShader()
         }
     }
 }
