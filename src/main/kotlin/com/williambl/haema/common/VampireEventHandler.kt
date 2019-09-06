@@ -11,10 +11,7 @@ import net.minecraft.potion.PotionEffect
 import net.minecraft.util.DamageSource
 import net.minecraft.util.EnumHand
 import net.minecraft.util.math.BlockPos
-import net.minecraftforge.event.entity.living.LivingEvent
-import net.minecraftforge.event.entity.living.LivingHealEvent
-import net.minecraftforge.event.entity.living.LivingHurtEvent
-import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent
+import net.minecraftforge.event.entity.living.*
 import net.minecraftforge.event.entity.player.PlayerInteractEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
@@ -52,6 +49,10 @@ object VampireEventHandler {
             if ((cap.getAbilities() and VampireAbilities.INVISIBILITY.flag) != 0) {
                 entity.addPotionEffect(PotionEffect(Potion.getPotionFromResourceLocation("minecraft:invisibility")!!, 200, cap.getPowerMultiplier().roundToInt()))
             }
+        }
+
+        if (world.isDaytime && world.canSeeSky(BlockPos(entity.posX, entity.posY+entity.eyeHeight, entity.posZ))) {
+            entity.attackEntityFrom(SunlightDamageSource, (1 shl cap.getInversePowerMultiplier().roundToInt()) * 0.1f)
         }
     }
 
@@ -101,6 +102,15 @@ object VampireEventHandler {
             entityPlayer.addBlood(0.01f)
         }
 
+    }
+
+    @SubscribeEvent
+    @JvmStatic
+    fun vampireFallEvent(e: LivingFallEvent) {
+        if (e.entity.world.isRemote || e.entity !is EntityPlayer || !(e.entity as EntityPlayer).hasVampirismCapability() || !((e.entity as EntityPlayer).getVampirismCapability().isVampire()))
+            return
+        if ((e.entity as EntityPlayer).getVampirismCapability().getAbilities() and VampireAbilities.FLIGHT.flag != 0)
+            e.isCanceled = true
     }
 
     @SubscribeEvent
