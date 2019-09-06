@@ -36,8 +36,6 @@ class SunlightHurtMessage(var uuid: UUID = UUID.fromString("00000000-0000-0000-0
                 val world = Minecraft.getMinecraft().world
                 val entity = world.getPlayerEntityByUUID(message.uuid) ?: return null
 
-                println("received")
-
                 for (i in 0..10) {
                     world.spawnParticle(
                             EnumParticleTypes.FLAME,

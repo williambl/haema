@@ -136,8 +136,6 @@ object VampireEventHandler {
         }
 
         if (source is SunlightDamageSource) {
-            println("sending")
-            println(entity.uniqueID)
             ModPackets.instance.sendToAllTracking(SunlightHurtMessage(entity.uniqueID), entity)
             ModPackets.instance.sendTo(SunlightHurtMessage(entity.uniqueID), entity as EntityPlayerMP?)
         }
