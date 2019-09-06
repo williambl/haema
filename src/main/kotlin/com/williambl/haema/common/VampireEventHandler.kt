@@ -1,10 +1,13 @@
 package com.williambl.haema.common
 
 import com.williambl.haema.common.capability.VampirismProvider
+import com.williambl.haema.common.networking.ModPackets
+import com.williambl.haema.common.networking.SunlightHurtMessage
 import com.williambl.haema.common.util.*
 import net.minecraft.entity.EntityLiving
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.entity.player.EntityPlayerMP
 import net.minecraft.init.Items
 import net.minecraft.potion.Potion
 import net.minecraft.potion.PotionEffect
@@ -130,6 +133,13 @@ object VampireEventHandler {
             if ((source.trueSource as EntityLivingBase).heldItemMainhand.item in arrayOf(Items.WOODEN_SWORD, Items.STICK)) {
                 e.amount *= (cap.getInversePowerMultiplier()/2)+1
             }
+        }
+
+        if (source is SunlightDamageSource) {
+            println("sending")
+            println(entity.uniqueID)
+            ModPackets.instance.sendToAllTracking(SunlightHurtMessage(entity.uniqueID), entity)
+            ModPackets.instance.sendTo(SunlightHurtMessage(entity.uniqueID), entity as EntityPlayerMP?)
         }
 
         entity.addBlood((-0.05 * e.amount).toFloat())
