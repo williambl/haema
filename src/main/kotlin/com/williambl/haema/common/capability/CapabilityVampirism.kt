@@ -1,12 +1,16 @@
 package com.williambl.haema.common.capability
 
 import com.williambl.haema.common.util.VampireAbilities
+import net.minecraft.nbt.CompoundNBT
+import net.minecraft.nbt.INBT
 import net.minecraft.nbt.NBTBase
 import net.minecraft.nbt.NBTTagCompound
+import net.minecraft.util.Direction
 import net.minecraft.util.EnumFacing
 import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.CapabilityInject
 import net.minecraftforge.common.capabilities.ICapabilitySerializable
+import net.minecraftforge.common.util.LazyOptional
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
@@ -88,24 +92,24 @@ class CapabilityVampirismImpl: ICapabilityVampirism {
 
 class VampirismStorage: Capability.IStorage<ICapabilityVampirism> {
 
-    override fun readNBT(capability: Capability<ICapabilityVampirism>?, instance: ICapabilityVampirism?, side: EnumFacing?, nbt: NBTBase?) {
-        nbt as NBTTagCompound
+    override fun readNBT(capability: Capability<ICapabilityVampirism>?, instance: ICapabilityVampirism?, side: Direction?, nbt: INBT?) {
+        nbt as CompoundNBT
         instance?.setBloodLevel(nbt.getFloat("bloodLevel"))
         instance?.setIsVampire(nbt.getBoolean("isVampire"))
     }
 
-    override fun writeNBT(capability: Capability<ICapabilityVampirism>?, instance: ICapabilityVampirism?, side: EnumFacing?): NBTBase? {
+    override fun writeNBT(capability: Capability<ICapabilityVampirism>?, instance: ICapabilityVampirism?, side: Direction?): INBT? {
         instance ?: return null
 
-        val compound = NBTTagCompound()
-        compound.setFloat("bloodLevel", instance.getBloodLevel())
-        compound.setBoolean("isVampire", instance.isVampire())
+        val compound = CompoundNBT()
+        compound.putFloat("bloodLevel", instance.getBloodLevel())
+        compound.putBoolean("isVampire", instance.isVampire())
         return compound
     }
 
 }
 
-class VampirismProvider : ICapabilitySerializable<NBTBase> {
+class VampirismProvider : ICapabilitySerializable<INBT> {
 
     companion object {
         @CapabilityInject(ICapabilityVampirism::class)
@@ -114,23 +118,16 @@ class VampirismProvider : ICapabilitySerializable<NBTBase> {
 
     private val instance: ICapabilityVampirism = vampirism!!.defaultInstance!!
 
-    override fun <T : Any?> getCapability(capability: Capability<T>, facing: EnumFacing?): T? {
-        return if (capability == vampirism)
-            vampirism.cast(instance)
-        else
-            null
+    override fun <T> getCapability(capability: Capability<T>, facing: Direction?): LazyOptional<T> {
+        return vampirism!!.orEmpty(capability, LazyOptional.of {-> instance})
     }
 
-    override fun deserializeNBT(nbt: NBTBase?) {
+    override fun deserializeNBT(nbt: INBT?) {
         vampirism!!.storage.readNBT(vampirism, instance, null, nbt)
     }
 
-    override fun serializeNBT(): NBTBase {
+    override fun serializeNBT(): INBT {
         return vampirism!!.storage.writeNBT(vampirism, instance, null)!!
-    }
-
-    override fun hasCapability(capability: Capability<*>, facing: EnumFacing?): Boolean {
-        return capability == vampirism
     }
 
 }

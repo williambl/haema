@@ -4,54 +4,59 @@ import com.williambl.haema.common.capability.ICapabilityVampirism
 import com.williambl.haema.common.capability.VampirismProvider
 import com.williambl.haema.common.networking.ModPackets
 import com.williambl.haema.common.networking.SyncVampirismMessage
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.entity.player.EntityPlayerMP
-import net.minecraft.potion.Potion
-import net.minecraft.potion.PotionEffect
+import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.entity.player.PlayerEntityMP
+import net.minecraft.entity.player.ServerPlayerEntity
+import net.minecraft.potion.Effect
 import net.minecraft.util.math.BlockPos
+import net.minecraftforge.common.util.LazyOptional
+import net.minecraftforge.fml.network.PacketDistributor
 import kotlin.math.ceil
 import kotlin.math.pow
 
-fun EntityPlayer.addBlood(amount: Float) {
-    val cap = this.getVampirismCapability()
-    cap.addBloodLevel(amount)
-    this.syncVampirismCapability(cap)
-    if (amount > 0.0f)
-        this.giveVampiricStrength(200, ceil(10.0f * amount.pow(2)).toInt())
+fun PlayerEntity.addBlood(amount: Float) {
+    this.getVampirismCapability().ifPresent {
+        it.addBloodLevel(amount)
+        this.syncVampirismCapability(it)
+        if (amount > 0.0f)
+            this.giveVampiricStrength(200, ceil(10.0f * amount.pow(2)).toInt())
+    }
 }
 
-fun EntityPlayer.isVampire(): Boolean {
-    return this.getCapability(VampirismProvider.vampirism!!, null)?.isVampire() ?: false
+fun PlayerEntity.isVampire(): Boolean {
+    var value = false
+    this.getCapability(VampirismProvider.vampirism!!, null).ifPresent { value = it.isVampire() }
+    return value
 }
 
-fun EntityPlayer.syncVampirismCapability(cap: ICapabilityVampirism) {
-    ModPackets.instance.sendTo(SyncVampirismMessage(cap), this as EntityPlayerMP)
+fun PlayerEntity.syncVampirismCapability(cap: ICapabilityVampirism) {
+    ModPackets.instance.send(PacketDistributor.PLAYER.with { this as ServerPlayerEntity }, SyncVampirismMessage(cap))
 }
 
-fun EntityPlayer.syncVampirismCapability() {
-    ModPackets.instance.sendTo(SyncVampirismMessage(this.getVampirismCapability()), this as EntityPlayerMP)
+fun PlayerEntity.syncVampirismCapability() {
+    ModPackets.instance.send(PacketDistributor.PLAYER.with { this as ServerPlayerEntity }, SyncVampirismMessage(this.getVampirismCapability()))
 }
 
-fun EntityPlayer.giveVampiricStrength(duration: Int, amplifier: Int) {
-    this.addPotionEffect(PotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_strength")!!, duration, amplifier))
+fun PlayerEntity.giveVampiricStrength(duration: Int, amplifier: Int) {
+    this.addPotionEffect(, duration, amplifier))
 }
 
-fun EntityPlayer.giveVampiricWeakness(duration: Int, amplifier: Int) {
-    this.addPotionEffect(PotionEffect(Potion.getPotionFromResourceLocation("haema:vampiric_weakness")!!, duration, amplifier))
+fun PlayerEntity.giveVampiricWeakness(duration: Int, amplifier: Int) {
+    this.addPotionEffect(, duration, amplifier))
 }
 
-fun EntityPlayer.hasPotionEffect(potion: Potion): Boolean {
-    return this.getActivePotionEffect(potion) != null
+fun PlayerEntity.hasEffect(effect: Effect): Boolean {
+    return this.getActivePotionEffect(effect) != null
 }
 
-fun EntityPlayer.getVampirismCapability(): ICapabilityVampirism {
-    return this.getCapability(VampirismProvider.vampirism!!, null)!!
+fun PlayerEntity.getVampirismCapability(): LazyOptional<ICapabilityVampirism> {
+    return this.getCapability(VampirismProvider.vampirism!!, null)
 }
 
-fun EntityPlayer.hasVampirismCapability(): Boolean {
-    return this.hasCapability(VampirismProvider.vampirism!!, null)
+fun PlayerEntity.hasVampirismCapability(): Boolean {
+    return this.getCapability(VampirismProvider.vampirism!!, null).isPresent
 }
 
-fun EntityPlayer.isInSunlight(): Boolean {
-    return this.world.isDaytime && this.world.canSeeSky(BlockPos(this.posX, this.posY + this.eyeHeight, this.posZ))
+fun PlayerEntity.isInSunlight(): Boolean {
+    return this.world.isDaytime && this.world.canBlockSeeSky(BlockPos(this.posX, this.posY + this.eyeHeight, this.posZ))
 }

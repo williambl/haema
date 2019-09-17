@@ -2,6 +2,7 @@ package com.williambl.haema.common.util
 
 import com.williambl.haema.objectholder.ModItemHolder
 import net.minecraft.init.Items
+import net.minecraft.item.Items
 
 val antiVampireItems = setOf(
         ModItemHolder.silver_sword,

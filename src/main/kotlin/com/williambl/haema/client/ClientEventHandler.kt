@@ -1,19 +1,22 @@
 package com.williambl.haema.client
 
 import com.williambl.haema.client.gui.VampireOverlayGui
+import com.williambl.haema.client.gui.VampireOverlayScreen
 import com.williambl.haema.common.capability.VampirismProvider
 import com.williambl.haema.common.util.VampireAbilities
 import com.williambl.haema.common.util.getVampirismCapability
+import net.alexwells.kottle.KotlinEventBusSubscriber
 import net.minecraft.client.Minecraft
 import net.minecraftforge.client.event.RenderGameOverlayEvent
-import net.minecraftforge.fml.common.Mod
+import net.minecraftforge.event.TickEvent
+import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
 
-@Mod.EventBusSubscriber
+@KotlinEventBusSubscriber
 object ClientEventHandler {
 
-    val overlayGui: VampireOverlayGui = VampireOverlayGui()
+    val overlayGui: VampireOverlayScreen = VampireOverlayScreen()
     var shaderApplied = false
 
     @SubscribeEvent
@@ -22,7 +25,7 @@ object ClientEventHandler {
         if (e.type != RenderGameOverlayEvent.ElementType.ALL)
             return
 
-        val player = Minecraft.getMinecraft().player
+        val player = Minecraft.getInstance().player
         val cap = player.getCapability(VampirismProvider.vampirism!!, null)!!
 
         if (!cap.isVampire())
@@ -34,18 +37,18 @@ object ClientEventHandler {
     @SubscribeEvent
     @JvmStatic
     fun applyShaderIfNeeded(e: TickEvent.ClientTickEvent) {
-        val mc = Minecraft.getMinecraft()
+        val mc = Minecraft.getInstance()
         if (mc.player == null)
             return
 
         if (mc.player.getVampirismCapability().getAbilities() and VampireAbilities.VISION.flag != 0) {
-            if (!shaderApplied || !mc.entityRenderer.isShaderActive) {
-                mc.entityRenderer.stopUseShader()
-                mc.entityRenderer.loadShader(enhancedVisionShaderLocation)
+            if (!shaderApplied || !mc.gameRenderer.isShaderActive) {
+                mc.gameRenderer.stopUseShader()
+                mc.gameRenderer.loadShader(enhancedVisionShaderLocation)
                 shaderApplied = true
             }
         } else if (shaderApplied) {
-            mc.entityRenderer.stopUseShader()
+            mc.gameRenderer.stopUseShader()
         }
     }
 }

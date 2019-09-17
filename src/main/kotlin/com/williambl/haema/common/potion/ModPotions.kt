@@ -1,19 +1,20 @@
 package com.williambl.haema.common.potion
 
-import net.minecraft.potion.Potion
+import net.alexwells.kottle.KotlinEventBusSubscriber
+import net.minecraft.potion.Effect
 import net.minecraftforge.event.RegistryEvent
-import net.minecraftforge.fml.common.Mod
+import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 
-@Mod.EventBusSubscriber()
+@KotlinEventBusSubscriber
 object ModPotions {
 
     @SubscribeEvent
     @JvmStatic
-    fun registerPotions(event: RegistryEvent.Register<Potion>) {
+    fun registerPotions(event: RegistryEvent.Register<Effect>) {
         event.registry.registerAll(
-                PotionVampiricWeakness(),
-                PotionVampiricStrength()
+                EffectVampiricWeakness(),
+                EffectVampiricStrength()
         )
     }
 }

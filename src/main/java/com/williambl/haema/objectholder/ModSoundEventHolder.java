@@ -1,8 +1,8 @@
 package com.williambl.haema.objectholder;
 
 import com.williambl.haema.Haema;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.registries.ObjectHolder;
 
-@GameRegistry.ObjectHolder(Haema.MODID)
+@ObjectHolder(Haema.MODID)
 public class ModSoundEventHolder {
 }

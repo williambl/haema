@@ -1,51 +1,46 @@
 package com.williambl.haema.common.networking
 
 import com.williambl.haema.common.capability.ICapabilityVampirism
-import com.williambl.haema.common.capability.VampirismProvider
 import com.williambl.haema.common.util.getVampirismCapability
 import com.williambl.haema.common.util.hasVampirismCapability
-import io.netty.buffer.ByteBuf
 import net.minecraft.client.Minecraft
 import net.minecraft.network.PacketBuffer
+import net.minecraftforge.fml.LogicalSide
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext
+import net.minecraftforge.fml.network.NetworkEvent
 import net.minecraftforge.fml.relauncher.Side
+import java.util.function.Supplier
 
-class SyncVampirismMessage(var bloodLevel: Float = 0.0f, var isVampire: Boolean = false) : IMessage {
+class SyncVampirismMessage(var bloodLevel: Float = 0.0f, var isVampire: Boolean = false) {
 
-    constructor(capability: ICapabilityVampirism): this(capability.getBloodLevel(), capability.isVampire())
+    constructor(capability: ICapabilityVampirism) : this(capability.getBloodLevel(), capability.isVampire())
 
-    override fun toBytes(buf: ByteBuf?) {
-        val packetBuffer = PacketBuffer(buf!!)
+    fun encode(buf: PacketBuffer) {
 
-        packetBuffer.writeFloat(bloodLevel)
-        packetBuffer.writeBoolean(isVampire)
+        buf.writeFloat(bloodLevel)
+        buf.writeBoolean(isVampire)
     }
 
-    override fun fromBytes(buf: ByteBuf?) {
-        val packetBuffer = PacketBuffer(buf!!)
+    fun decode(buf: PacketBuffer) {
 
-        bloodLevel = packetBuffer.readFloat()
-        isVampire = packetBuffer.readBoolean()
+        bloodLevel = buf.readFloat()
+        isVampire = buf.readBoolean()
     }
 
-    class SyncVampirismMessageHandler : IMessageHandler<SyncVampirismMessage, IMessage> {
-        override fun onMessage(message: SyncVampirismMessage?, ctx: MessageContext?): IMessage? {
-            if (message == null)
-                return null
-
-            if (ctx?.side == Side.CLIENT) {
-                if (Minecraft.getMinecraft().player.hasVampirismCapability()) {
-                    Minecraft.getMinecraft().player.getVampirismCapability().let {
-                        it.setBloodLevel(message.bloodLevel)
-                        it.setIsVampire(message.isVampire)
+    fun handle(ctx: Supplier<NetworkEvent.Context>) {
+        if (ctx.get().direction.receptionSide == LogicalSide.CLIENT) {
+            ctx.get().enqueueWork {
+                if (Minecraft.getInstance().player.hasVampirismCapability()) {
+                    Minecraft.getInstance().player.getVampirismCapability().let {
+                        it.setBloodLevel(this.bloodLevel)
+                        it.setIsVampire(this.isVampire)
                     }
                 }
             }
-
-            return null
         }
 
+        ctx.get().packetHandled = true
     }
 }
