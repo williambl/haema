@@ -3,10 +3,7 @@ package com.williambl.haema.common.capability
 import com.williambl.haema.common.util.VampireAbilities
 import net.minecraft.nbt.CompoundNBT
 import net.minecraft.nbt.INBT
-import net.minecraft.nbt.NBTBase
-import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.Direction
-import net.minecraft.util.EnumFacing
 import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.CapabilityInject
 import net.minecraftforge.common.capabilities.ICapabilitySerializable

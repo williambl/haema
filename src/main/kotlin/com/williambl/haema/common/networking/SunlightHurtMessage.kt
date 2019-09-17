@@ -1,17 +1,11 @@
 package com.williambl.haema.common.networking
 
 import net.minecraft.client.Minecraft
-import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.network.PacketBuffer
 import net.minecraft.particles.ParticleTypes
-import net.minecraft.util.EnumParticleTypes
 import net.minecraftforge.fml.LogicalSide
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext
 import net.minecraftforge.fml.network.NetworkEvent
-import net.minecraftforge.fml.relauncher.Side
 import java.util.*
 import java.util.function.Supplier
 

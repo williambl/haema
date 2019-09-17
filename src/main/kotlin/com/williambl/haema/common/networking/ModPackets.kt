@@ -3,10 +3,8 @@ package com.williambl.haema.common.networking
 import com.williambl.haema.Haema
 import net.minecraft.network.PacketBuffer
 import net.minecraft.util.ResourceLocation
-import net.minecraftforge.fml.common.network.NetworkRegistry
 import net.minecraftforge.fml.network.NetworkEvent
 import net.minecraftforge.fml.network.NetworkRegistry
-import net.minecraftforge.fml.relauncher.Side
 import java.util.function.BiConsumer
 import java.util.function.Function
 import java.util.function.Supplier

@@ -5,8 +5,6 @@ import com.williambl.haema.common.util.addBlood
 import com.williambl.haema.common.util.giveVampiricStrength
 import net.alexwells.kottle.KotlinEventBusSubscriber
 import net.minecraft.client.util.ITooltipFlag
-import net.minecraft.creativetab.CreativeTabs
-import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.Item
 import net.minecraft.item.ItemGroup
@@ -23,7 +21,6 @@ import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.api.distmarker.OnlyIn
 import net.minecraftforge.event.RegistryEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 
 @KotlinEventBusSubscriber
 object ModItems {

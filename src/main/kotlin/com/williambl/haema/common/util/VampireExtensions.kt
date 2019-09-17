@@ -5,7 +5,6 @@ import com.williambl.haema.common.capability.VampirismProvider
 import com.williambl.haema.common.networking.ModPackets
 import com.williambl.haema.common.networking.SyncVampirismMessage
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.entity.player.PlayerEntityMP
 import net.minecraft.entity.player.ServerPlayerEntity
 import net.minecraft.potion.Effect
 import net.minecraft.util.math.BlockPos

@@ -6,11 +6,7 @@ import com.williambl.haema.common.util.hasVampirismCapability
 import net.minecraft.client.Minecraft
 import net.minecraft.network.PacketBuffer
 import net.minecraftforge.fml.LogicalSide
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext
 import net.minecraftforge.fml.network.NetworkEvent
-import net.minecraftforge.fml.relauncher.Side
 import java.util.function.Supplier
 
 class SyncVampirismMessage(var bloodLevel: Float = 0.0f, var isVampire: Boolean = false) {

@@ -1,15 +1,12 @@
 package com.williambl.haema.common.potion
 
-import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.SharedMonsterAttributes
 import net.minecraft.entity.ai.attributes.AttributeModifier
-import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.potion.AttackDamageEffect
 import net.minecraft.potion.EffectType
-import net.minecraft.potion.PotionAttackDamage
 import kotlin.math.max
 
 class EffectVampiricStrength : AttackDamageEffect(EffectType.BENEFICIAL, 3484199, 4.0) {

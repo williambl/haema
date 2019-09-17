@@ -5,15 +5,11 @@ import com.williambl.haema.common.util.hasVampirismCapability
 import com.williambl.haema.common.util.syncVampirismCapability
 import net.alexwells.kottle.KotlinEventBusSubscriber
 import net.minecraft.entity.Entity
-import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.common.capabilities.CapabilityManager
 import net.minecraftforge.event.AttachCapabilitiesEvent
 import net.minecraftforge.event.entity.player.PlayerEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
-import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent
-import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent
 
 @KotlinEventBusSubscriber
 object CapabilityHandler {

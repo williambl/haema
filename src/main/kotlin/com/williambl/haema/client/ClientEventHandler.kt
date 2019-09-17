@@ -1,6 +1,5 @@
 package com.williambl.haema.client
 
-import com.williambl.haema.client.gui.VampireOverlayGui
 import com.williambl.haema.client.gui.VampireOverlayScreen
 import com.williambl.haema.common.capability.VampirismProvider
 import com.williambl.haema.common.util.VampireAbilities
@@ -10,8 +9,6 @@ import net.minecraft.client.Minecraft
 import net.minecraftforge.client.event.RenderGameOverlayEvent
 import net.minecraftforge.event.TickEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
-import net.minecraftforge.fml.common.gameevent.TickEvent
 
 @KotlinEventBusSubscriber
 object ClientEventHandler {

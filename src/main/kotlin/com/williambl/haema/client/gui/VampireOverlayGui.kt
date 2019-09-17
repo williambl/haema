@@ -1,7 +1,6 @@
 package com.williambl.haema.client.gui
 
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.Gui
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.util.text.StringTextComponent
 import net.minecraftforge.client.event.RenderGameOverlayEvent

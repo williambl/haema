@@ -4,22 +4,16 @@ import com.williambl.haema.common.networking.ModPackets
 import com.williambl.haema.common.networking.SunlightHurtMessage
 import com.williambl.haema.common.util.*
 import com.williambl.haema.objectholder.ModPotionHolder
-import net.minecraft.entity.EntityLiving
-import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.entity.player.PlayerEntityMP
 import net.minecraft.entity.player.ServerPlayerEntity
 import net.minecraft.potion.Potion
-import net.minecraft.potion.PotionEffect
 import net.minecraft.util.DamageSource
-import net.minecraft.util.EnumHand
 import net.minecraft.util.Hand
 import net.minecraftforge.event.entity.living.*
 import net.minecraftforge.event.entity.player.PlayerInteractEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.network.PacketDistributor
 import kotlin.math.max
 
