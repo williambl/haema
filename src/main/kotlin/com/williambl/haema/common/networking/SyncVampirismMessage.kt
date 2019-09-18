@@ -12,16 +12,11 @@ class SyncVampirismMessage(var bloodLevel: Float = 0.0f, var isVampire: Boolean 
 
     constructor(capability: ICapabilityVampirism) : this(capability.getBloodLevel(), capability.isVampire())
 
-    fun encode(buf: PacketBuffer) {
+    constructor(buf: PacketBuffer): this(buf.readFloat(), buf.readBoolean())
 
+    fun encode(buf: PacketBuffer) {
         buf.writeFloat(bloodLevel)
         buf.writeBoolean(isVampire)
-    }
-
-    fun decode(buf: PacketBuffer) {
-
-        bloodLevel = buf.readFloat()
-        isVampire = buf.readBoolean()
     }
 
     fun handle(ctx: Supplier<NetworkEvent.Context>) {

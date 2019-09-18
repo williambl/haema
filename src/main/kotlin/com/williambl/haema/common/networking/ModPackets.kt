@@ -1,13 +1,8 @@
 package com.williambl.haema.common.networking
 
 import com.williambl.haema.Haema
-import net.minecraft.network.PacketBuffer
 import net.minecraft.util.ResourceLocation
-import net.minecraftforge.fml.network.NetworkEvent
 import net.minecraftforge.fml.network.NetworkRegistry
-import java.util.function.BiConsumer
-import java.util.function.Function
-import java.util.function.Supplier
 
 object ModPackets {
 
@@ -20,21 +15,22 @@ object ModPackets {
             protocolVersion::equals
     )
 
+    @Suppress("INACCESSIBLE_TYPE")
     fun registerPackets() {
         var discriminator = 0
         instance.registerMessage(
                 discriminator++,
                 SyncVampirismMessage::class.java,
-                SyncVampirismMessage::encode as BiConsumer<SyncVampirismMessage, PacketBuffer>,
-                SyncVampirismMessage::decode as Function<PacketBuffer, SyncVampirismMessage>,
-                SyncVampirismMessage::handle as BiConsumer<SyncVampirismMessage, Supplier<NetworkEvent.Context>>
+                { syncVampirismMessage, packetBuffer -> syncVampirismMessage.encode(packetBuffer) },
+                { packetBuffer -> SyncVampirismMessage(packetBuffer) },
+                { syncVampirismMessage, supplier -> syncVampirismMessage.handle(supplier) }
         )
         instance.registerMessage(
                 discriminator++,
                 SunlightHurtMessage::class.java,
-                SunlightHurtMessage::encode as BiConsumer<SunlightHurtMessage, PacketBuffer>,
-                SunlightHurtMessage::decode as Function<PacketBuffer, SunlightHurtMessage>,
-                SunlightHurtMessage::handle as BiConsumer<SunlightHurtMessage, Supplier<NetworkEvent.Context>>
+                { sunlightHurtMessage, packetBuffer -> sunlightHurtMessage.encode(packetBuffer) },
+                { packetBuffer -> SunlightHurtMessage(packetBuffer) },
+                { sunlightHurtMessage, supplier -> sunlightHurtMessage.handle(supplier) }
         )
     }
 }
