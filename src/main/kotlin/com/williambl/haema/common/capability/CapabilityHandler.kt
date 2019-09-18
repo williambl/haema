@@ -1,6 +1,7 @@
 package com.williambl.haema.common.capability
 
 import com.williambl.haema.Haema
+import com.williambl.haema.common.util.getVampirismCapability
 import com.williambl.haema.common.util.hasVampirismCapability
 import com.williambl.haema.common.util.syncVampirismCapability
 import net.alexwells.kottle.KotlinEventBusSubscriber
@@ -31,12 +32,16 @@ object CapabilityHandler {
     @JvmStatic
     fun onPlayerClone(event: PlayerEvent.Clone) {
         val player = event.entityPlayer
-        val vampirism = player.getCapability(VampirismProvider.vampirism!!, null)!!
-        val oldVampirism = event.original.getCapability(VampirismProvider.vampirism, null)
+        val vampirism = player.getVampirismCapability()
+        val oldVampirism = event.original.getVampirismCapability()
 
-        if (!event.isWasDeath)
-            vampirism.setBloodLevel(oldVampirism.getBloodLevel() ?: 0.0f)
-        vampirism.setIsVampire(oldVampirism.isVampire() ?: false)
+        oldVampirism.ifPresent { oldCap ->
+            vampirism.ifPresent { cap ->
+                if (!event.isWasDeath)
+                    cap.setBloodLevel(oldCap.getBloodLevel())
+                cap.setIsVampire(oldCap.isVampire())
+            }
+        }
     }
 
     @SubscribeEvent

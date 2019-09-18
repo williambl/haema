@@ -3,11 +3,12 @@ package com.williambl.haema.common
 import com.williambl.haema.common.networking.ModPackets
 import com.williambl.haema.common.networking.SunlightHurtMessage
 import com.williambl.haema.common.util.*
-import com.williambl.haema.objectholder.ModPotionHolder
+import com.williambl.haema.objectholder.ModEffectHolder
 import net.minecraft.entity.LivingEntity
+import net.minecraft.entity.MobEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.ServerPlayerEntity
-import net.minecraft.potion.Potion
+import net.minecraft.potion.EffectInstance
 import net.minecraft.util.DamageSource
 import net.minecraft.util.Hand
 import net.minecraftforge.event.entity.living.*
@@ -16,6 +17,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.network.PacketDistributor
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 @Mod.EventBusSubscriber
 object VampireEventHandler {
@@ -27,9 +29,9 @@ object VampireEventHandler {
             return
 
         val entity = e.entity as PlayerEntity
-        val cap = entity.getVampirismCapability()
+        val cap = entity.getVampirismCapabilityOrThrow()
 
-        if (!entity.hasEffect(ModPotionHolder.vampiric_weakness)) {
+        if (!entity.hasEffect(ModEffectHolder.vampiric_weakness)) {
             if (entity.isInSunlight()) {
                 entity.giveVampiricWeakness(200, max(cap.getInversePowerMultiplier().roundToInt(), 2))
             } else if (cap.hasAbility(VampireAbilities.WEAKNESS)) {
@@ -37,15 +39,15 @@ object VampireEventHandler {
             }
         }
 
-        if (!entity.hasEffect(ModPotionHolder.vampiric_strength)) {
+        if (!entity.hasEffect(ModEffectHolder.vampiric_strength)) {
             if (cap.hasAbility(VampireAbilities.STRENGTH)) {
                 entity.giveVampiricStrength(200, cap.getPowerMultiplier().roundToInt())
             }
         }
 
-        if (!entity.hasEffect(ModPotionHolder.invisibility)) {
+        if (!entity.hasEffect(ModEffectHolder.invisibility)) {
             if (cap.hasAbility(VampireAbilities.INVISIBILITY)) {
-                entity.addPotionEffect(PotionEffect(Potion.getPotionFromResourceLocation("minecraft:invisibility")!!, 200, cap.getPowerMultiplier().roundToInt()))
+                entity.addPotionEffect(EffectInstance(ModEffectHolder.invisibility, 200, cap.getPowerMultiplier().roundToInt()))
             }
         }
 
@@ -57,20 +59,20 @@ object VampireEventHandler {
     @SubscribeEvent
     @JvmStatic
     fun vampireHealEvent(e: LivingHealEvent) {
-        if (e.entity.world.isRemote || e.entity !is PlayerEntity || !(e.entity as PlayerEntity).hasVampirismCapability() || !((e.entity as PlayerEntity).getVampirismCapability().isVampire()))
+        if (e.entity.world.isRemote || e.entity !is PlayerEntity || !(e.entity as PlayerEntity).hasVampirismCapability() || !((e.entity as PlayerEntity).getVampirismCapabilityOrThrow().isVampire()))
             return
 
         val entity = e.entity as PlayerEntity
         val world = entity.world
-        val cap = entity.getVampirismCapability()
+        val cap = entity.getVampirismCapabilityOrThrow()
 
-        if (entity.hasEffect(ModPotionHolder.vampiric_weakness)) {
+        if (entity.hasEffect(ModEffectHolder.vampiric_weakness)) {
             e.isCanceled = true
         } else if (!world.isDaytime) {
             e.amount *= 1.6f * cap.getPowerMultiplier()
         }
-        if (entity.hasEffect(ModPotionHolder.vampiric_strength)) {
-            e.amount *= 1.2f * (entity.getActivePotionEffect(ModPotionHolder.vampiric_strength)?.amplifier ?: 0)
+        if (entity.hasEffect(ModEffectHolder.vampiric_strength)) {
+            e.amount *= 1.2f * (entity.getActivePotionEffect(ModEffectHolder.vampiric_strength)?.amplifier ?: 0)
         }
     }
 
@@ -81,7 +83,7 @@ object VampireEventHandler {
                 e.entityPlayer.world.isRemote
                 || e.hand != Hand.MAIN_HAND
                 || !(e.entityPlayer.hasVampirismCapability())
-                || !(e.entityPlayer.getVampirismCapability().orElseThrow(::NullPointerException).isVampire())
+                || !(e.entityPlayer.getVampirismCapabilityOrThrow().isVampire())
                 || e.target !is LivingEntity
         )
             return
@@ -104,27 +106,27 @@ object VampireEventHandler {
     @SubscribeEvent
     @JvmStatic
     fun vampireFallEvent(e: LivingFallEvent) {
-        if (e.entity.world.isRemote || e.entity !is PlayerEntity || !(e.entity as PlayerEntity).hasVampirismCapability() || !((e.entity as PlayerEntity).getVampirismCapability().isVampire()))
+        if (e.entity.world.isRemote || e.entity !is PlayerEntity || !(e.entity as PlayerEntity).hasVampirismCapability() || !((e.entity as PlayerEntity).getVampirismCapabilityOrThrow().isVampire()))
             return
-        if ((e.entity as PlayerEntity).getVampirismCapability().hasAbility(VampireAbilities.FLIGHT))
+        if ((e.entity as PlayerEntity).getVampirismCapabilityOrThrow().hasAbility(VampireAbilities.FLIGHT))
             e.isCanceled = true
     }
 
     @SubscribeEvent
     @JvmStatic
     fun vampireHurtEvent(e: LivingHurtEvent) {
-        if (e.entity.world.isRemote || e.entity !is PlayerEntity || !(e.entity as PlayerEntity).hasVampirismCapability() || !((e.entity as PlayerEntity).getVampirismCapability().isVampire()))
+        if (e.entity.world.isRemote || e.entity !is PlayerEntity || !(e.entity as PlayerEntity).hasVampirismCapability() || !((e.entity as PlayerEntity).getVampirismCapabilityOrThrow().isVampire()))
             return
 
         val entity = e.entity as PlayerEntity
         val source = e.source
-        val cap = entity.getVampirismCapability()
+        val cap = entity.getVampirismCapabilityOrThrow()
 
         if (source.isFireDamage)
             e.amount *= (cap.getInversePowerMultiplier()/5)+1
 
-        if (source.trueSource is EntityLivingBase) {
-            if ((source.trueSource as EntityLivingBase).heldItemMainhand.item in antiVampireItems) {
+        if (source.trueSource is LivingEntity) {
+            if ((source.trueSource as LivingEntity).heldItemMainhand.item in antiVampireItems) {
                 e.amount *= (cap.getInversePowerMultiplier()/2)+1
             }
         }
@@ -141,12 +143,12 @@ object VampireEventHandler {
     @SubscribeEvent
     @JvmStatic
     fun cancelMobTargetingEvent(e: LivingSetAttackTargetEvent) {
-        if (e.entity.world.isRemote || e.target == null || e.target !is PlayerEntity || !(e.target as PlayerEntity).hasVampirismCapability() || !((e.target as PlayerEntity).getVampirismCapability().isVampire()))
+        if (e.entity.world.isRemote || e.target == null || e.target !is PlayerEntity || !(e.target as PlayerEntity).hasVampirismCapability() || !((e.target as PlayerEntity).getVampirismCapabilityOrThrow().isVampire()))
             return
 
-        if ((e.target as PlayerEntity).getVampirismCapability().hasAbility(VampireAbilities.CHARISMA)) {
+        if ((e.target as PlayerEntity).getVampirismCapabilityOrThrow().hasAbility(VampireAbilities.CHARISMA)) {
             if (e.entity.world.rand.nextBoolean()) {
-                (e.entityLiving as LivingEntity).attackTarget = null
+                (e.entityLiving as MobEntity).attackTarget = null
             }
         }
     }

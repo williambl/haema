@@ -1,8 +1,9 @@
 package com.williambl.haema.common.item
 
-import com.williambl.haema.common.capability.VampirismProvider
 import com.williambl.haema.common.util.addBlood
+import com.williambl.haema.common.util.getVampirismCapability
 import com.williambl.haema.common.util.giveVampiricStrength
+import com.williambl.haema.objectholder.ModEffectHolder
 import net.alexwells.kottle.KotlinEventBusSubscriber
 import net.minecraft.client.util.ITooltipFlag
 import net.minecraft.entity.player.PlayerEntity
@@ -32,7 +33,7 @@ object ModItems {
                 object : Item(Properties().group(ItemGroup.MATERIALS)) {
                     @OnlyIn(Dist.CLIENT)
                     override fun addInformation(stack: ItemStack, worldIn: World?, tooltip: MutableList<ITextComponent>, flagIn: ITooltipFlag) {
-                        tooltip.add(StringTextComponent("An ancient bottle of blood from an extinct race..."))
+                        tooltip.add(StringTextComponent("An ancient bottle of blood from an extinct race...") as ITextComponent)
                     }
                 }.setRegistryName("vampire_blood_vial"),
                 object : Item(Properties().group(ItemGroup.BREWING).maxStackSize(1)) {
@@ -44,18 +45,18 @@ object ModItems {
                     override fun onItemRightClick(worldIn: World, playerIn: PlayerEntity, handIn: Hand): ActionResult<ItemStack> {
                         if (worldIn.isRemote)
                             return ActionResult(ActionResultType.PASS, playerIn.getHeldItem(handIn))
-                        val vampirismCap = playerIn.getCapability(VampirismProvider.vampirism!!, null)!!
-                        if (!vampirismCap.isVampire()) {
-                            if (playerIn.getActivePotionEffect(Effect("minecraft:weakness")) != null) {
-                                vampirismCap.setIsVampire(true)
-                                playerIn.addBlood(0.5f)
-                                playerIn.giveVampiricStrength(200, 5)
-                            } else {
-                                playerIn.attackEntityFrom(DamageSource.MAGIC, 20.0f)
+                        playerIn.getVampirismCapability().ifPresent {
+                            if (!it.isVampire()) {
+                                if (playerIn.getActivePotionEffect(ModEffectHolder.weakness) != null) {
+                                    it.setIsVampire(true)
+                                    playerIn.addBlood(0.5f)
+                                    playerIn.giveVampiricStrength(200, 5)
+                                } else {
+                                    playerIn.attackEntityFrom(DamageSource.MAGIC, 20.0f)
+                                }
                             }
+                            playerIn.getHeldItem(handIn).count = 0
                         }
-                        playerIn.getHeldItem(handIn).count = 0
-                        println(vampirismCap.isVampire())
                         return ActionResult(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn))
                     }
                 }.setRegistryName("vampire_blood_syringe")

@@ -4,9 +4,11 @@ import com.williambl.haema.common.capability.ICapabilityVampirism
 import com.williambl.haema.common.capability.VampirismProvider
 import com.williambl.haema.common.networking.ModPackets
 import com.williambl.haema.common.networking.SyncVampirismMessage
+import com.williambl.haema.objectholder.ModEffectHolder
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.ServerPlayerEntity
 import net.minecraft.potion.Effect
+import net.minecraft.potion.EffectInstance
 import net.minecraft.util.math.BlockPos
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.fml.network.PacketDistributor
@@ -33,19 +35,23 @@ fun PlayerEntity.syncVampirismCapability(cap: ICapabilityVampirism) {
 }
 
 fun PlayerEntity.syncVampirismCapability() {
-    ModPackets.instance.send(PacketDistributor.PLAYER.with { this as ServerPlayerEntity }, SyncVampirismMessage(this.getVampirismCapability()))
+    ModPackets.instance.send(PacketDistributor.PLAYER.with { this as ServerPlayerEntity }, SyncVampirismMessage(this.getVampirismCapabilityOrThrow()))
 }
 
 fun PlayerEntity.giveVampiricStrength(duration: Int, amplifier: Int) {
-    this.addPotionEffect(, duration, amplifier))
+    this.addPotionEffect(EffectInstance(ModEffectHolder.vampiric_strength, duration, amplifier))
 }
 
 fun PlayerEntity.giveVampiricWeakness(duration: Int, amplifier: Int) {
-    this.addPotionEffect(, duration, amplifier))
+    this.addPotionEffect(EffectInstance(ModEffectHolder.vampiric_weakness, duration, amplifier))
 }
 
 fun PlayerEntity.hasEffect(effect: Effect): Boolean {
     return this.getActivePotionEffect(effect) != null
+}
+
+fun PlayerEntity.getVampirismCapabilityOrThrow(): ICapabilityVampirism {
+    return this.getCapability(VampirismProvider.vampirism!!, null).orElseThrow(::NullPointerException)
 }
 
 fun PlayerEntity.getVampirismCapability(): LazyOptional<ICapabilityVampirism> {
