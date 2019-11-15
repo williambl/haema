@@ -1,9 +1,9 @@
 package com.williambl.haema.common.util
 
 import com.williambl.haema.common.capability.ICapabilityVampirism
-import com.williambl.haema.common.capability.VampirismProvider
 import com.williambl.haema.common.networking.ModPackets
 import com.williambl.haema.common.networking.SyncVampirismMessage
+import com.williambl.haema.objectholder.ModCapabilityHolder
 import com.williambl.haema.objectholder.ModEffectHolder
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.ServerPlayerEntity
@@ -26,7 +26,7 @@ fun PlayerEntity.addBlood(amount: Float) {
 
 fun PlayerEntity.isVampire(): Boolean {
     var value = false
-    this.getCapability(VampirismProvider.vampirism!!, null).ifPresent { value = it.isVampire() }
+    this.getCapability(ModCapabilityHolder.vampirism, null).ifPresent { value = it.isVampire() }
     return value
 }
 
@@ -51,15 +51,15 @@ fun PlayerEntity.hasEffect(effect: Effect): Boolean {
 }
 
 fun PlayerEntity.getVampirismCapabilityOrThrow(): ICapabilityVampirism {
-    return this.getCapability(VampirismProvider.vampirism!!, null).orElseThrow(::NullPointerException)
+    return this.getCapability(ModCapabilityHolder.vampirism, null).orElseThrow(::NullPointerException)
 }
 
 fun PlayerEntity.getVampirismCapability(): LazyOptional<ICapabilityVampirism> {
-    return this.getCapability(VampirismProvider.vampirism!!, null)
+    return this.getCapability(ModCapabilityHolder.vampirism, null)
 }
 
 fun PlayerEntity.hasVampirismCapability(): Boolean {
-    return this.getCapability(VampirismProvider.vampirism!!, null).isPresent
+    return this.getCapability(ModCapabilityHolder.vampirism, null).isPresent
 }
 
 fun PlayerEntity.isInSunlight(): Boolean {

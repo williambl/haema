@@ -1,11 +1,11 @@
 package com.williambl.haema.common.capability
 
 import com.williambl.haema.common.util.VampireAbilities
+import com.williambl.haema.objectholder.ModCapabilityHolder
 import net.minecraft.nbt.CompoundNBT
 import net.minecraft.nbt.INBT
 import net.minecraft.util.Direction
 import net.minecraftforge.common.capabilities.Capability
-import net.minecraftforge.common.capabilities.CapabilityInject
 import net.minecraftforge.common.capabilities.ICapabilitySerializable
 import net.minecraftforge.common.util.LazyOptional
 import kotlin.math.max
@@ -108,23 +108,18 @@ class VampirismStorage: Capability.IStorage<ICapabilityVampirism> {
 
 class VampirismProvider : ICapabilitySerializable<INBT> {
 
-    companion object {
-        @CapabilityInject(ICapabilityVampirism::class)
-        val vampirism: Capability<ICapabilityVampirism>? = null
-    }
-
-    private val instance: ICapabilityVampirism = vampirism!!.defaultInstance!!
+    private val instance: ICapabilityVampirism = ModCapabilityHolder.vampirism.defaultInstance!!
 
     override fun <T> getCapability(capability: Capability<T>, facing: Direction?): LazyOptional<T> {
-        return vampirism!!.orEmpty(capability, LazyOptional.of {-> instance})
+        return ModCapabilityHolder.vampirism.orEmpty(capability, LazyOptional.of {-> instance})
     }
 
     override fun deserializeNBT(nbt: INBT?) {
-        vampirism!!.storage.readNBT(vampirism, instance, null, nbt)
+        ModCapabilityHolder.vampirism.storage.readNBT(ModCapabilityHolder.vampirism, instance, null, nbt)
     }
 
     override fun serializeNBT(): INBT {
-        return vampirism!!.storage.writeNBT(vampirism, instance, null)!!
+        return ModCapabilityHolder.vampirism.storage.writeNBT(ModCapabilityHolder.vampirism, instance, null)!!
     }
 
 }

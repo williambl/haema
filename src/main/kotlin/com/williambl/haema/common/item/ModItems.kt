@@ -23,11 +23,10 @@ import net.minecraftforge.api.distmarker.OnlyIn
 import net.minecraftforge.event.RegistryEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 
-@KotlinEventBusSubscriber
+@KotlinEventBusSubscriber(bus = KotlinEventBusSubscriber.Bus.MOD)
 object ModItems {
 
     @SubscribeEvent
-    @JvmStatic
     fun registerItems(event: RegistryEvent.Register<Item>) {
         event.registry.registerAll(
                 object : Item(Properties().group(ItemGroup.MATERIALS)) {
@@ -45,7 +44,9 @@ object ModItems {
                     override fun onItemRightClick(worldIn: World, playerIn: PlayerEntity, handIn: Hand): ActionResult<ItemStack> {
                         if (worldIn.isRemote)
                             return ActionResult(ActionResultType.PASS, playerIn.getHeldItem(handIn))
+                        println("hai")
                         playerIn.getVampirismCapability().ifPresent {
+                            println("hai 2!")
                             if (!it.isVampire()) {
                                 if (playerIn.getActivePotionEffect(ModEffectHolder.weakness) != null) {
                                     it.setIsVampire(true)

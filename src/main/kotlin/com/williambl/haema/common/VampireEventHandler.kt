@@ -23,7 +23,6 @@ import kotlin.math.roundToInt
 object VampireEventHandler {
 
     @SubscribeEvent
-    @JvmStatic
     fun vampireLivingEvent(e: LivingEvent.LivingUpdateEvent) {
         if (e.entity.world.isRemote || e.entity !is PlayerEntity || !(e.entity as PlayerEntity).hasVampirismCapability() || !(e.entity as PlayerEntity).isVampire())
             return
@@ -57,7 +56,6 @@ object VampireEventHandler {
     }
 
     @SubscribeEvent
-    @JvmStatic
     fun vampireHealEvent(e: LivingHealEvent) {
         if (e.entity.world.isRemote || e.entity !is PlayerEntity || !(e.entity as PlayerEntity).hasVampirismCapability() || !((e.entity as PlayerEntity).getVampirismCapabilityOrThrow().isVampire()))
             return
@@ -77,7 +75,6 @@ object VampireEventHandler {
     }
 
     @SubscribeEvent
-    @JvmStatic
     fun vampireDrainBloodRightClickEvent(e: PlayerInteractEvent.EntityInteract) {
         if (
                 e.entityPlayer.world.isRemote
@@ -104,7 +101,6 @@ object VampireEventHandler {
     }
 
     @SubscribeEvent
-    @JvmStatic
     fun vampireFallEvent(e: LivingFallEvent) {
         if (e.entity.world.isRemote || e.entity !is PlayerEntity || !(e.entity as PlayerEntity).hasVampirismCapability() || !((e.entity as PlayerEntity).getVampirismCapabilityOrThrow().isVampire()))
             return
@@ -113,7 +109,6 @@ object VampireEventHandler {
     }
 
     @SubscribeEvent
-    @JvmStatic
     fun vampireHurtEvent(e: LivingHurtEvent) {
         if (e.entity.world.isRemote || e.entity !is PlayerEntity || !(e.entity as PlayerEntity).hasVampirismCapability() || !((e.entity as PlayerEntity).getVampirismCapabilityOrThrow().isVampire()))
             return
@@ -141,7 +136,6 @@ object VampireEventHandler {
     }
 
     @SubscribeEvent
-    @JvmStatic
     fun cancelMobTargetingEvent(e: LivingSetAttackTargetEvent) {
         if (e.entity.world.isRemote || e.target == null || e.target !is PlayerEntity || !(e.target as PlayerEntity).hasVampirismCapability() || !((e.target as PlayerEntity).getVampirismCapabilityOrThrow().isVampire()))
             return

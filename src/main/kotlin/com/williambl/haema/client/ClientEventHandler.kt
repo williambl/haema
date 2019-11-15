@@ -16,7 +16,6 @@ object ClientEventHandler {
     var shaderApplied = false
 
     @SubscribeEvent
-    @JvmStatic
     fun renderBloodLevelOverlay(e: RenderGameOverlayEvent.Post) {
         if (e.type != RenderGameOverlayEvent.ElementType.ALL)
             return
@@ -31,7 +30,6 @@ object ClientEventHandler {
     }
 
     @SubscribeEvent
-    @JvmStatic
     fun applyShaderIfNeeded(e: TickEvent.ClientTickEvent) {
         val mc = Minecraft.getInstance()
         if (mc.player == null)

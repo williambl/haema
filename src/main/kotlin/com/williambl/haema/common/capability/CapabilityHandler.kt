@@ -6,6 +6,7 @@ import com.williambl.haema.common.util.hasVampirismCapability
 import com.williambl.haema.common.util.syncVampirismCapability
 import net.alexwells.kottle.KotlinEventBusSubscriber
 import net.minecraft.entity.Entity
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.common.capabilities.CapabilityManager
 import net.minecraftforge.event.AttachCapabilitiesEvent
@@ -22,14 +23,12 @@ object CapabilityHandler {
     }
 
     @SubscribeEvent
-    @JvmStatic
     fun attachCapabilities(e: AttachCapabilitiesEvent<Entity>) {
-        if (e.`object` is PlayerEvent)
+        if (e.`object` is PlayerEntity)
             e.addCapability(vampirismResourceLocation, VampirismProvider())
     }
 
     @SubscribeEvent
-    @JvmStatic
     fun onPlayerClone(event: PlayerEvent.Clone) {
         val player = event.entityPlayer
         val vampirism = player.getVampirismCapability()
@@ -45,13 +44,11 @@ object CapabilityHandler {
     }
 
     @SubscribeEvent
-    @JvmStatic
     fun onPlayerRespawn(event: PlayerEvent.PlayerRespawnEvent) {
         event.player.syncVampirismCapability()
     }
 
     @SubscribeEvent
-    @JvmStatic
     fun onPlayerLogIn(event: PlayerEvent.PlayerLoggedInEvent) {
         if (event.player.hasVampirismCapability())
             event.player.syncVampirismCapability()
