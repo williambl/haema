@@ -50,12 +50,12 @@ object ClientEventHandler {
 
             var i = 1
             while (i < 20) {
-                if (i < bloodLevel) {
+                if (i == bloodLevel-1) {
+                    //Half
+                    fullIcon(halfIcon, right, top, 9)
+                } else if (i < bloodLevel) {
                     //Full
                     fullIcon(fullIcon, right, top, 9)
-                } else if (i == bloodLevel+1) {
-                    //Half
-                    halfIcon(halfIcon, right, top)
                 }
                 right -= 8
                 i += 2
@@ -72,13 +72,6 @@ object ClientEventHandler {
         Minecraft.getInstance().getTextureManager().bindTexture(icon)
         GlStateManager.color4f(1f, 1f, 1f, 1f)
         IngameGui.blit(right, top, 0f, 0f, width, 9, 9, 9)
-        return icon
-    }
-
-    private fun halfIcon(icon: ResourceLocation, right: Int, top: Int): ResourceLocation {
-        Minecraft.getInstance().getTextureManager().bindTexture(icon)
-        GlStateManager.color4f(1f, 1f, 1f, 1f)
-        IngameGui.blit(right + 4, top, 0f, 0f, 5, 9, 5, 9)
         return icon
     }
 
