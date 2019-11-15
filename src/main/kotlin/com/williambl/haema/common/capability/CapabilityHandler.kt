@@ -36,9 +36,10 @@ object CapabilityHandler {
 
         oldVampirism.ifPresent { oldCap ->
             vampirism.ifPresent { cap ->
+                cap.setIsVampire(oldCap.isVampire())
+                cap.setBloodLevel(0.5f)
                 if (!event.isWasDeath)
                     cap.setBloodLevel(oldCap.getBloodLevel())
-                cap.setIsVampire(oldCap.isVampire())
             }
         }
     }
