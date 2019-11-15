@@ -4,6 +4,7 @@ import com.williambl.haema.common.networking.ModPackets
 import com.williambl.haema.common.networking.SunlightHurtMessage
 import com.williambl.haema.common.util.*
 import com.williambl.haema.objectholder.ModEffectHolder
+import net.alexwells.kottle.KotlinEventBusSubscriber
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.MobEntity
 import net.minecraft.entity.player.PlayerEntity
@@ -14,12 +15,11 @@ import net.minecraft.util.Hand
 import net.minecraftforge.event.entity.living.*
 import net.minecraftforge.event.entity.player.PlayerInteractEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.network.PacketDistributor
 import kotlin.math.max
 import kotlin.math.roundToInt
 
-@Mod.EventBusSubscriber
+@KotlinEventBusSubscriber
 object VampireEventHandler {
 
     @SubscribeEvent
