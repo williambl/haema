@@ -16,6 +16,7 @@ import net.minecraft.util.DamageSource
 import net.minecraft.util.Hand
 import net.minecraft.util.text.ITextComponent
 import net.minecraft.util.text.StringTextComponent
+import net.minecraft.util.text.TextFormatting
 import net.minecraft.world.IBlockReader
 import net.minecraft.world.World
 import net.minecraftforge.api.distmarker.Dist
@@ -32,21 +33,19 @@ object ModItems {
                 object : Item(Properties().group(ItemGroup.MATERIALS)) {
                     @OnlyIn(Dist.CLIENT)
                     override fun addInformation(stack: ItemStack, worldIn: World?, tooltip: MutableList<ITextComponent>, flagIn: ITooltipFlag) {
-                        tooltip.add(StringTextComponent("An ancient bottle of blood from an extinct race...") as ITextComponent)
+                        tooltip.add(StringTextComponent("An ancient bottle of blood from an extinct race...").applyTextStyle(TextFormatting.GRAY).applyTextStyle(TextFormatting.ITALIC))
                     }
                 }.setRegistryName("vampire_blood_vial"),
                 object : Item(Properties().group(ItemGroup.BREWING).maxStackSize(1)) {
                     @OnlyIn(Dist.CLIENT)
                     fun addInformation(stack: ItemStack, worldIn: IBlockReader?, tooltip: MutableList<ITextComponent>, flagIn: ITooltipFlag) {
-                        tooltip.add(StringTextComponent("It's just begging to be injected..."))
+                        tooltip.add(StringTextComponent("Inject it and revive the ancient race of vampires!").applyTextStyle(TextFormatting.GRAY).applyTextStyle(TextFormatting.ITALIC))
                     }
 
                     override fun onItemRightClick(worldIn: World, playerIn: PlayerEntity, handIn: Hand): ActionResult<ItemStack> {
                         if (worldIn.isRemote)
                             return ActionResult(ActionResultType.PASS, playerIn.getHeldItem(handIn))
-                        println("hai")
                         playerIn.getVampirismCapability().ifPresent {
-                            println("hai 2!")
                             if (!it.isVampire()) {
                                 if (playerIn.getActivePotionEffect(ModEffectHolder.weakness) != null) {
                                     it.setIsVampire(true)

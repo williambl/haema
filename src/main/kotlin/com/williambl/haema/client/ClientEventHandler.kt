@@ -13,6 +13,7 @@ import net.minecraftforge.client.ForgeIngameGui
 import net.minecraftforge.client.event.RenderGameOverlayEvent
 import net.minecraftforge.event.TickEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
+import kotlin.math.ceil
 import kotlin.math.roundToInt
 
 
@@ -37,7 +38,7 @@ object ClientEventHandler {
             if (!capability.isVampire())
                 return@ifPresent
 
-            val bloodLevel = (capability.getBloodLevel()*20).roundToInt();
+            val bloodLevel = ceil(capability.getBloodLevel() * 20).roundToInt();
             if (bloodLevel <= 0) {
                 return@ifPresent
             }
@@ -48,9 +49,8 @@ object ClientEventHandler {
             val top = mc.mainWindow.scaledHeight - ForgeIngameGui.right_height
             var right = mc.mainWindow.scaledWidth / 2 + 82
 
-            var i = 1
-            while (i < 20) {
-                if (i == bloodLevel-1) {
+            for (i in 0 until 20 step 2) {
+                if (i == bloodLevel - 1) {
                     //Half
                     fullIcon(halfIcon, right, top, 9)
                 } else if (i < bloodLevel) {
@@ -58,7 +58,6 @@ object ClientEventHandler {
                     fullIcon(fullIcon, right, top, 9)
                 }
                 right -= 8
-                i += 2
             }
             ForgeIngameGui.right_height += 10
 
