@@ -33,6 +33,7 @@ class VampireBloodManager : HungerManager() {
     //TODO: make this have effect
     var canSprint = false
 
+    @Deprecated("use getBloodLevel()")
     var absoluteBloodLevel: Double = 0.0
 
     override fun update(player: PlayerEntity?) {

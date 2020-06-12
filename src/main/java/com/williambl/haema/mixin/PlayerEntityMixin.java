@@ -1,11 +1,13 @@
 package com.williambl.haema.mixin;
 
 import com.mojang.authlib.GameProfile;
+import com.williambl.haema.SunlightSicknessEffect;
 import com.williambl.haema.VampireEntity;
 import com.williambl.haema.VampireBloodManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.vehicle.BoatEntity;
@@ -36,7 +38,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements VampireE
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;tick()V"))
     void damageInSunlight(CallbackInfo ci) {
         if (this.isInDaylight()) {
-            bloodManager.removeBlood(0.005);
+            bloodManager.removeBlood(0.01);
+            this.addStatusEffect(new StatusEffectInstance(SunlightSicknessEffect.instance, 1, 1));
         }
     }
 
