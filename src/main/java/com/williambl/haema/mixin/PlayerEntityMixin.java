@@ -7,6 +7,7 @@ import com.williambl.haema.VampireBloodManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
@@ -17,6 +18,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerEntity.class)
@@ -41,6 +43,15 @@ public abstract class PlayerEntityMixin extends LivingEntity implements VampireE
             bloodManager.removeBlood(0.01);
             this.addStatusEffect(new StatusEffectInstance(SunlightSicknessEffect.instance, 1, 1));
         }
+    }
+
+    @Redirect(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
+    boolean damage(LivingEntity livingEntity, DamageSource source, float amount) {
+        float bloodAbsorptionAmount = (float) (bloodManager.getBloodLevel()/20.0) * amount;
+        bloodAbsorptionAmount = bloodManager.getBloodLevel() - 1 > bloodAbsorptionAmount ? bloodAbsorptionAmount : (float) (bloodManager.getBloodLevel() - 1);
+        bloodManager.removeBlood(bloodAbsorptionAmount);
+
+        return super.damage(source, amount - bloodAbsorptionAmount);
     }
 
     protected boolean isInDaylight() {
