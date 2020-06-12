@@ -7,7 +7,9 @@ import net.minecraft.util.ActionResult
 fun init() {
     UseBlockCallback.EVENT.register(UseBlockCallback { playerEntity, world, hand, blockHitResult ->
         if (playerEntity.getStackInHand(hand).item == Items.STICK) {
-            (playerEntity.hungerManager as VampireBloodManager)
+            (playerEntity.hungerManager as VampireBloodManager).addBlood(0.1)
+        } else if (playerEntity.getStackInHand(hand).item == Items.GOLD_NUGGET) {
+            println((playerEntity.hungerManager as VampireBloodManager).absoluteBloodLevel)
         }
         ActionResult.PASS
     })

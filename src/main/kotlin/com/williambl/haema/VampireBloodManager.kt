@@ -1,13 +1,21 @@
 package com.williambl.haema
 
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes
+import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.attribute.EntityAttributeModifier
 import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.entity.player.HungerManager
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.item.Item
+import net.minecraft.item.ItemStack
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.GameRules
 import java.util.*
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.pow
+import kotlin.math.roundToInt
 
 class VampireBloodManager : HungerManager() {
 
@@ -21,20 +29,25 @@ class VampireBloodManager : HungerManager() {
     //TODO: make this have effect
     var canSprint = false
 
+    var absoluteBloodLevel: Double = 0.0
+
     override fun update(player: PlayerEntity?) {
         player!!
 
-        canSprint = foodLevel >= 6
-        player.isSilent = (foodLevel >= 10 && player.isSprinting) || foodLevel >= 12
+        canSprint = getBloodLevel() >= 6
+        player.isSilent = (getBloodLevel() >= 10 && player.isSprinting) || getBloodLevel() >= 12
 
-        if (foodLevel <= 3) {
-            player.addStatusEffect(StatusEffectInstance(StatusEffects.WEAKNESS, 1, 4-foodLevel))
+        if (getBloodLevel() <= 3) {
+            player.addStatusEffect(StatusEffectInstance(StatusEffects.WEAKNESS, 1, 4 - getBloodLevel().roundToInt()))
         }
 
         val reachAttr = player.getAttributeInstance(ReachEntityAttributes.REACH)
         val attackRangeAttr = player.getAttributeInstance(ReachEntityAttributes.ATTACK_RANGE)
 
-        if (foodLevel >= 6 && (reachAttr?.hasModifier(VAMPIRE_REACH) == false || attackRangeAttr?.hasModifier(VAMPIRE_ATTACK_RANGE) == false)) {
+        if (getBloodLevel() >= 6 && (reachAttr?.hasModifier(VAMPIRE_REACH) == false || attackRangeAttr?.hasModifier(
+                VAMPIRE_ATTACK_RANGE
+            ) == false)
+        ) {
             reachAttr?.addTemporaryModifier(VAMPIRE_REACH)
             attackRangeAttr?.addTemporaryModifier(VAMPIRE_ATTACK_RANGE)
         } else if (reachAttr?.hasModifier(VAMPIRE_REACH) != false || attackRangeAttr?.hasModifier(VAMPIRE_ATTACK_RANGE) != false) {
@@ -42,39 +55,78 @@ class VampireBloodManager : HungerManager() {
             attackRangeAttr?.removeModifier(VAMPIRE_ATTACK_RANGE)
         }
 
-        if (foodLevel >= 8) {
+        if (getBloodLevel() >= 8) {
             if (player.world.gameRules.get(GameRules.NATURAL_REGENERATION).get() && player.canFoodHeal()) {
                 player.heal(1.0f)
             }
         }
 
-        if (foodLevel >= 10) {
+        if (getBloodLevel() >= 10) {
             player.addStatusEffect(StatusEffectInstance(StatusEffects.STRENGTH, 1, 1))
             //TODO: faster sprinting
         }
 
-        if (foodLevel >= 12) {
+        if (getBloodLevel() >= 12) {
             //TODO: shader
         }
 
-        if (foodLevel >= 14) {
+        if (getBloodLevel() >= 14) {
             player.addStatusEffect(StatusEffectInstance(StatusEffects.STRENGTH, 1, 2))
         }
 
-        if (foodLevel >= 15) {
+        if (getBloodLevel() >= 15) {
             //TODO: shader part 2 electric boogaloo
         }
 
-        if (foodLevel >= 18) {
+        if (getBloodLevel() >= 18) {
             //TODO: dash/flight like yoshi but fast
         }
 
-        if (foodLevel >= 19) {
+        if (getBloodLevel() >= 19) {
             player.addStatusEffect(StatusEffectInstance(StatusEffects.STRENGTH, 1, 3))
         }
 
-        if (foodLevel >= 20) {
+        if (getBloodLevel() >= 20) {
             player.addStatusEffect(StatusEffectInstance(StatusEffects.INVISIBILITY, 1, 1))
         }
+    }
+
+    @Deprecated("use blood")
+    override fun add(food: Int, f: Float) {}
+    @Deprecated("use blood")
+    override fun addExhaustion(exhaustion: Float) {}
+    @Deprecated("use blood")
+    override fun eat(item: Item?, stack: ItemStack?) {}
+    @Deprecated("use blood")
+    override fun setFoodLevel(foodLevel: Int) {}
+    @Deprecated("use blood", ReplaceWith("getBloodLevel().roundToInt()", "kotlin.math.roundToInt"))
+    override fun getFoodLevel(): Int {
+        return getBloodLevel().roundToInt()
+    }
+
+    override fun fromTag(tag: CompoundTag?) {
+        super.fromTag(tag)
+        absoluteBloodLevel = tag?.getDouble("BloodLevel") ?: 0.0
+    }
+
+    override fun toTag(tag: CompoundTag?) {
+        super.toTag(tag)
+        tag?.putDouble("BloodLevel", absoluteBloodLevel)
+    }
+
+    fun getBloodLevel(): Double {
+        return 20.0 * ( 1.0 - (1.0 - absoluteBloodLevel /20.0).pow(2) )
+    }
+
+    fun removeBlood(blood: Double) {
+        absoluteBloodLevel = max(absoluteBloodLevel - blood, 0.0)
+    }
+
+    fun addBlood(blood: Double) {
+        absoluteBloodLevel = min(absoluteBloodLevel + blood, 20.0)
+    }
+
+    fun feed(entity: LivingEntity) {
+        //TODO
     }
 }

@@ -8,6 +8,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class PlayerEntityMixin extends LivingEntity implements VampireEntity {
 
     @Shadow protected HungerManager hungerManager;
+    protected VampireBloodManager bloodManager; // to avoid a load of casts
 
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
@@ -28,5 +30,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements VampireE
     @Inject(method = "<init>", at = @At("TAIL"))
     void useCustomHungerManager(World world, BlockPos blockPos, GameProfile gameProfile, CallbackInfo ci) {
         hungerManager = new VampireBloodManager();
+        bloodManager = (VampireBloodManager)hungerManager;
     }
 }
