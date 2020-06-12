@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "haema",
+  "version": "${version}",
+
+  "name": "Haema",
+  "description": "Vampire mod",
+  "authors": [
+    "Will BL"
+  ],
+  "contact": {
+    "homepage": "",
+    "sources": "https://github.com/williambl/haema"
+  },
+
+  "license": "MIT",
+  "icon": "assets/haema/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.williambl.haema.HaemaKt::init"
+    ]
+  },
+  "mixins": [
+    "haema.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.8.7",
+    "fabric": "*",
+    "fabric-language-kotlin": "*",
+    "minecraft": "1.16.x"
+  },
+  "suggests": {
+  }
+}
