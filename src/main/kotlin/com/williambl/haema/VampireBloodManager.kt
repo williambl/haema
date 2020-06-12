@@ -21,6 +21,7 @@ import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
+@Suppress("DEPRECATION")
 class VampireBloodManager : HungerManager() {
 
     companion object {
@@ -62,7 +63,7 @@ class VampireBloodManager : HungerManager() {
 
         if (getBloodLevel() >= 8) {
             if (player.world.gameRules.get(GameRules.NATURAL_REGENERATION).get() && player.canFoodHeal()) {
-                player.heal(1.0f)
+                heal(player, 1.0f)
             }
         }
 
@@ -141,5 +142,10 @@ class VampireBloodManager : HungerManager() {
         val buf = PacketByteBuf(Unpooled.buffer())
         buf.writeDouble(absoluteBloodLevel)
         ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, bloodLevelPackeId, buf)
+    }
+
+    fun heal(player: PlayerEntity, amount: Float) {
+        player.heal(amount)
+        removeBlood((1.1-(getBloodLevel()/20.0).pow(2))*amount)
     }
 }
