@@ -1,6 +1,9 @@
 package com.williambl.haema
 
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes
+import io.netty.buffer.ByteBuf
+import io.netty.buffer.Unpooled
+import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.attribute.EntityAttributeModifier
 import net.minecraft.entity.effect.StatusEffectInstance
@@ -10,6 +13,7 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.network.PacketByteBuf
 import net.minecraft.world.GameRules
 import java.util.*
 import kotlin.math.max
@@ -89,6 +93,8 @@ class VampireBloodManager : HungerManager() {
         if (getBloodLevel() >= 20) {
             player.addStatusEffect(StatusEffectInstance(StatusEffects.INVISIBILITY, 1, 1))
         }
+
+        sync(player)
     }
 
     @Deprecated("use blood")
@@ -128,5 +134,11 @@ class VampireBloodManager : HungerManager() {
 
     fun feed(entity: LivingEntity) {
         //TODO
+    }
+
+    private fun sync(player: PlayerEntity) {
+        val buf = PacketByteBuf(Unpooled.buffer())
+        buf.writeDouble(absoluteBloodLevel)
+        ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, bloodLevelPackeId, buf)
     }
 }

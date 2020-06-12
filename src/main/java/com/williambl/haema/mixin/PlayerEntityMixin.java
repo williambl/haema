@@ -32,4 +32,26 @@ public abstract class PlayerEntityMixin extends LivingEntity implements VampireE
         hungerManager = new VampireBloodManager();
         bloodManager = (VampireBloodManager)hungerManager;
     }
+
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;tick()V"))
+    void damageInSunlight(CallbackInfo ci) {
+        if (this.isInDaylight()) {
+            bloodManager.removeBlood(0.005);
+        }
+    }
+
+    protected boolean isInDaylight() {
+        if (this.world.isDay() && !this.world.isClient) {
+            float brightnessAtEyes = this.getBrightnessAtEyes();
+            BlockPos blockPos = this.getVehicle() instanceof BoatEntity ?
+                    (new BlockPos(this.getX(), (double)Math.round(this.getY()), this.getZ())).up()
+                    : new BlockPos(this.getX(), (double)Math.round(this.getY()), this.getZ());
+
+            return brightnessAtEyes > 0.5F
+                    && this.random.nextFloat() * 30.0F < (brightnessAtEyes - 0.4F) * 2.0F
+                    && this.world.isSkyVisible(blockPos);
+        }
+
+        return false;
+    }
 }

@@ -1,8 +1,12 @@
 package com.williambl.haema
 
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
+import net.fabricmc.fabric.api.network.PacketRegistry
 import net.minecraft.item.Items
 import net.minecraft.util.ActionResult
+import net.minecraft.util.Identifier
+
+val bloodLevelPackeId = Identifier("haema:bloodlevelsync")
 
 fun init() {
     UseBlockCallback.EVENT.register(UseBlockCallback { playerEntity, world, hand, blockHitResult ->

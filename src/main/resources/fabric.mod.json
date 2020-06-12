@@ -20,6 +20,9 @@
   "entrypoints": {
     "main": [
       "com.williambl.haema.HaemaKt::init"
+    ],
+    "client": [
+      "com.williambl.haema.client.HaemaClientKt::init"
     ]
   },
   "mixins": [
