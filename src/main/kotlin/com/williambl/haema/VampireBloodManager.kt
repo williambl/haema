@@ -14,6 +14,10 @@ import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.PacketByteBuf
+import net.minecraft.particle.DustParticleEffect
+import net.minecraft.particle.ParticleTypes
+import net.minecraft.util.ActionResult
+import net.minecraft.util.math.Vec3d
 import net.minecraft.world.GameRules
 import java.util.*
 import kotlin.math.max
@@ -29,6 +33,9 @@ class VampireBloodManager : HungerManager() {
         private val VAMPIRE_ATTACK_RANGE_UUID = UUID.fromString("3267a46b-2b48-429f-a3a8-439aa87a876d")
         private val VAMPIRE_REACH = EntityAttributeModifier(VAMPIRE_REACH_UUID, "Vampire reach extension", 2.0, EntityAttributeModifier.Operation.ADDITION)
         private val VAMPIRE_ATTACK_RANGE = EntityAttributeModifier(VAMPIRE_ATTACK_RANGE_UUID, "Vampire attack range extension", 2.0, EntityAttributeModifier.Operation.ADDITION)
+
+        //TODO config
+        const val FEED_COOLDOWN = 6000
     }
 
     //TODO: make this have effect
@@ -36,6 +43,8 @@ class VampireBloodManager : HungerManager() {
 
     @Deprecated("use getBloodLevel()")
     var absoluteBloodLevel: Double = 0.0
+
+    var lastFed: Long = -6000
 
     override fun update(player: PlayerEntity?) {
         player!!
@@ -115,11 +124,13 @@ class VampireBloodManager : HungerManager() {
     override fun fromTag(tag: CompoundTag?) {
         super.fromTag(tag)
         absoluteBloodLevel = tag?.getDouble("BloodLevel") ?: 0.0
+        lastFed = tag?.getLong("LastFed") ?: -6000
     }
 
     override fun toTag(tag: CompoundTag?) {
         super.toTag(tag)
         tag?.putDouble("BloodLevel", absoluteBloodLevel)
+        tag?.putLong("LastFed", lastFed)
     }
 
     fun getBloodLevel(): Double {
@@ -134,13 +145,42 @@ class VampireBloodManager : HungerManager() {
         absoluteBloodLevel = min(absoluteBloodLevel + blood, 20.0)
     }
 
-    fun feed(entity: LivingEntity) {
-        //TODO
+    fun feed(entity: LivingEntity, player: PlayerEntity): ActionResult {
+        if (lastFed >= player.world.time - FEED_COOLDOWN)
+            return ActionResult.PASS
+
+        if (goodBloodTag.contains(entity.type)) {
+            feed(0.8, entity.pos, player)
+            return ActionResult.SUCCESS
+        }
+        if (mediumBloodTag.contains(entity.type)) {
+            feed(0.4, entity.pos, player)
+            return ActionResult.SUCCESS
+        }
+        if (poorBloodTag.contains(entity.type)) {
+            feed(0.1, entity.pos, player)
+            return ActionResult.SUCCESS
+        }
+        return ActionResult.PASS
+    }
+
+    private fun feed(amount: Double, particlePos: Vec3d?, player: PlayerEntity) {
+        (player.hungerManager as VampireBloodManager).addBlood(amount)
+        lastFed = player.world.time
+        //TODO: improve particle effects and add sound effect
+        if (particlePos != null) {
+            val towards = player.pos.subtract(particlePos).multiply(0.1)
+            for (i in 0..20) {
+                val vel = towards.multiply(i.toDouble())
+                player.world.addParticle(DustParticleEffect.RED, particlePos.x+player.random.nextDouble()-0.5, particlePos.y+player.random.nextDouble(), particlePos.z+player.random.nextDouble()-0.5, vel.x, vel.y, vel.z)
+            }
+        }
     }
 
     private fun sync(player: PlayerEntity) {
         val buf = PacketByteBuf(Unpooled.buffer())
         buf.writeDouble(absoluteBloodLevel)
+        buf.writeLong(lastFed)
         ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, bloodLevelPackeId, buf)
     }
 

@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:villager",
+    "minecraft:player",
+    "minecraft:pillager",
+    "minecraft:witch",
+    "minecraft:wandering_trader"
+  ]
+}
