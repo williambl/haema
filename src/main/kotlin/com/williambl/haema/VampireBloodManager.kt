@@ -1,6 +1,8 @@
 package com.williambl.haema
 
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes
+import com.williambl.haema.effect.VampiricStrengthEffect
+import com.williambl.haema.effect.VampiricWeaknessEffect
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
@@ -42,7 +44,7 @@ class VampireBloodManager : HungerManager() {
     var canSprint = false
 
     @Deprecated("use getBloodLevel()")
-    var absoluteBloodLevel: Double = 3.0
+    var absoluteBloodLevel: Double = 0.0
 
     var lastFed: Long = -6000
 
@@ -53,7 +55,7 @@ class VampireBloodManager : HungerManager() {
         player.isSilent = (getBloodLevel() >= 10 && player.isSprinting) || getBloodLevel() >= 12
 
         if (getBloodLevel() <= 3) {
-            player.addStatusEffect(StatusEffectInstance(StatusEffects.WEAKNESS, 1, 4 - getBloodLevel().roundToInt()))
+            player.addStatusEffect(StatusEffectInstance(VampiricWeaknessEffect.instance, 1, 3 - getBloodLevel().roundToInt()))
         }
 
         val reachAttr = player.getAttributeInstance(ReachEntityAttributes.REACH)
@@ -77,20 +79,11 @@ class VampireBloodManager : HungerManager() {
         }
 
         if (getBloodLevel() >= 10) {
-            player.addStatusEffect(StatusEffectInstance(StatusEffects.STRENGTH, 1, 1))
-            //TODO: faster sprinting
-        }
-
-        if (getBloodLevel() >= 12) {
-            //TODO: shader
+            player.addStatusEffect(StatusEffectInstance(VampiricStrengthEffect.instance, 1, 0))
         }
 
         if (getBloodLevel() >= 14) {
-            player.addStatusEffect(StatusEffectInstance(StatusEffects.STRENGTH, 1, 2))
-        }
-
-        if (getBloodLevel() >= 15) {
-            //TODO: shader part 2 electric boogaloo
+            player.addStatusEffect(StatusEffectInstance(VampiricStrengthEffect.instance, 1, 1))
         }
 
         if (getBloodLevel() >= 18) {
@@ -98,7 +91,7 @@ class VampireBloodManager : HungerManager() {
         }
 
         if (getBloodLevel() >= 19) {
-            player.addStatusEffect(StatusEffectInstance(StatusEffects.STRENGTH, 1, 3))
+            player.addStatusEffect(StatusEffectInstance(VampiricStrengthEffect.instance, 1, 2))
         }
 
         if (getBloodLevel() >= 20) {

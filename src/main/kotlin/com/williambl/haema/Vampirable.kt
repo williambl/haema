@@ -21,13 +21,9 @@ interface Vampirable {
 
         fun convert(entity: PlayerEntity) {
             if (!(entity as Vampirable).isVampire) {
-                entity.kill()
                 entity.isVampire = true
-                if (entity is ServerPlayerEntity) {
-                    val buf = PacketByteBuf(Unpooled.buffer())
-                    buf.writeBoolean(true)
-                    ServerSidePacketRegistry.INSTANCE.sendToPlayer(entity, Identifier("haema:vampiresync"), buf)
-                }
+                (entity.hungerManager as VampireBloodManager).absoluteBloodLevel = 3.0
+                entity.health = 1f
             }
         }
     }

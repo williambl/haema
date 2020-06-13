@@ -1,19 +1,15 @@
 package com.williambl.haema.mixin;
 
-import com.mojang.authlib.GameProfile;
-import com.williambl.haema.SunlightSicknessEffect;
+import com.williambl.haema.effect.SunlightSicknessEffect;
 import com.williambl.haema.Vampirable;
 import com.williambl.haema.VampireBloodManager;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -57,7 +53,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
 
             if (this.isInDaylight()) {
                 bloodManager.removeBlood(0.01);
-                this.addStatusEffect(new StatusEffectInstance(SunlightSicknessEffect.instance, 1, 1));
+                this.addStatusEffect(new StatusEffectInstance(SunlightSicknessEffect.instance, 5, 0));
             }
         }
     }
