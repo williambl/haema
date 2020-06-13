@@ -53,7 +53,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
 
             if (this.isInDaylight()) {
                 bloodManager.removeBlood(0.01);
-                this.addStatusEffect(new StatusEffectInstance(SunlightSicknessEffect.instance, 5, 0));
+                this.addStatusEffect(new StatusEffectInstance(SunlightSicknessEffect.Companion.getInstance(), 5, 0));
             }
         }
     }
