@@ -42,7 +42,7 @@ class VampireBloodManager : HungerManager() {
     var canSprint = false
 
     @Deprecated("use getBloodLevel()")
-    var absoluteBloodLevel: Double = 0.0
+    var absoluteBloodLevel: Double = 3.0
 
     var lastFed: Long = -6000
 

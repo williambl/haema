@@ -3,10 +3,13 @@
   "package": "com.williambl.haema.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "ClientPlayerEntityMixin",
     "PlayerEntityMixin"
   ],
   "client": [
+    "ClientPlayerEntityMixin"
+  ],
+  "server": [
+    "ServerPlayerEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
