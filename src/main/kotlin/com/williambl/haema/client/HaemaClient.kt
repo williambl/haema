@@ -1,5 +1,6 @@
 package com.williambl.haema.client
 
+import com.mojang.blaze3d.systems.RenderSystem
 import com.williambl.haema.Vampirable
 import com.williambl.haema.VampireBloodManager
 import ladysnake.satin.api.event.ShaderEffectRenderCallback
@@ -27,5 +28,6 @@ fun init() {
     ShaderEffectRenderCallback.EVENT.register(ShaderEffectRenderCallback {
         if ((MinecraftClient.getInstance().player as Vampirable).isVampire)
             VAMPIRE_SHADER.render(it)
+        RenderSystem.enableTexture()
     })
 }
