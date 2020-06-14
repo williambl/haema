@@ -28,6 +28,8 @@ val goodBloodTag = TagRegistry.entityType(Identifier("haema:good_blood_sources")
 val mediumBloodTag = TagRegistry.entityType(Identifier("haema:medium_blood_sources"))
 val poorBloodTag = TagRegistry.entityType(Identifier("haema:poor_blood_sources"))
 
+val vampireEffectiveWeaponsTag = TagRegistry.item(Identifier("haema:vampire_weapons"))
+
 fun init() {
     UseBlockCallback.EVENT.register(UseBlockCallback { player, world, hand, blockHitResult ->
         if ((player as Vampirable).isVampire) {

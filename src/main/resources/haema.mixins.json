@@ -3,6 +3,7 @@
   "package": "com.williambl.haema.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "DamageSourceMixin",
     "PlayerEntityMixin"
   ],
   "client": [
