@@ -1,9 +1,9 @@
 package com.williambl.haema
 
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes
+import com.williambl.haema.damagesource.BloodLossDamageSource
 import com.williambl.haema.effect.VampiricStrengthEffect
 import com.williambl.haema.effect.VampiricWeaknessEffect
-import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
 import net.minecraft.entity.LivingEntity
@@ -17,7 +17,6 @@ import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.particle.DustParticleEffect
-import net.minecraft.particle.ParticleTypes
 import net.minecraft.util.ActionResult
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.GameRules
@@ -62,8 +61,8 @@ class VampireBloodManager : HungerManager() {
         val attackRangeAttr = player.getAttributeInstance(ReachEntityAttributes.ATTACK_RANGE)
 
         if (getBloodLevel() >= 6 && (reachAttr?.hasModifier(VAMPIRE_REACH) == false || attackRangeAttr?.hasModifier(
-                VAMPIRE_ATTACK_RANGE
-            ) == false)
+                        VAMPIRE_ATTACK_RANGE
+                ) == false)
         ) {
             reachAttr?.addTemporaryModifier(VAMPIRE_REACH)
             attackRangeAttr?.addTemporaryModifier(VAMPIRE_ATTACK_RANGE)
@@ -75,6 +74,9 @@ class VampireBloodManager : HungerManager() {
         if (getBloodLevel() >= 8) {
             if (player.world.gameRules.get(GameRules.NATURAL_REGENERATION).get() && player.canFoodHeal()) {
                 heal(player, 1.0f)
+            } else if (player.health >= 0) {
+                player.health = 1f
+                removeBlood(1.0)
             }
         }
 
@@ -143,30 +145,29 @@ class VampireBloodManager : HungerManager() {
             return ActionResult.PASS
 
         if (goodBloodTag.contains(entity.type)) {
-            feed(0.8, entity.pos, player)
+            feed(0.8, entity, player)
             return ActionResult.SUCCESS
         }
         if (mediumBloodTag.contains(entity.type)) {
-            feed(0.4, entity.pos, player)
+            feed(0.4, entity, player)
             return ActionResult.SUCCESS
         }
         if (poorBloodTag.contains(entity.type)) {
-            feed(0.1, entity.pos, player)
+            feed(0.1, entity, player)
             return ActionResult.SUCCESS
         }
         return ActionResult.PASS
     }
 
-    private fun feed(amount: Double, particlePos: Vec3d?, player: PlayerEntity) {
+    private fun feed(amount: Double, entity: LivingEntity, player: PlayerEntity) {
         (player.hungerManager as VampireBloodManager).addBlood(amount)
         lastFed = player.world.time
+        entity.damage(BloodLossDamageSource.instance, 1f)
         //TODO: improve particle effects and add sound effect
-        if (particlePos != null) {
-            val towards = player.pos.subtract(particlePos).multiply(0.1)
-            for (i in 0..20) {
-                val vel = towards.multiply(i.toDouble())
-                player.world.addParticle(DustParticleEffect.RED, particlePos.x+player.random.nextDouble()-0.5, particlePos.y+player.random.nextDouble(), particlePos.z+player.random.nextDouble()-0.5, vel.x, vel.y, vel.z)
-            }
+        val towards = player.pos.subtract(entity.pos).multiply(0.1)
+        for (i in 0..20) {
+            val vel = towards.multiply(i.toDouble())
+            player.world.addParticle(DustParticleEffect.RED, entity.x+player.random.nextDouble()-0.5, entity.y+player.random.nextDouble(), entity.z+player.random.nextDouble()-0.5, vel.x, vel.y, vel.z)
         }
     }
 

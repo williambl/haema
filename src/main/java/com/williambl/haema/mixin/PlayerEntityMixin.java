@@ -1,5 +1,6 @@
 package com.williambl.haema.mixin;
 
+import com.williambl.haema.damagesource.DamageSourceExtensionsKt;
 import com.williambl.haema.effect.SunlightSicknessEffect;
 import com.williambl.haema.Vampirable;
 import com.williambl.haema.VampireBloodManager;
@@ -44,6 +45,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
     @Inject(method = "initDataTracker", at = @At("TAIL"))
     void initVampireTracker(CallbackInfo ci) {
         dataTracker.startTracking(Vampirable.Companion.getIS_VAMPIRE(), false);
+        dataTracker.startTracking(Vampirable.Companion.getIS_KILLED(), false);
     }
 
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;tick()V"))
@@ -54,19 +56,29 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
             if (this.isInDaylight()) {
                 this.addStatusEffect(new StatusEffectInstance(SunlightSicknessEffect.Companion.getInstance(), 5, 0));
             }
+
+            if (this.getHealth() <= 0 && !this.isDead()) {
+                bloodManager.removeBlood(0.005);
+            }
         }
     }
 
     @Redirect(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
     boolean damage(LivingEntity livingEntity, DamageSource source, float amount) {
         if (isVampire()) {
-            float bloodAbsorptionAmount = (float) (bloodManager.getBloodLevel() / 20.0) * amount;
-            bloodAbsorptionAmount = bloodManager.getBloodLevel() > bloodAbsorptionAmount ?
+            boolean isDamageSourceEffective = DamageSourceExtensionsKt.isEffectiveAgainstVampires(source);
+            if (isDamageSourceEffective)
+                amount *= 2;
+
+            float bloodAbsorptionAmount = 0.5f * amount;
+            bloodAbsorptionAmount = bloodManager.getAbsoluteBloodLevel() > bloodAbsorptionAmount ?
                     bloodAbsorptionAmount
-                    : (float) bloodManager.getBloodLevel();
+                    : (float) bloodManager.getAbsoluteBloodLevel();
             bloodManager.removeBlood((1.1-Math.pow(bloodManager.getBloodLevel()/20.0, 2.0))*bloodAbsorptionAmount);
 
-            return super.damage(source, amount - bloodAbsorptionAmount);
+            boolean result = super.damage(source, amount - bloodAbsorptionAmount);
+            dataTracker.set(Vampirable.Companion.getIS_KILLED(), this.getHealth() <= 0 && isDamageSourceEffective);
+            return result;
         }
         return super.damage(source, amount);
     }
@@ -79,6 +91,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
     @Inject(method = "writeCustomDataToTag", at = @At("TAIL"))
     void writeVampireData(CompoundTag tag, CallbackInfo ci) {
         tag.putBoolean("IsVampire", isVampire());
+    }
+
+    @Override
+    public boolean isDead() {
+        if (isVampire())
+            return super.isDead() && bloodManager.getBloodLevel() <= 0 && dataTracker.get(Vampirable.Companion.getIS_KILLED());
+        return super.isDead();
     }
 
     protected boolean isInDaylight() {

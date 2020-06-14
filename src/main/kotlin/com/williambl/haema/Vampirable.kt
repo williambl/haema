@@ -18,6 +18,7 @@ interface Vampirable {
     companion object {
 
         val IS_VAMPIRE: TrackedData<Boolean> = DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
+        val IS_KILLED: TrackedData<Boolean> = DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
 
         fun convert(entity: PlayerEntity) {
             if (!(entity as Vampirable).isVampire) {
