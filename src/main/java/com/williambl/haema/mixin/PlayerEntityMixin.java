@@ -52,7 +52,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
             checkBloodManager();
 
             if (this.isInDaylight()) {
-                bloodManager.removeBlood(0.01);
                 this.addStatusEffect(new StatusEffectInstance(SunlightSicknessEffect.Companion.getInstance(), 5, 0));
             }
         }
@@ -62,8 +61,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
     boolean damage(LivingEntity livingEntity, DamageSource source, float amount) {
         if (isVampire()) {
             float bloodAbsorptionAmount = (float) (bloodManager.getBloodLevel() / 20.0) * amount;
-            bloodAbsorptionAmount = bloodManager.getBloodLevel() - 1 > bloodAbsorptionAmount ? bloodAbsorptionAmount : (float) (bloodManager.getBloodLevel() - 1);
-            bloodManager.removeBlood(bloodAbsorptionAmount);
+            bloodAbsorptionAmount = bloodManager.getBloodLevel() > bloodAbsorptionAmount ?
+                    bloodAbsorptionAmount
+                    : (float) bloodManager.getBloodLevel();
+            bloodManager.removeBlood((1.1-Math.pow(bloodManager.getBloodLevel()/20.0, 2.0))*bloodAbsorptionAmount);
 
             return super.damage(source, amount - bloodAbsorptionAmount);
         }
@@ -81,7 +82,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
     }
 
     protected boolean isInDaylight() {
-        return this.world.isDay() && !this.world.isRaining() && this.world.isSkyVisible(this.getBlockPos());
+        return !this.world.isClient && this.world.isDay() && !this.world.isRaining() && this.world.isSkyVisible(this.getBlockPos());
     }
 
     @Override
