@@ -139,7 +139,7 @@ class VampireBloodManager : HungerManager() {
     }
 
     fun feed(entity: LivingEntity, player: PlayerEntity): ActionResult {
-        if (lastFed >= player.world.time - FEED_COOLDOWN)
+        if (getBloodLevel() > 8.5 && lastFed >= player.world.time - FEED_COOLDOWN)
             return ActionResult.PASS
 
         if (goodBloodTag.contains(entity.type)) {
