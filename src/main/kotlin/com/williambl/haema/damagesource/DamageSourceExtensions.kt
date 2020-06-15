@@ -11,5 +11,10 @@ fun DamageSource.setEffectiveAgainstVampires() {
 }
 
 fun DamageSource.isEffectiveAgainstVampires(): Boolean {
-    return this.isOutOfWorld || this is SunlightDamageSource || damageSourcesThatCanKillVampires.any { it.get() == this }
+    return this.isOutOfWorld
+            || this is SunlightDamageSource
+            || damageSourcesThatCanKillVampires.any { it.get() == this }
+            || this == DamageSource.LIGHTNING_BOLT
+            || this == DamageSource.DROWN
+            || this == DamageSource.DRAGON_BREATH
 }
