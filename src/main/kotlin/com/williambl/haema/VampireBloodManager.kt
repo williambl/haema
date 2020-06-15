@@ -74,7 +74,7 @@ class VampireBloodManager : HungerManager() {
         if (getBloodLevel() >= 8) {
             if (player.world.gameRules.get(GameRules.NATURAL_REGENERATION).get() && player.canFoodHeal()) {
                 heal(player, 1.0f)
-            } else if (player.health >= 0) {
+            } else if (player.health <= 0) {
                 player.health = 1f
                 removeBlood(1.0)
             }
