@@ -42,12 +42,8 @@ fun init() {
     })
 
     UseEntityCallback.EVENT.register(UseEntityCallback { player, world, hand, entity, entityHitResult ->
-        if ((player as Vampirable).isVampire) {
-            if (entity is LivingEntity)
-                (player.hungerManager as VampireBloodManager).feed(entity, player)
-            else
-                ActionResult.PASS
-        }
+        if ((player as Vampirable).isVampire && entity is LivingEntity && player.isSneaking)
+            (player.hungerManager as VampireBloodManager).feed(entity, player)
         else ActionResult.PASS
     })
 

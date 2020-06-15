@@ -146,7 +146,7 @@ class VampireBloodManager : HungerManager() {
 
         if (goodBloodTag.contains(entity.type)) {
             feed(0.8, entity, player)
-            return ActionResult.SUCCESS
+            return ActionResult.SUCCESS // I'd like these to be CONSUME but then nothing's sent to the server
         }
         if (mediumBloodTag.contains(entity.type)) {
             feed(0.4, entity, player)
@@ -164,7 +164,7 @@ class VampireBloodManager : HungerManager() {
         lastFed = player.world.time
         entity.damage(BloodLossDamageSource.instance, 1f)
         //TODO: improve particle effects and add sound effect
-        val towards = player.pos.subtract(entity.pos).multiply(0.1)
+        val towards = player.pos.subtract(entity.pos).normalize().multiply(0.1)
         for (i in 0..20) {
             val vel = towards.multiply(i.toDouble())
             player.world.addParticle(DustParticleEffect.RED, entity.x+player.random.nextDouble()-0.5, entity.y+player.random.nextDouble(), entity.z+player.random.nextDouble()-0.5, vel.x, vel.y, vel.z)
