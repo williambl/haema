@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " # ",
+    "QBQ",
+    " S "
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:flint"
+    },
+    "Q": {
+      "item": "minecraft:quartz"
+    },
+    "B": {
+      "item": "minecraft:bucket"
+    },
+    "S": {
+      "tag": "minecraft:buttons"
+    }
+  },
+  "result": {
+    "item": "haema:vampire_blood_injector",
+    "count": 1
+  }
+}
