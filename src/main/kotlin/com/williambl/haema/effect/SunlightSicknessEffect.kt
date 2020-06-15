@@ -1,16 +1,14 @@
 package com.williambl.haema.effect
 
-import com.williambl.haema.Vampirable
 import com.williambl.haema.VampireBloodManager
 import com.williambl.haema.damagesource.SunlightDamageSource
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.attribute.EntityAttributeModifier
 import net.minecraft.entity.attribute.EntityAttributes
-import net.minecraft.entity.damage.DamageSource
 import net.minecraft.entity.effect.StatusEffect
 import net.minecraft.entity.effect.StatusEffectType
 import net.minecraft.entity.player.PlayerEntity
-import kotlin.math.max
+import net.minecraft.particle.ParticleTypes
 
 class SunlightSicknessEffect(type: StatusEffectType?, color: Int) : StatusEffect(type, color) {
 
@@ -31,6 +29,11 @@ class SunlightSicknessEffect(type: StatusEffectType?, color: Int) : StatusEffect
         if (entity.age % 10 == 0) {
             entity.damage(SunlightDamageSource.instance, 0.25f)
             (entity.hungerManager as VampireBloodManager).removeBlood(0.01)
+            val pos = entity.pos
+            val rand = entity.random
+            for (i in 0..10) {
+                entity.world.addParticle(ParticleTypes.FLAME, pos.x-0.5+rand.nextDouble(), pos.y+rand.nextDouble()*2, pos.z-0.5+rand.nextDouble(), 0.0, 0.0, 0.0)
+            }
         }
     }
 
