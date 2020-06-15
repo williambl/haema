@@ -39,9 +39,6 @@ class VampireBloodManager : HungerManager() {
         const val FEED_COOLDOWN = 6000
     }
 
-    //TODO: make this have effect
-    var canSprint = false
-
     @Deprecated("use getBloodLevel()")
     var absoluteBloodLevel: Double = 0.0
 
@@ -50,7 +47,6 @@ class VampireBloodManager : HungerManager() {
     override fun update(player: PlayerEntity?) {
         player!!
 
-        canSprint = getBloodLevel() >= 6
         player.isSilent = (getBloodLevel() >= 10 && player.isSprinting) || getBloodLevel() >= 12
 
         if (getBloodLevel() <= 3) {
