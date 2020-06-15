@@ -3,6 +3,7 @@ package com.williambl.haema
 import com.williambl.haema.effect.SunlightSicknessEffect
 import com.williambl.haema.effect.VampiricStrengthEffect
 import com.williambl.haema.effect.VampiricWeaknessEffect
+import com.williambl.haema.item.VampireBloodInjectorItem
 import com.williambl.haema.util.addTradesToProfession
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
@@ -117,6 +118,12 @@ fun init() {
     Registry.register(
             Registry.ITEM,
             Identifier("haema:vampire_blood_injector"),
+            VampireBloodInjectorItem(Item.Settings().group(ItemGroup.TOOLS))
+    )
+
+    Registry.register(
+            Registry.ITEM,
+            Identifier("haema:empty_vampire_blood_injector"),
             Item(Item.Settings().group(ItemGroup.TOOLS))
     )
 
