@@ -5,13 +5,16 @@ import com.williambl.haema.effect.VampiricStrengthEffect
 import com.williambl.haema.effect.VampiricWeaknessEffect
 import com.williambl.haema.item.VampireBloodInjectorItem
 import com.williambl.haema.util.addTradesToProfession
+import com.williambl.haema.util.raytraceForDash
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
 import net.fabricmc.fabric.api.loot.v1.FabricLootPoolBuilder
 import net.fabricmc.fabric.api.loot.v1.FabricLootSupplierBuilder
 import net.fabricmc.fabric.api.loot.v1.event.LootTableLoadingCallback
 import net.fabricmc.fabric.api.loot.v1.event.LootTableLoadingCallback.LootTableSetter
+import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
 import net.fabricmc.fabric.api.tag.TagRegistry
+import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.Item
@@ -21,17 +24,24 @@ import net.minecraft.item.Items
 import net.minecraft.loot.ConstantLootTableRange
 import net.minecraft.loot.LootManager
 import net.minecraft.loot.entry.ItemEntry
+import net.minecraft.particle.DustParticleEffect
 import net.minecraft.resource.ResourceManager
+import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
 import net.minecraft.util.Identifier
 import net.minecraft.util.TypedActionResult
+import net.minecraft.util.hit.BlockHitResult
+import net.minecraft.util.hit.HitResult
+import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Direction
+import net.minecraft.util.math.Vec3d
 import net.minecraft.util.registry.Registry
 import net.minecraft.village.TradeOffer
 import net.minecraft.village.TradeOffers
 import net.minecraft.village.VillagerProfession
+import net.minecraft.world.RayTraceContext
 import net.minecraft.world.World
-
 
 val bloodLevelPackeId = Identifier("haema:bloodlevelsync")
 
@@ -77,6 +87,29 @@ fun init() {
             supplier.withPool(poolBuilder.build())
         }
     })
+
+    ServerSidePacketRegistry.INSTANCE.register(Identifier("haema:dash")) { packetContext, packetByteBuf ->
+        val player = packetContext.player
+        val world = player.world
+        val target = raytraceForDash(player)
+
+        if (target != null) {
+            val rand = world.random
+            for (j in 0 until 3) {
+                val x: Double = (target.x - player.x) * rand.nextDouble() + player.x - 0.5
+                val y: Double = (target.y - player.y) * rand.nextDouble() + player.y + 1
+                val z: Double = (target.z - player.z) * rand.nextDouble() + player.z - 0.5
+                (world as ServerWorld).spawnParticles(
+                        DustParticleEffect.RED,
+                        x, y, z,
+                        10,
+                        0.5, 1.0, 0.5,
+                        0.0
+                )
+            }
+            player.teleport(target.x, target.y, target.z)
+        }
+    }
 
     Registry.register(
             Registry.STATUS_EFFECT,

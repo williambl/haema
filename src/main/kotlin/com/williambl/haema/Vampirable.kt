@@ -1,14 +1,9 @@
 package com.williambl.haema
 
-import io.netty.buffer.Unpooled
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
 import net.minecraft.entity.data.DataTracker
 import net.minecraft.entity.data.TrackedData
 import net.minecraft.entity.data.TrackedDataHandlerRegistry
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.network.PacketByteBuf
-import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.util.Identifier
 
 interface Vampirable {
     var isVampire: Boolean
