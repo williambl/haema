@@ -34,10 +34,10 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         if (((Vampirable) this).isVampire() && this.hungerManager instanceof VampireBloodManager) {
             HaemaClientKt.getVAMPIRE_SHADER().setUniformValue("Saturation", 0.8f * (float) ((VampireBloodManager) this.hungerManager).getBloodLevel() / 20.0f);
             HaemaClientKt.getVAMPIRE_SHADER().setUniformValue("RedMatrix", Math.max(1.3f, 2.3f - (this.world.getTime() - ((VampireBloodManager) this.hungerManager).getLastFed()) / (float) VampireBloodManager.FEED_COOLDOWN), 0f, 0f);
-            if (wasPressed && !HaemaClientKt.getDASH_KEY().isPressed()) {
+            if (wasPressed && !(HaemaClientKt.getDASH_KEY().isPressed() && canDash())) {
                 PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
                 ClientSidePacketRegistry.INSTANCE.sendToServer(new Identifier("haema:dash"), buf);
-            } else if (HaemaClientKt.getDASH_KEY().isPressed()) {
+            } else if (HaemaClientKt.getDASH_KEY().isPressed() && canDash()) {
                 Vec3d target = RaytraceUtilKt.raytraceForDash(this);
                 if (target != null) for (int i = 0; i < 10; i++) {
                     world.addParticle(new DustParticleEffect(0, 0, 0, 1), target.x - 0.5 + random.nextDouble(), target.y + random.nextDouble() * 2, target.z - 0.5 + random.nextDouble(), 0.0, 0.5, 0.0);
@@ -45,5 +45,9 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             }
             wasPressed = HaemaClientKt.getDASH_KEY().isPressed();
         }
+    }
+
+    boolean canDash() {
+        return ((VampireBloodManager)hungerManager).getBloodLevel() > 18 || abilities.creativeMode;
     }
 }

@@ -9,9 +9,11 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.HungerManager;
+import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,6 +26,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
 
     @Shadow protected HungerManager hungerManager;
 
+    @Shadow @Final public PlayerAbilities abilities;
     protected VampireBloodManager bloodManager = null; // to avoid a load of casts
 
     @Override
@@ -53,11 +56,11 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
         if (isVampire()) {
             checkBloodManager();
 
-            if (this.isInDaylight()) {
+            if (this.isInDaylight() && !abilities.creativeMode) {
                 this.addStatusEffect(new StatusEffectInstance(SunlightSicknessEffect.Companion.getInstance(), 5, 0));
             }
 
-            if (this.getHealth() <= 0 && !this.isDead()) {
+            if (this.getHealth() <= 0 && !this.isDead() && !abilities.creativeMode) {
                 bloodManager.removeBlood(0.005);
             }
         }
