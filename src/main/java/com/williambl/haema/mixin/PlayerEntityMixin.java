@@ -89,6 +89,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
     @Inject(method = "readCustomDataFromTag", at = @At("TAIL"))
     void readVampireData(CompoundTag tag, CallbackInfo ci) {
         this.setVampire(tag.getBoolean("IsVampire"));
+        if (this.isVampire()) {
+            bloodManager.fromTag(tag);
+        }
     }
 
     @Inject(method = "writeCustomDataToTag", at = @At("TAIL"))

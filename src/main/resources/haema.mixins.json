@@ -4,13 +4,13 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "DamageSourceMixin",
-    "PlayerEntityMixin"
+    "PlayerEntityMixin",
+    "ServerPlayerEntityMixin"
   ],
   "client": [
     "ClientPlayerEntityMixin"
   ],
   "server": [
-    "ServerPlayerEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
