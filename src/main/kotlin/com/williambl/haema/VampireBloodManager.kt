@@ -84,10 +84,6 @@ class VampireBloodManager : HungerManager() {
             player.addStatusEffect(StatusEffectInstance(VampiricStrengthEffect.instance, 1, 1))
         }
 
-        if (getBloodLevel() >= 18) {
-            //TODO: dash/flight like yoshi but fast
-        }
-
         if (getBloodLevel() >= 19) {
             player.addStatusEffect(StatusEffectInstance(VampiricStrengthEffect.instance, 1, 2))
         }
@@ -159,7 +155,7 @@ class VampireBloodManager : HungerManager() {
         (player.hungerManager as VampireBloodManager).addBlood(amount)
         lastFed = player.world.time
         entity.damage(BloodLossDamageSource.instance, 1f)
-        //TODO: improve particle effects and add sound effect
+        //TODO: sound effect
         val towards = player.pos.subtract(entity.pos).normalize().multiply(0.1)
         for (i in 0..20) {
             val vel = towards.multiply(i.toDouble())

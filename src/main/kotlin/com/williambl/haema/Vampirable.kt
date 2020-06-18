@@ -15,6 +15,7 @@ interface Vampirable {
         val IS_VAMPIRE: TrackedData<Boolean> = DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
         val IS_KILLED: TrackedData<Boolean> = DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
 
+        //TODO: particles effects
         fun convert(entity: PlayerEntity) {
             if (!(entity as Vampirable).isVampire) {
                 entity.isVampire = true

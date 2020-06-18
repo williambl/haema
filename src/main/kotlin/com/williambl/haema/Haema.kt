@@ -55,6 +55,7 @@ val dungeonLootTable = Identifier("minecraft:chests/simple_dungeon")
 val jungleTempleLootTable = Identifier("minecraft:chests/jungle_temple")
 val desertPyramidLootTable = Identifier("minecraft:chests/desert_pyramid")
 
+//TODO: patchouli
 fun init() {
     UseBlockCallback.EVENT.register(UseBlockCallback { player, world, hand, blockHitResult ->
         if ((player as Vampirable).isVampire) {
@@ -142,18 +143,21 @@ fun init() {
             }
     )
 
+    //TODO: texture
     Registry.register(
             Registry.ITEM,
             Identifier("haema:vampire_blood"),
             Item(Item.Settings().group(ItemGroup.MISC))
     )
 
+    //TODO: texture
     Registry.register(
             Registry.ITEM,
             Identifier("haema:vampire_blood_injector"),
             VampireBloodInjectorItem(Item.Settings().group(ItemGroup.TOOLS))
     )
 
+    //TODO: texture
     Registry.register(
             Registry.ITEM,
             Identifier("haema:empty_vampire_blood_injector"),
