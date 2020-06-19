@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "haema:item/empty_vampire_blood_injector"
+  }
+}
