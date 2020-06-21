@@ -21,7 +21,7 @@ import org.lwjgl.glfw.GLFW
 val VAMPIRE_SHADER: ManagedShaderEffect = ShaderEffectManager.getInstance()
         .manage(Identifier("haema", "shaders/post/vampirevision.json"))
 
-val DASH_KEY = KeyBinding("haema.key.dash", GLFW.GLFW_KEY_U, "key.categories.movement")
+val DASH_KEY = KeyBinding("key.haema.dash", GLFW.GLFW_KEY_U, "key.categories.movement")
 
 fun init() {
     ClientSidePacketRegistry.INSTANCE.register(Identifier("haema:bloodlevelsync")) { packetContext, packetByteBuf ->
