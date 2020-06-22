@@ -10,6 +10,7 @@ import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.attribute.EntityAttributeModifier
 import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.effect.StatusEffects
+import net.minecraft.entity.passive.VillagerEntity
 import net.minecraft.entity.player.HungerManager
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.Item
@@ -19,6 +20,7 @@ import net.minecraft.network.PacketByteBuf
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.util.ActionResult
 import net.minecraft.util.math.Vec3d
+import net.minecraft.village.VillageGossipType
 import net.minecraft.world.GameRules
 import java.util.*
 import kotlin.math.max
@@ -160,6 +162,9 @@ class VampireBloodManager : HungerManager() {
         for (i in 0..20) {
             val vel = towards.multiply(i.toDouble())
             player.world.addParticle(DustParticleEffect.RED, entity.x+player.random.nextDouble()-0.5, entity.y+player.random.nextDouble(), entity.z+player.random.nextDouble()-0.5, vel.x, vel.y, vel.z)
+        }
+        if (entity is VillagerEntity && !entity.isSleeping) {
+            entity.gossip.startGossip(player.uuid, VillageGossipType.MAJOR_NEGATIVE, 20)
         }
     }
 
