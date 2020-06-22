@@ -9,12 +9,12 @@
     "Will BL"
   ],
   "contact": {
-    "homepage": "",
+    "homepage": "https://curseforge.com/minecraft/mc-mods/haema",
     "sources": "https://github.com/williambl/haema"
   },
 
   "license": "MIT",
-  "icon": "assets/haema/icon.png",
+  "icon": "assets/haema/item/vampire_blood_injector.png",
 
   "environment": "*",
   "entrypoints": {
