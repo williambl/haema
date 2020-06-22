@@ -37,6 +37,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
 
     modImplementation "io.github.ladysnake:Satin:${project.satin_version}"
+    include "io.github.ladysnake:Satin:${project.satin_version}"
 
     modImplementation "com.jamieswhiteshirt:reach-entity-attributes:${project.rea_version}"
     include "com.jamieswhiteshirt:reach-entity-attributes:${project.rea_version}"
