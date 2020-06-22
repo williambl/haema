@@ -1,24 +1,13 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-    " # ",
-    "QBQ",
-    " S "
-  ],
-  "key": {
-    "#": {
-      "item": "minecraft:flint"
-    },
-    "Q": {
-      "item": "minecraft:quartz"
-    },
-    "B": {
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
       "item": "haema:vampire_blood"
     },
-    "S": {
-      "tag": "minecraft:buttons"
+    {
+      "item": "haema:empty_vampire_blood_injector"
     }
-  },
+  ],
   "result": {
     "item": "haema:vampire_blood_injector",
     "count": 1

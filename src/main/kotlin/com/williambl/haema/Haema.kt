@@ -3,6 +3,7 @@ package com.williambl.haema
 import com.williambl.haema.effect.SunlightSicknessEffect
 import com.williambl.haema.effect.VampiricStrengthEffect
 import com.williambl.haema.effect.VampiricWeaknessEffect
+import com.williambl.haema.item.EmptyVampireBloodInjectorItem
 import com.williambl.haema.item.VampireBloodInjectorItem
 import com.williambl.haema.util.addTradesToProfession
 import com.williambl.haema.util.raytraceForDash
@@ -158,7 +159,7 @@ fun init() {
     Registry.register(
             Registry.ITEM,
             Identifier("haema:empty_vampire_blood_injector"),
-            Item(Item.Settings().group(ItemGroup.TOOLS))
+            EmptyVampireBloodInjectorItem(Item.Settings().group(ItemGroup.TOOLS))
     )
 
     addTradesToProfession(
