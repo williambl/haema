@@ -58,16 +58,6 @@ val desertPyramidLootTable = Identifier("minecraft:chests/desert_pyramid")
 
 //TODO: patchouli
 fun init() {
-    UseBlockCallback.EVENT.register(UseBlockCallback { player, world, hand, blockHitResult ->
-        if ((player as Vampirable).isVampire) {
-            when (player.getStackInHand(hand).item) {
-                Items.STICK -> (player.hungerManager as VampireBloodManager).addBlood(0.1)
-                Items.GOLD_NUGGET -> println((player.hungerManager as VampireBloodManager).getBloodLevel())
-            }
-            ActionResult.PASS
-        } else ActionResult.PASS
-    })
-
     UseEntityCallback.EVENT.register(UseEntityCallback { player, world, hand, entity, entityHitResult ->
         if ((player as Vampirable).isVampire && entity is LivingEntity && player.isSneaking)
             (player.hungerManager as VampireBloodManager).feed(entity, player)
