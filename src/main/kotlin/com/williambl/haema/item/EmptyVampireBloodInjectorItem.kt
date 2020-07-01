@@ -20,11 +20,13 @@ class EmptyVampireBloodInjectorItem(settings: Settings?) : Item(settings) {
 
     override fun use(world: World, user: PlayerEntity, hand: Hand): TypedActionResult<ItemStack> {
         if ((user as Vampirable).isVampire) {
-            (user.hungerManager as VampireBloodManager).removeBlood(6.0)
             if (user.hasStatusEffect(StatusEffects.WEAKNESS)) {
                 (user as Vampirable).isVampire = false
                 user.kill()
             }
+            if ((user.hungerManager as VampireBloodManager).absoluteBloodLevel < 6.0)
+                return TypedActionResult.consume(user.getStackInHand(hand))
+            (user.hungerManager as VampireBloodManager).removeBlood(6.0)
             return TypedActionResult.consume(ItemStack(Registry.ITEM.get(Identifier("haema:vampire_blood_injector"))))
         }
 
