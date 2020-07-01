@@ -148,13 +148,13 @@ fun init() {
     Registry.register(
             Registry.ITEM,
             Identifier("haema:vampire_blood_injector"),
-            VampireBloodInjectorItem(Item.Settings().group(ItemGroup.TOOLS))
+            VampireBloodInjectorItem(Item.Settings().group(ItemGroup.TOOLS).maxCount(1))
     )
 
     Registry.register(
             Registry.ITEM,
             Identifier("haema:empty_vampire_blood_injector"),
-            EmptyVampireBloodInjectorItem(Item.Settings().group(ItemGroup.TOOLS))
+            EmptyVampireBloodInjectorItem(Item.Settings().group(ItemGroup.TOOLS).maxCount(1))
     )
 
     addTradesToProfession(
