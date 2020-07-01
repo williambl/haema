@@ -1,7 +1,10 @@
 {
   "item.haema.vampire_blood": "Vampire Blood",
+  "item.haema.vampire_blood.desc": "Put it into a Vampire Blood Injector...",
   "item.haema.vampire_blood_injector": "Vampire Blood Injector",
+  "item.haema.vampire_blood_injector.desc": "Do you have the Strength to become a vampire?",
   "item.haema.empty_vampire_blood_injector": "Empty Vampire Blood Injector",
+  "item.haema.empty_vampire_blood_injector.desc": "If you are Weak, you can become normal again",
   "item.haema.vampire_converter": "[DEBUG ITEM] Vampire Converter",
   "key.haema.dash": "Vampire Dash",
   "effect.haema.sunlight_sickness": "Sunlight Sickness",

@@ -15,6 +15,7 @@ import net.fabricmc.fabric.api.loot.v1.event.LootTableLoadingCallback
 import net.fabricmc.fabric.api.loot.v1.event.LootTableLoadingCallback.LootTableSetter
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
 import net.fabricmc.fabric.api.tag.TagRegistry
+import net.minecraft.client.item.TooltipContext
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
@@ -28,10 +29,9 @@ import net.minecraft.loot.entry.ItemEntry
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.resource.ResourceManager
 import net.minecraft.server.world.ServerWorld
-import net.minecraft.util.ActionResult
-import net.minecraft.util.Hand
-import net.minecraft.util.Identifier
-import net.minecraft.util.TypedActionResult
+import net.minecraft.text.Text
+import net.minecraft.text.TranslatableText
+import net.minecraft.util.*
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.hit.HitResult
 import net.minecraft.util.math.BlockPos
@@ -137,7 +137,12 @@ fun init() {
     Registry.register(
             Registry.ITEM,
             Identifier("haema:vampire_blood"),
-            Item(Item.Settings().group(ItemGroup.MISC))
+            object : Item(Item.Settings().group(ItemGroup.MISC)) {
+                override fun appendTooltip(stack: ItemStack?, world: World?, tooltip: MutableList<Text>, context: TooltipContext?) {
+                    super.appendTooltip(stack, world, tooltip, context)
+                    tooltip.add(TranslatableText("item.haema.vampire_blood.desc").formatted(Formatting.DARK_RED))
+                }
+            }
     )
 
     Registry.register(
