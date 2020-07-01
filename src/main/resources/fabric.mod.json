@@ -4,7 +4,7 @@
   "version": "${version}",
 
   "name": "Haema",
-  "description": "Vampire mod",
+  "description": "Become a vampire, and unlock many new abilities",
   "authors": [
     "Will BL"
   ],
@@ -14,7 +14,7 @@
   },
 
   "license": "MIT",
-  "icon": "assets/haema/item/vampire_blood_injector.png",
+  "icon": "assets/haema/icon.png",
 
   "environment": "*",
   "entrypoints": {
