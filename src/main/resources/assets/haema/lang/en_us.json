@@ -5,5 +5,8 @@
   "key.haema.dash": "Vampire Dash",
   "effect.haema.sunlight_sickness": "Sunlight Sickness",
   "effect.haema.vampiric_weakness": "Vampiric Weakness",
-  "effect.haema.vampiric_strength": "Vampiric Strength"
+  "effect.haema.vampiric_strength": "Vampiric Strength",
+  "death.attack.bloodLoss": "%1$s lost too much blood",
+  "death.attack.incompatibleBlood": "%1$s forgot to drink Strength",
+  "death.attack.sunlight": "%1$s burned in the sun"
 }
