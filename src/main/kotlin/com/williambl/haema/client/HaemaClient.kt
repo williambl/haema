@@ -33,7 +33,6 @@ fun init() {
     ShaderEffectRenderCallback.EVENT.register(ShaderEffectRenderCallback {
         if ((MinecraftClient.getInstance().player as Vampirable).isVampire)
             VAMPIRE_SHADER.render(it)
-        RenderSystem.enableTexture()
     })
 
     KeyBindingHelper.registerKeyBinding(DASH_KEY)
