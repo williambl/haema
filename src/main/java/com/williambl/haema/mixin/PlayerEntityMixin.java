@@ -39,6 +39,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
         dataTracker.set(Vampirable.Companion.getIS_VAMPIRE(), vampire);
         if (vampire) {
             checkBloodManager();
+        } else {
+            hungerManager = new HungerManager();
+            bloodManager = null;
         }
     }
 
