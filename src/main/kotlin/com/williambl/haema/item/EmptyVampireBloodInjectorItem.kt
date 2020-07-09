@@ -23,6 +23,7 @@ class EmptyVampireBloodInjectorItem(settings: Settings?) : Item(settings) {
             if (user.hasStatusEffect(StatusEffects.WEAKNESS)) {
                 (user as Vampirable).isVampire = false
                 user.kill()
+                return TypedActionResult.consume(ItemStack(Registry.ITEM.get(Identifier("haema:vampire_blood_injector"))))
             }
             if ((user.hungerManager as VampireBloodManager).absoluteBloodLevel < 6.0)
                 return TypedActionResult.consume(user.getStackInHand(hand))
