@@ -23,6 +23,7 @@ repositories {
         name = "Cotton"
         url = "https://server.bbkr.space/artifactory/libs-release/"
     }
+    maven { url 'https://maven.blamejared.com' }
 }
 
 dependencies {
@@ -41,6 +42,8 @@ dependencies {
 
     modImplementation "com.jamieswhiteshirt:reach-entity-attributes:${project.rea_version}"
     include "com.jamieswhiteshirt:reach-entity-attributes:${project.rea_version}"
+
+    modRuntime "vazkii.patchouli:Patchouli:${project.patchouli_version}"
 
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
     // You may need to force-disable transitiveness on them.
