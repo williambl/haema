@@ -1,0 +1,11 @@
+{
+  "name": "Becoming a vampire!",
+  "icon": "haema:vampire_blood_injector",
+  "category": "haema:beginning",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Becoming a vampire is a dangerous process, so you need the Strength II to survive it. When you have the Strength II effect, use the Vampire Blood Injector on yourself and become a vampire!"
+    }
+  ]
+}
