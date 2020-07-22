@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "DamageSourceMixin",
+    "HurtBySensorMixin",
     "LivingEntityMixin",
     "PlayerEntityMixin",
     "ServerPlayerEntityMixin"

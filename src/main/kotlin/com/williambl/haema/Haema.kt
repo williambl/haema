@@ -8,6 +8,7 @@ import com.williambl.haema.item.EmptyVampireBloodInjectorItem
 import com.williambl.haema.item.VampireBloodInjectorItem
 import com.williambl.haema.util.addTradesToProfession
 import com.williambl.haema.util.raytraceForDash
+import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
 import net.fabricmc.fabric.api.loot.v1.FabricLootPoolBuilder
 import net.fabricmc.fabric.api.loot.v1.FabricLootSupplierBuilder
@@ -15,8 +16,10 @@ import net.fabricmc.fabric.api.loot.v1.event.LootTableLoadingCallback
 import net.fabricmc.fabric.api.loot.v1.event.LootTableLoadingCallback.LootTableSetter
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
 import net.fabricmc.fabric.api.tag.TagRegistry
+import net.minecraft.block.BedBlock
 import net.minecraft.block.DispenserBlock
 import net.minecraft.block.dispenser.FallibleItemDispenserBehavior
+import net.minecraft.block.enums.BedPart
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.effect.StatusEffectInstance
@@ -61,6 +64,24 @@ fun init() {
         if ((player as Vampirable).isVampire && entity is LivingEntity && player.isSneaking)
             (player.hungerManager as VampireBloodManager).feed(entity, player)
         else ActionResult.PASS
+    })
+
+    UseBlockCallback.EVENT.register(UseBlockCallback { player, world, hand, blockHitResult ->
+        val state = world.getBlockState(blockHitResult.blockPos)
+
+        if (state.block !is BedBlock) {
+            return@UseBlockCallback ActionResult.PASS
+        }
+
+        val pos = if (state.get(BedBlock.PART) == BedPart.HEAD)
+            blockHitResult.blockPos
+        else
+            blockHitResult.blockPos.offset(state.get(BedBlock.FACING))
+        val entities = world.getEntities(player, Box(pos)) { it is LivingEntity && it.isSleeping }
+
+        if (entities.isNotEmpty() && (player as Vampirable).isVampire && player.isSneaking) {
+            (player.hungerManager as VampireBloodManager).feed(entities[0] as LivingEntity, player)
+        } else ActionResult.PASS
     })
 
     LootTableLoadingCallback.EVENT.register(LootTableLoadingCallback { resourceManager: ResourceManager?, lootManager: LootManager?, id: Identifier?, supplier: FabricLootSupplierBuilder, setter: LootTableSetter? ->

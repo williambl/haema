@@ -1,8 +1,8 @@
 package com.williambl.haema.mixin;
 
 import com.williambl.haema.Vampirable;
+import com.williambl.haema.damagesource.BloodLossDamageSource;
 import com.williambl.haema.damagesource.DamageSourceExtensionsKt;
-import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
@@ -36,5 +36,10 @@ public abstract class LivingEntityMixin {
             return this.getHealth() <= 0 && DamageSourceExtensionsKt.isEffectiveAgainstVampires(theCurrentSource);
         }
         return this.isDead();
+    }
+
+    @Redirect(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isSleeping()Z"))
+    boolean dontWakeForFeeding(LivingEntity livingEntity) {
+        return livingEntity.isSleeping() && currentSource != BloodLossDamageSource.Companion.getInstance();
     }
 }
