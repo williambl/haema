@@ -8,6 +8,7 @@ import com.williambl.haema.item.EmptyVampireBloodInjectorItem
 import com.williambl.haema.item.VampireBloodInjectorItem
 import com.williambl.haema.util.addTradesToProfession
 import com.williambl.haema.util.raytraceForDash
+import com.williambl.haema.util.vampiresBurnRule
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
 import net.fabricmc.fabric.api.gamerule.v1.CustomGameRuleCategory
@@ -60,6 +61,8 @@ val vampireEffectiveWeaponsTag = TagRegistry.item(Identifier("haema:vampire_weap
 val dungeonLootTable = Identifier("minecraft:chests/simple_dungeon")
 val jungleTempleLootTable = Identifier("minecraft:chests/jungle_temple")
 val desertPyramidLootTable = Identifier("minecraft:chests/desert_pyramid")
+
+val haemaCategory = CustomGameRuleCategory(Identifier("haema:haema"), TranslatableText("gamerule.category.haema").formatted(Formatting.BOLD).formatted(Formatting.YELLOW))
 
 val logger = LogManager.getLogger("Haema")
 
@@ -224,6 +227,8 @@ fun init() {
                 stack
         }
     })
+
+    vampiresBurnRule = GameRuleRegistry.register("vampiresBurn", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(true))
 
     logger.info("Everything registered. It's vampire time!")
 }

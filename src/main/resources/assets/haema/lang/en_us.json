@@ -33,5 +33,10 @@
   "power.haema.vampiric_strength.description": "You are weak if you don't have much blood - but as your blood level goes up, you become stronger, faster, and more resistant to damage.",
 
   "power.haema.dash.name": "Vampire Dash",
-  "power.haema.dash.description": "If your blood level is high enough, you can use a short-range dash ability to teleport around."
+  "power.haema.dash.description": "If your blood level is high enough, you can use a short-range dash ability to teleport around.",
+
+  "gamerule.category.haema": "Haema",
+
+  "gamerule.vampiresBurn": "Vampires Burn",
+  "gamerule.vampiresBurn.description": "Whether vampires are affected by sunlight"
 }

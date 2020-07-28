@@ -4,6 +4,7 @@ import com.williambl.haema.Vampirable;
 import com.williambl.haema.VampireBloodManager;
 import com.williambl.haema.damagesource.DamageSourceExtensionsKt;
 import com.williambl.haema.effect.SunlightSicknessEffect;
+import com.williambl.haema.util.HaemaGameRulesKt;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -71,7 +72,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
         if (isVampire()) {
             checkBloodManager();
 
-            if (this.isInDaylight() && !abilities.creativeMode) {
+            if (world.getGameRules().get(HaemaGameRulesKt.getVampiresBurnRule()).get() && this.isInDaylight() && !abilities.creativeMode) {
                 this.addStatusEffect(new StatusEffectInstance(SunlightSicknessEffect.Companion.getInstance(), 5, 0));
             }
 
