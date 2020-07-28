@@ -1,7 +1,6 @@
 package com.williambl.haema
 
 import com.williambl.haema.craft.BookOfBloodRecipe
-import com.williambl.haema.damagesource.IncompatibleBloodDamageSource
 import com.williambl.haema.effect.SunlightSicknessEffect
 import com.williambl.haema.effect.VampiricStrengthEffect
 import com.williambl.haema.effect.VampiricWeaknessEffect
@@ -11,6 +10,9 @@ import com.williambl.haema.util.addTradesToProfession
 import com.williambl.haema.util.raytraceForDash
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
+import net.fabricmc.fabric.api.gamerule.v1.CustomGameRuleCategory
+import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory
+import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry
 import net.fabricmc.fabric.api.loot.v1.FabricLootPoolBuilder
 import net.fabricmc.fabric.api.loot.v1.FabricLootSupplierBuilder
 import net.fabricmc.fabric.api.loot.v1.event.LootTableLoadingCallback
@@ -23,8 +25,6 @@ import net.minecraft.block.dispenser.FallibleItemDispenserBehavior
 import net.minecraft.block.enums.BedPart
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.entity.LivingEntity
-import net.minecraft.entity.effect.StatusEffectInstance
-import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.Item
 import net.minecraft.item.ItemGroup
@@ -45,6 +45,7 @@ import net.minecraft.util.registry.Registry
 import net.minecraft.village.TradeOffer
 import net.minecraft.village.TradeOffers
 import net.minecraft.village.VillagerProfession
+import net.minecraft.world.GameRules
 import net.minecraft.world.World
 import org.apache.logging.log4j.LogManager
 
@@ -205,22 +206,10 @@ fun init() {
             val blockPos = pointer.blockPos.offset(pointer.blockState.get(DispenserBlock.FACING))
             val user = pointer.world.getEntities(PlayerEntity::class.java, Box(blockPos), null)
                     .firstOrNull() ?: return stack
-
-            val emptyStack = ItemStack(Registry.ITEM.get(Identifier("haema:empty_vampire_blood_injector")))
-            if ((user as Vampirable).isVampire) {
-                (user.hungerManager as VampireBloodManager).addBlood(6.0)
-                return emptyStack
-            }
-
-            if (!user.hasStatusEffect(StatusEffects.STRENGTH) || user.getStatusEffect(StatusEffects.STRENGTH)!!.amplifier <= 0) {
-                user.addStatusEffect(StatusEffectInstance(StatusEffects.WITHER, 3000))
-                user.addStatusEffect(StatusEffectInstance(StatusEffects.NAUSEA, 100))
-                user.damage(IncompatibleBloodDamageSource.instance, 20f)
-                return emptyStack
-            }
-
-            Vampirable.convert(user)
-            return emptyStack
+            return if ((stack.item as VampireBloodInjectorItem).tryUse(user))
+                ItemStack(Registry.ITEM.get(Identifier("haema:empty_vampire_blood_injector")))
+            else
+                stack
         }
     })
 
@@ -229,20 +218,10 @@ fun init() {
             val blockPos = pointer.blockPos.offset(pointer.blockState.get(DispenserBlock.FACING))
             val user = pointer.world.getEntities(PlayerEntity::class.java, Box(blockPos), null)
                     .firstOrNull() ?: return stack
-
-            if ((user as Vampirable).isVampire) {
-                if (user.hasStatusEffect(StatusEffects.WEAKNESS) && !(user as Vampirable).isPermanentVampire) {
-                    (user as Vampirable).isVampire = false
-                    user.kill()
-                    return ItemStack(Registry.ITEM.get(Identifier("haema:vampire_blood_injector")));
-                }
-                if ((user.hungerManager as VampireBloodManager).absoluteBloodLevel < 6.0)
-                    return stack
-                (user.hungerManager as VampireBloodManager).removeBlood(6.0)
-                return ItemStack(Registry.ITEM.get(Identifier("haema:vampire_blood_injector")))
-            }
-
-            return stack
+            return if ((stack.item as EmptyVampireBloodInjectorItem).tryUse(user))
+                ItemStack(Registry.ITEM.get(Identifier("haema:vampire_blood_injector")))
+            else
+                stack
         }
     })
 
