@@ -1,5 +1,6 @@
 package com.williambl.haema
 
+import com.williambl.haema.craft.BookOfBloodRecipe
 import com.williambl.haema.damagesource.IncompatibleBloodDamageSource
 import com.williambl.haema.effect.SunlightSicknessEffect
 import com.williambl.haema.effect.VampiricStrengthEffect
@@ -58,7 +59,6 @@ val dungeonLootTable = Identifier("minecraft:chests/simple_dungeon")
 val jungleTempleLootTable = Identifier("minecraft:chests/jungle_temple")
 val desertPyramidLootTable = Identifier("minecraft:chests/desert_pyramid")
 
-//TODO: patchouli
 fun init() {
     UseEntityCallback.EVENT.register(UseEntityCallback { player, world, hand, entity, entityHitResult ->
         if ((player as Vampirable).isVampire && entity is LivingEntity && player.isSneaking)
@@ -175,6 +175,12 @@ fun init() {
             Registry.ITEM,
             Identifier("haema:empty_vampire_blood_injector"),
             EmptyVampireBloodInjectorItem(Item.Settings().group(ItemGroup.TOOLS).maxCount(1))
+    )
+
+    Registry.register(
+        Registry.RECIPE_SERIALIZER,
+        Identifier("haema:book_of_blood"),
+        BookOfBloodRecipe.Serializer
     )
 
     addTradesToProfession(
