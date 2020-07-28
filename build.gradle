@@ -44,6 +44,7 @@ dependencies {
     include "com.jamieswhiteshirt:reach-entity-attributes:${project.rea_version}"
 
     modRuntime "vazkii.patchouli:Patchouli:${project.patchouli_version}"
+    include "vazkii.patchouli:Patchouli:${project.patchouli_version}"
 
     modApi "me.shedaniel:RoughlyEnoughItems:${project.rei_version}"
     modRuntime "me.shedaniel:RoughlyEnoughItems:${project.rei_version}"
