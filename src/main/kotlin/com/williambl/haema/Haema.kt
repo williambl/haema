@@ -228,7 +228,7 @@ fun init() {
                     .firstOrNull() ?: return stack
 
             if ((user as Vampirable).isVampire) {
-                if (user.hasStatusEffect(StatusEffects.WEAKNESS)) {
+                if (user.hasStatusEffect(StatusEffects.WEAKNESS) && !(user as Vampirable).isPermanentVampire) {
                     (user as Vampirable).isVampire = false
                     user.kill()
                     return ItemStack(Registry.ITEM.get(Identifier("haema:vampire_blood_injector")));

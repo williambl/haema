@@ -45,6 +45,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
         }
     }
 
+    @Override
+    public boolean isPermanentVampire() {
+        return dataTracker.get(Vampirable.Companion.getIS_PERMANENT_VAMPIRE());
+    }
+
+    @Override
+    public void setPermanentVampire(boolean isPermanentVampire) {
+        dataTracker.set(Vampirable.Companion.getIS_PERMANENT_VAMPIRE(), isPermanentVampire);
+    }
+
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
     }
@@ -53,6 +63,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
     void initVampireTracker(CallbackInfo ci) {
         dataTracker.startTracking(Vampirable.Companion.getIS_VAMPIRE(), false);
         dataTracker.startTracking(Vampirable.Companion.getIS_KILLED(), false);
+        dataTracker.startTracking(Vampirable.Companion.getIS_PERMANENT_VAMPIRE(), false);
     }
 
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;tick()V"))

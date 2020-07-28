@@ -9,12 +9,14 @@ import net.minecraft.server.world.ServerWorld
 
 interface Vampirable {
     var isVampire: Boolean
+    var isPermanentVampire: Boolean
 
     fun checkBloodManager();
 
     companion object {
 
         val IS_VAMPIRE: TrackedData<Boolean> = DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
+        val IS_PERMANENT_VAMPIRE: TrackedData<Boolean> = DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
         val IS_KILLED: TrackedData<Boolean> = DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
 
         fun convert(entity: PlayerEntity) {

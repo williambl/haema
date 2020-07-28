@@ -1,0 +1,12 @@
+{
+  "powers": [
+    "haema:vampire",
+    "haema:immortality",
+    "haema:night_vision",
+    "haema:vampiric_strength",
+    "haema:dash"
+  ],
+  "icon": "haema:vampire_blood",
+  "order": 2,
+  "impact": 3
+}

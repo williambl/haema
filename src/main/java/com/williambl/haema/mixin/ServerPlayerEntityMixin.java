@@ -21,6 +21,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
     @Inject(method = "copyFrom", at = @At("TAIL"))
     void readVampireData(ServerPlayerEntity oldPlayer, boolean alive, CallbackInfo ci) {
         ((Vampirable)this).setVampire(((Vampirable)oldPlayer).isVampire());
+        ((Vampirable)this).setPermanentVampire(((Vampirable)oldPlayer).isPermanentVampire());
     }
 
 }

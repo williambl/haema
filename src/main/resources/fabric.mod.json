@@ -19,7 +19,8 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.williambl.haema.HaemaKt::init"
+      "com.williambl.haema.HaemaKt::init",
+      "com.williambl.haema.plugin.origins.HaemaOriginsPluginKt::init"
     ],
     "client": [
       "com.williambl.haema.client.HaemaClientKt::init"

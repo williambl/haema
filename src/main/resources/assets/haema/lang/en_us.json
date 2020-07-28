@@ -6,11 +6,32 @@
   "item.haema.empty_vampire_blood_injector": "Empty Vampire Blood Injector",
   "item.haema.empty_vampire_blood_injector.desc": "If you are Weak, you can become normal again",
   "item.haema.vampire_converter": "[DEBUG ITEM] Vampire Converter",
+
   "key.haema.dash": "Vampire Dash",
+
   "effect.haema.sunlight_sickness": "Sunlight Sickness",
   "effect.haema.vampiric_weakness": "Vampiric Weakness",
   "effect.haema.vampiric_strength": "Vampiric Strength",
+
   "death.attack.bloodLoss": "%1$s lost too much blood",
   "death.attack.incompatibleBlood": "%1$s forgot to drink Strength",
-  "death.attack.sunlight": "%1$s burned in the sun"
+  "death.attack.sunlight": "%1$s burned in the sun",
+
+  "origin.haema.vampire.name": "Vampire",
+  "origin.haema.vampire.description": "Though harmed by sunlight, vampires have great strength when in the darkness, provided they have enough blood.",
+
+  "power.haema.vampire.name": "Bloodthirsty",
+  "power.haema.vampire.description": "You do not need food, but instead drink blood to get your nourishment. Drink from mobs with shift+right click - more humanoid mobs give better blood.",
+
+  "power.haema.immortality.name": "Immortal",
+  "power.haema.immortality.description": "Even if your health goes to zero, you cannot die unless harmed by a few specific things, including the sun, lightning, and wooden swords.",
+
+  "power.haema.night_vision.name": "Night Vision",
+  "power.haema.night_vision.description": "Your vision, though dull and unsaturated, is better at picking out details in the dark.",
+
+  "power.haema.vampiric_strength.name": "Vampiric Strength",
+  "power.haema.vampiric_strength.description": "You are weak if you don't have much blood - but as your blood level goes up, you become stronger, faster, and more resistant to damage.",
+
+  "power.haema.dash.name": "Vampire Dash",
+  "power.haema.dash.description": "If your blood level is high enough, you can use a short-range dash ability to teleport around."
 }
