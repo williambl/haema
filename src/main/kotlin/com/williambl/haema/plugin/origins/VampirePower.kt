@@ -2,8 +2,8 @@ package com.williambl.haema.plugin.origins
 
 import com.williambl.haema.Vampirable
 import com.williambl.haema.VampireBloodManager
+import com.williambl.haema.logger
 import com.williambl.haema.util.getSpawn
-import io.github.apace100.origins.Origins
 import io.github.apace100.origins.power.Power
 import io.github.apace100.origins.power.PowerType
 import net.minecraft.block.BedBlock
@@ -45,10 +45,10 @@ class VampirePower(type: PowerType<*>?, player: PlayerEntity?) : Power(type, pla
                             player.yaw
                         )
                     } else {
-                        Origins.LOGGER.warn("Could not spawn player with Vampirism away from sunlight.")
+                        logger.warn("Could not spawn Vampire player with away from sunlight.")
                     }
                 } else {
-                    Origins.LOGGER.warn("Could not spawn player with Vampirism away from sunlight.")
+                    logger.warn("Could not spawn Vampire player away from sunlight.")
                 }
             }
         }

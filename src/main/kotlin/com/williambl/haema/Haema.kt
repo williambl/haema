@@ -46,6 +46,7 @@ import net.minecraft.village.TradeOffer
 import net.minecraft.village.TradeOffers
 import net.minecraft.village.VillagerProfession
 import net.minecraft.world.World
+import org.apache.logging.log4j.LogManager
 
 val bloodLevelPackeId = Identifier("haema:bloodlevelsync")
 
@@ -58,6 +59,8 @@ val vampireEffectiveWeaponsTag = TagRegistry.item(Identifier("haema:vampire_weap
 val dungeonLootTable = Identifier("minecraft:chests/simple_dungeon")
 val jungleTempleLootTable = Identifier("minecraft:chests/jungle_temple")
 val desertPyramidLootTable = Identifier("minecraft:chests/desert_pyramid")
+
+val logger = LogManager.getLogger("Haema")
 
 fun init() {
     UseEntityCallback.EVENT.register(UseEntityCallback { player, world, hand, entity, entityHitResult ->
@@ -242,5 +245,7 @@ fun init() {
             return stack
         }
     })
+
+    logger.info("Everything registered. It's vampire time!")
 }
 

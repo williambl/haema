@@ -1,6 +1,6 @@
 package com.williambl.haema.util
 
-import io.github.apace100.origins.Origins
+import com.williambl.haema.logger
 import net.minecraft.block.BedBlock
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.player.PlayerEntity
@@ -33,10 +33,10 @@ fun getSpawn(player: PlayerEntity, isSpawnObstructed: Boolean): Pair<ServerWorld
             }
         }
         return if (finalPos.isPresent) {
-            Origins.LOGGER.info("Found a spawn, ${finalPos.get().distanceTo(Vec3d.ofCenter(regularSpawn))} blocks from regular spawn, in $steps steps.")
+            logger.info("Found a vampire-safe spawn, ${finalPos.get().distanceTo(Vec3d.ofCenter(regularSpawn))} blocks from regular spawn, in $steps steps.")
             Pair(world, BlockPos(finalPos.get()))
         } else {
-            Origins.LOGGER.warn("Could not find spawn for player with Vampirism in the nether in range $range of $regularSpawn.")
+            logger.warn("Could not find a vampire-safe spawn in range $range of $regularSpawn.")
             null
         }
     }

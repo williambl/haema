@@ -1,5 +1,6 @@
 package com.williambl.haema.plugin.origins
 
+import com.williambl.haema.logger
 import io.github.apace100.origins.power.Power
 import io.github.apace100.origins.power.PowerType
 import io.github.apace100.origins.registry.ModRegistries
@@ -12,6 +13,7 @@ import java.util.function.BiFunction
 
 fun init() {
     if (FabricLoader.getInstance().isModLoaded("origins")) {
+        logger.info("Origins detected. Adding the vampire origin powers.")
         registerPowerTypes()
     }
 }
