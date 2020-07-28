@@ -23,6 +23,9 @@
     ],
     "client": [
       "com.williambl.haema.client.HaemaClientKt::init"
+    ],
+    "rei_plugins": [
+      "com.williambl.haema.plugin.rei.HaemaREIPlugin"
     ]
   },
   "mixins": [
