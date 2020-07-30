@@ -4,11 +4,14 @@ import com.williambl.haema.craft.BookOfBloodRecipe
 import com.williambl.haema.effect.SunlightSicknessEffect
 import com.williambl.haema.effect.VampiricStrengthEffect
 import com.williambl.haema.effect.VampiricWeaknessEffect
+import com.williambl.haema.entity.VampireHunterEntity
 import com.williambl.haema.item.EmptyVampireBloodInjectorItem
 import com.williambl.haema.item.VampireBloodInjectorItem
 import com.williambl.haema.util.addTradesToProfession
 import com.williambl.haema.util.raytraceForDash
 import com.williambl.haema.util.vampiresBurnRule
+import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
+import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
 import net.fabricmc.fabric.api.gamerule.v1.CustomGameRuleCategory
@@ -25,7 +28,12 @@ import net.minecraft.block.DispenserBlock
 import net.minecraft.block.dispenser.FallibleItemDispenserBehavior
 import net.minecraft.block.enums.BedPart
 import net.minecraft.client.item.TooltipContext
+import net.minecraft.entity.EntityDimensions
+import net.minecraft.entity.EntityType
 import net.minecraft.entity.LivingEntity
+import net.minecraft.entity.SpawnGroup
+import net.minecraft.entity.attribute.EntityAttributes
+import net.minecraft.entity.mob.HostileEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.Item
 import net.minecraft.item.ItemGroup
@@ -188,6 +196,22 @@ fun init() {
         Registry.RECIPE_SERIALIZER,
         Identifier("haema:book_of_blood"),
         BookOfBloodRecipe.Serializer
+    )
+
+    Registry.register(
+        Registry.ENTITY_TYPE,
+        Identifier("haema:vampire_hunter"),
+        FabricEntityTypeBuilder.create<VampireHunterEntity>(SpawnGroup.CREATURE) {type, world -> VampireHunterEntity(type, world) }.dimensions(
+            EntityDimensions.fixed(0.5f, 2f)).build()
+    )
+
+    @Suppress("UNCHECKED_CAST")
+    FabricDefaultAttributeRegistry.register(
+        Registry.ENTITY_TYPE.get(Identifier("haema:vampire_hunter")) as EntityType<out LivingEntity>?,
+        HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3499999940395355)
+            .add(EntityAttributes.GENERIC_MAX_HEALTH, 24.0)
+            .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 5.0)
+            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0)
     )
 
     addTradesToProfession(

@@ -1,19 +1,18 @@
 package com.williambl.haema.client
 
-import com.mojang.blaze3d.systems.RenderSystem
 import com.williambl.haema.Vampirable
 import com.williambl.haema.VampireBloodManager
 import ladysnake.satin.api.event.ShaderEffectRenderCallback
 import ladysnake.satin.api.managed.ManagedShaderEffect
 import ladysnake.satin.api.managed.ShaderEffectManager
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
+import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.color.item.ItemColorProvider
 import net.minecraft.client.options.KeyBinding
 import net.minecraft.util.Identifier
-import net.minecraft.util.math.Vec3d
 import net.minecraft.util.registry.Registry
 import org.lwjgl.glfw.GLFW
 
@@ -40,4 +39,6 @@ fun init() {
     ColorProviderRegistry.ITEM.register(ItemColorProvider { stack, index ->
         if (index > 0) -1 else 0xA23C3A
     }, Registry.ITEM.get(Identifier("haema:vampire_blood")))
+
+    EntityRendererRegistry.INSTANCE.register(Registry.ENTITY_TYPE.get(Identifier("haema:vampire_hunter"))) { dispatcher, _ -> VampireHunterEntityRenderer(dispatcher) }
 }
