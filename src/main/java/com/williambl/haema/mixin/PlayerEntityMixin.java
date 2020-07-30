@@ -122,6 +122,11 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
         return super.isDead();
     }
 
+    @Override
+    public boolean isAlive() {
+        return isVampire() ? !isDead() : super.isAlive();
+    }
+
     @Unique
     protected boolean isInDaylight() {
         return !this.world.isClient && this.world.isDay() && !this.world.isRaining() && this.world.isSkyVisible(this.getBlockPos());
