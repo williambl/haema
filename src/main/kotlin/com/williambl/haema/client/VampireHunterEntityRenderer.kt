@@ -83,16 +83,16 @@ class VampireHunterModel(scale: Float, pivotY: Float, textureWidth: Int, texture
             leftLeg.yaw = 0.0f
             leftLeg.roll = 0.0f
         }
-        when {
-            entity.isAttacking -> CrossbowPosing.method_29351(rightAttackingArm, leftAttackingArm, entity, handSwingProgress, h)
-            entity.isCharging() -> {
+        if (entity.isHolding(Items.CROSSBOW)) {
+            if (entity.isCharging()) {
                 CrossbowPosing.charge(rightAttackingArm, leftAttackingArm, entity, true)
-                val bl = false
-                arms.visible = bl
-                leftAttackingArm.visible = !bl
-                rightAttackingArm.visible = !bl
             }
-            entity.isHolding(Items.CROSSBOW) -> CrossbowPosing.hold(rightAttackingArm, leftAttackingArm, head, true)
+            else {
+                CrossbowPosing.hold(rightAttackingArm, leftAttackingArm, head, true)
+            }
+        } else if (entity.isAttacking) {
+            // hold arm up in the air
+            CrossbowPosing.method_29351(rightAttackingArm, leftAttackingArm, entity, handSwingProgress, h)
         }
     }
 
