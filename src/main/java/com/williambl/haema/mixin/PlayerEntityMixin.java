@@ -117,7 +117,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
 
     @Override
     public boolean isDead() {
-        if (isVampire())
+        if (isVampire() && bloodManager != null)
             return super.isDead() && bloodManager.getBloodLevel() <= 0 && dataTracker.get(Vampirable.Companion.getIS_KILLED());
         return super.isDead();
     }
