@@ -14,6 +14,7 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.projectile.ProjectileEntity
 import net.minecraft.entity.raid.RaiderEntity
 import net.minecraft.inventory.SimpleInventory
+import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.nbt.CompoundTag
@@ -53,17 +54,20 @@ class VampireHunterEntity(entityType: EntityType<out RaiderEntity>?, world: Worl
 
     override fun initEquipment(difficulty: LocalDifficulty?) {
         val crossbow = ItemStack(Items.CROSSBOW)
-        val sword = ItemStack(Items.WOODEN_SWORD)
-        EnchantmentHelper.set(mapOf(Pair(Enchantments.SMITE, 2)), sword)
+
+        val crossbowEnchants = mutableMapOf(Pair(Enchantments.QUICK_CHARGE, 3))
         if (random.nextInt(300) == 0) {
-            val map = mapOf(Pair(Enchantments.PIERCING, 1))
-            EnchantmentHelper.set(map, crossbow)
+            crossbowEnchants[Enchantments.PIERCING] = 1
         }
+        EnchantmentHelper.set(crossbowEnchants, crossbow)
         equip(300, crossbow)
+
+        val sword = ItemStack(Items.WOODEN_SWORD)
+        sword.addEnchantment(Enchantments.SMITE, 2)
         equip(301, sword)
     }
 
-    override fun equip(slot: Int, item: ItemStack?): Boolean {
+    override fun equip(slot: Int, item: ItemStack): Boolean {
         return if (super.equip(slot, item)) {
             true
         } else {
@@ -75,6 +79,17 @@ class VampireHunterEntity(entityType: EntityType<out RaiderEntity>?, world: Worl
                 false
             }
         }
+    }
+
+    fun takeItem(item: Item): ItemStack {
+        for (i in 0 until inventory.size()) {
+            val stack = inventory.getStack(i)
+            if (stack.item == item) {
+                inventory.removeStack(i)
+                return stack
+            }
+        }
+        return ItemStack.EMPTY
     }
 
     override fun writeCustomDataToTag(tag: CompoundTag) {
@@ -146,7 +161,7 @@ class VampireHunterCrossbowAttackGoal(private val actor: VampireHunterEntity, sp
         super.start()
         if (!actor.isHolding(Items.CROSSBOW)) {
             val equipped = actor.getStackInHand(Hand.MAIN_HAND)
-            actor.equipStack(EquipmentSlot.MAINHAND, actor.inventory.removeItem(Items.CROSSBOW, 1))
+            actor.equipStack(EquipmentSlot.MAINHAND, actor.takeItem(Items.CROSSBOW))
             actor.inventory.addStack(equipped)
         }
     }
@@ -177,7 +192,7 @@ class VampireHunterMeleeAttackGoal(private val actor: VampireHunterEntity, speed
         super.start()
         if (!actor.isHolding(Items.WOODEN_SWORD)) {
             val equipped = actor.getStackInHand(Hand.MAIN_HAND)
-            actor.equipStack(EquipmentSlot.MAINHAND, actor.inventory.removeItem(Items.WOODEN_SWORD, 1))
+            actor.equipStack(EquipmentSlot.MAINHAND, actor.takeItem(Items.WOODEN_SWORD))
             actor.inventory.addStack(equipped)
         }
     }
