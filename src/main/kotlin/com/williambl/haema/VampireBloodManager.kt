@@ -19,7 +19,6 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.util.ActionResult
-import net.minecraft.util.math.Vec3d
 import net.minecraft.village.VillageGossipType
 import net.minecraft.world.GameRules
 import java.util.*
@@ -38,7 +37,7 @@ class VampireBloodManager : HungerManager() {
         private val VAMPIRE_ATTACK_RANGE = EntityAttributeModifier(VAMPIRE_ATTACK_RANGE_UUID, "Vampire attack range extension", 2.0, EntityAttributeModifier.Operation.ADDITION)
 
         //TODO config
-        const val FEED_COOLDOWN = 6000
+        const val FEED_COOLDOWN = 10
     }
 
     @Deprecated("use getBloodLevel()")
