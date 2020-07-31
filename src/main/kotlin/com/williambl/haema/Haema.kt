@@ -201,8 +201,9 @@ fun init() {
     Registry.register(
         Registry.ENTITY_TYPE,
         Identifier("haema:vampire_hunter"),
-        FabricEntityTypeBuilder.create<VampireHunterEntity>(SpawnGroup.CREATURE) {type, world -> VampireHunterEntity(type, world) }.dimensions(
-            EntityDimensions.fixed(0.5f, 2f)).build()
+        FabricEntityTypeBuilder.create<VampireHunterEntity>(SpawnGroup.CREATURE) {type, world -> VampireHunterEntity(type, world) }
+            .dimensions(EntityDimensions.fixed(0.5f, 2f))
+            .trackable(128, 3).spawnableFarFromPlayer().build()
     )
 
     @Suppress("UNCHECKED_CAST")
