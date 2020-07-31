@@ -9,24 +9,22 @@ import net.minecraft.entity.data.DataTracker
 import net.minecraft.entity.data.TrackedData
 import net.minecraft.entity.data.TrackedDataHandlerRegistry
 import net.minecraft.entity.mob.MobEntity
+import net.minecraft.entity.mob.PatrolEntity
 import net.minecraft.entity.passive.AbstractTraderEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.projectile.ProjectileEntity
-import net.minecraft.entity.raid.RaiderEntity
 import net.minecraft.inventory.SimpleInventory
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.ListTag
-import net.minecraft.sound.SoundEvent
-import net.minecraft.sound.SoundEvents
 import net.minecraft.util.Hand
 import net.minecraft.world.LocalDifficulty
 import net.minecraft.world.World
 import net.minecraft.world.WorldAccess
 
-class VampireHunterEntity(entityType: EntityType<out RaiderEntity>?, world: World?) : RaiderEntity(entityType, world), CrossbowUser {
+class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, world: World?) : PatrolEntity(entityType, world), CrossbowUser {
     val inventory = SimpleInventory(5)
 
     override fun initialize(world: WorldAccess?, difficulty: LocalDifficulty?, spawnReason: SpawnReason?, entityData: EntityData?, entityTag: CompoundTag?): EntityData? {
@@ -115,10 +113,6 @@ class VampireHunterEntity(entityType: EntityType<out RaiderEntity>?, world: Worl
         }
         setCanPickUpLoot(true)
     }
-
-    override fun getCelebratingSound(): SoundEvent = SoundEvents.ENTITY_VILLAGER_CELEBRATE
-
-    override fun addBonusForWave(wave: Int, unused: Boolean) {}
 
     override fun attack(target: LivingEntity?, pullProgress: Float) {
         shoot(this, 1.6f)
