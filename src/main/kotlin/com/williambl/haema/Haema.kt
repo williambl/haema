@@ -213,9 +213,9 @@ fun init() {
     FabricDefaultAttributeRegistry.register(
         Registry.ENTITY_TYPE.get(Identifier("haema:vampire_hunter")) as EntityType<out LivingEntity>?,
         HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3499999940395355)
-            .add(EntityAttributes.GENERIC_MAX_HEALTH, 24.0)
+            .add(EntityAttributes.GENERIC_MAX_HEALTH, 20.0)
             .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 5.0)
-            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0)
+            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 64.0)
     )
 
     @Suppress("UNCHECKED_CAST")
