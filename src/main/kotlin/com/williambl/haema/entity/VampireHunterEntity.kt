@@ -126,13 +126,18 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
 
     fun isCharging(): Boolean = dataTracker[CHARGING]
 
-    override fun shoot(
-        target: LivingEntity?,
-        crossbow: ItemStack?,
-        projectile: ProjectileEntity?,
-        multiShotSpray: Float
-    ) {
+    override fun shoot(target: LivingEntity?, crossbow: ItemStack?, projectile: ProjectileEntity?, multiShotSpray: Float) {
         shoot(this, target, projectile, multiShotSpray, 1.6f)
+    }
+
+    override fun isTeammate(other: Entity?): Boolean {
+        return if (super.isTeammate(other)) {
+            true
+        } else if (other is VampireHunterEntity || other is AbstractTraderEntity) {
+            this.scoreboardTeam == null && other.scoreboardTeam == null
+        } else {
+            false
+        }
     }
 
     companion object {
