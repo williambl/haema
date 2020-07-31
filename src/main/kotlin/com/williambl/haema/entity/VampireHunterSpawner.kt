@@ -5,7 +5,6 @@ import net.minecraft.entity.EntityData
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.SpawnReason
 import net.minecraft.entity.mob.PatrolEntity
-import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
@@ -48,15 +47,15 @@ class VampireHunterSpawner(val entityType: EntityType<out VampireHunterEntity>) 
         if (serverWorld.isNearOccupiedPointOfInterest(player.blockPos, 2))
             return 0
 
-        val amountSpawned = trySpawnNearPlayer(serverWorld, random, player)
+        val amountSpawned = trySpawnNear(serverWorld, random, player.blockPos)
         println("spawned $amountSpawned")
         return amountSpawned
     }
 
-    fun trySpawnNearPlayer(serverWorld: ServerWorld, random: Random, player: PlayerEntity): Int {
+    fun trySpawnNear(serverWorld: ServerWorld, random: Random, pos: BlockPos): Int {
         val dx = (24 + random.nextInt(24)) * if (random.nextBoolean()) -1 else 1
         val dz = (24 + random.nextInt(24)) * if (random.nextBoolean()) -1 else 1
-        val mutable = player.blockPos.mutableCopy().move(dx, 0, dz)
+        val mutable = pos.mutableCopy().move(dx, 0, dz)
 
         if (!serverWorld.isRegionLoaded(mutable.x - 10, mutable.y - 10, mutable.z - 10, mutable.x + 10, mutable.y + 10, mutable.z + 10))
             return 0

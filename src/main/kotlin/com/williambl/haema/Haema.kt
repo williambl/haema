@@ -5,6 +5,7 @@ import com.williambl.haema.effect.SunlightSicknessEffect
 import com.williambl.haema.effect.VampiricStrengthEffect
 import com.williambl.haema.effect.VampiricWeaknessEffect
 import com.williambl.haema.entity.VampireHunterEntity
+import com.williambl.haema.entity.VampireHunterSpawner
 import com.williambl.haema.item.EmptyVampireBloodInjectorItem
 import com.williambl.haema.item.VampireBloodInjectorItem
 import com.williambl.haema.util.addTradesToProfession
@@ -71,6 +72,8 @@ val jungleTempleLootTable = Identifier("minecraft:chests/jungle_temple")
 val desertPyramidLootTable = Identifier("minecraft:chests/desert_pyramid")
 
 val haemaCategory = CustomGameRuleCategory(Identifier("haema:haema"), TranslatableText("gamerule.category.haema").formatted(Formatting.BOLD).formatted(Formatting.YELLOW))
+
+lateinit var vampireHunterSpawner: VampireHunterSpawner
 
 val logger = LogManager.getLogger("Haema")
 
@@ -214,6 +217,9 @@ fun init() {
             .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 5.0)
             .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0)
     )
+
+    @Suppress("UNCHECKED_CAST")
+    vampireHunterSpawner = VampireHunterSpawner(Registry.ENTITY_TYPE.get(Identifier("haema:vampire_hunter")) as EntityType<out VampireHunterEntity>)
 
     addTradesToProfession(
             VillagerProfession.CLERIC,
