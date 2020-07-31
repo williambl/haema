@@ -56,9 +56,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Inject(method = "onDeath", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setPose(Lnet/minecraft/entity/EntityPose;)V"))
     void alertVampireHuntersToDeath(DamageSource source, CallbackInfo ci) {
-        System.out.println("hihi?");
         if (source == BloodLossDamageSource.Companion.getInstance()) {
-            System.out.println("hihi");
             for (float i = 0f; i < 0.5f; i += 0.1f) {
                 world.addImportantParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, getX(), getY(), getZ(), 0.0, 2.0 * i, 0.0);
             }
