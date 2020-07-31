@@ -1,6 +1,7 @@
 package com.williambl.haema.entity
 
 import com.williambl.haema.Vampirable
+import net.minecraft.block.entity.BannerPattern
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.enchantment.Enchantments
 import net.minecraft.entity.*
@@ -19,6 +20,9 @@ import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.ListTag
+import net.minecraft.text.TranslatableText
+import net.minecraft.util.DyeColor
+import net.minecraft.util.Formatting
 import net.minecraft.util.Hand
 import net.minecraft.world.LocalDifficulty
 import net.minecraft.world.World
@@ -28,8 +32,9 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
     val inventory = SimpleInventory(5)
 
     override fun initialize(world: WorldAccess?, difficulty: LocalDifficulty?, spawnReason: SpawnReason?, entityData: EntityData?, entityTag: CompoundTag?): EntityData? {
+        val result =  super.initialize(world, difficulty, spawnReason, entityData, entityTag)
         initEquipment(difficulty)
-        return super.initialize(world, difficulty, spawnReason, entityData, entityTag)
+        return result
     }
 
     override fun initGoals() {
@@ -63,6 +68,21 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
         val sword = ItemStack(Items.WOODEN_SWORD)
         sword.addEnchantment(Enchantments.SMITE, 2)
         equip(301, sword)
+
+        if (isPatrolLeader) {
+            val banner = ItemStack(Items.WHITE_BANNER)
+            val compoundTag: CompoundTag = banner.getOrCreateSubTag("BlockEntityTag")
+            val listTag = BannerPattern.Patterns()
+                .add(BannerPattern.RHOMBUS_MIDDLE, DyeColor.RED)
+                .add(BannerPattern.HALF_VERTICAL, DyeColor.LIGHT_BLUE)
+                .add(BannerPattern.CIRCLE_MIDDLE, DyeColor.RED)
+                .toTag()
+            compoundTag.put("Patterns", listTag)
+            @Suppress("UsePropertyAccessSyntax")
+            banner.getOrCreateTag().putInt("HideFlags", 32)
+            banner.setCustomName(TranslatableText("block.haema.righteous_banner").formatted(Formatting.GOLD))
+            equipStack(EquipmentSlot.HEAD, banner)
+        }
     }
 
     override fun equip(slot: Int, item: ItemStack): Boolean {
