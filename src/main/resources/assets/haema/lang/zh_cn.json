@@ -35,7 +35,7 @@
   "power.haema.dash.name": "吸血鬼冲刺",
   "power.haema.dash.description": "如果你的鲜血等级足够高，你将拥有短程的近乎传送的冲刺能力。",
 
-  "gamerule.category.haema": "Haema",
+  "gamerule.category.haema": "血族",
 
   "gamerule.vampiresBurn": "吸血鬼燃烧",
   "gamerule.vampiresBurn.description": "吸血鬼是否会被日光点燃。"
