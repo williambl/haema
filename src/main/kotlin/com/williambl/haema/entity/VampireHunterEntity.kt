@@ -74,7 +74,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
             val compoundTag: CompoundTag = banner.getOrCreateSubTag("BlockEntityTag")
             val listTag = BannerPattern.Patterns()
                 .add(BannerPattern.RHOMBUS_MIDDLE, DyeColor.RED)
-                .add(BannerPattern.HALF_HORIZONTAL, DyeColor.LIGHT_BLUE)
+                .add(BannerPattern.HALF_HORIZONTAL_MIRROR, DyeColor.LIGHT_BLUE)
                 .add(BannerPattern.CIRCLE_MIDDLE, DyeColor.RED)
                 .toTag()
             compoundTag.put("Patterns", listTag)
