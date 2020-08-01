@@ -1,0 +1,42 @@
+{
+  "item.haema.vampire_blood": "吸血鬼血液",
+  "item.haema.vampire_blood.desc": "把它放入一个吸血鬼血液注射器......",
+  "item.haema.vampire_blood_injector": "吸血鬼血液注射器",
+  "item.haema.vampire_blood_injector.desc": "你有成为一个吸血鬼的力量吗？",
+  "item.haema.empty_vampire_blood_injector": "空的吸血鬼血液注射器",
+  "item.haema.empty_vampire_blood_injector.desc": "如果你很虚弱，你将可以变回正常的人。",
+  "item.haema.vampire_converter": "[调试物品] 吸血鬼转变器",
+
+  "key.haema.dash": "吸血鬼冲刺",
+
+  "effect.haema.sunlight_sickness": "日照不健",
+  "effect.haema.vampiric_weakness": "吸血虚弱",
+  "effect.haema.vampiric_strength": "吸血力量",
+
+  "death.attack.bloodLoss": "%1$s 失去了太多的血液",
+  "death.attack.incompatibleBlood": "%1$s 忘记饮用力量了",
+  "death.attack.sunlight": "%1$s 受太阳照射而亡",
+
+  "origin.haema.vampire.name": "吸血鬼",
+  "origin.haema.vampire.description": "尽管会被太阳光伤害，在暗处，有充足的鲜血时他们将拥有极大的力量。",
+
+  "power.haema.vampire.name": "嗜血",
+  "power.haema.vampire.description": "你无需食用食物，只需饮用鲜血即可获得滋养。潜行右击一个生物以吸取血液——越类人的生物给予你的血液便越好。",
+
+  "power.haema.immortality.name": "长生",
+  "power.haema.immortality.description": "即使你失去了全部的生命值，你也仍然不会死亡，除非被特定的事物伤害——包括阳光、日照、木剑等等。",
+
+  "power.haema.night_vision.name": "夜视",
+  "power.haema.night_vision.description": "尽管你的目光迟钝而沉郁，你仍然能在黑暗中更好地分辨出细节。",
+
+  "power.haema.vampiric_strength.name": "吸血力量",
+  "power.haema.vampiric_strength.description": "如果你没有足够的鲜血，你将会变得虚弱——但是随着你的鲜血等级的提升，你也会变得更加具有力量与速度，并更不容易受到伤害。",
+
+  "power.haema.dash.name": "吸血鬼冲刺",
+  "power.haema.dash.description": "如果你的鲜血等级足够高，你将拥有短程的近乎传送的冲刺能力。",
+
+  "gamerule.category.haema": "Haema",
+
+  "gamerule.vampiresBurn": "吸血鬼燃烧",
+  "gamerule.vampiresBurn.description": "吸血鬼是否会被日光点燃。"
+}
