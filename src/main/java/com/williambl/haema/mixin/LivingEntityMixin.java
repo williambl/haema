@@ -4,6 +4,7 @@ import com.williambl.haema.HaemaKt;
 import com.williambl.haema.Vampirable;
 import com.williambl.haema.damagesource.BloodLossDamageSource;
 import com.williambl.haema.damagesource.DamageSourceExtensionsKt;
+import com.williambl.haema.util.HaemaGameRulesKt;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -62,7 +63,7 @@ public abstract class LivingEntityMixin extends Entity {
             }
 
             if (world instanceof ServerWorld) {
-                if (random.nextDouble() < 0.1)
+                if (random.nextDouble() < world.getGameRules().get(HaemaGameRulesKt.getVampireHunterNoticeChance()).get())
                     HaemaKt.getVampireHunterSpawner().trySpawnNear((ServerWorld)world, random, getBlockPos());
             }
         }

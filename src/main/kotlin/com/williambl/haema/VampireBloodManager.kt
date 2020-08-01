@@ -4,6 +4,7 @@ import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes
 import com.williambl.haema.damagesource.BloodLossDamageSource
 import com.williambl.haema.effect.VampiricStrengthEffect
 import com.williambl.haema.effect.VampiricWeaknessEffect
+import com.williambl.haema.util.feedCooldown
 import io.netty.buffer.Unpooled
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
 import net.minecraft.entity.LivingEntity
@@ -21,6 +22,7 @@ import net.minecraft.particle.DustParticleEffect
 import net.minecraft.util.ActionResult
 import net.minecraft.village.VillageGossipType
 import net.minecraft.world.GameRules
+import net.minecraft.world.World
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
@@ -36,8 +38,7 @@ class VampireBloodManager : HungerManager() {
         private val VAMPIRE_REACH = EntityAttributeModifier(VAMPIRE_REACH_UUID, "Vampire reach extension", 2.0, EntityAttributeModifier.Operation.ADDITION)
         private val VAMPIRE_ATTACK_RANGE = EntityAttributeModifier(VAMPIRE_ATTACK_RANGE_UUID, "Vampire attack range extension", 2.0, EntityAttributeModifier.Operation.ADDITION)
 
-        //TODO config
-        const val FEED_COOLDOWN = 10
+        fun getFeedCooldown(world: World): Int = world.gameRules[feedCooldown].get()
     }
 
     @Deprecated("use getBloodLevel()")
@@ -134,7 +135,7 @@ class VampireBloodManager : HungerManager() {
     }
 
     fun feed(entity: LivingEntity, player: PlayerEntity): ActionResult {
-        if (getBloodLevel() > 8.5 && lastFed >= player.world.time - FEED_COOLDOWN)
+        if (getBloodLevel() > 8.5 && lastFed >= player.world.time - getFeedCooldown(player.world))
             return ActionResult.PASS
 
         if (goodBloodTag.contains(entity.type)) {

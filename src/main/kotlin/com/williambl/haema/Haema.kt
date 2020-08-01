@@ -8,9 +8,7 @@ import com.williambl.haema.entity.VampireHunterEntity
 import com.williambl.haema.entity.VampireHunterSpawner
 import com.williambl.haema.item.EmptyVampireBloodInjectorItem
 import com.williambl.haema.item.VampireBloodInjectorItem
-import com.williambl.haema.util.addTradesToProfession
-import com.williambl.haema.util.raytraceForDash
-import com.williambl.haema.util.vampiresBurnRule
+import com.williambl.haema.util.*
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
@@ -259,7 +257,9 @@ fun init() {
         }
     })
 
-    vampiresBurnRule = GameRuleRegistry.register("vampiresBurn", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(true))
+    vampiresBurn = GameRuleRegistry.register("vampiresBurn", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(true))
+    feedCooldown = GameRuleRegistry.register("feedCooldown", GameRules.Category.PLAYER, GameRuleFactory.createIntRule(10, 0, 24000))
+    vampireHunterNoticeChance = GameRuleRegistry.register("vampireHunterNoticeChance", GameRules.Category.PLAYER, GameRuleFactory.createDoubleRule(0.1, 0.0, 1.0))
 
     logger.info("Everything registered. It's vampire time!")
 }

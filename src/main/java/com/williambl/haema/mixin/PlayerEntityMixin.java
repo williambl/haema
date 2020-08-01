@@ -72,7 +72,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
         if (isVampire()) {
             checkBloodManager();
 
-            if (world.getGameRules().get(HaemaGameRulesKt.getVampiresBurnRule()).get() && this.isInDaylight() && !abilities.creativeMode) {
+            if (world.getGameRules().get(HaemaGameRulesKt.getVampiresBurn()).get() && this.isInDaylight() && !abilities.creativeMode) {
                 this.addStatusEffect(new StatusEffectInstance(SunlightSicknessEffect.Companion.getInstance(), 5, 0));
             }
 
