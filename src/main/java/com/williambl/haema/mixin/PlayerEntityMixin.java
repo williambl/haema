@@ -75,10 +75,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
             if (world.getGameRules().get(HaemaGameRulesKt.getVampiresBurn()).get() && this.isInDaylight() && !abilities.creativeMode) {
                 this.addStatusEffect(new StatusEffectInstance(SunlightSicknessEffect.Companion.getInstance(), 5, 0));
             }
-
-            if (this.getHealth() <= 0 && !this.isDead() && !abilities.creativeMode) {
-                bloodManager.removeBlood(0.005);
-            }
         }
     }
 
@@ -93,7 +89,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
             bloodAbsorptionAmount = bloodManager.getAbsoluteBloodLevel() > bloodAbsorptionAmount ?
                     bloodAbsorptionAmount
                     : (float) bloodManager.getAbsoluteBloodLevel();
-            bloodManager.removeBlood((1.1-Math.pow(bloodManager.getBloodLevel()/20.0, 2.0))*bloodAbsorptionAmount);
 
             boolean result = super.damage(source, amount - bloodAbsorptionAmount);
             dataTracker.set(Vampirable.Companion.getIS_KILLED(), this.getHealth() <= 0 && isDamageSourceEffective);

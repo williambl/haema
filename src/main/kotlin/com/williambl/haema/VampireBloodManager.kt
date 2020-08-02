@@ -24,10 +24,7 @@ import net.minecraft.village.VillageGossipType
 import net.minecraft.world.GameRules
 import net.minecraft.world.World
 import java.util.*
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.pow
-import kotlin.math.roundToInt
+import kotlin.math.*
 
 @Suppress("DEPRECATION")
 class VampireBloodManager : HungerManager() {
@@ -69,7 +66,7 @@ class VampireBloodManager : HungerManager() {
             attackRangeAttr?.removeModifier(VAMPIRE_ATTACK_RANGE)
         }
 
-        if (getBloodLevel() >= 8) {
+        if (getBloodLevel() >= 8 || (getBloodLevel() > 0 && player.health <= 0)) {
             if (player.world.gameRules.get(GameRules.NATURAL_REGENERATION).get() && player.canFoodHeal()) {
                 heal(player, 1.0f)
             } else if (player.health <= 0) {
@@ -123,7 +120,7 @@ class VampireBloodManager : HungerManager() {
     }
 
     fun getBloodLevel(): Double {
-        return 20.0 * ( 1.0 - (1.0 - absoluteBloodLevel /20.0).pow(2) )
+        return 20.0 * (sin((absoluteBloodLevel * PI) / 40.0))
     }
 
     fun removeBlood(blood: Double) {
