@@ -10,7 +10,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.particle.ParticleTypes;
+import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -57,15 +57,11 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Inject(method = "onDeath", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setPose(Lnet/minecraft/entity/EntityPose;)V"))
     void alertVampireHuntersToDeath(DamageSource source, CallbackInfo ci) {
-        if (source == BloodLossDamageSource.Companion.getInstance()) {
-            for (float i = 0f; i < 0.5f; i += 0.1f) {
-                world.addImportantParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, getX(), getY(), getZ(), 0.0, 2.0 * i, 0.0);
-            }
+        if (source == BloodLossDamageSource.Companion.getInstance() && world instanceof ServerWorld) {
+            ((ServerWorld) world).spawnParticles(new DustParticleEffect(1.0f,0.0f, 0.0f, 3.0f), getX(), getY()+1, getZ(), 30, 1.0, 1.0, 1.0, 0.1);
 
-            if (world instanceof ServerWorld) {
-                if (random.nextDouble() < world.getGameRules().get(HaemaGameRulesKt.getVampireHunterNoticeChance()).get())
-                    HaemaKt.getVampireHunterSpawner().trySpawnNear((ServerWorld)world, random, getBlockPos());
-            }
+            if (random.nextDouble() < world.getGameRules().get(HaemaGameRulesKt.getVampireHunterNoticeChance()).get())
+                HaemaKt.getVampireHunterSpawner().trySpawnNear((ServerWorld)world, random, getBlockPos());
         }
     }
 }

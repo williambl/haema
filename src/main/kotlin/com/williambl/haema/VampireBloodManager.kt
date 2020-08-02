@@ -19,6 +19,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.particle.DustParticleEffect
+import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.ActionResult
 import net.minecraft.village.VillageGossipType
 import net.minecraft.world.GameRules
@@ -162,6 +163,8 @@ class VampireBloodManager : HungerManager() {
         }
         if (entity is VillagerEntity && !entity.isSleeping) {
             entity.gossip.startGossip(player.uuid, VillageGossipType.MAJOR_NEGATIVE, 20)
+            if (player.world is ServerWorld)
+                vampireHunterSpawner.trySpawnNear(player.world as ServerWorld, player.random, player.blockPos)
         }
     }
 
