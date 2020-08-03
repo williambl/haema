@@ -41,9 +41,9 @@ class VampireBloodManager : HungerManager() {
     }
 
     @Deprecated("use getBloodLevel()")
-    var absoluteBloodLevel: Double = 0.0
+    var absoluteBloodLevel: Double = 9.0
 
-    var lastFed: Long = -6000
+    var lastFed: Long = -24000
 
     override fun update(player: PlayerEntity?) {
         player!!
