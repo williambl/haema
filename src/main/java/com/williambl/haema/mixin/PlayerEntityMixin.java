@@ -7,6 +7,7 @@ import com.williambl.haema.effect.SunlightSicknessEffect;
 import com.williambl.haema.util.HaemaGameRulesKt;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.HungerManager;
@@ -83,12 +84,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
         if (isVampire()) {
             boolean isDamageSourceEffective = DamageSourceExtensionsKt.isEffectiveAgainstVampires(source);
             if (isDamageSourceEffective)
-                amount *= 2;
+                amount *= 1.25;
 
             float bloodAbsorptionAmount = 0.5f * amount;
             bloodAbsorptionAmount = bloodManager.getAbsoluteBloodLevel() > bloodAbsorptionAmount ?
                     bloodAbsorptionAmount
                     : (float) bloodManager.getAbsoluteBloodLevel();
+
+            double originalMax = getAttributeBaseValue(EntityAttributes.GENERIC_MAX_HEALTH);
+            if (getHealth()-(amount-bloodAbsorptionAmount) > originalMax)
+                bloodManager.removeBlood(Math.min(bloodAbsorptionAmount, getHealth()-originalMax));
 
             boolean result = super.damage(source, amount - bloodAbsorptionAmount);
             dataTracker.set(Vampirable.Companion.getIS_KILLED(), this.getHealth() <= 0 && isDamageSourceEffective);
