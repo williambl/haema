@@ -9,6 +9,7 @@ import io.netty.buffer.Unpooled
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.attribute.EntityAttributeModifier
+import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.entity.passive.VillagerEntity
@@ -50,7 +51,7 @@ class VampireBloodManager : HungerManager() {
         player.isSilent = (getBloodLevel() >= 10 && player.isSprinting) || getBloodLevel() >= 12
 
         if (getBloodLevel() <= 3) {
-            player.addStatusEffect(StatusEffectInstance(VampiricWeaknessEffect.instance, 1, 3 - getBloodLevel().roundToInt()))
+            player.addStatusEffect(StatusEffectInstance(VampiricWeaknessEffect.instance, 5, 3 - getBloodLevel().roundToInt()))
         }
 
         val reachAttr = player.getAttributeInstance(ReachEntityAttributes.REACH)
@@ -67,6 +68,24 @@ class VampireBloodManager : HungerManager() {
             attackRangeAttr?.removeModifier(VAMPIRE_ATTACK_RANGE)
         }
 
+
+        if (getBloodLevel() >= 10) {
+            player.addStatusEffect(StatusEffectInstance(VampiricStrengthEffect.instance, 10, 0))
+        }
+
+        if (getBloodLevel() >= 14) {
+            player.addStatusEffect(StatusEffectInstance(VampiricStrengthEffect.instance, 10, 1))
+        }
+
+        if (getBloodLevel() >= 19) {
+            player.addStatusEffect(StatusEffectInstance(VampiricStrengthEffect.instance, 10, 2))
+        }
+
+        if (getBloodLevel() >= 20) {
+            player.addStatusEffect(StatusEffectInstance(StatusEffects.INVISIBILITY, 10, 0))
+        }
+
+        //Healing at the bottom, so that the health boosts aren't wiped
         if (getBloodLevel() >= 8 || (getBloodLevel() > 0 && player.health <= 0)) {
             if (player.world.gameRules.get(GameRules.NATURAL_REGENERATION).get() && player.canFoodHeal()) {
                 heal(player, 1.0f)
@@ -75,23 +94,6 @@ class VampireBloodManager : HungerManager() {
                 removeBlood(1.0)
             }
         }
-
-        if (getBloodLevel() >= 10) {
-            player.addStatusEffect(StatusEffectInstance(VampiricStrengthEffect.instance, 1, 0))
-        }
-
-        if (getBloodLevel() >= 14) {
-            player.addStatusEffect(StatusEffectInstance(VampiricStrengthEffect.instance, 1, 1))
-        }
-
-        if (getBloodLevel() >= 19) {
-            player.addStatusEffect(StatusEffectInstance(VampiricStrengthEffect.instance, 1, 2))
-        }
-
-        if (getBloodLevel() >= 20) {
-            player.addStatusEffect(StatusEffectInstance(StatusEffects.INVISIBILITY, 1, 1))
-        }
-
         sync(player)
     }
 
@@ -177,6 +179,7 @@ class VampireBloodManager : HungerManager() {
 
     fun heal(player: PlayerEntity, amount: Float) {
         player.heal(amount)
-        removeBlood((1.1-(getBloodLevel()/20.0).pow(2))*amount)
+        if (player.health < player.getAttributeBaseValue(EntityAttributes.GENERIC_MAX_HEALTH))
+            removeBlood((1.1-(getBloodLevel()/20.0).pow(2))*amount)
     }
 }
