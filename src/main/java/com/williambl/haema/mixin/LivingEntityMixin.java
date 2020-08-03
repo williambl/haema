@@ -2,6 +2,7 @@ package com.williambl.haema.mixin;
 
 import com.williambl.haema.HaemaKt;
 import com.williambl.haema.Vampirable;
+import com.williambl.haema.VampireBloodManager;
 import com.williambl.haema.damagesource.BloodLossDamageSource;
 import com.williambl.haema.damagesource.DamageSourceExtensionsKt;
 import com.williambl.haema.util.HaemaGameRulesKt;
@@ -45,7 +46,11 @@ public abstract class LivingEntityMixin extends Entity {
         if (livingEntity instanceof PlayerEntity && ((Vampirable)livingEntity).isVampire()) {
             DamageSource theCurrentSource = currentSource;
             currentSource = null;
-            return this.getHealth() <= 0 && DamageSourceExtensionsKt.isEffectiveAgainstVampires(theCurrentSource);
+            boolean result = this.getHealth() <= 0 && DamageSourceExtensionsKt.isEffectiveAgainstVampires(theCurrentSource);
+            if (result) {
+                ((VampireBloodManager)((PlayerEntity) livingEntity).getHungerManager()).setAbsoluteBloodLevel(0.0);
+            }
+            return result;
         }
         return this.isDead();
     }
