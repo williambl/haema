@@ -18,8 +18,11 @@
   "effect.haema.vampiric_strength": "Vampiric Strength",
 
   "death.attack.bloodLoss": "%1$s lost too much blood",
+  "death.attack.bloodLoss.player": "%1$s lost too much blood whilst fighting %2$s",
   "death.attack.incompatibleBlood": "%1$s forgot to drink Strength",
+  "death.attack.incompatibleBlood.player": "%1$s forgot to drink Strength whilst fighting %2$s",
   "death.attack.sunlight": "%1$s burned in the sun",
+  "death.attack.sunlight.player": "%1$s burned in the sun whilst fighting %2$s",
 
   "origin.haema.vampire.name": "Vampire",
   "origin.haema.vampire.description": "Though harmed by sunlight, vampires have great strength when in the darkness, provided they have enough blood.",
