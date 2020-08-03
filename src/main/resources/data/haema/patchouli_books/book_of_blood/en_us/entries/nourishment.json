@@ -19,7 +19,7 @@
     },
     {
       "type": "text",
-      "text": "You can gain blood by feeding from mobs with $(k:sneak)+$(k:use) - more 'human-like' mobs give better blood. You can feed as often as you like before you get to blood level four, but after that you can only feed $(italic)once every quarter day/$. Be careful feeding from villagers - if they're awake and notice you, they won't be very happy!"
+      "text": "You can gain blood by feeding from mobs with $(k:sneak)+$(k:use) - more 'human-like' mobs give better blood. You can feed as often as you like, but be careful - if you feed enough to kill someone, $(thing)Vampire Hunters/$ have a chance of noticing you. Be careful feeding from villagers - if they're awake and notice you, they won't be very happy!"
     },
     {
       "type": "spotlight",

@@ -1,0 +1,11 @@
+{
+  "name": "7: Your Weaknesses",
+  "icon": "minecraft:wooden_sword",
+  "category": "haema:surviving",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Vampires can only be killed by certain things. These are:$(br) - Sunlight$(br) - Lightning$(br) - Drowning$(br) - Dragon Breath$(br) - The Void$(br) - Certain weapons, such as wooden swords$(br) - Attacks with the Smite enchantment"
+    }
+  ]
+}
