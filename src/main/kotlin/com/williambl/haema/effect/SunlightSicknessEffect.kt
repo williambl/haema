@@ -27,8 +27,8 @@ class SunlightSicknessEffect(type: StatusEffectType?, color: Int) : StatusEffect
             return
 
         if (entity.age % 10 == 0) {
-            entity.damage(SunlightDamageSource.instance, 0.25f)
-            (entity.hungerManager as VampireBloodManager).removeBlood(0.01)
+            entity.damage(SunlightDamageSource.instance, 0.5f)
+            (entity.hungerManager as VampireBloodManager).removeBlood(0.25)
             val pos = entity.pos
             val rand = entity.random
             for (i in 0..10) {
