@@ -1,30 +1,30 @@
 {
-  "name": "4: Nourishment",
+  "name": "bookOfBlood.4.title",
   "icon": "minecraft:cooked_beef",
   "category": "haema:surviving",
   "pages": [
     {
       "type": "text",
-      "text": "You'll probably notice that your vision is much less saturated when you become a vampire - this is because you don't have enough $(thing)blood/$."
+      "text": "bookOfBlood.4.text.1.text"
     },
     {
       "type": "text",
-      "text": "As a vampire, you don't need food any more - your hunger bar is now a blood bar."
+      "text": "bookOfBlood.4.text.2.text"
     },
     {
       "type": "entity",
       "entity": "minecraft:villager",
       "rotate": false,
-      "name": "A Tasty Meal"
+      "name": "bookOfBlood.4.entity.1.name"
     },
     {
       "type": "text",
-      "text": "You can gain blood by feeding from mobs with $(k:sneak)+$(k:use) - more 'human-like' mobs give better blood. You can feed as often as you like, but be careful - if you feed enough to kill someone, $(thing)Vampire Hunters/$ have a chance of noticing you. Be careful feeding from villagers - if they're awake and notice you, they won't be very happy!"
+      "text": "bookOfBlood.4.text.3.text"
     },
     {
       "type": "spotlight",
       "item": "haema:vampire_blood_injector",
-      "text": "You can use $(item)Vampire Blood Injectors/$ and $(item)Empty Vampire Blood Injectors/$ to give yourself (or take away) blood any time."
+      "text": "bookOfBlood.4.spotlight.1.text"
     }
   ]
 }

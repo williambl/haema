@@ -1,5 +1,5 @@
 {
-  "name": "2: Crafting an Injector",
+  "name": "bookOfBlood.2.title",
   "icon": "haema:empty_vampire_blood_injector",
   "category": "haema:beginning",
   "pages": [
@@ -10,7 +10,7 @@
     },
     {
       "type": "text",
-      "text": "Once you have $(item)Vampire Blood/$, you need to put it into an $(item)injector/$ - this is the tool that you will use to become a vampire!"
+      "text": "bookOfBlood.2.text.1.text"
     }
   ]
 }

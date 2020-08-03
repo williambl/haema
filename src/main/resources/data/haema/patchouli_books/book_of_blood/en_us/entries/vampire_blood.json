@@ -1,12 +1,12 @@
 {
-  "name": "1: Finding Vampire Blood",
+  "name": "bookOfBlood.1.title",
   "icon": "haema:vampire_blood",
   "category": "haema:beginning",
   "pages": [
     {
       "type": "spotlight",
       "item": "haema:vampire_blood",
-      "text": "$(item)Vampire Blood/$ can be found in dungeons, temples, or from trading with cleric villagers."
+      "text": "bookOfBlood.1.spotlight.1.text"
     }
   ]
 }

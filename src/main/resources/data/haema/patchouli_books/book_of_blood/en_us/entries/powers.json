@@ -1,25 +1,25 @@
 {
-  "name": "6: Your Powers",
+  "name": "bookOfBlood.6.title",
   "icon": "minecraft:netherite_sword",
   "category": "haema:surviving",
   "pages": [
     {
       "type": "text",
-      "text": "As a vampire, you have many powers, which are unlocked as your blood level goes up:$(br) - Blood Level 1: Vampiric Weakness III$(br) - Blood Level 2: Vampiric Weakness II$(br) - Blood Level 3: Vampiric Weakness I$(br) - Blood Level 6: Extended reach, sprinting$(br) - Blood Level 8: Regeneration$(br) - Blood Level 10: Vampiric Strength I"
+      "text": "bookOfBlood.6.text.1.text"
     },
     {
       "type": "text",
-      "text": "$(br) - Blood Level 14: Vampiric Strength II$(br) - Blood Level 19: Vampiric Strength III, dash ability$(br) - Blood Level 20: Invisibility"
+      "text": "bookOfBlood.6.text.2.text"
     },
     {
       "type": "text",
-      "title": "Vampiric Weakness",
-      "text": "Vampiric Weakness is a status effect that slows you down, weakens you, and makes you less resistant to damage. Vampiric Strength is a status effect that does the opposite."
+      "title": "bookOfBlood.6.text.3.title",
+      "text": "bookOfBlood.6.text.3.text"
     },
     {
       "type": "text",
-      "title": "Dash",
-      "text": "The dash ability is a short-range teleport, which can be activated with $(k:haema.dash)."
+      "title": "bookOfBlood.6.text.4.title",
+      "text": "bookOfBlood.6.text.4.text"
     }
   ]
 }

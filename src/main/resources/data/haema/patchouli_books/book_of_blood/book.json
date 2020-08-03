@@ -1,6 +1,7 @@
 {
-  "name": "The Book of Blood",
+  "name": "bookOfBlood.name",
   "landing_text": "",
   "book_texture": "patchouli:textures/gui/book_red.png",
+  "i18n": true,
   "version": 1
 }

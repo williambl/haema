@@ -1,25 +1,24 @@
 {
-  "name": "5: A Warning",
+  "name": "bookOfBlood.5.title",
   "icon": "minecraft:crossbow",
   "category": "haema:surviving",
   "pages": [
     {
       "type": "text",
-      "text": "$(thing)Vampire Hunters/$ were once Illagers, who have turned from attacking villages to defending them from the threat of vampires."
+      "text": "bookOfBlood.5.text.1.text"
     },
     {
       "type": "text",
-      "text": "They have a chance of noticing when a mob dies from a vampire's feeding, and Villagers will call them to their aid if they notice a vampire feeding on them!"
+      "text": "bookOfBlood.5.text.2.text"
     },
     {
       "type": "entity",
       "entity": "haema:vampire_hunter",
-      "rotate": false,
-      "name": "Your Enemy"
+      "rotate": false
     },
     {
       "type": "text",
-      "text": "They have crossbows, and will use them against you from a distance. They also have wooden swords for up-close fighting, so be careful!"
+      "text": "bookOfBlood.5.text.3.text"
     }
   ]
 }

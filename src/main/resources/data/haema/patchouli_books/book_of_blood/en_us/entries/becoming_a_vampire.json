@@ -1,11 +1,11 @@
 {
-  "name": "3: Becoming a vampire!",
+  "name": "bookOfBlood.3.title",
   "icon": "haema:vampire_blood_injector",
   "category": "haema:beginning",
   "pages": [
     {
       "type": "text",
-      "text": "Becoming a vampire is a dangerous process, so you need $(thing)Strength II/$ to survive it. When you have the $(thing)Strength II/$ effect, use the $(item)Vampire Blood Injector/$ on yourself and become a vampire!"
+      "text": "bookOfBlood.3.text.1.text"
     }
   ]
 }
