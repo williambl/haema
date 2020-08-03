@@ -88,7 +88,7 @@ class VampireBloodManager : HungerManager() {
         }
 
         //Healing at the bottom, so that the health boosts aren't wiped
-        if (getBloodLevel() >= 8 || (getBloodLevel() > 0 && player.health <= 0)) {
+        if (getBloodLevel() >= 8 || (getBloodLevel() > 0 && player.health <= 0 && player.isAlive)) {
             if (player.world.gameRules.get(GameRules.NATURAL_REGENERATION).get() && player.canFoodHeal()) {
                 heal(player, 1.0f)
             } else if (player.health <= 0) {
