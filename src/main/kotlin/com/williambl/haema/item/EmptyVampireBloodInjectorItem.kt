@@ -37,8 +37,10 @@ class EmptyVampireBloodInjectorItem(settings: Settings?) : Item(settings) {
                 user.kill()
                 return true
             }
-            if ((user.hungerManager as VampireBloodManager).absoluteBloodLevel < 6.0)
-                return true
+            if ((user.hungerManager as VampireBloodManager).absoluteBloodLevel < 6.0) {
+                (user.hungerManager as VampireBloodManager).removeBlood(6.0)
+                return false
+            }
             (user.hungerManager as VampireBloodManager).removeBlood(6.0)
             return true
         }
