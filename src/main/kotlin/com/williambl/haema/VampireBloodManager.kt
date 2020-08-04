@@ -138,7 +138,7 @@ class VampireBloodManager : HungerManager() {
 
     fun feed(entity: LivingEntity, player: PlayerEntity): ActionResult {
         if (getBloodLevel() > 8.5 && lastFed >= player.world.time - getFeedCooldown(player.world))
-            return ActionResult.PASS
+            return if (entity.isSleeping) ActionResult.FAIL else ActionResult.PASS //Prevents accidentally waking up villagers
 
         if (goodBloodTag.contains(entity.type)) {
             feed(0.8, entity, player)
