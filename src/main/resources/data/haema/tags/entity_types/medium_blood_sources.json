@@ -4,6 +4,17 @@
     "minecraft:sheep",
     "minecraft:pig",
     "minecraft:cow",
-    "minecraft:chicken"
+    "minecraft:chicken",
+    "minecraft:horse",
+    "minecraft:cat",
+    "minecraft:llama",
+    "minecraft:mooshroom",
+    "minecraft:mule",
+    "minecraft:ocelot",
+    "minecraft:panda",
+    "minecraft:piglin",
+    "minecraft:rabbit",
+    "minecraft:wolf",
+    "minecraft:trader_llama"
   ]
 }
