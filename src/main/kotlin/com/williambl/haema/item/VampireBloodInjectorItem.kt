@@ -22,7 +22,7 @@ class VampireBloodInjectorItem(settings: Settings?) : Item(settings) {
 
     override fun use(world: World, user: PlayerEntity, hand: Hand): TypedActionResult<ItemStack> {
         val emptyStack = ItemStack(Registry.ITEM.get(Identifier("haema:empty_vampire_blood_injector")))
-        return if (tryUse(user))
+        return if (tryUse(user, hand))
             TypedActionResult.consume(emptyStack)
         else
             TypedActionResult.pass(user.getStackInHand(hand))
@@ -33,13 +33,17 @@ class VampireBloodInjectorItem(settings: Settings?) : Item(settings) {
         tooltip.add(TranslatableText("item.haema.vampire_blood_injector.desc").formatted(Formatting.DARK_RED))
     }
 
-    fun tryUse(user: PlayerEntity): Boolean {
+    fun tryUse(user: PlayerEntity, hand: Hand? = null): Boolean {
         if ((user as Vampirable).isVampire) {
             (user.hungerManager as VampireBloodManager).addBlood(6.0)
             return true
         }
 
         if (!user.hasStatusEffect(StatusEffects.STRENGTH) || user.getStatusEffect(StatusEffects.STRENGTH)!!.amplifier <= 0) {
+            //awful hack, but the player dies before the item can be changed
+            if (hand != null)
+                user.setStackInHand(hand, ItemStack(Registry.ITEM.get(Identifier("haema:empty_vampire_blood_injector"))))
+
             user.addStatusEffect(StatusEffectInstance(StatusEffects.WITHER, 3000))
             user.addStatusEffect(StatusEffectInstance(StatusEffects.NAUSEA, 100))
             user.damage(IncompatibleBloodDamageSource.instance, 20f)
