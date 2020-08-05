@@ -14,8 +14,7 @@
     {
       "type": "entity",
       "entity": "minecraft:villager",
-      "rotate": false,
-      "name": "bookOfBlood.4.entity.1.name"
+      "rotate": false
     },
     {
       "type": "text",
