@@ -105,7 +105,6 @@ fun init() {
 
     ServerEntityEvents.ENTITY_LOAD.register(ServerEntityEvents.Load { entity, serverWorld ->
         if (entity is PlayerEntity) {
-            println(entity.name)
             val buf = PacketByteBuf(Unpooled.buffer())
             buf.writeInt(serverWorld.gameRules.get(dashCooldown).get())
             ServerSidePacketRegistry.INSTANCE.sendToPlayer(entity, Identifier("haema:updatedashcooldown"), buf)
