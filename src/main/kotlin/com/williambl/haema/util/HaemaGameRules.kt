@@ -7,4 +7,6 @@ lateinit var vampiresBurn: GameRules.Key<GameRules.BooleanRule>
 
 lateinit var feedCooldown: GameRules.Key<GameRules.IntRule>
 
+lateinit var dashCooldown: GameRules.Key<GameRules.IntRule>
+
 lateinit var vampireHunterNoticeChance: GameRules.Key<DoubleRule>

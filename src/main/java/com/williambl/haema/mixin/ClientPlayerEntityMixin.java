@@ -23,6 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
 
     private boolean wasPressed;
+    private long lastDashed = -24000;
 
     public ClientPlayerEntityMixin(ClientWorld world, GameProfile profile) {
         super(world, profile);
@@ -36,6 +37,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             if (wasPressed && !(HaemaClientKt.getDASH_KEY().isPressed()) && canDash()) {
                 PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
                 ClientSidePacketRegistry.INSTANCE.sendToServer(new Identifier("haema:dash"), buf);
+                lastDashed = world.getTime();
             } else if (HaemaClientKt.getDASH_KEY().isPressed() && canDash()) {
                 Vec3d target = RaytraceUtilKt.raytraceForDash(this);
                 if (target != null) for (int i = 0; i < 10; i++) {
@@ -47,6 +49,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     }
 
     boolean canDash() {
-        return ((VampireBloodManager)hungerManager).getBloodLevel() > 18 || abilities.creativeMode;
+        return world.getTime() > lastDashed+HaemaClientKt.getDashCooldownValue() && (((VampireBloodManager)hungerManager).getBloodLevel() > 18 || abilities.creativeMode);
     }
 }

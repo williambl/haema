@@ -22,6 +22,8 @@ val VAMPIRE_SHADER: ManagedShaderEffect = ShaderEffectManager.getInstance()
 
 val DASH_KEY = KeyBinding("key.haema.dash", GLFW.GLFW_KEY_U, "key.categories.movement")
 
+var dashCooldownValue = 10
+
 fun init() {
     ClientSidePacketRegistry.INSTANCE.register(Identifier("haema:bloodlevelsync")) { packetContext, packetByteBuf ->
         if (packetContext.player is Vampirable) {
@@ -29,6 +31,10 @@ fun init() {
             (packetContext.player.hungerManager as VampireBloodManager).absoluteBloodLevel = packetByteBuf.readDouble()
         }
     }
+    ClientSidePacketRegistry.INSTANCE.register(Identifier("haema:updatedashcooldown")) { packetContext, packetByteBuf ->
+        dashCooldownValue = packetByteBuf.readInt()
+    }
+
     ShaderEffectRenderCallback.EVENT.register(ShaderEffectRenderCallback {
         if ((MinecraftClient.getInstance().player as Vampirable).isVampire)
             VAMPIRE_SHADER.render(it)

@@ -9,8 +9,10 @@ import com.williambl.haema.entity.VampireHunterSpawner
 import com.williambl.haema.item.EmptyVampireBloodInjectorItem
 import com.williambl.haema.item.VampireBloodInjectorItem
 import com.williambl.haema.util.*
+import io.netty.buffer.Unpooled
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
 import net.fabricmc.fabric.api.gamerule.v1.CustomGameRuleCategory
@@ -41,6 +43,7 @@ import net.minecraft.item.Items
 import net.minecraft.loot.ConstantLootTableRange
 import net.minecraft.loot.LootManager
 import net.minecraft.loot.entry.ItemEntry
+import net.minecraft.network.PacketByteBuf
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.resource.ResourceManager
 import net.minecraft.server.world.ServerWorld
@@ -100,6 +103,15 @@ fun init() {
         } else ActionResult.PASS
     })
 
+    ServerEntityEvents.ENTITY_LOAD.register(ServerEntityEvents.Load { entity, serverWorld ->
+        if (entity is PlayerEntity) {
+            println(entity.name)
+            val buf = PacketByteBuf(Unpooled.buffer())
+            buf.writeInt(serverWorld.gameRules.get(dashCooldown).get())
+            ServerSidePacketRegistry.INSTANCE.sendToPlayer(entity, Identifier("haema:updatedashcooldown"), buf)
+        }
+    })
+
     LootTableLoadingCallback.EVENT.register(LootTableLoadingCallback { resourceManager: ResourceManager?, lootManager: LootManager?, id: Identifier?, supplier: FabricLootSupplierBuilder, setter: LootTableSetter? ->
         if (id == dungeonLootTable || id == jungleTempleLootTable || id == desertPyramidLootTable) {
             val poolBuilder: FabricLootPoolBuilder = FabricLootPoolBuilder.builder()
@@ -115,6 +127,8 @@ fun init() {
             supplier.withPool(poolBuilder.build())
         }
     })
+
+
 
     ServerSidePacketRegistry.INSTANCE.register(Identifier("haema:dash")) { packetContext, packetByteBuf ->
         val player = packetContext.player
@@ -259,6 +273,11 @@ fun init() {
 
     vampiresBurn = GameRuleRegistry.register("vampiresBurn", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(true))
     feedCooldown = GameRuleRegistry.register("feedCooldown", GameRules.Category.PLAYER, GameRuleFactory.createIntRule(10, 0, 24000))
+    dashCooldown = GameRuleRegistry.register("dashCooldown", GameRules.Category.PLAYER, GameRuleFactory.createIntRule(10, 0, 24000) { server, rule ->
+        val buf = PacketByteBuf(Unpooled.buffer())
+        buf.writeInt(rule.get())
+        server.playerManager.sendToAll(ServerSidePacketRegistry.INSTANCE.toPacket(Identifier("haema:updatedashcooldown"), buf))
+    })
     vampireHunterNoticeChance = GameRuleRegistry.register("vampireHunterNoticeChance", GameRules.Category.MOBS, GameRuleFactory.createDoubleRule(0.1, 0.0, 1.0))
 
     logger.info("Everything registered. It's vampire time!")
