@@ -4,6 +4,7 @@ import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes
 import com.williambl.haema.damagesource.BloodLossDamageSource
 import com.williambl.haema.effect.VampiricStrengthEffect
 import com.williambl.haema.effect.VampiricWeaknessEffect
+import com.williambl.haema.util.computeValueWithout
 import com.williambl.haema.util.feedCooldown
 import io.netty.buffer.Unpooled
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
@@ -181,7 +182,7 @@ class VampireBloodManager : HungerManager() {
 
     fun heal(player: PlayerEntity, amount: Float) {
         player.heal(amount)
-        if (player.health < player.getAttributeBaseValue(EntityAttributes.GENERIC_MAX_HEALTH))
+        if (player.health < player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.computeValueWithout(UUID.fromString("858a6a28-5092-49ea-a94e-eb74db018a92")) ?: 20.0)
             removeBlood((1.1-(getBloodLevel()/20.0).pow(2))*amount)
     }
 }

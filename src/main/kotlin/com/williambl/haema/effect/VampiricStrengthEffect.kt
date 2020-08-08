@@ -1,11 +1,13 @@
 package com.williambl.haema.effect
 
+import com.williambl.haema.util.computeValueWithout
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.attribute.AttributeContainer
 import net.minecraft.entity.attribute.EntityAttributeModifier
 import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.effect.StatusEffect
 import net.minecraft.entity.effect.StatusEffectType
+import java.util.*
 
 class VampiricStrengthEffect(type: StatusEffectType?, color: Int) : StatusEffect(type, color) {
 
@@ -43,7 +45,7 @@ class VampiricStrengthEffect(type: StatusEffectType?, color: Int) : StatusEffect
 
     override fun onApplied(entity: LivingEntity, attributes: AttributeContainer?, amplifier: Int) {
         super.onApplied(entity, attributes, amplifier)
-        if (entity.health == entity.getAttributeBaseValue(EntityAttributes.GENERIC_MAX_HEALTH).toFloat())
+        if (entity.health == entity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.computeValueWithout(UUID.fromString("858a6a28-5092-49ea-a94e-eb74db018a92"))?.toFloat() ?: 0.0)
             entity.health = entity.maxHealth
     }
 
