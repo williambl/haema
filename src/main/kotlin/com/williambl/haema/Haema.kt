@@ -24,6 +24,7 @@ import net.fabricmc.fabric.api.loot.v1.event.LootTableLoadingCallback
 import net.fabricmc.fabric.api.loot.v1.event.LootTableLoadingCallback.LootTableSetter
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
 import net.fabricmc.fabric.api.tag.TagRegistry
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.block.BedBlock
 import net.minecraft.block.DispenserBlock
 import net.minecraft.block.dispenser.FallibleItemDispenserBehavior
@@ -278,6 +279,7 @@ fun init() {
         server.playerManager.sendToAll(ServerSidePacketRegistry.INSTANCE.toPacket(Identifier("haema:updatedashcooldown"), buf))
     })
     vampireHunterNoticeChance = GameRuleRegistry.register("vampireHunterNoticeChance", GameRules.Category.MOBS, GameRuleFactory.createDoubleRule(0.1, 0.0, 1.0))
+    playerVampireConversion = GameRuleRegistry.register("playerVampireConversion", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(!FabricLoader.getInstance().isModLoaded("origins")))
 
     logger.info("Everything registered. It's vampire time!")
 }

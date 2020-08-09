@@ -10,3 +10,5 @@ lateinit var feedCooldown: GameRules.Key<GameRules.IntRule>
 lateinit var dashCooldown: GameRules.Key<GameRules.IntRule>
 
 lateinit var vampireHunterNoticeChance: GameRules.Key<DoubleRule>
+
+lateinit var playerVampireConversion: GameRules.Key<GameRules.BooleanRule>

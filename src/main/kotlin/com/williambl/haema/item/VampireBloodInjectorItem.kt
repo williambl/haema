@@ -3,6 +3,7 @@ package com.williambl.haema.item
 import com.williambl.haema.Vampirable
 import com.williambl.haema.VampireBloodManager
 import com.williambl.haema.damagesource.IncompatibleBloodDamageSource
+import com.williambl.haema.util.playerVampireConversion
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.effect.StatusEffects
@@ -39,7 +40,7 @@ class VampireBloodInjectorItem(settings: Settings?) : Item(settings) {
             return true
         }
 
-        if (!user.hasStatusEffect(StatusEffects.STRENGTH) || user.getStatusEffect(StatusEffects.STRENGTH)!!.amplifier <= 0) {
+        if (!user.hasStatusEffect(StatusEffects.STRENGTH) || user.getStatusEffect(StatusEffects.STRENGTH)!!.amplifier <= 0 || !user.world.gameRules[playerVampireConversion].get()) {
             //awful hack, but the player dies before the item can be changed
             if (hand != null)
                 user.setStackInHand(hand, ItemStack(Registry.ITEM.get(Identifier("haema:empty_vampire_blood_injector"))))

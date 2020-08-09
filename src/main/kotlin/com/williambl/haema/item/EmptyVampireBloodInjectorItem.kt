@@ -2,6 +2,7 @@ package com.williambl.haema.item
 
 import com.williambl.haema.Vampirable
 import com.williambl.haema.VampireBloodManager
+import com.williambl.haema.util.playerVampireConversion
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.entity.player.PlayerEntity
@@ -32,7 +33,7 @@ class EmptyVampireBloodInjectorItem(settings: Settings?) : Item(settings) {
 
     fun tryUse(user: PlayerEntity, hand: Hand? = null): Boolean {
         if ((user as Vampirable).isVampire) {
-            if (user.hasStatusEffect(StatusEffects.WEAKNESS) && !user.isPermanentVampire) {
+            if (user.hasStatusEffect(StatusEffects.WEAKNESS) && !(user.isPermanentVampire) && user.world.gameRules[playerVampireConversion].get()) {
                 (user as Vampirable).isVampire = false
                 //awful hack, but the player dies before the item can be changed
                 if (hand != null)
