@@ -56,6 +56,9 @@
   "gamerule.vampireHunterNoticeChance": "Vampire Hunter Notice Chance",
   "gamerule.vampireHunterNoticeChance.description": "Chance that a vampire hunter group will spawn when killing a mob through feeding",
 
+  "gamerule.playerVampireConversion": "Player Vampire Conversion",
+  "gamerule.playerVampireConversion.description": "Whether players can convert to being vampires and back with injectors.",
+
   "bookOfBlood.name": "Book Of Blood",
 
   "bookOfBlood.beginning": "Beginning",
