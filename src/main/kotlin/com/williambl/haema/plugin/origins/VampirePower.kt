@@ -45,7 +45,7 @@ class VampirePower(type: PowerType<*>?, player: PlayerEntity?) : Power(type, pla
             if (!isOrbOfOrigin) {
                 if (spawn != null) {
                     val tpPos =
-                        BedBlock.canWakeUpAt(EntityType.PLAYER, spawn.left, spawn.right)
+                        BedBlock.findWakeUpPosition(EntityType.PLAYER, spawn.left, spawn.right, player.yaw)
                     if (tpPos.isPresent) {
                         serverPlayer.teleport(
                             spawn.left,

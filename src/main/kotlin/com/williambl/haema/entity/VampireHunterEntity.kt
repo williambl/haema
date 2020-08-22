@@ -25,13 +25,13 @@ import net.minecraft.util.DyeColor
 import net.minecraft.util.Formatting
 import net.minecraft.util.Hand
 import net.minecraft.world.LocalDifficulty
+import net.minecraft.world.ServerWorldAccess
 import net.minecraft.world.World
-import net.minecraft.world.WorldAccess
 
 class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, world: World?) : PatrolEntity(entityType, world), CrossbowUser {
     val inventory = SimpleInventory(5)
 
-    override fun initialize(world: WorldAccess?, difficulty: LocalDifficulty?, spawnReason: SpawnReason?, entityData: EntityData?, entityTag: CompoundTag?): EntityData? {
+    override fun initialize(world: ServerWorldAccess?, difficulty: LocalDifficulty?, spawnReason: SpawnReason?, entityData: EntityData?, entityTag: CompoundTag?): EntityData? {
         val result =  super.initialize(world, difficulty, spawnReason, entityData, entityTag)
         initEquipment(difficulty)
         return result

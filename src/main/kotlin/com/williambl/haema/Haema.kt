@@ -97,7 +97,7 @@ fun init() {
             blockHitResult.blockPos
         else
             blockHitResult.blockPos.offset(state.get(BedBlock.FACING))
-        val entities = world.getEntities(player, Box(pos)) { it is LivingEntity && it.isSleeping }
+        val entities = world.getOtherEntities(player, Box(pos)) { it is LivingEntity && it.isSleeping }
 
         if (entities.isNotEmpty() && (player as Vampirable).isVampire && player.isSneaking) {
             (player.hungerManager as VampireBloodManager).feed(entities[0] as LivingEntity, player)
@@ -250,7 +250,7 @@ fun init() {
     DispenserBlock.registerBehavior(Registry.ITEM.get(Identifier("haema:vampire_blood_injector")), object : FallibleItemDispenserBehavior() {
         override fun dispenseSilently(pointer: BlockPointer, stack: ItemStack): ItemStack {
             val blockPos = pointer.blockPos.offset(pointer.blockState.get(DispenserBlock.FACING))
-            val user = pointer.world.getEntities(PlayerEntity::class.java, Box(blockPos), null)
+            val user = pointer.world.getEntitiesByClass(PlayerEntity::class.java, Box(blockPos), null)
                     .firstOrNull() ?: return stack
             return if ((stack.item as VampireBloodInjectorItem).tryUse(user))
                 ItemStack(Registry.ITEM.get(Identifier("haema:empty_vampire_blood_injector")))
@@ -262,7 +262,7 @@ fun init() {
     DispenserBlock.registerBehavior(Registry.ITEM.get(Identifier("haema:empty_vampire_blood_injector")), object : FallibleItemDispenserBehavior() {
         override fun dispenseSilently(pointer: BlockPointer, stack: ItemStack): ItemStack {
             val blockPos = pointer.blockPos.offset(pointer.blockState.get(DispenserBlock.FACING))
-            val user = pointer.world.getEntities(PlayerEntity::class.java, Box(blockPos), null)
+            val user = pointer.world.getEntitiesByClass(PlayerEntity::class.java, Box(blockPos), null)
                     .firstOrNull() ?: return stack
             return if ((stack.item as EmptyVampireBloodInjectorItem).tryUse(user))
                 ItemStack(Registry.ITEM.get(Identifier("haema:vampire_blood_injector")))

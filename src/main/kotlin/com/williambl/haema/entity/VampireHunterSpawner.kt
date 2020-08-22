@@ -11,7 +11,6 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.world.GameRules
 import net.minecraft.world.Heightmap
 import net.minecraft.world.SpawnHelper
-import net.minecraft.world.World
 import net.minecraft.world.biome.Biome
 import net.minecraft.world.gen.Spawner
 import java.util.*
@@ -84,7 +83,7 @@ class VampireHunterSpawner(val entityType: EntityType<out VampireHunterEntity>) 
         return amountToSpawn
     }
 
-    private fun spawnOneEntity(world: World, blockPos: BlockPos, random: Random, isLeader: Boolean): Boolean {
+    private fun spawnOneEntity(world: ServerWorld, blockPos: BlockPos, random: Random, isLeader: Boolean): Boolean {
         val blockState = world.getBlockState(blockPos)
         if (!SpawnHelper.isClearForSpawn(world, blockPos, blockState, blockState.fluidState, entityType))
             return false

@@ -33,11 +33,12 @@
     "haema.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.8.7",
+    "fabricloader": "*",
     "fabric": "*",
     "fabric-language-kotlin": "*",
     "minecraft": "1.16.x"
   },
   "suggests": {
+    "origins": ">=3.0.0"
   }
 }

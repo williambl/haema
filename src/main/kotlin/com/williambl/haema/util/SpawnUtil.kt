@@ -26,7 +26,7 @@ fun getSpawn(player: PlayerEntity, isSpawnObstructed: Boolean): Pair<ServerWorld
                         continue@yloop
                     if (world.getFluidState(mutable).fluid != Fluids.EMPTY)
                         continue@yloop
-                    val candidate = BedBlock.canWakeUpAt(EntityType.PLAYER, world, mutable)
+                    val candidate = BedBlock.findWakeUpPosition(EntityType.PLAYER, world, mutable, player.yaw)
                     if (candidate.isPresent)
                         candidates.add(candidate.get())
                 }
