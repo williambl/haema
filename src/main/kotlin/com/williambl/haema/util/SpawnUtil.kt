@@ -1,7 +1,7 @@
 package com.williambl.haema.util
 
 import com.williambl.haema.logger
-import net.minecraft.block.BedBlock
+import net.minecraft.entity.Dismounting
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.fluid.Fluids
@@ -11,7 +11,7 @@ import net.minecraft.util.Pair
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 
-fun getSpawn(player: PlayerEntity, isSpawnObstructed: Boolean): Pair<ServerWorld, BlockPos>? {
+fun getSpawn(player: PlayerEntity): Pair<ServerWorld, BlockPos>? {
     if (player is ServerPlayerEntity) {
         val world = player.world as ServerWorld
         val regularSpawn: BlockPos = world.spawnPos
@@ -26,9 +26,9 @@ fun getSpawn(player: PlayerEntity, isSpawnObstructed: Boolean): Pair<ServerWorld
                         continue@yloop
                     if (world.getFluidState(mutable).fluid != Fluids.EMPTY)
                         continue@yloop
-                    val candidate = BedBlock.findWakeUpPosition(EntityType.PLAYER, world, mutable, player.yaw)
-                    if (candidate.isPresent)
-                        candidates.add(candidate.get())
+                    val candidate = Dismounting.method_30769(EntityType.PLAYER, world, mutable, true)
+                    if (candidate != null)
+                        candidates.add(candidate)
                 }
             }
         }

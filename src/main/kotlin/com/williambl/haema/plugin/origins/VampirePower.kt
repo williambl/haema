@@ -41,7 +41,7 @@ class VampirePower(type: PowerType<*>?, player: PlayerEntity?) : Power(type, pla
         if (isOrbOfOrigin) return
         if (player is ServerPlayerEntity) {
             val serverPlayer = player as ServerPlayerEntity
-            val spawn: Pair<ServerWorld, BlockPos>? = getSpawn(player, false)
+            val spawn: Pair<ServerWorld, BlockPos>? = getSpawn(player)
             if (!isOrbOfOrigin) {
                 if (spawn != null) {
                     val tpPos =
