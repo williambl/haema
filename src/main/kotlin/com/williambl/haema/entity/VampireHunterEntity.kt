@@ -11,7 +11,7 @@ import net.minecraft.entity.data.TrackedData
 import net.minecraft.entity.data.TrackedDataHandlerRegistry
 import net.minecraft.entity.mob.MobEntity
 import net.minecraft.entity.mob.PatrolEntity
-import net.minecraft.entity.passive.AbstractTraderEntity
+import net.minecraft.entity.passive.MerchantEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.projectile.ProjectileEntity
 import net.minecraft.inventory.SimpleInventory
@@ -46,7 +46,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
         goalSelector.add(9, LookAtEntityGoal(this, PlayerEntity::class.java, 15.0f, 1.0f))
         goalSelector.add(10, LookAtEntityGoal(this, MobEntity::class.java, 15.0f))
 
-        targetSelector.add(1, RevengeGoal(this, AbstractTraderEntity::class.java).setGroupRevenge())
+        targetSelector.add(1, RevengeGoal(this, MerchantEntity::class.java).setGroupRevenge())
         targetSelector.add(2, FollowTargetGoal(this, PlayerEntity::class.java, 10, true, false) { it is Vampirable && it.isVampire })
     }
 
@@ -153,7 +153,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
     override fun isTeammate(other: Entity?): Boolean {
         return if (super.isTeammate(other)) {
             true
-        } else if (other is VampireHunterEntity || other is AbstractTraderEntity) {
+        } else if (other is VampireHunterEntity || other is MerchantEntity) {
             this.scoreboardTeam == null && other.scoreboardTeam == null
         } else {
             false
