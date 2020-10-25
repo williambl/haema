@@ -28,6 +28,10 @@ repositories {
         url = "https://dl.bintray.com/adriantodt/maven"
     }
     maven { url 'https://maven.blamejared.com' }
+    maven {
+        name = "Ladysnake Libs"
+        url = "https://dl.bintray.com/ladysnake/libs"
+    }
 }
 
 dependencies {
@@ -69,13 +73,22 @@ dependencies {
         exclude module: "fabric-dimensions-v1"
         exclude module: "fabric-biomes-v1"
     }
-    modRuntime "me.shedaniel:RoughlyEnoughItems:${project.rei_version}"
+    modRuntime ("me.shedaniel:RoughlyEnoughItems:${project.rei_version}") {
+        exclude module: "fabric-dimensions-v1"
+        exclude module: "fabric-biomes-v1"
+    }
 
     modImplementation("com.github.apace100:origins-fabric:${project.origins_version}") {
         exclude module: "fabric-dimensions-v1"
         exclude module: "fabric-biomes-v1"
     }
-    modRuntime "com.github.apace100:origins-fabric:${project.origins_version}"
+    modRuntime ("com.github.apace100:origins-fabric:${project.origins_version}") {
+        exclude module: "fabric-dimensions-v1"
+        exclude module: "fabric-biomes-v1"
+    }
+
+    modImplementation "io.github.onyxstudios:Cardinal-Components-API:${project.cc_version}"
+    include "io.github.onyxstudios:Cardinal-Components-API:${project.cc_version}"
 
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
     // You may need to force-disable transitiveness on them.
@@ -135,3 +148,9 @@ publishing {
 }
 
 compileKotlin.kotlinOptions.jvmTarget = "1.8"
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        freeCompilerArgs += '-Xjvm-default=all'
+    }
+}
