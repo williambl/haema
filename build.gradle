@@ -149,6 +149,9 @@ publishing {
 
 compileKotlin.kotlinOptions.jvmTarget = "1.8"
 
+/**
+ * https://dev.to/williambl/mixins-kotlin-and-default-methods-why-they-don-t-work-together-417d
+ */
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
         freeCompilerArgs += '-Xjvm-default=all'
