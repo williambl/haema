@@ -1,7 +1,6 @@
 package com.williambl.haema.plugin.origins
 
 import com.williambl.haema.Vampirable
-import com.williambl.haema.VampireBloodManager
 import com.williambl.haema.logger
 import com.williambl.haema.util.getSpawn
 import io.github.apace100.origins.power.Power
@@ -30,8 +29,6 @@ class VampirePower(type: PowerType<*>?, player: PlayerEntity?) : Power(type, pla
     }
 
     override fun onChosen(isOrbOfOrigin: Boolean) {
-        (player.hungerManager as VampireBloodManager).addBlood(8.0)
-
         val bookStack = ItemStack(Registry.ITEM[Identifier("patchouli:guide_book")])
         val tag = CompoundTag()
         tag.putString("patchouli:book", "haema:book_of_blood")
