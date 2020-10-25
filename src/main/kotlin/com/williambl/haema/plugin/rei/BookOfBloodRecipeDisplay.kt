@@ -37,9 +37,9 @@ class BookOfBloodRecipeDisplay(private val recipe: BookOfBloodRecipe) : DefaultC
 
     override fun getOutputEntries(): MutableList<EntryStack> = EntryStack.ofItemStacks(listOf(resultStack.copy()))
 
-    override fun getRecipeLocation(): Optional<Identifier?>? = optionalRecipe.map { it.id }
+    override fun getRecipeLocation(): Optional<Identifier> = optionalRecipe.map { it.id }
 
-    override fun getRequiredEntries(): List<List<EntryStack?>?>? = inputEntries
+    override fun getRequiredEntries(): MutableList<MutableList<EntryStack>> = inputEntries
 
     override fun getWidth(): Int = 2
 
