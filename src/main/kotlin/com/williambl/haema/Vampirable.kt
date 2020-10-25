@@ -1,24 +1,33 @@
 package com.williambl.haema
 
-import net.minecraft.entity.data.DataTracker
-import net.minecraft.entity.data.TrackedData
-import net.minecraft.entity.data.TrackedDataHandlerRegistry
+import com.williambl.haema.component.VampireComponent
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.server.world.ServerWorld
 
 interface Vampirable {
+
     var isVampire: Boolean
+        get() = VampireComponent.entityKey.get(this).isVampire
+        set(value) {
+            VampireComponent.entityKey.get(this).isVampire = value
+        }
+
     var isPermanentVampire: Boolean
+        get() = VampireComponent.entityKey.get(this).isPermanentVampire
+        set(value) {
+            VampireComponent.entityKey.get(this).isPermanentVampire = value
+        }
+
+    var isKilled: Boolean
+        get() = VampireComponent.entityKey.get(this).isKilled
+        set(value) {
+            VampireComponent.entityKey.get(this).isKilled = value
+        }
 
     fun checkBloodManager();
 
     companion object {
-
-        val IS_VAMPIRE: TrackedData<Boolean> = DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
-        val IS_PERMANENT_VAMPIRE: TrackedData<Boolean> = DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
-        val IS_KILLED: TrackedData<Boolean> = DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
-
         fun convert(entity: PlayerEntity) {
             if (!(entity as Vampirable).isVampire) {
                 entity.isVampire = true

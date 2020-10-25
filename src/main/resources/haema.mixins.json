@@ -7,8 +7,7 @@
     "HurtBySensorMixin",
     "LivingEntityMixin",
     "MinecraftServerMixin",
-    "PlayerEntityMixin",
-    "ServerPlayerEntityMixin"
+    "PlayerEntityMixin"
   ],
   "client": [
     "ClientPlayerEntityMixin",

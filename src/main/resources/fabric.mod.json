@@ -27,6 +27,9 @@
     ],
     "rei_plugins": [
       "com.williambl.haema.plugin.rei.HaemaREIPlugin"
+    ],
+    "cardinal-components-entity": [
+      "com.williambl.haema.HaemaKt::registerEntityComponentFactories"
     ]
   },
   "mixins": [
@@ -40,5 +43,10 @@
   },
   "suggests": {
     "origins": ">=3.0.0"
+  },
+  "custom": {
+    "cardinal-components": [
+      "haema:vampire"
+    ]
   }
 }

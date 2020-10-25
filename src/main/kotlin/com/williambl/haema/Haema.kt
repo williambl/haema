@@ -1,5 +1,7 @@
 package com.williambl.haema
 
+import com.williambl.haema.component.VampireComponent
+import com.williambl.haema.component.VampirePlayerComponent
 import com.williambl.haema.craft.BookOfBloodRecipe
 import com.williambl.haema.effect.SunlightSicknessEffect
 import com.williambl.haema.effect.VampiricStrengthEffect
@@ -9,7 +11,10 @@ import com.williambl.haema.entity.VampireHunterSpawner
 import com.williambl.haema.item.EmptyVampireBloodInjectorItem
 import com.williambl.haema.item.VampireBloodInjectorItem
 import com.williambl.haema.util.*
+import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactory
+import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
 import io.netty.buffer.Unpooled
+import nerdhub.cardinal.components.api.util.RespawnCopyStrategy
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents
@@ -282,5 +287,9 @@ fun init() {
     playerVampireConversion = GameRuleRegistry.register("playerVampireConversion", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(!FabricLoader.getInstance().isModLoaded("origins")))
 
     logger.info("Everything registered. It's vampire time!")
+}
+
+fun registerEntityComponentFactories(registry: EntityComponentFactoryRegistry) {
+    registry.registerForPlayers(VampireComponent.entityKey, EntityComponentFactory { VampirePlayerComponent() }, RespawnCopyStrategy.ALWAYS_COPY)
 }
 
