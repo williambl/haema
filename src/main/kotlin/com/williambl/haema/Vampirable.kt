@@ -31,7 +31,7 @@ interface Vampirable {
         fun convert(entity: PlayerEntity) {
             if (!(entity as Vampirable).isVampire) {
                 entity.isVampire = true
-                (entity.hungerManager as VampireBloodManager).absoluteBloodLevel = 3.0
+                entity.checkBloodManager()
                 entity.health = 1f
                 if (entity.world is ServerWorld) {
                     (entity.world as ServerWorld).spawnParticles(DustParticleEffect.RED, entity.x, entity.y+1, entity.z, 25, 0.5, 1.0, 0.5, 1.0)
