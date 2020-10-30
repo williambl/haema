@@ -30,6 +30,9 @@
     ],
     "cardinal-components-entity": [
       "com.williambl.haema.HaemaKt::registerEntityComponentFactories"
+    ],
+    "modmenu": [
+      "com.williambl.haema.plugin.modmenu.HaemaModMenuPlugin"
     ]
   },
   "mixins": [
