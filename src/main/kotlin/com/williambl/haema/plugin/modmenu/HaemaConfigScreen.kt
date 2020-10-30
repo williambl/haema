@@ -3,18 +3,25 @@ package com.williambl.haema.plugin.modmenu
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawableHelper
 import net.minecraft.client.gui.screen.Screen
+import net.minecraft.client.gui.widget.ButtonWidget
+import net.minecraft.client.gui.widget.ButtonWidget.PressAction
 import net.minecraft.client.util.InputUtil
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.text.ClickEvent
 import net.minecraft.text.LiteralText
 import net.minecraft.text.Style
+import net.minecraft.text.Text
 import net.minecraft.util.Formatting
+import net.minecraft.util.Identifier
 import net.minecraft.util.Util
 import org.lwjgl.glfw.GLFW
+import java.awt.Color
 import java.net.URI
 import java.net.URISyntaxException
 
 class HaemaConfigScreen(private val parent: Screen?) : Screen(LiteralText("HAEMA").formatted(Formatting.UNDERLINE)) {
+
+    val icon = Identifier("haema:icon.png")
 
     val keys = listOf(
         GLFW.GLFW_KEY_UP,
@@ -31,6 +38,10 @@ class HaemaConfigScreen(private val parent: Screen?) : Screen(LiteralText("HAEMA
 
     var wasKeyDown = false
     var currentKey = 0
+    var currentHue = 0.0
+    var isDoingAnim = false
+
+    var isShowingMore = false
 
     val texts = listOf(
         LiteralText("Haema is configured using data packs and game rules.").formatted(Formatting.UNDERLINE),
@@ -51,44 +62,59 @@ class HaemaConfigScreen(private val parent: Screen?) : Screen(LiteralText("HAEMA
                 .withColor(Formatting.BLUE)
             )
     )
+    val extratexts = listOf(
+        LiteralText("For blood sources, Haema uses the entity tags: "),
+        LiteralText("haema:good_blood_sources").formatted(Formatting.UNDERLINE),
+        LiteralText("haema:medium_blood_sources").formatted(Formatting.UNDERLINE),
+        LiteralText("haema:poor_blood_sources").formatted(Formatting.UNDERLINE),
+
+        LiteralText("For vampire-effective weapons, Haema uses the item tag: ")
+            .append(LiteralText("haema:vampire_weapons").formatted(Formatting.UNDERLINE)),
+
+        LiteralText("The game rules Haema adds can be checked in the Create New World screen.")
+    )
+
+    override fun init() {
+        super.init()
+        addButton(object : ButtonWidget(width/2-210, 180, 200, 20, LiteralText("More Info"), PressAction {
+            isShowingMore = !isShowingMore
+        }) {
+            override fun getMessage(): Text {
+                return LiteralText(if (isShowingMore) "Less Info" else "More Info")
+            }
+        })
+        addButton(ButtonWidget(width/2+10, 180, 200, 20, LiteralText("Done"), ButtonWidget.PressAction {
+            onClose()
+        }))
+    }
 
     override fun render(matrices: MatrixStack?, mouseX: Int, mouseY: Int, delta: Float) {
         renderBackground(matrices)
+        super.render(matrices, mouseX, mouseY, delta)
+        client!!.textureManager.bindTexture(icon)
         DrawableHelper.drawTexture(
             matrices,
-            width/20,
+            width/2-20,
             20,
             0f,
             0f,
-            20,
-            20,
-            9,
-            9
-        )
-        DrawableHelper.drawCenteredText(
-            matrices,
-            textRenderer,
-            texts[0],
-            width / 2,
             40,
-            0xffffff
+            40,
+            40,
+            40
         )
-        DrawableHelper.drawCenteredText(
-            matrices,
-            textRenderer,
-            texts[1],
-            width / 2,
-            80,
-            0xffffff
-        )
-        DrawableHelper.drawCenteredText(
-            matrices,
-            textRenderer,
-            texts[2],
-            width / 2,
-            90,
-            0xffffff
-        )
+        if (isShowingMore) {
+            DrawableHelper.drawCenteredText(matrices, textRenderer, extratexts[0], width / 2, 80, 0xffffff)
+            DrawableHelper.drawCenteredText(matrices, textRenderer, extratexts[1], width / 2, 90, 0xffffff)
+            DrawableHelper.drawCenteredText(matrices, textRenderer, extratexts[2], width / 2, 100, 0xffffff)
+            DrawableHelper.drawCenteredText(matrices, textRenderer, extratexts[3], width / 2, 110, 0xffffff)
+            DrawableHelper.drawCenteredText(matrices, textRenderer, extratexts[4], width / 2, 130, 0xffffff)
+            DrawableHelper.drawCenteredText(matrices, textRenderer, extratexts[5], width / 2, 150, 0xffffff)
+        } else {
+            DrawableHelper.drawCenteredText(matrices, textRenderer, texts[0], width / 2, 80, if (isDoingAnim) Color.HSBtoRGB(currentHue.toFloat(), 0.8f, 0.8f) else 0xffffff)
+            DrawableHelper.drawCenteredText(matrices, textRenderer, texts[1], width / 2, 120, 0xffffff)
+            DrawableHelper.drawCenteredText(matrices, textRenderer, texts[2], width / 2, 135, 0xffffff)
+        }
     }
 
     override fun onClose() {
@@ -97,9 +123,17 @@ class HaemaConfigScreen(private val parent: Screen?) : Screen(LiteralText("HAEMA
 
     override fun tick() {
         super.tick()
+        if (isDoingAnim && currentHue < 1) {
+            currentHue += 0.01
+            println(currentHue)
+            println(Color.HSBtoRGB(currentHue.toFloat(), 0.8f, 0.8f).toString(2))
+        } else if (currentHue >= 1) {
+            currentHue = 0.0
+            isDoingAnim = false
+        }
         if (currentKey > 9) {
             currentKey = 0
-            println("well done")
+            isDoingAnim = true
         }
         if (wasKeyDown) {
             wasKeyDown = false
@@ -112,10 +146,12 @@ class HaemaConfigScreen(private val parent: Screen?) : Screen(LiteralText("HAEMA
     }
 
     override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
-        val style: Style? = getTextComponentUnderMouse(mouseX.toInt(), mouseY.toInt())
-        if (style?.clickEvent != null && style.clickEvent!!.action == ClickEvent.Action.OPEN_URL) {
-            handleTextClick(style)
-            return false
+        if (!isShowingMore) {
+            val style: Style? = getTextComponentUnderMouse(mouseX.toInt(), mouseY.toInt())
+            if (style?.clickEvent != null && style.clickEvent!!.action == ClickEvent.Action.OPEN_URL) {
+                handleTextClick(style)
+                return false
+            }
         }
         return super.mouseClicked(mouseX, mouseY, button)
     }
@@ -139,9 +175,9 @@ class HaemaConfigScreen(private val parent: Screen?) : Screen(LiteralText("HAEMA
 
     private fun getTextComponentUnderMouse(mouseX: Int, mouseY: Int): Style? {
         val textIndex = when (mouseY) {
-            in 40..49 -> 0
-            in 80..89 -> 1
-            in 90..99 -> 2
+            in 80..89 -> 0
+            in 120..129 -> 1
+            in 135..144 -> 2
             else -> 0
         }
         val i = client!!.textRenderer.getWidth(texts[textIndex])
