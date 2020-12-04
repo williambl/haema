@@ -96,5 +96,15 @@
   "bookOfBlood.6.text.4.text": "The dash ability is a short-range teleport, which can be activated with $(k:haema.dash).",
 
   "bookOfBlood.7.title": "7: Your Weaknesses",
-  "bookOfBlood.7.text.1.text": "Vampires can only be killed by certain things. These are:$(br) - Sunlight$(br) - Lightning$(br) - Drowning$(br) - Dragon Breath$(br) - The Void$(br) - Certain weapons, such as wooden swords$(br) - Attacks with the Smite enchantment"
+  "bookOfBlood.7.text.1.text": "Vampires can only be killed by certain things. These are:$(br) - Sunlight$(br) - Lightning$(br) - Drowning$(br) - Dragon Breath$(br) - The Void$(br) - Certain weapons, such as wooden swords$(br) - Attacks with the Smite enchantment",
+
+  "gui.haema.main": "Haema is configured using data packs and game rules.",
+  "gui.haema.gameruleslink": "To learn how to use game rules, click here.",
+  "gui.haema.datapackslink": "To learn how to use data packs, click here.",
+  "gui.haema.bloodsources": "For blood sources, Haema uses the entity tags: ",
+  "gui.haema.vampireweapons": "For vampire-effective weapons, Haema uses the item tag: ",
+  "gui.haema.gamerules": "The game rules Haema adds can be checked in the Create New World screen.",
+  "gui.haema.moreinfo": "More Info",
+  "gui.haema.lessinfo": "Less Info",
+  "gui.haema.done": "Done"
 }

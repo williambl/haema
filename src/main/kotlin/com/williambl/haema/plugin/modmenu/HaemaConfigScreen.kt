@@ -7,10 +7,7 @@ import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.client.gui.widget.ButtonWidget.PressAction
 import net.minecraft.client.util.InputUtil
 import net.minecraft.client.util.math.MatrixStack
-import net.minecraft.text.ClickEvent
-import net.minecraft.text.LiteralText
-import net.minecraft.text.Style
-import net.minecraft.text.Text
+import net.minecraft.text.*
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
 import net.minecraft.util.Util
@@ -43,9 +40,9 @@ class HaemaConfigScreen(private val parent: Screen?) : Screen(LiteralText("HAEMA
 
     var isShowingMore = false
 
-    val texts = listOf(
-        LiteralText("Haema is configured using data packs and game rules.").formatted(Formatting.UNDERLINE),
-        LiteralText("To learn how to use game rules, click here.")
+    private val texts = listOf(
+        TranslatableText("gui.haema.main").formatted(Formatting.UNDERLINE),
+        TranslatableText("gui.haema.gameruleslink")
             .setStyle(Style.EMPTY
                 .withClickEvent(
                     ClickEvent(ClickEvent.Action.OPEN_URL, "https://minecraft.gamepedia.com/Commands/gamerule")
@@ -53,7 +50,7 @@ class HaemaConfigScreen(private val parent: Screen?) : Screen(LiteralText("HAEMA
                 .withUnderline(true)
                 .withColor(Formatting.BLUE)
             ),
-        LiteralText("To learn how to use data packs, click here.")
+        TranslatableText("gui.haema.datapackslink")
             .setStyle(Style.EMPTY
                 .withClickEvent(
                     ClickEvent(ClickEvent.Action.OPEN_URL, "https://minecraft.gamepedia.com/Data_Pack")
@@ -62,28 +59,28 @@ class HaemaConfigScreen(private val parent: Screen?) : Screen(LiteralText("HAEMA
                 .withColor(Formatting.BLUE)
             )
     )
-    val extratexts = listOf(
-        LiteralText("For blood sources, Haema uses the entity tags: "),
+    private val extratexts = listOf(
+        TranslatableText("gui.haema.bloodsources"),
         LiteralText("haema:good_blood_sources").formatted(Formatting.UNDERLINE),
         LiteralText("haema:medium_blood_sources").formatted(Formatting.UNDERLINE),
         LiteralText("haema:poor_blood_sources").formatted(Formatting.UNDERLINE),
 
-        LiteralText("For vampire-effective weapons, Haema uses the item tag: ")
+        TranslatableText("gui.haema.vampireweapons")
             .append(LiteralText("haema:vampire_weapons").formatted(Formatting.UNDERLINE)),
 
-        LiteralText("The game rules Haema adds can be checked in the Create New World screen.")
+        TranslatableText("gui.haema.gamerules")
     )
 
     override fun init() {
         super.init()
-        addButton(object : ButtonWidget(width/2-210, 180, 200, 20, LiteralText("More Info"), PressAction {
+        addButton(object : ButtonWidget(width/2-210, 180, 200, 20, TranslatableText("gui.haema.moreinfo"), PressAction {
             isShowingMore = !isShowingMore
         }) {
             override fun getMessage(): Text {
-                return LiteralText(if (isShowingMore) "Less Info" else "More Info")
+                return TranslatableText(if (isShowingMore) "gui.haema.lessinfo" else "gui.haema.moreinfo")
             }
         })
-        addButton(ButtonWidget(width/2+10, 180, 200, 20, LiteralText("Done"), ButtonWidget.PressAction {
+        addButton(ButtonWidget(width/2+10, 180, 200, 20, TranslatableText("gui.done"), PressAction {
             onClose()
         }))
     }
