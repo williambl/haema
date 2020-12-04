@@ -18,6 +18,9 @@ import kotlin.math.ceil
 
 class VampireHunterSpawner(val entityType: EntityType<out VampireHunterEntity>) : Spawner {
     private var ticksUntilNextSpawn = 0
+
+    private var amountSpawnedSinceLast = 0
+
     override fun spawn(serverWorld: ServerWorld, spawnMonsters: Boolean, spawnAnimals: Boolean): Int {
         if (!spawnMonsters)
             return 0
@@ -30,6 +33,8 @@ class VampireHunterSpawner(val entityType: EntityType<out VampireHunterEntity>) 
             return 0
 
         ticksUntilNextSpawn += 12000 + random.nextInt(1200)
+        amountSpawnedSinceLast = 0
+
         if (random.nextInt(5) != 0)
             return 0
 
@@ -52,6 +57,9 @@ class VampireHunterSpawner(val entityType: EntityType<out VampireHunterEntity>) 
     }
 
     fun trySpawnNear(serverWorld: ServerWorld, random: Random, pos: BlockPos): Int {
+        if (amountSpawnedSinceLast > 10)
+            return 0
+
         val dx = (24 + random.nextInt(24)) * if (random.nextBoolean()) -1 else 1
         val dz = (24 + random.nextInt(24)) * if (random.nextBoolean()) -1 else 1
         val mutable = pos.mutableCopy().move(dx, 0, dz)
@@ -91,6 +99,7 @@ class VampireHunterSpawner(val entityType: EntityType<out VampireHunterEntity>) 
             return false
         val entity = entityType.create(world)
         if (entity != null) {
+            amountSpawnedSinceLast++
             if (isLeader) {
                 entity.isPatrolLeader = true
                 entity.setRandomPatrolTarget()
