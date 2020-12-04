@@ -22,6 +22,7 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.sound.SoundEvents
 import net.minecraft.util.ActionResult
 import net.minecraft.village.VillageGossipType
 import net.minecraft.world.GameRules
@@ -160,7 +161,7 @@ class VampireBloodManager : HungerManager() {
         (player.hungerManager as VampireBloodManager).addBlood(amount)
         lastFed = player.world.time
         entity.damage(BloodLossDamageSource.instance, 1f)
-        //TODO: sound effect
+        player.playSound(SoundEvents.ENTITY_GENERIC_DRINK, 1f, 1f)
         val towards = player.pos.subtract(entity.pos).normalize().multiply(0.1)
         for (i in 0..20) {
             val vel = towards.multiply(i.toDouble())
