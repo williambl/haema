@@ -7,7 +7,6 @@ import com.williambl.haema.effect.SunlightSicknessEffect;
 import com.williambl.haema.util.HaemaGameRulesKt;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.HungerManager;
@@ -20,8 +19,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements Vampirable {
@@ -46,27 +45,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
         }
     }
 
-    @Redirect(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
-    boolean damage(LivingEntity livingEntity, DamageSource source, float amount) {
+    @Inject(method = "damage", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/LivingEntity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
+    void damage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (isVampire()) {
             boolean isDamageSourceEffective = DamageSourceExtensionsKt.isEffectiveAgainstVampires(source);
-            if (isDamageSourceEffective)
-                amount *= 1.25;
-
-            float bloodAbsorptionAmount = 0.5f * amount;
-            bloodAbsorptionAmount = bloodManager.getAbsoluteBloodLevel() > bloodAbsorptionAmount ?
-                    bloodAbsorptionAmount
-                    : (float) bloodManager.getAbsoluteBloodLevel();
-
-            double originalMax = getAttributeBaseValue(EntityAttributes.GENERIC_MAX_HEALTH);
-            if (getHealth()-(amount-bloodAbsorptionAmount) > originalMax)
-                bloodManager.removeBlood(Math.min(bloodAbsorptionAmount, getHealth()-originalMax));
-
-            boolean result = super.damage(source, amount - bloodAbsorptionAmount);
             this.setKilled(this.getHealth() <= 0 && isDamageSourceEffective);
-            return result;
         }
-        return super.damage(source, amount);
     }
 
     @Override
