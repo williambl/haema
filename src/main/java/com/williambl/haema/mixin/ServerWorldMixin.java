@@ -20,7 +20,7 @@ public abstract class ServerWorldMixin {
         if (!serverWorld.isDay()) {
             serverWorld.setTimeOfDay(timeOfDay);
         } else {
-            serverWorld.setTimeOfDay((13000) - (serverWorld.getTimeOfDay() + 24000L) % 24000L);
+            serverWorld.setTimeOfDay(serverWorld.getTimeOfDay() + (13000L - (serverWorld.getTimeOfDay() % 24000L)));
         }
     }
 }
