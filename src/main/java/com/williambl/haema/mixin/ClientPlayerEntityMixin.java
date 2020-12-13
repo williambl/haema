@@ -32,7 +32,11 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;tick()V"))
     void useShaders(CallbackInfo ci) {
         if (((Vampirable) this).isVampire() && this.hungerManager instanceof VampireBloodManager) {
-            HaemaClientKt.getVAMPIRE_SHADER().setUniformValue("Saturation", 0.8f * (float) ((VampireBloodManager) this.hungerManager).getBloodLevel() / 20.0f);
+            float bloodLevel = ((float) ((VampireBloodManager)this.hungerManager).getBloodLevel()) / 20.0f;
+            HaemaClientKt.getVAMPIRE_SHADER().setUniformValue("Saturation", 0.8f * bloodLevel);
+            bloodLevel += 1.4; //Dubious way of maybe getting more performance at the cost of readability
+            HaemaClientKt.getVAMPIRE_SHADER().setUniformValue("ColorScale", bloodLevel, bloodLevel, bloodLevel);
+
             HaemaClientKt.getVAMPIRE_SHADER().setUniformValue("RedMatrix", Math.max(1.3f, 2.3f - (this.world.getTime() - ((VampireBloodManager) this.hungerManager).getLastFed()) / (float) VampireBloodManager.Companion.getFeedCooldown(world)), 0f, 0f);
             if (wasPressed && !(HaemaClientKt.getDASH_KEY().isPressed()) && canDash()) {
                 PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
