@@ -20,6 +20,9 @@ import org.lwjgl.glfw.GLFW
 val VAMPIRE_SHADER: ManagedShaderEffect = ShaderEffectManager.getInstance()
         .manage(Identifier("haema", "shaders/post/vampirevision.json"))
 
+val DISTORT_SHADER: ManagedShaderEffect = ShaderEffectManager.getInstance()
+    .manage(Identifier("haema", "shaders/post/barreldistortion.json"))
+
 val DASH_KEY = KeyBinding("key.haema.dash", GLFW.GLFW_KEY_X, "key.categories.movement")
 
 var dashCooldownValue = 10
