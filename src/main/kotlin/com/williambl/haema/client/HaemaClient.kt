@@ -18,14 +18,29 @@ import org.lwjgl.glfw.GLFW
 
 
 val VAMPIRE_SHADER: ManagedShaderEffect = ShaderEffectManager.getInstance()
-        .manage(Identifier("haema", "shaders/post/vampirevision.json"))
-
-val DISTORT_SHADER: ManagedShaderEffect = ShaderEffectManager.getInstance()
-    .manage(Identifier("haema", "shaders/post/barreldistortion.json"))
+    .manage(Identifier("haema", "shaders/post/vampirevision.json"))
 
 val DASH_KEY = KeyBinding("key.haema.dash", GLFW.GLFW_KEY_X, "key.categories.movement")
 
 var dashCooldownValue = 10
+
+var distortAmount = 0.0f
+    set(value) {
+        field = value
+        VAMPIRE_SHADER.setUniformValue("DistortAmount", value)
+    }
+
+fun setRedAmount(value: Float) {
+    VAMPIRE_SHADER.setUniformValue("RedMatrix", value, 0.0f, 0.0f)
+}
+
+fun setColorScale(value: Float) {
+    VAMPIRE_SHADER.setUniformValue("ColorScale", value, value, value)
+}
+
+fun setSaturation(value: Float) {
+    VAMPIRE_SHADER.setUniformValue("Saturation", value)
+}
 
 fun init() {
     ClientSidePacketRegistry.INSTANCE.register(Identifier("haema:bloodlevelsync")) { packetContext, packetByteBuf ->

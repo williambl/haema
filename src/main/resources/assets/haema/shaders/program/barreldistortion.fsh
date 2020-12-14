@@ -9,19 +9,48 @@ varying vec2 texCoord;
 varying vec2 oneTexel;
 
 uniform vec2 InSize;
+uniform vec2 OutSize;
 
 // positive values give barrel distortion, negative give pincushion
 uniform float DistortAmount;
 
 void main() {
-    vec2 uv = texCoord;
-    //uv.y = 1.0 - uv.y;
-    uv = uv * 2.0 - 1.0;
+    /* @ 0:
+    a   d
+    |
+    |
+    b---c
+    */
+    vec2 coord = texCoord * 2.0 - vec2(1.0, 1.0);
 
-    float r2 = uv.x*uv.x + uv.y*uv.y;
-    uv *= 1.0 + DistortAmount * r2;
+    /*
+    a   |   d
+        |
+        |
+    ----+----
+        |
+        |
+    b   |   c
+    */
+    float squareDistFromOrigin = coord.x*coord.x + coord.y*coord.y;
+    coord *= 1.0 + (DistortAmount * squareDistFromOrigin);
 
-    uv = 0.5 * (uv * 0.5 + 1.0);
+    /* @ 0:
+    a   |   d
+        |
+        |
+    ----+----
+        |
+        |
+    b   |   c
+    */
+    coord = 0.5 * (coord + vec2(1.0, 1.0));
 
-    gl_FragColor = texture2D(DiffuseSampler, uv);
+    /* @ 0:
+    a   d
+    |
+    |
+    b---c
+    */
+    gl_FragColor = texture2D(DiffuseSampler, coord);
 }

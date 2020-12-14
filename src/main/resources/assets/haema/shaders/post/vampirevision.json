@@ -4,9 +4,15 @@
     ],
     "passes": [
         {
-            "name": "color_convolve",
+            "name": "haema:barreldistortion",
             "intarget": "minecraft:main",
             "outtarget": "swap",
+            "uniforms": []
+        },
+        {
+            "name": "color_convolve",
+            "intarget": "swap",
+            "outtarget": "minecraft:main",
             "uniforms": [
                 {
                     "name": "RedMatrix",
@@ -21,11 +27,6 @@
                     "values": [ 0.0, 0.0, 1.5 ]
                 }
             ]
-        },
-        {
-            "name": "blit",
-            "intarget": "swap",
-            "outtarget": "minecraft:main"
         }
     ]
 }
