@@ -53,6 +53,8 @@ import net.minecraft.network.PacketByteBuf
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.resource.ResourceManager
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.sound.SoundCategory
+import net.minecraft.sound.SoundEvents
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.*
@@ -154,6 +156,7 @@ fun init() {
                         0.0
                 )
             }
+            world.playSound(null, target.x, target.y, target.z, SoundEvents.ENTITY_GHAST_SHOOT, SoundCategory.PLAYERS, 1f, 1.5f)
             player.teleport(target.x, target.y, target.z)
         }
     }
