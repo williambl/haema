@@ -3,6 +3,7 @@ package com.williambl.haema.mixin;
 import com.mojang.authlib.GameProfile;
 import com.williambl.haema.Vampirable;
 import com.williambl.haema.VampireBloodManager;
+import com.williambl.haema.client.ClientVampire;
 import com.williambl.haema.client.HaemaClientKt;
 import com.williambl.haema.util.RaytraceUtilKt;
 import io.netty.buffer.Unpooled;
@@ -20,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayerEntity.class)
-public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
+public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity implements ClientVampire {
 
     private int pressedTicks = 0;
     private long lastDashed = -24000;
@@ -71,7 +72,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         }
     }
 
-    boolean canDash() {
-        return world.getTime() > lastDashed+HaemaClientKt.getDashCooldownValue() && (((VampireBloodManager)hungerManager).getBloodLevel() > 18 || abilities.creativeMode);
+    @Override
+    public boolean canDash() {
+        return world.getTime() > lastDashed+HaemaClientKt.getDashCooldownValue() && hungerManager instanceof VampireBloodManager && (((VampireBloodManager)hungerManager).getBloodLevel() > 18 || abilities.creativeMode);
     }
 }

@@ -2,12 +2,14 @@ package com.williambl.haema.client
 
 import com.williambl.haema.Vampirable
 import com.williambl.haema.VampireBloodManager
+import com.williambl.haema.client.gui.VampireHud
 import ladysnake.satin.api.event.ShaderEffectRenderCallback
 import ladysnake.satin.api.managed.ManagedShaderEffect
 import ladysnake.satin.api.managed.ShaderEffectManager
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.color.item.ItemColorProvider
@@ -52,6 +54,8 @@ fun init() {
     ClientSidePacketRegistry.INSTANCE.register(Identifier("haema:updatedashcooldown")) { packetContext, packetByteBuf ->
         dashCooldownValue = packetByteBuf.readInt()
     }
+
+    HudRenderCallback.EVENT.register(VampireHud::render)
 
     ShaderEffectRenderCallback.EVENT.register(ShaderEffectRenderCallback {
         if ((MinecraftClient.getInstance().player as Vampirable).isVampire)
