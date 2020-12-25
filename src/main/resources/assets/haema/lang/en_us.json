@@ -108,5 +108,10 @@
   "gui.haema.lessinfo": "Less Info",
   "gui.haema.done": "Done",
 
-  "gui.haema.hud.vampiredash": "Vampire Dash"
+  "gui.haema.hud.vampiredash": "Vampire Dash",
+  "gui.haema.hud.feed": "Feed",
+  "gui.haema.hud.bloodquality": "Blood Quality: ",
+  "gui.haema.hud.bloodquality.good": "Good",
+  "gui.haema.hud.bloodquality.medium": "Medium",
+  "gui.haema.hud.bloodquality.poor": "Poor"
 }
