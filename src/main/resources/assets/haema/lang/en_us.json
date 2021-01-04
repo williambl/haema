@@ -101,6 +101,8 @@
   "gui.haema.moreinfo": "More Info",
   "gui.haema.lessinfo": "Less Info",
 
+  "gui.haema.title": "HAEMA",
+
   "gui.haema.hud.vampiredash": "Vampire Dash",
   "gui.haema.hud.feed": "Feed",
   "gui.haema.hud.bloodquality": "Blood Quality: ",
