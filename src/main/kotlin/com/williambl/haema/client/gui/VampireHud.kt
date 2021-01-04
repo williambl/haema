@@ -5,6 +5,8 @@ import com.williambl.haema.Vampirable
 import com.williambl.haema.VampireBloodManager
 import com.williambl.haema.client.ClientVampire
 import com.williambl.haema.client.DASH_KEY
+import com.williambl.haema.client.config
+import com.williambl.haema.client.config.HudPlacement
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawableHelper
 import net.minecraft.client.options.KeyBinding
@@ -18,6 +20,8 @@ import net.minecraft.util.Formatting
 object VampireHud : DrawableHelper() {
 
     fun render(matrixStack: MatrixStack, tickDelta: Float) {
+        if (config.vampireHudPlacement == HudPlacement.NONE) return
+
         matrixStack.push()
         val width = MinecraftClient.getInstance().window.scaledWidth
         val height = MinecraftClient.getInstance().window.scaledHeight
@@ -39,8 +43,8 @@ object VampireHud : DrawableHelper() {
                     matrixStack,
                     MinecraftClient.getInstance().textRenderer,
                     text,
-                    width - textRenderer.getWidth(text) / 2 - 10,
-                    height - 16 - index*9,
+                    config.vampireHudPlacement.x(width, textRenderer.getWidth(text)),
+                    config.vampireHudPlacement.y(height,index),
                     0xffffff
             )
         }
