@@ -33,8 +33,8 @@ var dashCooldownValue = 10
 
 var distortAmount = 0.0f
     set(value) {
-        field = value
-        VAMPIRE_SHADER.setUniformValue("DistortAmount", value)
+        field = value * config.distortionAdjust
+        VAMPIRE_SHADER.setUniformValue("DistortAmount", field)
     }
 
 fun setRedAmount(value: Float) {
@@ -42,11 +42,11 @@ fun setRedAmount(value: Float) {
 }
 
 fun setColorScale(value: Float) {
-    VAMPIRE_SHADER.setUniformValue("ColorScale", value, value, value)
+    VAMPIRE_SHADER.setUniformValue("ColorScale", value*config.brightAdjust, value*config.brightAdjust, value* config.brightAdjust)
 }
 
 fun setSaturation(value: Float) {
-    VAMPIRE_SHADER.setUniformValue("Saturation", value)
+    VAMPIRE_SHADER.setUniformValue("Saturation", 1f-((1f-value)*config.saturationAdjust))
 }
 
 fun init() {
