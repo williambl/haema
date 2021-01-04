@@ -122,8 +122,6 @@ class HaemaGameplayConfigScreen(private val parent: Screen?) : Screen(LiteralTex
         super.tick()
         if (isDoingAnim && currentHue < 1) {
             currentHue += 0.01
-            println(currentHue)
-            println(Color.HSBtoRGB(currentHue.toFloat(), 0.8f, 0.8f).toString(2))
         } else if (currentHue >= 1) {
             currentHue = 0.0
             isDoingAnim = false
