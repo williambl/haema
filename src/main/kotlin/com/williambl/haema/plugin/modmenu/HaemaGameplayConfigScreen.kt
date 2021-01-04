@@ -16,7 +16,7 @@ import java.awt.Color
 import java.net.URI
 import java.net.URISyntaxException
 
-class HaemaConfigScreen(private val parent: Screen?) : Screen(LiteralText("HAEMA").formatted(Formatting.UNDERLINE)) {
+class HaemaGameplayConfigScreen(private val parent: Screen?) : Screen(LiteralText("HAEMA").formatted(Formatting.UNDERLINE)) {
 
     val icon = Identifier("haema:icon.png")
 
@@ -41,8 +41,8 @@ class HaemaConfigScreen(private val parent: Screen?) : Screen(LiteralText("HAEMA
     var isShowingMore = false
 
     private val texts = listOf(
-        TranslatableText("gui.haema.main").formatted(Formatting.UNDERLINE),
-        TranslatableText("gui.haema.gameruleslink")
+        TranslatableText("gui.haema.config.gameplay.main").formatted(Formatting.UNDERLINE),
+        TranslatableText("gui.haema.config.gameplay.gameruleslink")
             .setStyle(Style.EMPTY
                 .withClickEvent(
                     ClickEvent(ClickEvent.Action.OPEN_URL, "https://minecraft.gamepedia.com/Commands/gamerule")
@@ -50,7 +50,7 @@ class HaemaConfigScreen(private val parent: Screen?) : Screen(LiteralText("HAEMA
                 .withUnderline(true)
                 .withColor(Formatting.BLUE)
             ),
-        TranslatableText("gui.haema.datapackslink")
+        TranslatableText("gui.haema.config.gameplay.datapackslink")
             .setStyle(Style.EMPTY
                 .withClickEvent(
                     ClickEvent(ClickEvent.Action.OPEN_URL, "https://minecraft.gamepedia.com/Data_Pack")
@@ -60,15 +60,15 @@ class HaemaConfigScreen(private val parent: Screen?) : Screen(LiteralText("HAEMA
             )
     )
     private val extratexts = listOf(
-        TranslatableText("gui.haema.bloodsources"),
+        TranslatableText("gui.haema.config.gameplay.bloodsources"),
         LiteralText("haema:good_blood_sources").formatted(Formatting.UNDERLINE),
         LiteralText("haema:medium_blood_sources").formatted(Formatting.UNDERLINE),
         LiteralText("haema:poor_blood_sources").formatted(Formatting.UNDERLINE),
 
-        TranslatableText("gui.haema.vampireweapons")
+        TranslatableText("gui.haema.config.gameplay.vampireweapons")
             .append(LiteralText("haema:vampire_weapons").formatted(Formatting.UNDERLINE)),
 
-        TranslatableText("gui.haema.gamerules")
+        TranslatableText("gui.haema.config.gameplay.gamerules")
     )
 
     override fun init() {
@@ -122,8 +122,6 @@ class HaemaConfigScreen(private val parent: Screen?) : Screen(LiteralText("HAEMA
         super.tick()
         if (isDoingAnim && currentHue < 1) {
             currentHue += 0.01
-            println(currentHue)
-            println(Color.HSBtoRGB(currentHue.toFloat(), 0.8f, 0.8f).toString(2))
         } else if (currentHue >= 1) {
             currentHue = 0.0
             isDoingAnim = false
