@@ -33,7 +33,7 @@ var dashCooldownValue = 10
 
 var distortAmount = 0.0f
     set(value) {
-        field = value * config.distortionAdjust
+        field = value * config.distortionAdjust * MinecraftClient.getInstance().options.distortionEffectScale
         VAMPIRE_SHADER.setUniformValue("DistortAmount", field)
     }
 
