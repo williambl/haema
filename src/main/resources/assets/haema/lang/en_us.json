@@ -98,20 +98,32 @@
   "bookOfBlood.7.title": "7: Your Weaknesses",
   "bookOfBlood.7.text.1.text": "Vampires can only be killed by certain things. These are:$(br) - Sunlight$(br) - Lightning$(br) - Drowning$(br) - Dragon Breath$(br) - The Void$(br) - Certain weapons, such as wooden swords$(br) - Attacks with the Smite enchantment",
 
-  "gui.haema.main": "Haema is configured using data packs and game rules.",
-  "gui.haema.gameruleslink": "To learn how to use game rules, click here.",
-  "gui.haema.datapackslink": "To learn how to use data packs, click here.",
-  "gui.haema.bloodsources": "For blood sources, Haema uses the entity tags: ",
-  "gui.haema.vampireweapons": "For vampire-effective weapons, Haema uses the item tag: ",
-  "gui.haema.gamerules": "The game rules Haema adds can be checked in the Create New World screen.",
-  "gui.haema.moreinfo": "More Info",
+ "gui.haema.moreinfo": "More Info",
   "gui.haema.lessinfo": "Less Info",
-  "gui.haema.done": "Done",
 
   "gui.haema.hud.vampiredash": "Vampire Dash",
   "gui.haema.hud.feed": "Feed",
   "gui.haema.hud.bloodquality": "Blood Quality: ",
   "gui.haema.hud.bloodquality.good": "Good",
   "gui.haema.hud.bloodquality.medium": "Medium",
-  "gui.haema.hud.bloodquality.poor": "Poor"
+  "gui.haema.hud.bloodquality.poor": "Poor",
+
+  "gui.haema.config.client": "Configure Client",
+  "gui.haema.config.gameplay": "Configure Gameplay",
+  "gui.haema.config.gameplay.main": "Haema is configured using data packs and game rules.",
+  "gui.haema.config.gameplay.gameruleslink": "To learn how to use game rules, click here.",
+  "gui.haema.config.gameplay.datapackslink": "To learn how to use data packs, click here.",
+  "gui.haema.config.gameplay.bloodsources": "For blood sources, Haema uses the entity tags: ",
+  "gui.haema.config.gameplay.vampireweapons": "For vampire-effective weapons, Haema uses the item tag: ",
+  "gui.haema.config.gameplay.gamerules": "The game rules Haema adds can be checked in the Create New World screen.",
+
+  "text.autoconfig.haema.title": "Haema",
+  "text.autoconfig.haema.option.vampireHudPlacement": "Vampire HUD placement",
+  "text.autoconfig.haema.option.vampireShaderEnabled": "Enable Vampire Shader",
+  "text.autoconfig.haema.option.brightAdjust": "Vampire Vision brightness strength",
+  "text.autoconfig.haema.option.brightAdjust.@Tooltip": "0 = no brightness boost. 1 = default brightness boost.",
+  "text.autoconfig.haema.option.distortionAdjust": "Vampire Dash distortion strength",
+  "text.autoconfig.haema.option.distortionAdjust.@Tooltip": "0 = no distortion. 1 = default distortion. This multiplies with the vanilla 'Distortion Effects' setting.",
+  "text.autoconfig.haema.option.saturationAdjust": "Vampire Vision saturation effect strength",
+  "text.autoconfig.haema.option.saturationAdjust.@Tooltip": "0 = no saturation change. 1 = default vampire saturation change."
 }

@@ -2,10 +2,13 @@ package com.williambl.haema.client
 
 import com.williambl.haema.Vampirable
 import com.williambl.haema.VampireBloodManager
+import com.williambl.haema.client.config.HaemaConfig
 import com.williambl.haema.client.gui.VampireHud
 import ladysnake.satin.api.event.ShaderEffectRenderCallback
 import ladysnake.satin.api.managed.ManagedShaderEffect
 import ladysnake.satin.api.managed.ShaderEffectManager
+import me.sargunvohra.mcmods.autoconfig1u.AutoConfig
+import me.sargunvohra.mcmods.autoconfig1u.serializer.Toml4jConfigSerializer
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry
@@ -24,12 +27,14 @@ val VAMPIRE_SHADER: ManagedShaderEffect = ShaderEffectManager.getInstance()
 
 val DASH_KEY = KeyBinding("key.haema.dash", GLFW.GLFW_KEY_X, "key.categories.movement")
 
+val config: HaemaConfig by lazy { AutoConfig.getConfigHolder(HaemaConfig::class.java).config }
+
 var dashCooldownValue = 10
 
 var distortAmount = 0.0f
     set(value) {
-        field = value
-        VAMPIRE_SHADER.setUniformValue("DistortAmount", value)
+        field = value * config.distortionAdjust * MinecraftClient.getInstance().options.distortionEffectScale
+        VAMPIRE_SHADER.setUniformValue("DistortAmount", field)
     }
 
 fun setRedAmount(value: Float) {
@@ -37,11 +42,11 @@ fun setRedAmount(value: Float) {
 }
 
 fun setColorScale(value: Float) {
-    VAMPIRE_SHADER.setUniformValue("ColorScale", value, value, value)
+    VAMPIRE_SHADER.setUniformValue("ColorScale", value*config.brightAdjust, value*config.brightAdjust, value* config.brightAdjust)
 }
 
 fun setSaturation(value: Float) {
-    VAMPIRE_SHADER.setUniformValue("Saturation", value)
+    VAMPIRE_SHADER.setUniformValue("Saturation", 1f-((1f-value)*config.saturationAdjust))
 }
 
 fun init() {
@@ -58,7 +63,7 @@ fun init() {
     HudRenderCallback.EVENT.register(VampireHud::render)
 
     ShaderEffectRenderCallback.EVENT.register(ShaderEffectRenderCallback {
-        if ((MinecraftClient.getInstance().player as Vampirable).isVampire)
+        if (config.vampireShaderEnabled && (MinecraftClient.getInstance().player as Vampirable).isVampire)
             VAMPIRE_SHADER.render(it)
     })
 
@@ -69,4 +74,6 @@ fun init() {
     }, Registry.ITEM.get(Identifier("haema:vampire_blood")))
 
     EntityRendererRegistry.INSTANCE.register(Registry.ENTITY_TYPE.get(Identifier("haema:vampire_hunter"))) { dispatcher, _ -> VampireHunterEntityRenderer(dispatcher) }
+
+    AutoConfig.register(HaemaConfig::class.java) { config, clazz -> Toml4jConfigSerializer(config, clazz) }
 }
