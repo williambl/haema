@@ -33,5 +33,6 @@ fun raytraceForDash(player: PlayerEntity): Vec3d? {
 }
 
 fun posIsClear(world: World, pos: BlockPos): Boolean {
-    return world.isAir(pos) && world.isAir(pos.up())
+    return (world.isAir(pos) || world.getBlockState(pos).getCollisionShape(world, pos).isEmpty)
+            && (world.isAir(pos.up()) || world.getBlockState(pos.up()).getCollisionShape(world, pos.up()).isEmpty)
 }
