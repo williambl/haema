@@ -85,7 +85,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
     @Override
     public void checkBloodManager() {
         if (bloodManager == null) {
-            hungerManager = new VampireBloodManager();
+            hungerManager = new VampireBloodManager(hungerManager);
             bloodManager = (VampireBloodManager) hungerManager;
             bloodManager.setOwner((PlayerEntity) (Object) this);
         }

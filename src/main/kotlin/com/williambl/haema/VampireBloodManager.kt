@@ -31,7 +31,11 @@ import java.util.*
 import kotlin.math.*
 
 @Suppress("DEPRECATION")
-class VampireBloodManager : HungerManager() {
+class VampireBloodManager() : HungerManager() {
+
+    constructor(original: HungerManager) : this() {
+        absoluteBloodLevel = original.foodLevel.toDouble()
+    }
 
     companion object {
         private val VAMPIRE_REACH_UUID = UUID.fromString("0eb4fc5f-71d5-4440-b517-bcc18e1df6f4")
@@ -74,15 +78,11 @@ class VampireBloodManager : HungerManager() {
 
 
         if (getBloodLevel() >= 10) {
-            player.addStatusEffect(StatusEffectInstance(VampiricStrengthEffect.instance, 10, 0))
-        }
-
-        if (getBloodLevel() >= 14) {
-            player.addStatusEffect(StatusEffectInstance(VampiricStrengthEffect.instance, 10, 1))
-        }
-
-        if (getBloodLevel() >= 19) {
-            player.addStatusEffect(StatusEffectInstance(VampiricStrengthEffect.instance, 10, 2))
+            player.addStatusEffect(StatusEffectInstance(VampiricStrengthEffect.instance, 10, when {
+                getBloodLevel() >= 19 -> 2
+                getBloodLevel() >= 14 -> 1
+                else -> 0
+            }))
         }
 
         if (getBloodLevel() >= 20) {
@@ -184,6 +184,6 @@ class VampireBloodManager : HungerManager() {
     fun heal(player: PlayerEntity, amount: Float) {
         player.heal(amount)
         if (player.health < player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.computeValueWithout(UUID.fromString("858a6a28-5092-49ea-a94e-eb74db018a92")) ?: 20.0)
-            removeBlood((1.1-(getBloodLevel()/20.0).pow(2))*amount)
+            removeBlood((1.05-(getBloodLevel()/20.0).pow(2))*amount)
     }
 }
