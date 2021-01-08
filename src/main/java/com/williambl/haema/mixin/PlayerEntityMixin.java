@@ -12,6 +12,7 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
@@ -34,6 +35,14 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
 
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
+    }
+
+    @Inject(method = "readCustomDataFromTag", at = @At("RETURN"))
+    void addVampireHungerManager(CompoundTag tag, CallbackInfo ci) {
+        if (tag.contains("foodLevel")) {
+            checkBloodManager();
+            bloodManager.fromTag(tag);
+        }
     }
 
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;tick()V"))
@@ -85,7 +94,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
     @Override
     public void checkBloodManager() {
         if (bloodManager == null) {
-            hungerManager = new VampireBloodManager(hungerManager);
+            hungerManager = new VampireBloodManager();
             bloodManager = (VampireBloodManager) hungerManager;
             bloodManager.setOwner((PlayerEntity) (Object) this);
         }
