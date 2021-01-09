@@ -40,8 +40,10 @@ class VampireBloodManager() : HungerManager() {
     companion object {
         private val VAMPIRE_REACH_UUID = UUID.fromString("0eb4fc5f-71d5-4440-b517-bcc18e1df6f4")
         private val VAMPIRE_ATTACK_RANGE_UUID = UUID.fromString("3267a46b-2b48-429f-a3a8-439aa87a876d")
+        private val VAMPIRE_HEALTH_BOOST_UUID = UUID.fromString("858a6a28-5092-49ea-a94e-eb74db018a92")
         private val VAMPIRE_REACH = EntityAttributeModifier(VAMPIRE_REACH_UUID, "Vampire reach extension", 2.0, EntityAttributeModifier.Operation.ADDITION)
         private val VAMPIRE_ATTACK_RANGE = EntityAttributeModifier(VAMPIRE_ATTACK_RANGE_UUID, "Vampire attack range extension", 2.0, EntityAttributeModifier.Operation.ADDITION)
+        private val VAMPIRE_HEALTH_BOOST = EntityAttributeModifier(VAMPIRE_HEALTH_BOOST_UUID, "Vampire health boost", 1.0, EntityAttributeModifier.Operation.MULTIPLY_BASE)
 
         fun getFeedCooldown(world: World): Int = world.gameRules[feedCooldown].get()
     }
@@ -52,14 +54,22 @@ class VampireBloodManager() : HungerManager() {
     var absoluteBloodLevel: Double = 7.0
 
     var lastFed: Long = -24000
+    var lastBloodLevel: Double = -1.0
 
     override fun update(player: PlayerEntity?) {
         owner = player!!
 
         player.isSilent = (getBloodLevel() >= 10 && player.isSprinting) || getBloodLevel() >= 12
 
+        if (getBloodLevel() > 3 && player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.hasModifier(VAMPIRE_HEALTH_BOOST) == false) {
+            player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)!!.addPersistentModifier(VAMPIRE_HEALTH_BOOST)
+        }
+
         if (getBloodLevel() <= 3) {
             player.addStatusEffect(StatusEffectInstance(VampiricWeaknessEffect.instance, 5, 3 - getBloodLevel().roundToInt()))
+            if (player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.hasModifier(VAMPIRE_HEALTH_BOOST) == true) {
+                player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)!!.removeModifier(VAMPIRE_HEALTH_BOOST)
+            }
         }
 
         val reachAttr = player.getAttributeInstance(ReachEntityAttributes.REACH)
@@ -92,7 +102,19 @@ class VampireBloodManager() : HungerManager() {
         //Healing at the bottom, so that the health boosts aren't wiped
         if (getBloodLevel() >= 8 || (getBloodLevel() > 0 && player.health <= 0 && player.isAlive)) {
             if (player.world.gameRules.get(GameRules.NATURAL_REGENERATION).get() && player.canFoodHeal()) {
-                heal(player, 1.0f)
+                val defaultMaxHealth = player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.computeValueWithout(UUID.fromString("858a6a28-5092-49ea-a94e-eb74db018a92")) ?: 20.0
+                if (player.health >= defaultMaxHealth) {
+                    if (player.age % 20 == 0 && (player.health - defaultMaxHealth) < when {
+                            getBloodLevel() >= 19 -> 20
+                            getBloodLevel() >= 14 -> 10
+                            getBloodLevel() >= 10 -> 6
+                            else -> 0
+                        }) {
+                        heal(player)
+                    }
+                } else {
+                    heal(player)
+                }
             } else if (player.health <= 0) {
                 player.health = 1f
                 removeBlood(1.0)
@@ -181,9 +203,8 @@ class VampireBloodManager() : HungerManager() {
         ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, bloodLevelPackeId, buf)
     }
 
-    fun heal(player: PlayerEntity, amount: Float) {
-        player.heal(amount)
-        if (player.health < player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.computeValueWithout(UUID.fromString("858a6a28-5092-49ea-a94e-eb74db018a92")) ?: 20.0)
-            removeBlood((1.05-(getBloodLevel()/20.0).pow(2))*amount)
+    private fun heal(player: PlayerEntity) {
+        removeBlood((1.05 - (getBloodLevel() / 20.0).pow(2)))
+        player.heal(1.0f)
     }
 }

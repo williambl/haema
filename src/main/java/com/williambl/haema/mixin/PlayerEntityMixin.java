@@ -21,6 +21,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -62,6 +63,18 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
             boolean isDamageSourceEffective = DamageSourceExtensionsKt.isEffectiveAgainstVampires(source);
             this.setKilled(this.getHealth() <= 0 && isDamageSourceEffective);
         }
+    }
+
+    @ModifyVariable(method = "applyDamage",
+            at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/player/PlayerEntity;applyEnchantmentsToDamage(Lnet/minecraft/entity/damage/DamageSource;F)F"),
+            argsOnly = true,
+            require = 1,
+            index = 2
+    )
+    float tweakDamageIfVampire(float amount, DamageSource source) {
+        return this.isVampire() && DamageSourceExtensionsKt.isEffectiveAgainstVampires(source) ?
+                amount * 1.25f
+                : amount;
     }
 
     @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;isDay()Z"))

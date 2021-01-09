@@ -1,13 +1,10 @@
 package com.williambl.haema.effect
 
-import com.williambl.haema.util.computeValueWithout
 import net.minecraft.entity.LivingEntity
-import net.minecraft.entity.attribute.AttributeContainer
 import net.minecraft.entity.attribute.EntityAttributeModifier
 import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.effect.StatusEffect
 import net.minecraft.entity.effect.StatusEffectType
-import java.util.*
 
 class VampiricStrengthEffect(type: StatusEffectType?, color: Int) : StatusEffect(type, color) {
 
@@ -26,12 +23,6 @@ class VampiricStrengthEffect(type: StatusEffectType?, color: Int) : StatusEffect
                 EntityAttributeModifier.Operation.MULTIPLY_TOTAL
             )
             .addAttributeModifier(
-                EntityAttributes.GENERIC_MAX_HEALTH,
-                "858a6a28-5092-49ea-a94e-eb74db018a92",
-                6.0,
-                EntityAttributeModifier.Operation.ADDITION
-            )
-            .addAttributeModifier(
                 EntityAttributes.GENERIC_MOVEMENT_SPEED,
                 "7a47b1b8-16a5-4877-905a-07ffd5d2189b",
                 0.2,
@@ -43,15 +34,4 @@ class VampiricStrengthEffect(type: StatusEffectType?, color: Int) : StatusEffect
 
     override fun canApplyUpdateEffect(duration: Int, amplifier: Int): Boolean { return false }
 
-    override fun onApplied(entity: LivingEntity, attributes: AttributeContainer?, amplifier: Int) {
-        super.onApplied(entity, attributes, amplifier)
-        if (entity.health == entity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.computeValueWithout(UUID.fromString("858a6a28-5092-49ea-a94e-eb74db018a92"))?.toFloat() ?: 0.0)
-            entity.health = entity.maxHealth
-    }
-
-    override fun onRemoved(entity: LivingEntity, attributes: AttributeContainer?, amplifier: Int) {
-        super.onRemoved(entity, attributes, amplifier)
-        if (entity.health > entity.maxHealth)
-            entity.health = entity.maxHealth
-    }
 }
