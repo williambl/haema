@@ -1,5 +1,6 @@
 package com.williambl.haema.client
 
+import com.mojang.blaze3d.systems.RenderSystem
 import com.williambl.haema.Vampirable
 import com.williambl.haema.VampireBloodManager
 import com.williambl.haema.client.config.HaemaConfig
@@ -63,8 +64,10 @@ fun init() {
     HudRenderCallback.EVENT.register(VampireHud::render)
 
     ShaderEffectRenderCallback.EVENT.register(ShaderEffectRenderCallback {
-        if (config.vampireShaderEnabled && (MinecraftClient.getInstance().player as Vampirable).isVampire)
+        if (config.vampireShaderEnabled && (MinecraftClient.getInstance().player as Vampirable).isVampire) {
+            RenderSystem.disableAlphaTest();
             VAMPIRE_SHADER.render(it)
+        }
     })
 
     KeyBindingHelper.registerKeyBinding(DASH_KEY)
