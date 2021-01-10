@@ -5,8 +5,6 @@ import com.williambl.haema.logger
 import com.williambl.haema.util.getSpawn
 import io.github.apace100.origins.power.Power
 import io.github.apace100.origins.power.PowerType
-import net.minecraft.block.BedBlock
-import net.minecraft.entity.EntityType
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
@@ -15,6 +13,7 @@ import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.Identifier
 import net.minecraft.util.Pair
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Vec3d
 import net.minecraft.util.registry.Registry
 
 class VampirePower(type: PowerType<*>?, player: PlayerEntity?) : Power(type, player) {
@@ -41,23 +40,25 @@ class VampirePower(type: PowerType<*>?, player: PlayerEntity?) : Power(type, pla
             val spawn: Pair<ServerWorld, BlockPos>? = getSpawn(player)
             if (!isOrbOfOrigin) {
                 if (spawn != null) {
-                    val tpPos =
-                        BedBlock.findWakeUpPosition(EntityType.PLAYER, spawn.left, spawn.right, player.yaw)
-                    if (tpPos.isPresent) {
-                        serverPlayer.teleport(
-                            spawn.left,
-                            tpPos.get().x,
-                            tpPos.get().y,
-                            tpPos.get().z,
-                            player.pitch,
-                            player.yaw
-                        )
-                    } else {
-                        logger.warn("Could not spawn Vampire player with away from sunlight.")
-                    }
+                    val tpPos = Vec3d.ofCenter(spawn.right)
+                    serverPlayer.teleport(
+                        spawn.left,
+                        tpPos.x,
+                        tpPos.y,
+                        tpPos.z,
+                        player.pitch,
+                        player.yaw
+                    )
+                    serverPlayer.setSpawnPoint(spawn.left.registryKey, spawn.right, 0.0f, true, false)
+
                 } else {
                     logger.warn("Could not spawn Vampire player away from sunlight.")
                 }
+                if (serverPlayer.server.currentPlayerCount == 1) {
+                    serverPlayer.serverWorld.timeOfDay = 13000
+                }
+            } else {
+                logger.warn("Could not spawn Vampire player away from sunlight.")
             }
         }
     }
