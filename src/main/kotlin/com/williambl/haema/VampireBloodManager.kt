@@ -182,7 +182,11 @@ class VampireBloodManager() : HungerManager() {
     private fun feed(amount: Double, entity: LivingEntity, player: PlayerEntity) {
         (player.hungerManager as VampireBloodManager).addBlood(amount)
         lastFed = player.world.time
-        entity.damage(BloodLossDamageSource.instance, 1f)
+        if (entity is PlayerEntity && entity is Vampirable && entity.isVampire && entity.hungerManager is VampireBloodManager) {
+            ((entity.hungerManager) as VampireBloodManager).removeBlood(amount)
+        } else {
+            entity.damage(BloodLossDamageSource.instance, 1f)
+        }
         player.playSound(SoundEvents.ENTITY_GENERIC_DRINK, 1f, 1f)
         val towards = player.pos.subtract(entity.pos).normalize().multiply(0.1)
         for (i in 0..20) {
