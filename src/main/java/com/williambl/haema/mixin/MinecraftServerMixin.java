@@ -9,14 +9,15 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+
+import java.util.List;
 
 @Mixin(MinecraftServer.class)
 public class MinecraftServerMixin {
-    //TODO: PR to FAPI
-    @SuppressWarnings("unchecked")
-    @Redirect(method = "createWorlds", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableList;of(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableList;"))
-    <E> ImmutableList<E> addVampireHunterSpawner(E e1, E e2, E e3, E e4, E e5) {
-        return ImmutableList.of(e1, e2, e3, e4, e5, (E) new VampireHunterSpawner((EntityType<? extends VampireHunterEntity>) Registry.ENTITY_TYPE.get(new Identifier("haema:vampire_hunter"))));
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @ModifyVariable(method = "createWorlds", at = @At(value = "INVOKE_ASSIGN", target = "Lcom/google/common/collect/ImmutableList;of(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableList;"))
+    List addVampireHunterSpawner(List list) {
+        return ImmutableList.builder().addAll(list).add(new VampireHunterSpawner((EntityType<? extends VampireHunterEntity>) Registry.ENTITY_TYPE.get(new Identifier("haema:vampire_hunter")))).build();
     }
 }
