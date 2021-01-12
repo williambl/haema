@@ -33,6 +33,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
 
     @Shadow @Final public PlayerAbilities abilities;
     protected VampireBloodManager bloodManager = null; // to avoid a load of casts
+    protected CompoundTag nbt;
 
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
@@ -41,8 +42,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
     @Inject(method = "readCustomDataFromTag", at = @At("RETURN"))
     void addVampireHungerManager(CompoundTag tag, CallbackInfo ci) {
         if (tag.contains("foodLevel")) {
-            checkBloodManager();
-            bloodManager.fromTag(tag);
+            nbt = tag;
         }
     }
 
@@ -109,6 +109,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
         if (bloodManager == null) {
             hungerManager = new VampireBloodManager();
             bloodManager = (VampireBloodManager) hungerManager;
+            if (nbt != null) {
+                hungerManager.fromTag(nbt);
+                nbt = null;
+            }
             bloodManager.setOwner((PlayerEntity) (Object) this);
         }
     }
