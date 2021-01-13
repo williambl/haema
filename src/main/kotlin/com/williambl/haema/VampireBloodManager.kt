@@ -149,7 +149,7 @@ class VampireBloodManager() : HungerManager() {
     }
 
     fun getBloodLevel(): Double {
-        return if (owner?.isCreative == true) 20.0 else 20.0 * (sin((absoluteBloodLevel * PI) / 40.0))
+        return if (owner?.isCreative == true) 19.0 else 20.0 * (sin((absoluteBloodLevel * PI) / 40.0))
     }
 
     fun removeBlood(blood: Double) {
