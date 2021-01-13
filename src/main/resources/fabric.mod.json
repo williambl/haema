@@ -50,6 +50,9 @@
   "custom": {
     "cardinal-components": [
       "haema:vampire"
-    ]
+    ],
+    "vanguard": {
+      "curse-project-id": "391257"
+    }
   }
 }
