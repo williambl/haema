@@ -10,5 +10,15 @@ uniform vec2 OutSize;
 uniform float DistortAmount;
 
 void main() {
-    gl_FragColor = texture2D(DiffuseSampler, texCoord);
+    //Transform so 0,0 is center and edges are 1 away
+    vec2 coord = (2.0 * texCoord) - 1.0;
+
+    //Apply distortion
+    float sqDist = (coord.x*coord.x) + (coord.y * coord.y);
+    coord = (coord * ( 1.0 + (sqDist * DistortAmount)));
+
+    //Transform so 0,0 is bottom left again
+    coord = (1.0 + (coord))/2.0;
+
+    gl_FragColor = texture2D(DiffuseSampler, coord);
 }
