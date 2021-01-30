@@ -1,7 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "item/potion_overlay",
-    "layer1": "item/potion"
+    "layer0": "haema:item/vampire_blood"
   }
 }

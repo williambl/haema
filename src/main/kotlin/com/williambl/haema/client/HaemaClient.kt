@@ -72,9 +72,9 @@ fun init() {
 
     KeyBindingHelper.registerKeyBinding(DASH_KEY)
 
-    ColorProviderRegistry.ITEM.register(ItemColorProvider { stack, index ->
-        if (index > 0) -1 else 0xA23C3A
-    }, Registry.ITEM.get(Identifier("haema:vampire_blood")))
+    //ColorProviderRegistry.ITEM.register(ItemColorProvider { stack, index ->
+    //    if (index > 0) -1 else 0xA23C3A
+    //}, Registry.ITEM.get(Identifier("haema:vampire_blood")))
 
     EntityRendererRegistry.INSTANCE.register(Registry.ENTITY_TYPE.get(Identifier("haema:vampire_hunter"))) { dispatcher, _ -> VampireHunterEntityRenderer(dispatcher) }
 
