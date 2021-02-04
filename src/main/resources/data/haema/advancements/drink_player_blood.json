@@ -1,0 +1,24 @@
+{
+    "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
+    "display": {
+        "title": {
+            "text": "Give me the heart on your neck"
+        },
+        "description": {
+            "text": "Drink some blood from another vampire"
+        },
+        "icon": {
+            "item": "minecraft:player_head"
+        },
+        "frame": "challenge",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false
+    },
+    "criteria": {
+        "drinkfromplayer": {
+            "trigger": "minecraft:impossible"
+        }
+    },
+    "parent": "haema:drink_good_blood"
+}

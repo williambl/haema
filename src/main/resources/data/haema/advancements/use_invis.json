@@ -1,0 +1,25 @@
+{
+    "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
+    "display": {
+        "title": {
+            "text": "Now you see me"
+        },
+        "description": {
+            "text": "Use vampire invisibility"
+        },
+        "icon": {
+            "item": "minecraft:potion",
+            "nbt": "{Potion: \"minecraft:invisibility\"}"
+        },
+        "frame": "task",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false
+    },
+    "criteria": {
+        "usevampireinvis": {
+            "trigger": "minecraft:impossible"
+        }
+    },
+    "parent": "haema:use_dash"
+}

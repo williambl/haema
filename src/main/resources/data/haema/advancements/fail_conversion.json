@@ -1,0 +1,25 @@
+{
+    "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
+    "display": {
+        "title": {
+            "text": "I'm not a vampire"
+        },
+        "description": {
+            "text": "You forgot to have Strength II, didn't you?"
+        },
+        "icon": {
+            "item": "minecraft:potion",
+            "nbt": "{Potion: \"minecraft:weakness\"}"
+        },
+        "frame": "challenge",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": true
+    },
+    "criteria": {
+        "failconversion": {
+            "trigger": "minecraft:impossible"
+        }
+    },
+    "parent": "haema:get_blood"
+}

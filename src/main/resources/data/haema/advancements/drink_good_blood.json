@@ -1,0 +1,24 @@
+{
+    "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
+    "display": {
+        "title": {
+            "text": "I Never Have to Complain"
+        },
+        "description": {
+            "text": "Get some good quality blood from a villager"
+        },
+        "icon": {
+            "item": "minecraft:hay_block"
+        },
+        "frame": "task",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false
+    },
+    "criteria": {
+        "drinkgoodblood": {
+            "trigger": "minecraft:impossible"
+        }
+    },
+    "parent": "haema:drink_blood"
+}
