@@ -12,7 +12,13 @@ class VampirePlayerComponent : VampireComponent, AutoSyncedComponent, CopyableCo
     override var isPermanentVampire: Boolean = false
     override var isKilled: Boolean = false
 
-    override var abilities: MutableMap<VampireAbility, Int> = mutableMapOf()
+    override var abilities: MutableMap<VampireAbility, Int> = mutableMapOf(
+        VampireAbility.STRENGTH to 3,
+        VampireAbility.DASH to 1,
+        VampireAbility.INVISIBILITY to 1,
+        VampireAbility.IMMORTALITY to 1,
+        VampireAbility.VISION to 1
+    )
 
     override fun writeToNbt(tag: CompoundTag) {
         tag.putBoolean("isVampire", isVampire)
