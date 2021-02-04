@@ -25,6 +25,8 @@ interface Vampirable {
             VampireComponent.entityKey.get(this).isKilled = value
         }
 
+    fun getAbilityLevel(ability: VampireAbility): Int = VampireComponent.entityKey.get(this).abilities[ability] ?: 0
+
     fun checkBloodManager();
 
     companion object {
