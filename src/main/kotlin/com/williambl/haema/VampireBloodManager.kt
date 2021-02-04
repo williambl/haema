@@ -87,15 +87,15 @@ class VampireBloodManager() : HungerManager() {
         }
 
 
-        if (getBloodLevel() >= 10) {
+        if (getBloodLevel() >= 10 && (player as Vampirable).getAbilityLevel(VampireAbility.STRENGTH) > 0) {
             player.addStatusEffect(StatusEffectInstance(VampiricStrengthEffect.instance, 10, when {
                 getBloodLevel() >= 19 -> 2
                 getBloodLevel() >= 14 -> 1
                 else -> 0
-            }))
+            }.coerceAtMost((player as Vampirable).getAbilityLevel(VampireAbility.STRENGTH)-1)))
         }
 
-        if (getBloodLevel() >= 20) {
+        if (getBloodLevel() >= 20 && (player as Vampirable).getAbilityLevel(VampireAbility.INVISIBILITY) > 0) {
             player.addStatusEffect(StatusEffectInstance(StatusEffects.INVISIBILITY, 10, 0))
         }
 

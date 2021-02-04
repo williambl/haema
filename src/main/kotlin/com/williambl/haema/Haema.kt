@@ -142,6 +142,7 @@ fun init() {
         val world = player.world
         val target = raytraceForDash(player)
 
+        //TODO: don't trust the client
         if (target != null) {
             val rand = world.random
             for (j in 0 until 3) {

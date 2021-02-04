@@ -2,6 +2,7 @@ package com.williambl.haema.client
 
 import com.mojang.blaze3d.systems.RenderSystem
 import com.williambl.haema.Vampirable
+import com.williambl.haema.VampireAbility
 import com.williambl.haema.VampireBloodManager
 import com.williambl.haema.client.config.HaemaConfig
 import com.williambl.haema.client.gui.VampireHud
@@ -12,11 +13,9 @@ import me.sargunvohra.mcmods.autoconfig1u.AutoConfig
 import me.sargunvohra.mcmods.autoconfig1u.serializer.Toml4jConfigSerializer
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry
-import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry
 import net.minecraft.client.MinecraftClient
-import net.minecraft.client.color.item.ItemColorProvider
 import net.minecraft.client.options.KeyBinding
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
@@ -64,7 +63,7 @@ fun init() {
     HudRenderCallback.EVENT.register(VampireHud::render)
 
     ShaderEffectRenderCallback.EVENT.register(ShaderEffectRenderCallback {
-        if (config.vampireShaderEnabled && (MinecraftClient.getInstance().player as Vampirable).isVampire) {
+        if (config.vampireShaderEnabled && (MinecraftClient.getInstance().player as Vampirable).isVampire && (MinecraftClient.getInstance().player as Vampirable).getAbilityLevel(VampireAbility.VISION) > 0) {
             RenderSystem.disableAlphaTest();
             VAMPIRE_SHADER.render(it)
         }
