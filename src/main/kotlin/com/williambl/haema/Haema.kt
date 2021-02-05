@@ -12,6 +12,7 @@ import com.williambl.haema.entity.VampireHunterEntity
 import com.williambl.haema.entity.VampireHunterSpawner
 import com.williambl.haema.item.EmptyVampireBloodInjectorItem
 import com.williambl.haema.item.VampireBloodInjectorItem
+import com.williambl.haema.ritual.RitualTable
 import com.williambl.haema.util.*
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactory
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
@@ -33,8 +34,10 @@ import net.fabricmc.fabric.api.loot.v1.event.LootTableLoadingCallback.LootTableS
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
 import net.fabricmc.fabric.api.tag.TagRegistry
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.block.AbstractBlock
 import net.minecraft.block.BedBlock
 import net.minecraft.block.DispenserBlock
+import net.minecraft.block.Material
 import net.minecraft.block.dispenser.FallibleItemDispenserBehavior
 import net.minecraft.block.enums.BedPart
 import net.minecraft.client.item.TooltipContext
@@ -46,10 +49,7 @@ import net.minecraft.entity.SpawnGroup
 import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.mob.HostileEntity
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.item.Item
-import net.minecraft.item.ItemGroup
-import net.minecraft.item.ItemStack
-import net.minecraft.item.Items
+import net.minecraft.item.*
 import net.minecraft.loot.ConstantLootTableRange
 import net.minecraft.loot.LootManager
 import net.minecraft.loot.entry.ItemEntry
@@ -83,6 +83,12 @@ val mediumBloodTag = TagRegistry.entityType(Identifier("haema:medium_blood_sourc
 val poorBloodTag = TagRegistry.entityType(Identifier("haema:poor_blood_sources"))
 
 val vampireEffectiveWeaponsTag = TagRegistry.item(Identifier("haema:vampire_weapons"))
+
+val level0RitualMaterialsTag = TagRegistry.block(Identifier("haema:ritual_materials/level_0"))
+val level1RitualMaterialsTag = TagRegistry.block(Identifier("haema:ritual_materials/level_1"))
+
+val level0RitualTorchesTag = TagRegistry.block(Identifier("haema:ritual_torches/level_0"))
+val level1RitualTorchesTag = TagRegistry.block(Identifier("haema:ritual_torches/level_1"))
 
 val dungeonLootTable = Identifier("minecraft:chests/simple_dungeon")
 val jungleTempleLootTable = Identifier("minecraft:chests/jungle_temple")
@@ -131,13 +137,15 @@ fun init() {
         if (id == dungeonLootTable || id == jungleTempleLootTable || id == desertPyramidLootTable) {
             val poolBuilder: FabricLootPoolBuilder = FabricLootPoolBuilder.builder()
                 .rolls(ConstantLootTableRange.create(1))
-                .withEntry(ItemEntry.builder(Registry.ITEM.get(Identifier("haema:vampire_blood")))
-                    .weight(if (id == dungeonLootTable) 10 else 5)
-                    .build()
+                .withEntry(
+                    ItemEntry.builder(Registry.ITEM.get(Identifier("haema:vampire_blood")))
+                        .weight(if (id == dungeonLootTable) 10 else 5)
+                        .build()
                 )
-                .withEntry(ItemEntry.builder(Items.AIR)
-                    .weight(10)
-                    .build()
+                .withEntry(
+                    ItemEntry.builder(Items.AIR)
+                        .weight(10)
+                        .build()
                 )
             supplier.withPool(poolBuilder.build())
         }
@@ -165,7 +173,16 @@ fun init() {
                     0.0
                 )
             }
-            world.playSound(null, target.x, target.y, target.z, SoundEvents.ENTITY_GHAST_SHOOT, SoundCategory.PLAYERS, 1f, 1.5f)
+            world.playSound(
+                null,
+                target.x,
+                target.y,
+                target.z,
+                SoundEvents.ENTITY_GHAST_SHOOT,
+                SoundCategory.PLAYERS,
+                1f,
+                1.5f
+            )
             player.teleport(target.x, target.y, target.z)
         }
     }
@@ -186,6 +203,20 @@ fun init() {
         Registry.STATUS_EFFECT,
         Identifier("haema:vampiric_weakness"),
         VampiricWeaknessEffect.instance
+    )
+
+    val ritualTable = RitualTable(AbstractBlock.Settings.of(Material.METAL))
+
+    Registry.register(
+        Registry.BLOCK,
+        Identifier("haema:ritual_table"),
+        ritualTable
+    )
+
+    Registry.register(
+        Registry.ITEM,
+        Identifier("haema:ritual_table"),
+        BlockItem(ritualTable, Item.Settings().group(ItemGroup.DECORATIONS))
     )
 
     Registry.register(
