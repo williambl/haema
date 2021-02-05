@@ -43,6 +43,7 @@ import net.minecraft.block.dispenser.FallibleItemDispenserBehavior
 import net.minecraft.block.enums.BedPart
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.command.argument.EntityArgumentType
+import net.minecraft.command.argument.IdentifierArgumentType
 import net.minecraft.entity.EntityDimensions
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.LivingEntity
@@ -343,7 +344,7 @@ fun init() {
                     .then(literal("get").then(argument("targets", EntityArgumentType.players()).executes {  context ->
                         EntityArgumentType.getPlayers(context, "targets").forEach {
                             if ((it as Vampirable).isVampire) {
-                                context.source.sendFeedback(it.name.copy().append("has abilities:"), false)
+                                context.source.sendFeedback(it.name.copy().append(" has abilities:"), false)
                                 VampireAbility.values().forEach { ability ->
                                     context.source.sendFeedback(Text.of("${ability.name}: ${it.getAbilityLevel(ability)}"), false)
                                 }
@@ -360,6 +361,35 @@ fun init() {
                             }
                             return@executes 1
                         }))))
+                )
+                .then(literal("rituals")
+                    .then(literal("get").then(argument("targets", EntityArgumentType.players()).executes { context ->
+                        EntityArgumentType.getPlayers(context, "targets").forEach {
+                            if ((it as Vampirable).isVampire) {
+                                context.source.sendFeedback(it.name.copy().append(" has used rituals:"), false)
+                                VampireComponent.entityKey.get(it).ritualsUsed.forEach { ritual ->
+                                    context.source.sendFeedback(Text.of(ritual.toString()), false)
+                                }
+                            }
+                        }
+                        return@executes 1
+                    }))
+                    .then(literal("add").then(argument("targets", EntityArgumentType.players()).then(argument("ritual", IdentifierArgumentType.identifier()).executes { context ->
+                        EntityArgumentType.getPlayers(context, "targets").forEach {
+                            if ((it as Vampirable).isVampire) {
+                                it.setHasUsedRitual(IdentifierArgumentType.getIdentifier(context, "ritual"), true)
+                            }
+                        }
+                        return@executes 1
+                    })))
+                    .then(literal("remove").then(argument("targets", EntityArgumentType.players()).then(argument("ritual", IdentifierArgumentType.identifier()).executes { context ->
+                        EntityArgumentType.getPlayers(context, "targets").forEach {
+                            if ((it as Vampirable).isVampire) {
+                                it.setHasUsedRitual(IdentifierArgumentType.getIdentifier(context, "ritual"), false)
+                            }
+                        }
+                        return@executes 1
+                    })))
                 )
         )
     }
