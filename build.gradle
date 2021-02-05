@@ -99,8 +99,8 @@ dependencies {
     }
     include "me.sargunvohra.mcmods:autoconfig1u:${project.acu_version}"
 
-    modImplementation "io.github.cottonmc:LibGui:${project.libgui_version}"
-    include "io.github.cottonmc:LibGui:${project.libgui_version}"
+    modImplementation "com.github.RedstoneParadox:OakTree:${project.oaktree_version}"
+    include "com.github.RedstoneParadox:OakTree:${project.oaktree_version}"
 
     //include "io.github.ladysnake:vanguard:${vanguard_version}"
 
