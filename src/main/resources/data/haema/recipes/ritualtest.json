@@ -2,11 +2,13 @@
   "type": "haema:ritual",
   "ingredients": [
     {
-      "item": "haema:vampire_blood"
-    },
-    {
-      "item": "haema:empty_vampire_blood_injector"
+      "item": "minecraft:barrier"
     }
   ],
-  "fluid": "minecraft:water"
+  "fluid": "minecraft:water",
+  "repeatable": "false",
+  "action": {
+    "name": "add_level",
+    "arg": 1
+  }
 }
