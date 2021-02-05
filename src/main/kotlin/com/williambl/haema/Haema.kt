@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.williambl.haema.component.VampireComponent
 import com.williambl.haema.component.VampirePlayerComponent
 import com.williambl.haema.craft.BookOfBloodRecipe
+import com.williambl.haema.craft.ritual.RitualRecipe
 import com.williambl.haema.effect.SunlightSicknessEffect
 import com.williambl.haema.effect.VampiricStrengthEffect
 import com.williambl.haema.effect.VampiricWeaknessEffect
@@ -247,6 +248,10 @@ fun init() {
         Identifier("haema:book_of_blood"),
         BookOfBloodRecipe.Serializer
     )
+
+    //To make them load and register
+    RitualRecipe.recipeSerializer
+    RitualRecipe.recipeType
 
     Registry.register(
         Registry.ENTITY_TYPE,

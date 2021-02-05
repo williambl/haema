@@ -1,6 +1,7 @@
 package com.williambl.haema.craft.ritual
 
 import com.google.gson.JsonObject
+import net.minecraft.block.Blocks
 import net.minecraft.fluid.Fluid
 import net.minecraft.item.ItemStack
 import net.minecraft.network.PacketByteBuf
@@ -8,7 +9,10 @@ import net.minecraft.recipe.Ingredient
 import net.minecraft.recipe.Recipe
 import net.minecraft.recipe.RecipeSerializer
 import net.minecraft.recipe.RecipeType
+import net.minecraft.state.property.Properties
 import net.minecraft.util.Identifier
+import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Direction
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.World
 
@@ -43,6 +47,33 @@ class RitualRecipe(private val ingredients: List<Ingredient>, val fluid: Fluid, 
             println(inv.player.name.asString())
         }
 
+        val invItemStacks = inv.getAllItemStacks().toMutableList()
+
+        for (ingredient: Ingredient in ingredients) {
+            var result = ItemStack.EMPTY
+            for (itemStack: ItemStack in invItemStacks) {
+                if (ingredient.test(itemStack)) {
+                    result = itemStack
+                }
+            }
+
+            if (!result.isEmpty) {
+                invItemStacks.remove(result)
+                inv.removeItem(result.item, 1)
+            }
+        }
+
+        val mutable = inv.pos.mutableCopy().move(Direction.DOWN)
+
+        inv.player.world.clearFluidState(mutable.move(Direction.EAST))
+        inv.player.world.clearFluidState(mutable.move(Direction.NORTH))
+        inv.player.world.clearFluidState(mutable.move(Direction.WEST))
+        inv.player.world.clearFluidState(mutable.move(Direction.WEST))
+        inv.player.world.clearFluidState(mutable.move(Direction.SOUTH))
+        inv.player.world.clearFluidState(mutable.move(Direction.SOUTH))
+        inv.player.world.clearFluidState(mutable.move(Direction.EAST))
+        inv.player.world.clearFluidState(mutable.move(Direction.EAST))
+
         return ItemStack.EMPTY
     }
 
@@ -55,6 +86,15 @@ class RitualRecipe(private val ingredients: List<Ingredient>, val fluid: Fluid, 
     override fun getSerializer(): RecipeSerializer<*> = recipeSerializer
 
     override fun getType(): RecipeType<*> = recipeType
+
+    private fun World.clearFluidState(pos: BlockPos) {
+        val blockState = getBlockState(pos)
+        if (blockState.properties.contains(Properties.WATERLOGGED)) {
+            setBlockState(pos, blockState.with(Properties.WATERLOGGED, false))
+        } else {
+            setBlockState(pos, Blocks.AIR.defaultState)
+        }
+    }
 
     companion object {
         val recipeType: RecipeType<RitualRecipe> = RecipeType.register("haema:ritual")

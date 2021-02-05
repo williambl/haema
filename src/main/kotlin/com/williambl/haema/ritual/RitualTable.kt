@@ -1,16 +1,24 @@
 package com.williambl.haema.ritual
 
+import com.williambl.haema.craft.ritual.RitualInventory
+import com.williambl.haema.craft.ritual.RitualRecipe
 import com.williambl.haema.level0RitualMaterialsTag
 import com.williambl.haema.level0RitualTorchesTag
 import com.williambl.haema.level1RitualMaterialsTag
 import com.williambl.haema.level1RitualTorchesTag
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
+import net.minecraft.entity.EntityType
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.fluid.Fluid
+import net.minecraft.fluid.FluidState
+import net.minecraft.fluid.Fluids
+import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Box
 import net.minecraft.util.math.Direction
 import net.minecraft.world.World
 
@@ -27,6 +35,13 @@ class RitualTable(settings: Settings) : Block(settings) {
         println("base block level: ${checkBaseBlockStates(world, pos)}")
         println("torch level: ${checkTorchBlockStates(world, pos)}")
 
+        if (!world.isClient && player != null) {
+            val inventory = getInventory(world, pos, player)
+
+            (world as ServerWorld).server.recipeManager.listAllOfType(RitualRecipe.recipeType)
+                .first { it.matches(inventory) }
+                .craft(inventory)
+        }
         return ActionResult.SUCCESS
     }
 
@@ -86,6 +101,39 @@ class RitualTable(settings: Settings) : Block(settings) {
             result = result.coerceAtMost(getTorchLevel(world.getBlockState(mutable.move(Direction.EAST, 2)).block))
 
             return result
+        }
+
+        private fun getFluid(world: World, tablePos: BlockPos): Fluid {
+            val states = mutableListOf<FluidState>()
+            val mutable = tablePos.mutableCopy().move(Direction.DOWN)
+
+            states.add(world.getFluidState(mutable.move(Direction.EAST)))
+            states.add(world.getFluidState(mutable.move(Direction.NORTH)))
+            states.add(world.getFluidState(mutable.move(Direction.WEST)))
+            states.add(world.getFluidState(mutable.move(Direction.WEST)))
+            states.add(world.getFluidState(mutable.move(Direction.SOUTH)))
+            states.add(world.getFluidState(mutable.move(Direction.SOUTH)))
+            states.add(world.getFluidState(mutable.move(Direction.EAST)))
+            states.add(world.getFluidState(mutable.move(Direction.EAST)))
+
+            if (states.any { !it.isStill })
+                return Fluids.EMPTY
+
+            val result = states.asSequence()
+                .map { it.fluid }
+                .distinct()
+
+            if (result.count() == 1) {
+                return result.first()
+            }
+            return Fluids.EMPTY
+        }
+
+        fun getInventory(world: World, pos: BlockPos, player: PlayerEntity): RitualInventory {
+            val itemEntities = world.getEntitiesByType(EntityType.ITEM, Box(pos).expand(2.0, 1.0, 2.0)) { true }
+            val fluid = getFluid(world, pos)
+
+            return RitualInventory(itemEntities, fluid, pos, player)
         }
 
         private fun getBlockLevel(block: Block): Int {

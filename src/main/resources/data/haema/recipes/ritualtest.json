@@ -1,0 +1,12 @@
+{
+  "type": "haema:ritual",
+  "ingredients": [
+    {
+      "item": "haema:vampire_blood"
+    },
+    {
+      "item": "haema:empty_vampire_blood_injector"
+    }
+  ],
+  "fluid": "minecraft:water"
+}
