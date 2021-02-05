@@ -1,5 +1,6 @@
 package com.williambl.haema
 
+import com.mojang.brigadier.arguments.DoubleArgumentType
 import com.williambl.haema.component.VampireComponent
 import com.williambl.haema.component.VampirePlayerComponent
 import com.williambl.haema.craft.BookOfBloodRecipe
@@ -17,6 +18,7 @@ import io.netty.buffer.Unpooled
 import nerdhub.cardinal.components.api.util.RespawnCopyStrategy
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
+import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
@@ -35,6 +37,7 @@ import net.minecraft.block.DispenserBlock
 import net.minecraft.block.dispenser.FallibleItemDispenserBehavior
 import net.minecraft.block.enums.BedPart
 import net.minecraft.client.item.TooltipContext
+import net.minecraft.command.argument.EntityArgumentType
 import net.minecraft.entity.EntityDimensions
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.LivingEntity
@@ -52,12 +55,16 @@ import net.minecraft.loot.entry.ItemEntry
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.resource.ResourceManager
+import net.minecraft.server.command.CommandManager.argument
+import net.minecraft.server.command.CommandManager.literal
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
-import net.minecraft.util.*
+import net.minecraft.util.ActionResult
+import net.minecraft.util.Formatting
+import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPointer
 import net.minecraft.util.math.Box
 import net.minecraft.util.registry.Registry
@@ -122,15 +129,15 @@ fun init() {
     LootTableLoadingCallback.EVENT.register(LootTableLoadingCallback { resourceManager: ResourceManager?, lootManager: LootManager?, id: Identifier?, supplier: FabricLootSupplierBuilder, setter: LootTableSetter? ->
         if (id == dungeonLootTable || id == jungleTempleLootTable || id == desertPyramidLootTable) {
             val poolBuilder: FabricLootPoolBuilder = FabricLootPoolBuilder.builder()
-                    .rolls(ConstantLootTableRange.create(1))
-                    .withEntry(ItemEntry.builder(Registry.ITEM.get(Identifier("haema:vampire_blood")))
-                            .weight(if (id == dungeonLootTable) 10 else 5)
-                            .build()
-                    )
-                    .withEntry(ItemEntry.builder(Items.AIR)
-                            .weight(10)
-                            .build()
-                    )
+                .rolls(ConstantLootTableRange.create(1))
+                .withEntry(ItemEntry.builder(Registry.ITEM.get(Identifier("haema:vampire_blood")))
+                    .weight(if (id == dungeonLootTable) 10 else 5)
+                    .build()
+                )
+                .withEntry(ItemEntry.builder(Items.AIR)
+                    .weight(10)
+                    .build()
+                )
             supplier.withPool(poolBuilder.build())
         }
     })
@@ -149,11 +156,11 @@ fun init() {
                 val y: Double = (target.y - player.y) * rand.nextDouble() + player.y + 1
                 val z: Double = (target.z - player.z) * rand.nextDouble() + player.z - 0.5
                 (world as ServerWorld).spawnParticles(
-                        DustParticleEffect.RED,
-                        x, y, z,
-                        10,
-                        0.5, 1.0, 0.5,
-                        0.0
+                    DustParticleEffect.RED,
+                    x, y, z,
+                    10,
+                    0.5, 1.0, 0.5,
+                    0.0
                 )
             }
             world.playSound(null, target.x, target.y, target.z, SoundEvents.ENTITY_GHAST_SHOOT, SoundCategory.PLAYERS, 1f, 1.5f)
@@ -162,57 +169,44 @@ fun init() {
     }
 
     Registry.register(
-            Registry.STATUS_EFFECT,
-            Identifier("haema:sunlight_sickness"),
-            SunlightSicknessEffect.instance
+        Registry.STATUS_EFFECT,
+        Identifier("haema:sunlight_sickness"),
+        SunlightSicknessEffect.instance
     )
 
     Registry.register(
-            Registry.STATUS_EFFECT,
-            Identifier("haema:vampiric_strength"),
-            VampiricStrengthEffect.instance
+        Registry.STATUS_EFFECT,
+        Identifier("haema:vampiric_strength"),
+        VampiricStrengthEffect.instance
     )
 
     Registry.register(
-            Registry.STATUS_EFFECT,
-            Identifier("haema:vampiric_weakness"),
-            VampiricWeaknessEffect.instance
+        Registry.STATUS_EFFECT,
+        Identifier("haema:vampiric_weakness"),
+        VampiricWeaknessEffect.instance
     )
 
     Registry.register(
-            Registry.ITEM,
-            Identifier("haema:vampire_converter"),
-            object : Item(Settings()) {
-                override fun use(world: World?, user: PlayerEntity?, hand: Hand?): TypedActionResult<ItemStack> {
-                    if (world?.isClient != false || user == null)
-                        return super.use(world, user, hand)
-                    Vampirable.convert(user)
-                    return TypedActionResult.consume(user.getStackInHand(hand))
-                }
+        Registry.ITEM,
+        Identifier("haema:vampire_blood"),
+        object : Item(Item.Settings().group(ItemGroup.MISC)) {
+            override fun appendTooltip(stack: ItemStack?, world: World?, tooltip: MutableList<Text>, context: TooltipContext?) {
+                super.appendTooltip(stack, world, tooltip, context)
+                tooltip.add(TranslatableText("item.haema.vampire_blood.desc").formatted(Formatting.DARK_RED))
             }
+        }
     )
 
     Registry.register(
-            Registry.ITEM,
-            Identifier("haema:vampire_blood"),
-            object : Item(Item.Settings().group(ItemGroup.MISC)) {
-                override fun appendTooltip(stack: ItemStack?, world: World?, tooltip: MutableList<Text>, context: TooltipContext?) {
-                    super.appendTooltip(stack, world, tooltip, context)
-                    tooltip.add(TranslatableText("item.haema.vampire_blood.desc").formatted(Formatting.DARK_RED))
-                }
-            }
+        Registry.ITEM,
+        Identifier("haema:vampire_blood_injector"),
+        VampireBloodInjectorItem(Item.Settings().group(ItemGroup.TOOLS).maxCount(1))
     )
 
     Registry.register(
-            Registry.ITEM,
-            Identifier("haema:vampire_blood_injector"),
-            VampireBloodInjectorItem(Item.Settings().group(ItemGroup.TOOLS).maxCount(1))
-    )
-
-    Registry.register(
-            Registry.ITEM,
-            Identifier("haema:empty_vampire_blood_injector"),
-            EmptyVampireBloodInjectorItem(Item.Settings().group(ItemGroup.TOOLS).maxCount(1))
+        Registry.ITEM,
+        Identifier("haema:empty_vampire_blood_injector"),
+        EmptyVampireBloodInjectorItem(Item.Settings().group(ItemGroup.TOOLS).maxCount(1))
     )
 
     Registry.register(
@@ -242,24 +236,24 @@ fun init() {
     vampireHunterSpawner = VampireHunterSpawner(Registry.ENTITY_TYPE.get(Identifier("haema:vampire_hunter")) as EntityType<out VampireHunterEntity>)
 
     addTradesToProfession(
-            VillagerProfession.CLERIC,
-            3,
-            TradeOffers.Factory { _, _ ->
-                TradeOffer(
-                        ItemStack(Items.EMERALD, 5),
-                        ItemStack(Registry.ITEM.get(Identifier("haema:vampire_blood"))),
-                        1,
-                        30,
-                        0.05f
-                )
-            }
+        VillagerProfession.CLERIC,
+        3,
+        TradeOffers.Factory { _, _ ->
+            TradeOffer(
+                ItemStack(Items.EMERALD, 5),
+                ItemStack(Registry.ITEM.get(Identifier("haema:vampire_blood"))),
+                1,
+                30,
+                0.05f
+            )
+        }
     )
 
     DispenserBlock.registerBehavior(Registry.ITEM.get(Identifier("haema:vampire_blood_injector")), object : FallibleItemDispenserBehavior() {
         override fun dispenseSilently(pointer: BlockPointer, stack: ItemStack): ItemStack {
             val blockPos = pointer.blockPos.offset(pointer.blockState.get(DispenserBlock.FACING))
             val user = pointer.world.getEntitiesByClass(PlayerEntity::class.java, Box(blockPos), null)
-                    .firstOrNull() ?: return stack
+                .firstOrNull() ?: return stack
             return if ((stack.item as VampireBloodInjectorItem).tryUse(user))
                 ItemStack(Registry.ITEM.get(Identifier("haema:empty_vampire_blood_injector")))
             else
@@ -271,13 +265,44 @@ fun init() {
         override fun dispenseSilently(pointer: BlockPointer, stack: ItemStack): ItemStack {
             val blockPos = pointer.blockPos.offset(pointer.blockState.get(DispenserBlock.FACING))
             val user = pointer.world.getEntitiesByClass(PlayerEntity::class.java, Box(blockPos), null)
-                    .firstOrNull() ?: return stack
+                .firstOrNull() ?: return stack
             return if ((stack.item as EmptyVampireBloodInjectorItem).tryUse(user))
                 ItemStack(Registry.ITEM.get(Identifier("haema:vampire_blood_injector")))
             else
                 stack
         }
     })
+
+    CommandRegistrationCallback.EVENT.register { dispatcher, isDedicated ->
+        dispatcher.register(
+            literal("haema")
+                .then(literal("convert")
+                    .then(argument("targets", EntityArgumentType.players()).executes { context ->
+                        EntityArgumentType.getPlayers(context, "targets").forEach(Vampirable.Companion::convert)
+                        return@executes 1
+                    })
+                )
+                .then(literal("deconvert")
+                    .then(argument("targets", EntityArgumentType.players())).executes { context ->
+                        EntityArgumentType.getPlayers(context, "targets").forEach {
+                            if (!(it as Vampirable).isPermanentVampire) {
+                                it.isVampire = false
+                                it.kill()
+                            }
+                        }
+                        return@executes 1
+                    })
+                .then(literal("blood")
+                    .then(argument("targets", EntityArgumentType.players()).then(argument("amount", DoubleArgumentType.doubleArg(0.0, 20.0)).executes { context ->
+                        EntityArgumentType.getPlayers(context, "targets").forEach {
+                            if ((it as Vampirable).isVampire && it.hungerManager is VampireBloodManager) {
+                                (it.hungerManager as VampireBloodManager).absoluteBloodLevel = DoubleArgumentType.getDouble(context, "amount")
+                            }
+                        }
+                        return@executes 1
+                    })))
+        )
+    }
 
     vampiresBurn = GameRuleRegistry.register("vampiresBurn", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(true))
     feedCooldown = GameRuleRegistry.register("feedCooldown", GameRules.Category.PLAYER, GameRuleFactory.createIntRule(10, 0, 24000))
