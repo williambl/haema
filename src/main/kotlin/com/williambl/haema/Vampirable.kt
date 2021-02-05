@@ -29,6 +29,7 @@ interface Vampirable {
 
     fun setAbilityLevel(ability: VampireAbility, level: Int) {
         VampireComponent.entityKey.get(this).abilities[ability] = level
+        VampireComponent.entityKey.sync(this)
     }
 
     fun checkBloodManager();
