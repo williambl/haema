@@ -98,6 +98,8 @@ val desertPyramidLootTable = Identifier("minecraft:chests/desert_pyramid")
 
 val haemaCategory = CustomGameRuleCategory(Identifier("haema:haema"), TranslatableText("gamerule.category.haema").formatted(Formatting.BOLD).formatted(Formatting.YELLOW))
 
+lateinit var ritualTable: RitualTable
+
 lateinit var vampireHunterSpawner: VampireHunterSpawner
 
 val logger = LogManager.getLogger("Haema")
@@ -207,7 +209,7 @@ fun init() {
         VampiricWeaknessEffect.instance
     )
 
-    val ritualTable = RitualTable(AbstractBlock.Settings.of(Material.METAL))
+    ritualTable = RitualTable(AbstractBlock.Settings.of(Material.METAL))
 
     Registry.register(
         Registry.BLOCK,
