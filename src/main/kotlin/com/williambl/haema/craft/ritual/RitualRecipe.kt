@@ -22,6 +22,7 @@ class RitualRecipe(
     private val id: Identifier,
     val fluid: Fluid,
     private val ingredients: List<Ingredient>,
+    val minLevel: Int,
     val isRepeatable: Boolean,
     val actionName: String,
     val actionArg: Int
@@ -29,7 +30,7 @@ class RitualRecipe(
     : Recipe<RitualInventory> {
 
     fun matches(inv: RitualInventory): Boolean {
-        if (!isRepeatable && (inv.player as Vampirable).hasUsedRitual(id))
+        if (!isRepeatable && (inv.player as Vampirable).hasUsedRitual(id) || inv.level < minLevel)
             return false
 
         val invItemStacks = inv.getAllItemStacks().toMutableList()
@@ -131,9 +132,10 @@ class RitualRecipe(
                     id,
                     Registry.FLUID.get(Identifier(json.get("fluid").asString)),
                     json.getAsJsonArray("ingredients").map(Ingredient::fromJson),
+                    json.get("minLevel").asInt,
                     json.get("repeatable").asBoolean,
                     actionElement.get("name").asString,
-                    actionElement.get("arg").asNumber.toInt()
+                    actionElement.get("arg").asInt
                 )
             }
 
@@ -145,6 +147,7 @@ class RitualRecipe(
                     id,
                     Registry.FLUID.get(buf.readIdentifier()),
                     ingredients,
+                    buf.readInt(),
                     buf.readBoolean(),
                     buf.readString(),
                     buf.readInt()
@@ -155,6 +158,7 @@ class RitualRecipe(
                 buf.writeInt(recipe.ingredients.size)
                 recipe.ingredients.forEach { it.write(buf) }
                 buf.writeIdentifier(Registry.FLUID.getId(recipe.fluid))
+                buf.writeInt(recipe.minLevel)
                 buf.writeBoolean(recipe.isRepeatable)
                 buf.writeString(recipe.actionName)
                 buf.writeInt(recipe.actionArg)

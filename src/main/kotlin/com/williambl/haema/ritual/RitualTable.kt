@@ -21,6 +21,7 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Direction
 import net.minecraft.world.World
+import kotlin.math.min
 
 class RitualTable(settings: Settings) : Block(settings) {
 
@@ -32,11 +33,10 @@ class RitualTable(settings: Settings) : Block(settings) {
         hand: Hand,
         hit: BlockHitResult
     ): ActionResult {
-        println("base block level: ${checkBaseBlockStates(world, pos)}")
-        println("torch level: ${checkTorchBlockStates(world, pos)}")
+        val level = min(checkBaseBlockStates(world, pos), checkTorchBlockStates(world, pos))
 
         if (!world.isClient && player != null) {
-            val inventory = getInventory(world, pos, player)
+            val inventory = getInventory(world, pos, player, level)
 
             (world as ServerWorld).server.recipeManager.listAllOfType(RitualRecipe.recipeType)
                 .first { it.matches(inventory) }
@@ -129,11 +129,11 @@ class RitualTable(settings: Settings) : Block(settings) {
             return Fluids.EMPTY
         }
 
-        fun getInventory(world: World, pos: BlockPos, player: PlayerEntity): RitualInventory {
+        fun getInventory(world: World, pos: BlockPos, player: PlayerEntity, level: Int): RitualInventory {
             val itemEntities = world.getEntitiesByType(EntityType.ITEM, Box(pos).expand(2.0, 1.0, 2.0)) { true }
             val fluid = getFluid(world, pos)
 
-            return RitualInventory(itemEntities, fluid, pos, player)
+            return RitualInventory(itemEntities, fluid, pos, player, level)
         }
 
         private fun getBlockLevel(block: Block): Int {
