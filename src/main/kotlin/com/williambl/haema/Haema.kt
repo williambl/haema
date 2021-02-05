@@ -1,6 +1,7 @@
 package com.williambl.haema
 
 import com.mojang.brigadier.arguments.DoubleArgumentType
+import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.williambl.haema.component.VampireComponent
 import com.williambl.haema.component.VampirePlayerComponent
 import com.williambl.haema.craft.BookOfBloodRecipe
@@ -302,6 +303,28 @@ fun init() {
                         }
                         return@executes 1
                     })))
+                .then(literal("abilities")
+                    .then(literal("get").then(argument("targets", EntityArgumentType.players()).executes {  context ->
+                        EntityArgumentType.getPlayers(context, "targets").forEach {
+                            if ((it as Vampirable).isVampire) {
+                                context.source.sendFeedback(it.name.copy().append("has abilities:"), false)
+                                VampireAbility.values().forEach { ability ->
+                                    context.source.sendFeedback(Text.of("${ability.name}: ${it.getAbilityLevel(ability)}"), false)
+                                }
+                            }
+                        }
+                        return@executes 1
+                    }))
+                    .then(literal("set").then(argument("targets", EntityArgumentType.players()).then(argument("ability", VampireAbilityArgumentType.ability()).then(
+                        argument("level", IntegerArgumentType.integer(0)).executes { context ->
+                            EntityArgumentType.getPlayers(context, "targets").forEach {
+                                if ((it as Vampirable).isVampire) {
+                                    it.setAbilityLevel(VampireAbilityArgumentType.getAbility(context, "ability"), IntegerArgumentType.getInteger(context, "level"))
+                                }
+                            }
+                            return@executes 1
+                        }))))
+                )
         )
     }
 
