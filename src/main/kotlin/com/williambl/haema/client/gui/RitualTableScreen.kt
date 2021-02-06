@@ -62,7 +62,7 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
 
         widgets.forEachIndexed { i, widgets ->
             widgets.forEachIndexed { j, widget ->
-                widget.render(matrices, (panX+3+i*30).toInt(), (panY+3+j*30).toInt(), client!!, handler.getProperty(i+1))
+                widget.render(matrices, (panX+3+i*30).toInt(), (panY+3+j*30).toInt(), xBase, yBase, client!!, handler.getProperty(i+1))
             }
         }
 
@@ -120,8 +120,15 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
     }
 
     class AbilityWidget(val ability: VampireAbility, val level: Int): DrawableHelper() {
-        fun render(matrices: MatrixStack, x: Int, y: Int, client: MinecraftClient, levelAchieved: Int) {
-            matrices.push()
+        fun render(
+            matrices: MatrixStack,
+            x: Int,
+            y: Int,
+            xBase: Int,
+            yBase: Int,
+            client: MinecraftClient,
+            levelAchieved: Int
+        ) {
             client.textureManager.bindTexture(WIDGETS_TEXTURE)
             drawTexture(
                 matrices,
@@ -142,15 +149,11 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
                 26
             )
 
-            drawCenteredString(
-                matrices,
-                client.textRenderer,
-                ability.name.take(2),
-                x+12,
-                y+8,
-                0xffffff
+            client.itemRenderer.renderInGui(
+                ability.iconItem,
+                x + xBase + 13,
+                y + yBase + 22
             )
-            matrices.pop()
         }
     }
 
