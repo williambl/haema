@@ -1,15 +1,26 @@
 package com.williambl.haema.client.gui
 
 import com.mojang.blaze3d.systems.RenderSystem
+import com.williambl.haema.VampireAbility
 import com.williambl.haema.ritual.RitualTableScreenHandler
+import net.minecraft.advancement.AdvancementFrame
+import net.minecraft.client.MinecraftClient
+import net.minecraft.client.gui.DrawableHelper
+import net.minecraft.client.gui.screen.advancement.AdvancementObtainedStatus
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.player.PlayerInventory
+import net.minecraft.text.LiteralText
 import net.minecraft.text.Text
+import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
 
 class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInventory, title: Text) :
     HandledScreen<RitualTableScreenHandler>(handler, inventory, title) {
+
+    val widgets = VampireAbility.values()
+        .filterNot { it == VampireAbility.NONE }
+        .map { List (it.maxLevel) { idx -> AbilityWidget(it, idx) } }
 
     var movingTab = false
 
@@ -49,9 +60,11 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
             }
         }
 
-        /*rootWidget.renderLines(matrices, originX, originY, true)
-        rootWidget.renderLines(matrices, originX, originY, false)
-        rootWidget.renderWidgets(matrices, originX, originY)*/
+        widgets.forEachIndexed { idx, widgets ->
+            widgets.forEachIndexed { idx2, widget ->
+                widget.render(matrices, (panX+3+idx*30).toInt(), (panY+3+idx2*30).toInt(), client!!, handler.getProperty(idx+1))
+            }
+        }
 
         RenderSystem.depthFunc(518)
         matrices.translate(0.0, 0.0, -950.0)
@@ -65,12 +78,24 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
     }
 
     private fun renderWindowBorder(matrices: MatrixStack, xBase: Int, yBase: Int) {
+        matrices.push()
         RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f)
         RenderSystem.enableBlend()
         client!!.textureManager.bindTexture(WINDOW_TEXTURE)
         drawTexture(matrices, xBase, yBase, 0, 0, 252, 140)
 
-        textRenderer.draw(matrices, title, xBase.toFloat() + 6f, yBase.toFloat() + 6f, 4210752)
+        val pointsRemaining = handler.getProperty(0)
+        drawTextWithShadow(
+            matrices,
+            client!!.textRenderer,
+            LiteralText("Ability Points remaining: ")
+                .append(LiteralText(pointsRemaining.toString())
+                    .formatted(if (pointsRemaining == 0) Formatting.RED else Formatting.GREEN)),
+            xBase + 6,
+            yBase + 6,
+            0xffffff
+        )
+        matrices.pop()
     }
 
 
@@ -94,7 +119,38 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
         handler.close(handler.inv.player)
     }
 
+    class AbilityWidget(val ability: VampireAbility, val level: Int): DrawableHelper() {
+        fun render(matrices: MatrixStack, x: Int, y: Int, client: MinecraftClient, levelAchieved: Int) {
+            client.textureManager.bindTexture(WIDGETS_TEXTURE)
+            drawTexture(
+                matrices,
+                x,
+                y,
+                AdvancementFrame.TASK.textureV,
+                128 + (
+                        if (levelAchieved >= level)
+                            AdvancementObtainedStatus.OBTAINED.spriteIndex
+                        else
+                            AdvancementObtainedStatus.UNOBTAINED.spriteIndex
+                        )
+                        * 26,
+                26,
+                26
+            )
+
+            drawCenteredString(
+                matrices,
+                client.textRenderer,
+                ability.name.take(2),
+                x+12,
+                y+8,
+                0xffffff
+            )
+        }
+    }
+
     companion object {
         private val WINDOW_TEXTURE = Identifier("textures/gui/advancements/window.png")
+        private val WIDGETS_TEXTURE = Identifier("textures/gui/advancements/widgets.png")
     }
 }
