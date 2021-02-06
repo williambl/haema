@@ -18,11 +18,11 @@ import net.minecraft.util.Identifier
 class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInventory, title: Text) :
     HandledScreen<RitualTableScreenHandler>(handler, inventory, title) {
 
-    val widgets = VampireAbility.values()
+    private val widgets = VampireAbility.values()
         .filterNot { it == VampireAbility.NONE }
-        .map { List (it.maxLevel) { idx -> AbilityWidget(it, idx) } }
+        .map { List (it.maxLevel) { idx -> AbilityWidget(it, idx+1) } }
 
-    var movingTab = false
+    private var movingTab = false
 
     var panX = 117 / 2.0
     var panY = 56 / 2.0
@@ -60,9 +60,9 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
             }
         }
 
-        widgets.forEachIndexed { idx, widgets ->
-            widgets.forEachIndexed { idx2, widget ->
-                widget.render(matrices, (panX+3+idx*30).toInt(), (panY+3+idx2*30).toInt(), client!!, handler.getProperty(idx+1))
+        widgets.forEachIndexed { i, widgets ->
+            widgets.forEachIndexed { j, widget ->
+                widget.render(matrices, (panX+3+i*30).toInt(), (panY+3+j*30).toInt(), client!!, handler.getProperty(i+1))
             }
         }
 
@@ -121,12 +121,16 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
 
     class AbilityWidget(val ability: VampireAbility, val level: Int): DrawableHelper() {
         fun render(matrices: MatrixStack, x: Int, y: Int, client: MinecraftClient, levelAchieved: Int) {
+            matrices.push()
             client.textureManager.bindTexture(WIDGETS_TEXTURE)
             drawTexture(
                 matrices,
                 x,
                 y,
-                AdvancementFrame.TASK.textureV,
+                if (level == ability.maxLevel)
+                    AdvancementFrame.CHALLENGE.textureV
+                else
+                    AdvancementFrame.GOAL.textureV,
                 128 + (
                         if (levelAchieved >= level)
                             AdvancementObtainedStatus.OBTAINED.spriteIndex
@@ -146,6 +150,7 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
                 y+8,
                 0xffffff
             )
+            matrices.pop()
         }
     }
 
