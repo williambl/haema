@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " _ ",
+    "L#L",
+    "###"
+  ],
+  "key": {
+    "_": {
+      "item": "minecraft:gold_ingot"
+    },
+    "#": {
+      "item": "minecraft:blackstone"
+    },
+    "L": {
+      "item": "minecraft:lapis_lazuli"
+    }
+  },
+  "result": {
+    "item": "minecraft:enchanting_table"
+  }
+}
