@@ -14,6 +14,7 @@ import com.williambl.haema.entity.VampireHunterSpawner
 import com.williambl.haema.item.EmptyVampireBloodInjectorItem
 import com.williambl.haema.item.VampireBloodInjectorItem
 import com.williambl.haema.ritual.RitualTable
+import com.williambl.haema.ritual.RitualTableScreenHandler
 import com.williambl.haema.util.*
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactory
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
@@ -33,6 +34,8 @@ import net.fabricmc.fabric.api.loot.v1.FabricLootSupplierBuilder
 import net.fabricmc.fabric.api.loot.v1.event.LootTableLoadingCallback
 import net.fabricmc.fabric.api.loot.v1.event.LootTableLoadingCallback.LootTableSetter
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
+import net.fabricmc.fabric.api.networking.v1.PacketSender
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.fabricmc.fabric.api.tag.TagRegistry
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.block.AbstractBlock
@@ -58,8 +61,11 @@ import net.minecraft.loot.entry.ItemEntry
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.resource.ResourceManager
+import net.minecraft.server.MinecraftServer
 import net.minecraft.server.command.CommandManager.argument
 import net.minecraft.server.command.CommandManager.literal
+import net.minecraft.server.network.ServerPlayNetworkHandler
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
@@ -188,6 +194,21 @@ fun init() {
                 1.5f
             )
             player.teleport(target.x, target.y, target.z)
+        }
+    }
+
+    ServerPlayNetworking.registerGlobalReceiver(Identifier("haema:transferlevels")) { server: MinecraftServer, player: ServerPlayerEntity, networkHandler: ServerPlayNetworkHandler, buf: PacketByteBuf, sender: PacketSender ->
+        if (player.currentScreenHandler.syncId == buf.readInt() && player.currentScreenHandler is RitualTableScreenHandler) {
+            val amount = buf.readInt()
+            val from = buf.readInt()
+            val to = buf.readInt()
+            val currentAmountFrom = (player.currentScreenHandler as RitualTableScreenHandler).getProperty(from)
+            val currentAmountTo = (player.currentScreenHandler as RitualTableScreenHandler).getProperty(to)
+
+            if (currentAmountFrom-amount >= 0 && currentAmountTo+amount <= VampireAbility.values()[to].maxLevel) {
+                player.currentScreenHandler.setProperty(from, currentAmountFrom-amount)
+                player.currentScreenHandler.setProperty(to, currentAmountTo+amount)
+            }
         }
     }
 

@@ -20,7 +20,7 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
 
     private val widgets = VampireAbility.values()
         .filterNot { it == VampireAbility.NONE }
-        .map { List (it.maxLevel) { idx -> AbilityWidget(it, idx+1) } }
+        .map { List(it.maxLevel) { idx -> AbilityWidget(it, idx + 1) } }
 
     private var movingTab = false
 
@@ -35,6 +35,7 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
 
         renderWindow(matrices, xBase, yBase)
         renderWindowBorder(matrices, xBase, yBase)
+        renderWidgetTooltip(matrices, xBase, yBase, mouseX, mouseY)
     }
 
     private fun renderWindow(matrices: MatrixStack, xBase: Int, yBase: Int) {
@@ -62,7 +63,17 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
 
         widgets.forEachIndexed { i, widgets ->
             widgets.forEachIndexed { j, widget ->
-                widget.render(matrices, (panX+3+i*30).toInt(), (panY+3+j*30).toInt(), xBase, yBase, client!!, handler.getProperty(i+1))
+                widget.render(
+                    matrices,
+                    (panX + 3 + i * 30).toInt(),
+                    (panY + 3 + j * 30).toInt(),
+                    xBase,
+                    yBase,
+                    client!!,
+                    handler.getProperty(
+                        i + 1
+                    )
+                )
             }
         }
 
@@ -89,8 +100,10 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
             matrices,
             client!!.textRenderer,
             LiteralText("Ability Points remaining: ")
-                .append(LiteralText(pointsRemaining.toString())
-                    .formatted(if (pointsRemaining == 0) Formatting.RED else Formatting.GREEN)),
+                .append(
+                    LiteralText(pointsRemaining.toString())
+                        .formatted(if (pointsRemaining == 0) Formatting.RED else Formatting.GREEN)
+                ),
             xBase + 6,
             yBase + 6,
             0xffffff
@@ -98,6 +111,43 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
         matrices.pop()
     }
 
+    private fun renderWidgetTooltip(matrices: MatrixStack, xBase: Int, yBase: Int, mouseX: Int, mouseY: Int) {
+        val widget = getWidgetHovered(xBase, yBase, mouseX, mouseY)
+
+        if (widget != null) {
+            renderTooltip(
+                matrices, listOf(
+                    LiteralText(widget.ability.name + " " + widget.level).formatted(Formatting.BOLD)
+                        .formatted(Formatting.UNDERLINE),
+                    LiteralText("description")
+                ), mouseX, mouseY
+            )
+        }
+    }
+
+    override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
+        val xBase = (width - 252) / 2
+        val yBase = (height - 140) / 2
+
+        val widget = getWidgetHovered(xBase, yBase, mouseX.toInt(), mouseY.toInt())
+
+        if (widget != null) {
+            val currentLevel = handler.getProperty(widget.ability.ordinal)
+            val spareLevels = handler.getProperty(0)
+            val widgetLevel = widget.level
+
+            if (widgetLevel > currentLevel) {
+                if (widgetLevel - currentLevel <= spareLevels) {
+                    handler.transferLevels(widgetLevel - currentLevel, 0, widget.ability.ordinal)
+                }
+            } else if (widgetLevel < currentLevel) {
+                handler.transferLevels(currentLevel - widgetLevel, widget.ability.ordinal, 0)
+            } else if (widgetLevel == currentLevel) {
+                handler.transferLevels(1, widget.ability.ordinal, 0)
+            }
+        }
+        return super.mouseClicked(mouseX, mouseY, button)
+    }
 
     override fun mouseDragged(mouseX: Double, mouseY: Double, button: Int, deltaX: Double, deltaY: Double): Boolean {
         return if (button != 0) {
@@ -117,6 +167,18 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
     override fun onClose() {
         super.onClose()
         handler.close(handler.inv.player)
+    }
+
+    private fun getWidgetHovered(xBase: Int, yBase: Int, mouseX: Int, mouseY: Int): AbilityWidget? {
+        for (i in widgets.indices) for (j in widgets[i].indices) {
+            x = xBase + panX.toInt() + 15 + i * 30
+            y = yBase + panY.toInt() + 20 + j * 30
+
+            if (mouseX in x..x+22 && mouseY in y..y+26) {
+                return widgets[i][j]
+            }
+        }
+        return null
     }
 
     class AbilityWidget(val ability: VampireAbility, val level: Int): DrawableHelper() {

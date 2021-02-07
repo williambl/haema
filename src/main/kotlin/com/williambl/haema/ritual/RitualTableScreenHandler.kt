@@ -4,6 +4,10 @@ import com.williambl.haema.Vampirable
 import com.williambl.haema.VampireAbility
 import com.williambl.haema.craft.ritual.RitualInventory
 import com.williambl.haema.ritualTable
+import io.netty.buffer.Unpooled
+import net.fabricmc.api.EnvType
+import net.fabricmc.api.Environment
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
@@ -48,6 +52,11 @@ class RitualTableScreenHandler(syncId: Int, val inv: RitualInventory, val contex
     }
 
     fun getProperty(index: Int): Int = propertyDelegate[index]
+
+    @Environment(EnvType.CLIENT)
+    fun transferLevels(amount: Int, from: Int, to: Int) {
+        ClientPlayNetworking.send(Identifier("haema:transferlevels"), PacketByteBuf(Unpooled.buffer().writeInt(syncId).writeInt(amount).writeInt(from).writeInt(to)))
+    }
 
     override fun canUse(player: PlayerEntity): Boolean = canUse(context, player, ritualTable)
 
