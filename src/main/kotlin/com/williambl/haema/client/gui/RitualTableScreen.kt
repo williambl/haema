@@ -126,6 +126,8 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
     }
 
     override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
+        if (button != 0) return super.mouseClicked(mouseX, mouseY, button)
+
         val xBase = (width - 252) / 2
         val yBase = (height - 140) / 2
 
