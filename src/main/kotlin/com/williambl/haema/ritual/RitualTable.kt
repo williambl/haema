@@ -8,6 +8,7 @@ import com.williambl.haema.level1RitualMaterialsTag
 import com.williambl.haema.level1RitualTorchesTag
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
+import net.minecraft.block.ShapeContext
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.fluid.Fluid
@@ -20,6 +21,8 @@ import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Direction
+import net.minecraft.util.shape.VoxelShape
+import net.minecraft.world.BlockView
 import net.minecraft.world.World
 import kotlin.math.min
 
@@ -45,7 +48,16 @@ class RitualTable(settings: Settings) : Block(settings) {
         return ActionResult.SUCCESS
     }
 
+    override fun getOutlineShape(
+        state: BlockState?,
+        world: BlockView?,
+        pos: BlockPos?,
+        context: ShapeContext?
+    ): VoxelShape = shape
+
     companion object {
+        val shape: VoxelShape = createCuboidShape(0.0, 0.0, 0.0, 16.0, 12.0, 16.0)
+
         fun checkBaseBlockStates(world: World, tablePos: BlockPos): Int {
             var result = 4
             val mutable = tablePos.mutableCopy()
