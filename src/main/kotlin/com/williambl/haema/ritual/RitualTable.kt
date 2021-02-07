@@ -39,8 +39,8 @@ class RitualTable(settings: Settings) : Block(settings) {
             val inventory = getInventory(world, pos, player, level)
 
             (world as ServerWorld).server.recipeManager.listAllOfType(RitualRecipe.recipeType)
-                .first { it.matches(inventory) }
-                .craft(inventory)
+                .firstOrNull { it.matches(inventory) }
+                ?.craft(inventory)
         }
         return ActionResult.SUCCESS
     }
