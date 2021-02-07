@@ -8,10 +8,15 @@ import net.minecraft.block.Blocks
 import net.minecraft.fluid.Fluid
 import net.minecraft.item.ItemStack
 import net.minecraft.network.PacketByteBuf
+import net.minecraft.particle.DustParticleEffect
+import net.minecraft.particle.ParticleTypes
 import net.minecraft.recipe.Ingredient
 import net.minecraft.recipe.Recipe
 import net.minecraft.recipe.RecipeSerializer
 import net.minecraft.recipe.RecipeType
+import net.minecraft.server.world.ServerWorld
+import net.minecraft.sound.SoundCategory
+import net.minecraft.sound.SoundEvents
 import net.minecraft.state.property.Properties
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
@@ -79,14 +84,28 @@ class RitualRecipe(
 
         val mutable = inv.pos.mutableCopy().move(Direction.DOWN)
 
+        (inv.player.world as ServerWorld).spawnParticles(DustParticleEffect.RED, mutable.x.toDouble()+0.5, mutable.y.toDouble()+1.5, mutable.z.toDouble()+0.5, 10, 0.5, 1.0, 0.5, 0.5)
+
+        (inv.player.world as ServerWorld).playSound(null, mutable.x.toDouble()+0.5, mutable.y.toDouble()+1.5, mutable.z.toDouble()+0.5, SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, SoundCategory.BLOCKS, 1f, 1f)
+        (inv.player.world as ServerWorld).playSound(null, mutable.x.toDouble()+0.5, mutable.y.toDouble()+1.5, mutable.z.toDouble()+0.5, SoundEvents.BLOCK_END_GATEWAY_SPAWN, SoundCategory.BLOCKS, 1f, 1f)
+        (inv.player.world as ServerWorld).spawnParticles(ParticleTypes.LARGE_SMOKE, mutable.x.toDouble()+0.5, mutable.y.toDouble()+1.5, mutable.z.toDouble()+0.5, 10, 1.5, 1.0, 1.5, 0.2)
+
         inv.player.world.clearFluidState(mutable.move(Direction.EAST))
+        (inv.player.world as ServerWorld).spawnParticles(ParticleTypes.SOUL, mutable.x.toDouble()+0.5, mutable.y.toDouble()+0.5, mutable.z.toDouble()+0.5, 5, 0.5, 0.5, 0.5, 0.5)
         inv.player.world.clearFluidState(mutable.move(Direction.NORTH))
+        (inv.player.world as ServerWorld).spawnParticles(ParticleTypes.SOUL, mutable.x.toDouble()+0.5, mutable.y.toDouble()+0.5, mutable.z.toDouble()+0.5, 5, 0.5, 0.5, 0.5, 0.5)
         inv.player.world.clearFluidState(mutable.move(Direction.WEST))
+        (inv.player.world as ServerWorld).spawnParticles(ParticleTypes.SOUL, mutable.x.toDouble()+0.5, mutable.y.toDouble()+0.5, mutable.z.toDouble()+0.5, 5, 0.5, 0.5, 0.5, 0.5)
         inv.player.world.clearFluidState(mutable.move(Direction.WEST))
+        (inv.player.world as ServerWorld).spawnParticles(ParticleTypes.SOUL, mutable.x.toDouble()+0.5, mutable.y.toDouble()+0.5, mutable.z.toDouble()+0.5, 5, 0.5, 0.5, 0.5, 0.5)
         inv.player.world.clearFluidState(mutable.move(Direction.SOUTH))
+        (inv.player.world as ServerWorld).spawnParticles(ParticleTypes.SOUL, mutable.x.toDouble()+0.5, mutable.y.toDouble()+0.5, mutable.z.toDouble()+0.5, 5, 0.5, 0.5, 0.5, 0.5)
         inv.player.world.clearFluidState(mutable.move(Direction.SOUTH))
+        (inv.player.world as ServerWorld).spawnParticles(ParticleTypes.SOUL, mutable.x.toDouble()+0.5, mutable.y.toDouble()+0.5, mutable.z.toDouble()+0.5, 5, 0.5, 0.5, 0.5, 0.5)
         inv.player.world.clearFluidState(mutable.move(Direction.EAST))
+        (inv.player.world as ServerWorld).spawnParticles(ParticleTypes.SOUL, mutable.x.toDouble()+0.5, mutable.y.toDouble()+0.5, mutable.z.toDouble()+0.5, 5, 0.5, 0.5, 0.5, 0.5)
         inv.player.world.clearFluidState(mutable.move(Direction.EAST))
+        (inv.player.world as ServerWorld).spawnParticles(ParticleTypes.SOUL, mutable.x.toDouble()+0.5, mutable.y.toDouble()+0.5, mutable.z.toDouble()+0.5, 5, 0.5, 0.5, 0.5, 0.5)
 
         ritualActions[actionName]?.invoke(inv, actionArg)
         (inv.player as Vampirable).setHasUsedRitual(id, true)
