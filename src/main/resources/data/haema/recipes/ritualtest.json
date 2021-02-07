@@ -6,7 +6,7 @@
     }
   ],
   "fluid": "minecraft:water",
-  "repeatable": "false",
+  "repeatable": true,
   "minLevel": 1,
   "action": {
     "name": "add_level",

@@ -4,10 +4,7 @@ import com.google.gson.JsonObject
 import com.williambl.haema.Vampirable
 import com.williambl.haema.VampireAbility
 import com.williambl.haema.ritual.RitualTableScreenHandler
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory
 import net.minecraft.block.Blocks
-import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.fluid.Fluid
 import net.minecraft.item.ItemStack
 import net.minecraft.network.PacketByteBuf
@@ -15,12 +12,7 @@ import net.minecraft.recipe.Ingredient
 import net.minecraft.recipe.Recipe
 import net.minecraft.recipe.RecipeSerializer
 import net.minecraft.recipe.RecipeType
-import net.minecraft.screen.ScreenHandler
-import net.minecraft.screen.ScreenHandlerContext
-import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.state.property.Properties
-import net.minecraft.text.LiteralText
-import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
@@ -127,24 +119,10 @@ class RitualRecipe(
 
         val ritualActions = mapOf<String, (RitualInventory, Int) -> Unit>(
             "add_level" to { inv, arg ->
-                (inv.player as Vampirable).setAbilityLevel(VampireAbility.DASH, arg)
-                inv.player.openHandledScreen(object: ExtendedScreenHandlerFactory {
-                    override fun createMenu(syncId: Int, playerInv: PlayerInventory, player: PlayerEntity): ScreenHandler? {
-                        return RitualTableScreenHandler(syncId, inv, ScreenHandlerContext.create(inv.player.world, inv.pos))
-                    }
-
-                    override fun getDisplayName(): Text {
-                        return LiteralText("Ritual Table")
-                    }
-
-                    override fun writeScreenOpeningData(player: ServerPlayerEntity, buf: PacketByteBuf) {
-                        buf.writeIdentifier(Registry.FLUID.getId(inv.fluid))
-                        buf.writeBlockPos(inv.pos)
-                        buf.writeInt(inv.level)
-                    }
-                })
+                (inv.player as Vampirable).setAbilityLevel(VampireAbility.NONE, (inv.player as Vampirable).getAbilityLevel(VampireAbility.NONE)+arg)
+                inv.player.openHandledScreen(RitualTableScreenHandler.Factory(inv))
             },
-            "change_abilities" to { _, _ -> }
+            "change_abilities" to { inv, _ -> inv.player.openHandledScreen(RitualTableScreenHandler.Factory(inv)) }
         )
 
         object Serializer: RecipeSerializer<RitualRecipe> {

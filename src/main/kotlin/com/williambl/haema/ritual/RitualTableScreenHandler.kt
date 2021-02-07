@@ -8,6 +8,7 @@ import io.netty.buffer.Unpooled
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
@@ -16,6 +17,9 @@ import net.minecraft.screen.PropertyDelegate
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.ScreenHandlerContext
 import net.minecraft.screen.ScreenHandlerType
+import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.text.LiteralText
+import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 
@@ -59,6 +63,22 @@ class RitualTableScreenHandler(syncId: Int, val inv: RitualInventory, val contex
     }
 
     override fun canUse(player: PlayerEntity): Boolean = canUse(context, player, ritualTable)
+
+    class Factory(private val inv: RitualInventory): ExtendedScreenHandlerFactory {
+        override fun createMenu(syncId: Int, playerInv: PlayerInventory, player: PlayerEntity): ScreenHandler? {
+            return RitualTableScreenHandler(syncId, inv, ScreenHandlerContext.create(inv.player.world, inv.pos))
+        }
+
+        override fun getDisplayName(): Text {
+            return LiteralText("Ritual Table")
+        }
+
+        override fun writeScreenOpeningData(player: ServerPlayerEntity, buf: PacketByteBuf) {
+            buf.writeIdentifier(Registry.FLUID.getId(inv.fluid))
+            buf.writeBlockPos(inv.pos)
+            buf.writeInt(inv.level)
+        }
+    }
 
     companion object {
         val ritualTableScreenHandlerType: ScreenHandlerType<RitualTableScreenHandler>
