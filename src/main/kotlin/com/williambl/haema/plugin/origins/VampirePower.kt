@@ -19,6 +19,12 @@ import net.minecraft.util.math.Vec3d
 import net.minecraft.util.registry.Registry
 
 class VampirePower(type: PowerType<*>?, player: PlayerEntity?) : Power(type, player) {
+
+    override fun onAdded() {
+        (player as Vampirable).isVampire = true
+        (player as Vampirable).isPermanentVampire = true
+    }
+
     override fun onRemoved() {
         val originsVersion = FabricLoader.getInstance().getModContainer("origins").get().metadata.version
         if (originsVersion is SemanticVersion  && originsVersion < SemanticVersion.parse("0.4.6")) {
