@@ -31,6 +31,7 @@ import net.fabricmc.fabric.api.loot.v1.event.LootTableLoadingCallback
 import net.fabricmc.fabric.api.loot.v1.event.LootTableLoadingCallback.LootTableSetter
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
 import net.fabricmc.fabric.api.tag.TagRegistry
+import net.fabricmc.fabric.api.util.TriState
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.block.BedBlock
 import net.minecraft.block.DispenserBlock
@@ -74,6 +75,8 @@ import net.minecraft.village.VillagerProfession
 import net.minecraft.world.GameRules
 import net.minecraft.world.World
 import org.apache.logging.log4j.LogManager
+import top.theillusivec4.somnus.api.PlayerSleepEvents
+import top.theillusivec4.somnus.api.WorldSleepEvents
 
 val bloodLevelPackeId = Identifier("haema:bloodlevelsync")
 
@@ -142,7 +145,33 @@ fun init() {
         }
     })
 
+    PlayerSleepEvents.CAN_SLEEP_NOW.register(PlayerSleepEvents.CanSleepNow { player, pos ->
+        if (player is Vampirable) {
+            if (player.isVampire && player.world.isDay) {
+                return@CanSleepNow TriState.TRUE
+            }
+        }
 
+        TriState.DEFAULT
+    })
+
+    PlayerSleepEvents.TRY_SLEEP.register(PlayerSleepEvents.TrySleep { player, pos ->
+        if (player is Vampirable) {
+            if (player.isVampire && !player.world.isDay) {
+                return@TrySleep PlayerEntity.SleepFailureReason.NOT_POSSIBLE_NOW
+            }
+        }
+
+        null
+    })
+
+    WorldSleepEvents.WORLD_WAKE_TIME.register(WorldSleepEvents.WorldWakeTime {world, newTime, curTime ->
+        if (!world.isDay) {
+            newTime
+        } else {
+            curTime + (13000L - (world.getTimeOfDay() % 24000L))
+        }
+    })
 
     ServerSidePacketRegistry.INSTANCE.register(Identifier("haema:dash")) { packetContext, packetByteBuf ->
         val player = packetContext.player
@@ -320,4 +349,3 @@ fun init() {
 fun registerEntityComponentFactories(registry: EntityComponentFactoryRegistry) {
     registry.registerForPlayers(VampireComponent.entityKey, EntityComponentFactory { VampirePlayerComponent() }, RespawnCopyStrategy.ALWAYS_COPY)
 }
-
