@@ -155,16 +155,6 @@ fun init() {
         TriState.DEFAULT
     })
 
-    PlayerSleepEvents.TRY_SLEEP.register(PlayerSleepEvents.TrySleep { player, pos ->
-        if (player is Vampirable) {
-            if (player.isVampire && !player.world.isDay) {
-                return@TrySleep PlayerEntity.SleepFailureReason.NOT_POSSIBLE_NOW
-            }
-        }
-
-        null
-    })
-
     WorldSleepEvents.WORLD_WAKE_TIME.register(WorldSleepEvents.WorldWakeTime {world, newTime, curTime ->
         if (!world.isDay) {
             newTime
