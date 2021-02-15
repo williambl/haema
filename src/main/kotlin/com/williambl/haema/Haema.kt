@@ -283,7 +283,7 @@ fun init() {
                     })
                 )
                 .then(literal("deconvert")
-                    .then(argument("targets", EntityArgumentType.players())).executes { context ->
+                    .then(argument("targets", EntityArgumentType.players()).executes { context ->
                         EntityArgumentType.getPlayers(context, "targets").forEach {
                             if (!(it as Vampirable).isPermanentVampire) {
                                 it.isVampire = false
@@ -292,6 +292,7 @@ fun init() {
                         }
                         return@executes 1
                     })
+                )
                 .then(literal("blood")
                     .then(argument("targets", EntityArgumentType.players()).then(argument("amount", DoubleArgumentType.doubleArg(0.0, 20.0)).executes { context ->
                         EntityArgumentType.getPlayers(context, "targets").forEach {
@@ -300,7 +301,8 @@ fun init() {
                             }
                         }
                         return@executes 1
-                    })))
+                    }))
+                )
         )
     }
 
