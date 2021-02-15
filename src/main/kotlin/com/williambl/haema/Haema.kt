@@ -276,6 +276,7 @@ fun init() {
     CommandRegistrationCallback.EVENT.register { dispatcher, isDedicated ->
         dispatcher.register(
             literal("haema")
+                .requires { it.hasPermissionLevel(2) }
                 .then(literal("convert")
                     .then(argument("targets", EntityArgumentType.players()).executes { context ->
                         EntityArgumentType.getPlayers(context, "targets").forEach(Vampirable.Companion::convert)
