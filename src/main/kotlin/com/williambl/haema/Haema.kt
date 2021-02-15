@@ -320,6 +320,6 @@ fun init() {
 }
 
 fun registerEntityComponentFactories(registry: EntityComponentFactoryRegistry) {
-    registry.registerForPlayers(VampireComponent.entityKey, EntityComponentFactory { VampirePlayerComponent() }, RespawnCopyStrategy.ALWAYS_COPY)
+    registry.registerForPlayers(VampireComponent.entityKey, EntityComponentFactory { player ->  VampirePlayerComponent(player) }, RespawnCopyStrategy.ALWAYS_COPY)
 }
 
