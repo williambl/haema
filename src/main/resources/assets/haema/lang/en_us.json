@@ -119,6 +119,9 @@
   "gui.haema.config.gameplay.vampireweapons": "For vampire-effective weapons, Haema uses the item tag: ",
   "gui.haema.config.gameplay.gamerules": "The game rules Haema adds can be checked in the Create New World screen.",
 
+  "gui.haema.message.conversion_blocked_by_gamerule": "Game Rule 'playerVampireConversion' is not set to true.",
+  "gui.haema.message.conversion_not_possible": "Player is a permanent vampire and cannot be converted.",
+
   "text.autoconfig.haema.title": "Haema",
   "text.autoconfig.haema.option.vampireHudPlacement": "Vampire HUD placement",
   "text.autoconfig.haema.option.vampireShaderEnabled": "Enable Vampire Shader",

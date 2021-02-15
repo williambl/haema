@@ -3,13 +3,22 @@ package com.williambl.haema.component
 import dev.onyxstudios.cca.api.v3.component.CopyableComponent
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent
 import nerdhub.cardinal.components.api.ComponentType
+import net.minecraft.entity.Entity
 import net.minecraft.nbt.CompoundTag
+import kotlin.properties.Delegates
+import kotlin.reflect.KProperty
 
 @Suppress("UnstableApiUsage")
-class VampirePlayerComponent : VampireComponent, AutoSyncedComponent, CopyableComponent<VampirePlayerComponent> {
-    override var isVampire: Boolean = false
-    override var isPermanentVampire: Boolean = false
-    override var isKilled: Boolean = false
+class VampirePlayerComponent(player: Entity) : VampireComponent, AutoSyncedComponent, CopyableComponent<VampirePlayerComponent> {
+    private val syncCallback = { _: KProperty<*>, _: Any?, _: Any? ->
+        if (!player.world.isClient) {
+            VampireComponent.entityKey.sync(player)
+        }
+    }
+
+    override var isVampire: Boolean by Delegates.observable(false, syncCallback)
+    override var isPermanentVampire: Boolean by Delegates.observable(false, syncCallback)
+    override var isKilled: Boolean by Delegates.observable(false, syncCallback)
 
     override fun writeToNbt(tag: CompoundTag) {
         tag.putBoolean("isVampire", isVampire)

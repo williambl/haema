@@ -295,6 +295,7 @@ fun init() {
     CommandRegistrationCallback.EVENT.register { dispatcher, isDedicated ->
         dispatcher.register(
             literal("haema")
+                .requires { it.hasPermissionLevel(2) }
                 .then(literal("convert")
                     .then(argument("targets", EntityArgumentType.players()).executes { context ->
                         EntityArgumentType.getPlayers(context, "targets").forEach(Vampirable.Companion::convert)
@@ -302,7 +303,7 @@ fun init() {
                     })
                 )
                 .then(literal("deconvert")
-                    .then(argument("targets", EntityArgumentType.players())).executes { context ->
+                    .then(argument("targets", EntityArgumentType.players()).executes { context ->
                         EntityArgumentType.getPlayers(context, "targets").forEach {
                             if (!(it as Vampirable).isPermanentVampire) {
                                 it.isVampire = false
@@ -311,6 +312,7 @@ fun init() {
                         }
                         return@executes 1
                     })
+                )
                 .then(literal("blood")
                     .then(argument("targets", EntityArgumentType.players()).then(argument("amount", DoubleArgumentType.doubleArg(0.0, 20.0)).executes { context ->
                         EntityArgumentType.getPlayers(context, "targets").forEach {
@@ -319,7 +321,8 @@ fun init() {
                             }
                         }
                         return@executes 1
-                    })))
+                    }))
+                )
         )
     }
 
@@ -331,11 +334,11 @@ fun init() {
         server.playerManager.sendToAll(ServerSidePacketRegistry.INSTANCE.toPacket(Identifier("haema:updatedashcooldown"), buf))
     })
     vampireHunterNoticeChance = GameRuleRegistry.register("vampireHunterNoticeChance", GameRules.Category.MOBS, GameRuleFactory.createDoubleRule(0.1, 0.0, 1.0))
-    playerVampireConversion = GameRuleRegistry.register("playerVampireConversion", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(!FabricLoader.getInstance().isModLoaded("origins")))
+    playerVampireConversion = GameRuleRegistry.register("playerVampireConversion", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(true))
 
     logger.info("Everything registered. It's vampire time!")
 }
 
 fun registerEntityComponentFactories(registry: EntityComponentFactoryRegistry) {
-    registry.registerForPlayers(VampireComponent.entityKey, EntityComponentFactory { VampirePlayerComponent() }, RespawnCopyStrategy.ALWAYS_COPY)
+    registry.registerForPlayers(VampireComponent.entityKey, EntityComponentFactory { player ->  VampirePlayerComponent(player) }, RespawnCopyStrategy.ALWAYS_COPY)
 }

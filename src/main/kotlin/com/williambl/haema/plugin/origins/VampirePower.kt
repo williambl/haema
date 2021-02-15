@@ -27,7 +27,11 @@ class VampirePower(type: PowerType<*>?, player: PlayerEntity?) : Power(type, pla
 
     override fun onRemoved() {
         val originsVersion = FabricLoader.getInstance().getModContainer("origins").get().metadata.version
-        if (originsVersion is SemanticVersion  && originsVersion < SemanticVersion.parse("0.4.6")) {
+        if (originsVersion is SemanticVersion
+                && (
+                        originsVersion < SemanticVersion.parse("0.4.6")
+                        || (originsVersion == SemanticVersion.parse("0.4.6") && Throwable().stackTrace[1].className.contains("PlayerOriginComponent"))) // awful hack I know
+                    ) {
             (player as Vampirable).isVampire = false
             (player as Vampirable).isPermanentVampire = false
         }
