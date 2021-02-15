@@ -77,11 +77,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
                 : amount;
     }
 
-    @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;isDay()Z"))
-    boolean allowVampiresToSleepInDay(World world) {
-        return world.isDay() && !this.isVampire();
-    }
-
     @Redirect(method = "isInvulnerableTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$Key;)Z", ordinal = 1))
     boolean makeVampiresImmuneToFalling(GameRules gameRules, GameRules.Key<GameRules.BooleanRule> rule) {
         return gameRules.getBoolean(rule) && !isVampire();
