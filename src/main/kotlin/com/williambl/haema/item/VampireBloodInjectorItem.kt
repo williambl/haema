@@ -35,12 +35,16 @@ class VampireBloodInjectorItem(settings: Settings?) : Item(settings) {
     }
 
     fun tryUse(user: PlayerEntity, hand: Hand? = null): Boolean {
+        if (user.world.isClient) {
+            return false
+        }
+
         if ((user as Vampirable).isVampire) {
             (user.hungerManager as VampireBloodManager).addBlood(6.0)
             return true
         }
 
-        if (!user.hasStatusEffect(StatusEffects.STRENGTH) || user.getStatusEffect(StatusEffects.STRENGTH)!!.amplifier <= 0 || !user.world.gameRules[playerVampireConversion].get()) {
+        if (!user.hasStatusEffect(StatusEffects.STRENGTH) || user.getStatusEffect(StatusEffects.STRENGTH)!!.amplifier <= 0) {
             //awful hack, but the player dies before the item can be changed
             if (hand != null)
                 user.setStackInHand(hand, ItemStack(Registry.ITEM.get(Identifier("haema:empty_vampire_blood_injector"))))
@@ -49,6 +53,11 @@ class VampireBloodInjectorItem(settings: Settings?) : Item(settings) {
             user.addStatusEffect(StatusEffectInstance(StatusEffects.NAUSEA, 100))
             user.damage(IncompatibleBloodDamageSource.instance, 20f)
             return true
+        }
+
+        if (!user.world.gameRules[playerVampireConversion].get()) {
+            user.sendMessage(TranslatableText("gui.haema.message.conversion_blocked_by_gamerule"), true)
+            return false
         }
 
         Vampirable.convert(user)
