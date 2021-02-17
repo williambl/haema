@@ -32,7 +32,6 @@ import net.fabricmc.fabric.api.loot.v1.event.LootTableLoadingCallback.LootTableS
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
 import net.fabricmc.fabric.api.tag.TagRegistry
 import net.fabricmc.fabric.api.util.TriState
-import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.block.BedBlock
 import net.minecraft.block.DispenserBlock
 import net.minecraft.block.dispenser.FallibleItemDispenserBehavior
@@ -307,7 +306,7 @@ fun init() {
                         EntityArgumentType.getPlayers(context, "targets").forEach {
                             if (!(it as Vampirable).isPermanentVampire) {
                                 it.isVampire = false
-                                it.kill()
+                                it.removeBloodManager()
                             }
                         }
                         return@executes 1

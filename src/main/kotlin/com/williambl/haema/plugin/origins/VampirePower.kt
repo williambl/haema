@@ -34,12 +34,14 @@ class VampirePower(type: PowerType<*>?, player: PlayerEntity?) : Power(type, pla
                     ) {
             (player as Vampirable).isVampire = false
             (player as Vampirable).isPermanentVampire = false
+            (player as Vampirable).removeBloodManager()
         }
     }
 
     override fun onLost() {
         (player as Vampirable).isVampire = false
         (player as Vampirable).isPermanentVampire = false
+        (player as Vampirable).removeBloodManager()
     }
 
     override fun onChosen(isOrbOfOrigin: Boolean) {

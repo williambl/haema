@@ -44,10 +44,7 @@ class EmptyVampireBloodInjectorItem(settings: Settings?) : Item(settings) {
                 }
 
                 user.isVampire = false
-                //awful hack, but the player dies before the item can be changed
-                if (hand != null)
-                    user.setStackInHand(hand, ItemStack(Registry.ITEM.get(Identifier("haema:vampire_blood_injector"))))
-                user.kill()
+                user.removeBloodManager()
                 return true
             }
             if ((user.hungerManager as VampireBloodManager).absoluteBloodLevel < 6.0) {
