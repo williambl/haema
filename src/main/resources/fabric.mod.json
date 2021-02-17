@@ -48,7 +48,7 @@
     "minecraft": "1.16.x"
   },
   "suggests": {
-    "origins": ">=3.0.0"
+    "origins": ">=0.4.7"
   },
   "breaks": {
     "gunpowder": "*"

@@ -30,11 +30,16 @@ class VampirePower(type: PowerType<*>?, player: PlayerEntity?) : Power(type, pla
         if (originsVersion is SemanticVersion
                 && (
                         originsVersion < SemanticVersion.parse("0.4.6")
-                        || (originsVersion == SemanticVersion.parse("0.4.6") && Throwable().stackTrace[1].className.contains("PlayerOriginComponent"))) // awful hack I know
+                        || ((originsVersion == SemanticVersion.parse("0.4.6") || originsVersion == SemanticVersion.parse("0.4.7")) && Throwable().stackTrace[1].className.contains("PlayerOriginComponent"))) // awful hack I know
                     ) {
             (player as Vampirable).isVampire = false
             (player as Vampirable).isPermanentVampire = false
         }
+    }
+
+    override fun onLost() {
+        (player as Vampirable).isVampire = false
+        (player as Vampirable).isPermanentVampire = false
     }
 
     override fun onChosen(isOrbOfOrigin: Boolean) {
