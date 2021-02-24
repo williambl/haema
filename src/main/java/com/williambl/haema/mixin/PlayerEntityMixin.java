@@ -72,9 +72,11 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
             index = 2
     )
     float tweakDamageIfVampire(float amount, DamageSource source) {
-        return this.isVampire() && DamageSourceExtensionsKt.isEffectiveAgainstVampires(source) ?
+        float result = this.isVampire() && DamageSourceExtensionsKt.isEffectiveAgainstVampires(source) ?
                 amount * 1.25f
                 : amount;
+
+        return Float.isFinite(result) ? result : amount;
     }
 
     @Redirect(method = "isInvulnerableTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$Key;)Z", ordinal = 1))
