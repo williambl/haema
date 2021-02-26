@@ -4,6 +4,9 @@ import com.google.gson.JsonObject
 import com.williambl.haema.Vampirable
 import com.williambl.haema.VampireAbility
 import com.williambl.haema.ritual.RitualTableScreenHandler
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import net.minecraft.block.Blocks
 import net.minecraft.fluid.Fluid
 import net.minecraft.item.ItemStack
@@ -107,8 +110,13 @@ class RitualRecipe(
         inv.player.world.clearFluidState(mutable.move(Direction.EAST))
         (inv.player.world as ServerWorld).spawnParticles(ParticleTypes.SOUL, mutable.x.toDouble()+0.5, mutable.y.toDouble()+0.5, mutable.z.toDouble()+0.5, 5, 0.5, 0.5, 0.5, 0.5)
 
-        ritualActions[actionName]?.invoke(inv, actionArg)
-        (inv.player as Vampirable).setHasUsedRitual(id, true)
+        GlobalScope.launch {
+            delay(200)
+            (inv.player.world as ServerWorld).server.submit {
+                ritualActions[actionName]?.invoke(inv, actionArg)
+                (inv.player as Vampirable).setHasUsedRitual(id, true)
+            }
+        }
 
         return ItemStack.EMPTY
     }

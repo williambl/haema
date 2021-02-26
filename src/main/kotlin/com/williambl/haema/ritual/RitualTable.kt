@@ -1,19 +1,19 @@
 package com.williambl.haema.ritual
 
+import com.williambl.haema.*
 import com.williambl.haema.craft.ritual.RitualInventory
 import com.williambl.haema.craft.ritual.RitualRecipe
-import com.williambl.haema.level0RitualMaterialsTag
-import com.williambl.haema.level0RitualTorchesTag
-import com.williambl.haema.level1RitualMaterialsTag
-import com.williambl.haema.level1RitualTorchesTag
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
 import net.minecraft.block.ShapeContext
+import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.fluid.Fluid
 import net.minecraft.fluid.FluidState
 import net.minecraft.fluid.Fluids
+import net.minecraft.particle.DustParticleEffect
+import net.minecraft.particle.ParticleTypes
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
@@ -24,6 +24,7 @@ import net.minecraft.util.math.Direction
 import net.minecraft.util.shape.VoxelShape
 import net.minecraft.world.BlockView
 import net.minecraft.world.World
+import java.util.*
 import kotlin.math.min
 
 class RitualTable(settings: Settings) : Block(settings) {
@@ -54,6 +55,74 @@ class RitualTable(settings: Settings) : Block(settings) {
         pos: BlockPos?,
         context: ShapeContext?
     ): VoxelShape = shape
+
+    override fun onSteppedOn(world: World, pos: BlockPos, entity: Entity) {
+        if (world.isClient && entity is Vampirable && entity.isVampire && world.random.nextFloat() < 0.1) {
+            val level = min(checkBaseBlockStates(world, pos), checkTorchBlockStates(world, pos))
+
+            if (level >= 0) {
+                val showExtras = getFluid(world, pos) != Fluids.EMPTY
+                for (i in 0..level + 1 + world.random.nextInt(3)) {
+                    spawnParticles(world, pos, world.random.nextDouble() * 0.4, showExtras)
+                }
+            }
+        }
+        super.onSteppedOn(world, pos, entity)
+    }
+
+    override fun randomDisplayTick(state: BlockState, world: World, pos: BlockPos, random: Random) {
+        if (random.nextFloat() < 0.3) {
+            val level = min(checkBaseBlockStates(world, pos), checkTorchBlockStates(world, pos))
+
+            if (level >= 0) {
+                val showExtras = getFluid(world, pos) != Fluids.EMPTY
+                for (i in 0..level + 1 + random.nextInt(3)) {
+                    spawnParticles(world, pos, random.nextDouble() * 0.2, showExtras)
+                }
+            }
+        }
+        super.randomDisplayTick(state, world, pos, random)
+    }
+
+    private fun spawnParticles(world: World, pos: BlockPos, speed: Double, showExtras: Boolean) {
+        world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, pos.x + 2.5, pos.y + 1.5, pos.z + 0.5, -speed, 0.0, 0.0)
+        world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, pos.x + 2.5, pos.y + 1.5, pos.z + 2.5, -speed, 0.0, -speed)
+        world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, pos.x + 2.5, pos.y + 1.5, pos.z - 1.5, -speed, 0.0, speed)
+        world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, pos.x + 0.5, pos.y + 1.5, pos.z + 2.5, 0.0, 0.0, -speed)
+        world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, pos.x + 0.5, pos.y + 1.5, pos.z - 1.5, 0.0, 0.0, speed)
+        world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, pos.x - 1.5, pos.y + 1.5, pos.z + 0.5, speed, 0.0, 0.0)
+        world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, pos.x - 1.5, pos.y + 1.5, pos.z + 2.5, speed, 0.0, -speed)
+        world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, pos.x - 1.5, pos.y + 1.5, pos.z - 1.5, speed, 0.0, speed)
+
+        if (showExtras) {
+            repeat(20) {
+                val offsetX = 3*world.random.nextDouble() - 1.0
+                val offsetZ = 3*world.random.nextDouble() - 1.0
+                world.addParticle(
+                    ParticleTypes.BUBBLE,
+                    pos.x + offsetX,
+                    pos.y - 0.3,
+                    pos.z + offsetZ,
+                    0.0,
+                    speed * 0.1,
+                    0.0
+                )
+            }
+            repeat(40) {
+                val offsetX = 3*world.random.nextDouble() - 1.0
+                val offsetZ = 3*world.random.nextDouble() - 1.0
+                world.addParticle(
+                    DustParticleEffect(speed.toFloat(), 0f, 0f, 1f),
+                    pos.x + offsetX,
+                    pos.y - 0.2,
+                    pos.z + offsetZ,
+                    0.0,
+                    speed,
+                    0.0
+                )
+            }
+        }
+    }
 
     companion object {
         val shape: VoxelShape = createCuboidShape(0.0, 0.0, 0.0, 16.0, 12.0, 16.0)
