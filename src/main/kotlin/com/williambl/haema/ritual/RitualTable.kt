@@ -15,6 +15,8 @@ import net.minecraft.fluid.Fluids
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.particle.ParticleTypes
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.sound.SoundCategory
+import net.minecraft.sound.SoundEvents
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
 import net.minecraft.util.hit.BlockHitResult
@@ -65,20 +67,21 @@ class RitualTable(settings: Settings) : Block(settings) {
                 for (i in 0..level + 1 + world.random.nextInt(3)) {
                     spawnParticles(world, pos, world.random.nextDouble() * 0.4, showExtras)
                 }
+                if (world.random.nextDouble() < 0.1) {
+                    world.playSound(pos.x+0.5, pos.y+1.0, pos.z+0.5, SoundEvents.BLOCK_BEACON_AMBIENT, SoundCategory.BLOCKS, 1.0f, 1.0f, false)
+                }
             }
         }
         super.onSteppedOn(world, pos, entity)
     }
 
     override fun randomDisplayTick(state: BlockState, world: World, pos: BlockPos, random: Random) {
-        if (random.nextFloat() < 0.3) {
-            val level = min(checkBaseBlockStates(world, pos), checkTorchBlockStates(world, pos))
+        val level = min(checkBaseBlockStates(world, pos), checkTorchBlockStates(world, pos))
 
-            if (level >= 0) {
-                val showExtras = getFluid(world, pos) != Fluids.EMPTY
-                for (i in 0..level + 1 + random.nextInt(3)) {
-                    spawnParticles(world, pos, random.nextDouble() * 0.2, showExtras)
-                }
+        if (level >= 0) {
+            val showExtras = getFluid(world, pos) != Fluids.EMPTY
+            for (i in 0..level + random.nextInt(1)) {
+                spawnParticles(world, pos, random.nextDouble() * 0.2, showExtras)
             }
         }
         super.randomDisplayTick(state, world, pos, random)
@@ -121,6 +124,8 @@ class RitualTable(settings: Settings) : Block(settings) {
                     0.0
                 )
             }
+
+            world.playSound(3*world.random.nextDouble() - 1.0, pos.y.toDouble(),  3*world.random.nextDouble() - 1.0, SoundEvents.BLOCK_LAVA_POP, SoundCategory.BLOCKS, 1.0f, 1.0f, false)
         }
     }
 
