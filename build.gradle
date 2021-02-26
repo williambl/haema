@@ -32,6 +32,9 @@ repositories {
         name = "Ladysnake Libs"
         url = "https://dl.bintray.com/ladysnake/libs"
     }
+    maven {
+        url = "https://maven.theillusivec4.top"
+    }
 }
 
 dependencies {
@@ -99,8 +102,8 @@ dependencies {
     }
     include "me.sargunvohra.mcmods:autoconfig1u:${project.acu_version}"
 
-    modImplementation "com.github.RedstoneParadox:OakTree:${project.oaktree_version}"
-    include "com.github.RedstoneParadox:OakTree:${project.oaktree_version}"
+    modImplementation "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
+    include "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
 
     //include "io.github.ladysnake:vanguard:${vanguard_version}"
 

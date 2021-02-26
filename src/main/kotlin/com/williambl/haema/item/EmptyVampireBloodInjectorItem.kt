@@ -32,13 +32,19 @@ class EmptyVampireBloodInjectorItem(settings: Settings?) : Item(settings) {
     }
 
     fun tryUse(user: PlayerEntity, hand: Hand? = null): Boolean {
-        if ((user as Vampirable).isVampire) {
-            if (user.hasStatusEffect(StatusEffects.WEAKNESS) && !(user.isPermanentVampire) && user.world.gameRules[playerVampireConversion].get()) {
-                (user as Vampirable).isVampire = false
-                //awful hack, but the player dies before the item can be changed
-                if (hand != null)
-                    user.setStackInHand(hand, ItemStack(Registry.ITEM.get(Identifier("haema:vampire_blood_injector"))))
-                user.kill()
+        if ((user as Vampirable).isVampire && !user.world.isClient) {
+            if (user.hasStatusEffect(StatusEffects.WEAKNESS)) {
+                if (!user.world.gameRules[playerVampireConversion].get()) {
+                    user.sendMessage(TranslatableText("gui.haema.message.conversion_blocked_by_gamerule"), true)
+                    return false
+                }
+                if (user.isPermanentVampire) {
+                    user.sendMessage(TranslatableText("gui.haema.message.conversion_not_possible"), true)
+                    return false
+                }
+
+                user.isVampire = false
+                user.removeBloodManager()
                 return true
             }
             if ((user.hungerManager as VampireBloodManager).absoluteBloodLevel < 6.0) {

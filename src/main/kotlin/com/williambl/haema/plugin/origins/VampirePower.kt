@@ -5,6 +5,8 @@ import com.williambl.haema.logger
 import com.williambl.haema.util.getSpawn
 import io.github.apace100.origins.power.Power
 import io.github.apace100.origins.power.PowerType
+import net.fabricmc.loader.api.FabricLoader
+import net.fabricmc.loader.api.SemanticVersion
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
@@ -17,14 +19,29 @@ import net.minecraft.util.math.Vec3d
 import net.minecraft.util.registry.Registry
 
 class VampirePower(type: PowerType<*>?, player: PlayerEntity?) : Power(type, player) {
+
     override fun onAdded() {
         (player as Vampirable).isVampire = true
         (player as Vampirable).isPermanentVampire = true
     }
 
     override fun onRemoved() {
+        val originsVersion = FabricLoader.getInstance().getModContainer("origins").get().metadata.version
+        if (originsVersion is SemanticVersion
+                && (
+                        originsVersion < SemanticVersion.parse("0.4.6")
+                        || ((originsVersion == SemanticVersion.parse("0.4.6") || originsVersion == SemanticVersion.parse("0.4.7")) && Throwable().stackTrace[1].className.contains("PlayerOriginComponent"))) // awful hack I know
+                    ) {
+            (player as Vampirable).isVampire = false
+            (player as Vampirable).isPermanentVampire = false
+            (player as Vampirable).removeBloodManager()
+        }
+    }
+
+    override fun onLost() {
         (player as Vampirable).isVampire = false
         (player as Vampirable).isPermanentVampire = false
+        (player as Vampirable).removeBloodManager()
     }
 
     override fun onChosen(isOrbOfOrigin: Boolean) {

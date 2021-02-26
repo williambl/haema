@@ -45,6 +45,7 @@ interface Vampirable {
     }
 
     fun checkBloodManager();
+    fun removeBloodManager();
 
     companion object {
         fun convert(entity: PlayerEntity) {
