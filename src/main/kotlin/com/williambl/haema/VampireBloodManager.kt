@@ -54,7 +54,7 @@ class VampireBloodManager() : HungerManager() {
     var absoluteBloodLevel: Double = 7.0
 
     var lastFed: Long = -24000
-    var lastBloodLevel: Double = -1.0
+    var invisTicks: Long = 0
 
     override fun update(player: PlayerEntity?) {
         owner = player!!
@@ -95,8 +95,10 @@ class VampireBloodManager() : HungerManager() {
             }.coerceAtMost((player as Vampirable).getAbilityLevel(VampireAbility.STRENGTH)-1)))
         }
 
-        if (getBloodLevel() >= 20 && (player as Vampirable).getAbilityLevel(VampireAbility.INVISIBILITY) > 0) {
-            player.addStatusEffect(StatusEffectInstance(StatusEffects.INVISIBILITY, 10, 0))
+        val invisLevel = (player as Vampirable).getAbilityLevel(VampireAbility.INVISIBILITY)
+        if (getBloodLevel() >= 18 && invisLevel > 0 && player.isSneaking && player.world.time-invisTicks >= 120 + invisLevel*20) {
+            invisTicks = player.world.time
+            player.addStatusEffect(StatusEffectInstance(StatusEffects.INVISIBILITY, invisLevel*20, 0))
         }
 
         //Healing at the bottom, so that the health boosts aren't wiped

@@ -44,6 +44,15 @@ object VampireHud : DrawableHelper() {
             )
         }
 
+        val invisLevel = (player as Vampirable).getAbilityLevel(VampireAbility.INVISIBILITY)
+        if (invisLevel > 0 && (player.hungerManager as VampireBloodManager).getBloodLevel() >= 18f) {
+            texts.add(createText(
+                MinecraftClient.getInstance().options.keySneak.boundKeyLocalizedText.copy(),
+                (player as Vampirable).isVampire && player.world.time-(player.hungerManager as VampireBloodManager).invisTicks >= 120 + invisLevel*20,
+                TranslatableText("gui.haema.hud.invisibility"))
+            )
+        }
+
         if (mc.crosshairTarget != null && mc.crosshairTarget!!.type == HitResult.Type.ENTITY) {
             val lookingAt = (mc.crosshairTarget as EntityHitResult).entity.type
             if (poorBloodTag.contains(lookingAt) || mediumBloodTag.contains(lookingAt) || goodBloodTag.contains(lookingAt)) {
