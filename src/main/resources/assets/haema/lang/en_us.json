@@ -132,5 +132,11 @@
   "text.autoconfig.haema.option.distortionAdjust": "Vampire Dash distortion strength",
   "text.autoconfig.haema.option.distortionAdjust.@Tooltip": "0 = no distortion. 1 = default distortion. This multiplies with the vanilla 'Distortion Effects' setting.",
   "text.autoconfig.haema.option.saturationAdjust": "Vampire Vision saturation effect strength",
-  "text.autoconfig.haema.option.saturationAdjust.@Tooltip": "0 = no saturation change. 1 = default vampire saturation change."
+  "text.autoconfig.haema.option.saturationAdjust.@Tooltip": "0 = no saturation change. 1 = default vampire saturation change.",
+
+  "ability.haema.strength.description": "Vampiric Strength gives you increased attack strength and speed.",
+  "ability.haema.dash.description": "Your dash ability is a short-range teleport.",
+  "ability.haema.invisibility.description": "A short-lasting invisibility when you sneak.",
+  "ability.haema.immortality.description": "The power of immortality! Survive practically anything.",
+  "ability.haema.vision.description": "A vampire's vision is better in the dark - but worse in the light."
 }
