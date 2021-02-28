@@ -36,7 +36,8 @@ object VampireHud : DrawableHelper() {
 
         val texts = mutableListOf<Text>()
 
-        if ((player.hungerManager as VampireBloodManager).getBloodLevel() > 18f) {
+        val dashLevel = (player as Vampirable).getAbilityLevel(VampireAbility.DASH)
+        if (dashLevel > 0 && (player.hungerManager as VampireBloodManager).getBloodLevel() > 18f) {
             texts.add(createText(
                 DASH_KEY.boundKeyLocalizedText.copy(),
                 (player as Vampirable).isVampire && (player as ClientVampire).canDash(),

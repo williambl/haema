@@ -16,6 +16,7 @@ import me.sargunvohra.mcmods.autoconfig1u.AutoConfig
 import me.sargunvohra.mcmods.autoconfig1u.serializer.Toml4jConfigSerializer
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry
@@ -66,6 +67,9 @@ fun init() {
     }
     ClientSidePacketRegistry.INSTANCE.register(Identifier("haema:updatedashcooldown")) { packetContext, packetByteBuf ->
         dashCooldownValue = packetByteBuf.readInt()
+    }
+    ClientPlayNetworking.registerGlobalReceiver(Identifier("haema:updateinvisticks")) { client, handler, buf, sender ->
+        (client.player!!.hungerManager as VampireBloodManager).invisTicks = client.world!!.time
     }
 
     HudRenderCallback.EVENT.register(VampireHud::render)
