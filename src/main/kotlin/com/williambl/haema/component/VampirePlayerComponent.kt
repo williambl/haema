@@ -23,9 +23,9 @@ class VampirePlayerComponent(player: Entity) : VampireComponent, AutoSyncedCompo
     override var isKilled: Boolean by Delegates.observable(false, syncCallback)
 
     override var abilities: MutableMap<VampireAbility, Int> = mutableMapOf(
-        VampireAbility.STRENGTH to 3,
+        VampireAbility.STRENGTH to 1,
         VampireAbility.DASH to 1,
-        VampireAbility.INVISIBILITY to 1,
+        VampireAbility.INVISIBILITY to 0,
         VampireAbility.IMMORTALITY to 1,
         VampireAbility.VISION to 1
     )
