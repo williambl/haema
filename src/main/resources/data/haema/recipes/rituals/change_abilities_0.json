@@ -2,7 +2,13 @@
   "type": "haema:ritual",
   "ingredients": [
     {
-      "item": "minecraft:barrier"
+      "item": "minecraft:ghast_tear"
+    },
+    {
+      "item": "minecraft:charcoal"
+    },
+    {
+      "item": "minecraft:nether_wart"
     }
   ],
   "fluid": "minecraft:water",
