@@ -1,5 +1,18 @@
 {
   "values": [
-    "minecraft:torch"
+    "minecraft:torch",
+    "minecraft:campfire",
+    {
+      "id": "arstheurgia:velinha",
+      "required": false
+    },
+    {
+      "id": "bewitchment:iron_candelabra",
+      "required": false
+    },
+    {
+      "id": "bewitchment:golden_candelabra",
+      "required": false
+    }
   ]
 }

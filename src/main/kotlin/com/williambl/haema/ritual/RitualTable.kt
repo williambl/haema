@@ -17,6 +17,7 @@ import net.minecraft.particle.ParticleTypes
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
+import net.minecraft.state.property.Properties
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
 import net.minecraft.util.hit.BlockHitResult
@@ -67,7 +68,7 @@ class RitualTable(settings: Settings) : Block(settings) {
             if (level >= 0) {
                 val showExtras = getFluid(world, pos) != Fluids.EMPTY
                 for (i in 0..level + 1 + world.random.nextInt(3)) {
-                    spawnParticles(world, pos, world.random.nextDouble() * 0.4, showExtras)
+                    spawnParticles(world, pos, world.random.nextDouble() * 0.4, showExtras, level)
                 }
                 if (world.random.nextDouble() < 0.1) {
                     world.playSound(pos.x+0.5, pos.y+1.0, pos.z+0.5, SoundEvents.BLOCK_BEACON_AMBIENT, SoundCategory.BLOCKS, 1.0f, 1.0f, false)
@@ -83,21 +84,21 @@ class RitualTable(settings: Settings) : Block(settings) {
         if (level >= 0) {
             val showExtras = getFluid(world, pos) != Fluids.EMPTY
             for (i in 0..level + random.nextInt(1)) {
-                spawnParticles(world, pos, random.nextDouble() * 0.2, showExtras)
+                spawnParticles(world, pos, random.nextDouble() * 0.2, showExtras, level)
             }
         }
         super.randomDisplayTick(state, world, pos, random)
     }
 
-    private fun spawnParticles(world: World, pos: BlockPos, speed: Double, showExtras: Boolean) {
-        world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, pos.x + 2.5, pos.y + 1.5, pos.z + 0.5, -speed, 0.0, 0.0)
-        world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, pos.x + 2.5, pos.y + 1.5, pos.z + 2.5, -speed, 0.0, -speed)
-        world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, pos.x + 2.5, pos.y + 1.5, pos.z - 1.5, -speed, 0.0, speed)
-        world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, pos.x + 0.5, pos.y + 1.5, pos.z + 2.5, 0.0, 0.0, -speed)
-        world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, pos.x + 0.5, pos.y + 1.5, pos.z - 1.5, 0.0, 0.0, speed)
-        world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, pos.x - 1.5, pos.y + 1.5, pos.z + 0.5, speed, 0.0, 0.0)
-        world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, pos.x - 1.5, pos.y + 1.5, pos.z + 2.5, speed, 0.0, -speed)
-        world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, pos.x - 1.5, pos.y + 1.5, pos.z - 1.5, speed, 0.0, speed)
+    private fun spawnParticles(world: World, pos: BlockPos, speed: Double, showExtras: Boolean, level: Int) {
+        world.addParticle(if (level > 0) ParticleTypes.SOUL_FIRE_FLAME else ParticleTypes.FLAME, pos.x + 2.5, pos.y + 1.5, pos.z + 0.5, -speed, 0.0, 0.0)
+        world.addParticle(if (level > 0) ParticleTypes.SOUL_FIRE_FLAME else ParticleTypes.FLAME, pos.x + 2.5, pos.y + 1.5, pos.z + 2.5, -speed, 0.0, -speed)
+        world.addParticle(if (level > 0) ParticleTypes.SOUL_FIRE_FLAME else ParticleTypes.FLAME, pos.x + 2.5, pos.y + 1.5, pos.z - 1.5, -speed, 0.0, speed)
+        world.addParticle(if (level > 0) ParticleTypes.SOUL_FIRE_FLAME else ParticleTypes.FLAME, pos.x + 0.5, pos.y + 1.5, pos.z + 2.5, 0.0, 0.0, -speed)
+        world.addParticle(if (level > 0) ParticleTypes.SOUL_FIRE_FLAME else ParticleTypes.FLAME, pos.x + 0.5, pos.y + 1.5, pos.z - 1.5, 0.0, 0.0, speed)
+        world.addParticle(if (level > 0) ParticleTypes.SOUL_FIRE_FLAME else ParticleTypes.FLAME, pos.x - 1.5, pos.y + 1.5, pos.z + 0.5, speed, 0.0, 0.0)
+        world.addParticle(if (level > 0) ParticleTypes.SOUL_FIRE_FLAME else ParticleTypes.FLAME, pos.x - 1.5, pos.y + 1.5, pos.z + 2.5, speed, 0.0, -speed)
+        world.addParticle(if (level > 0) ParticleTypes.SOUL_FIRE_FLAME else ParticleTypes.FLAME, pos.x - 1.5, pos.y + 1.5, pos.z - 1.5, speed, 0.0, speed)
 
         if (showExtras) {
             repeat(20) {
@@ -189,14 +190,14 @@ class RitualTable(settings: Settings) : Block(settings) {
             var result = 4
             val mutable = tablePos.mutableCopy().move(Direction.UP)
 
-            result = result.coerceAtMost(getTorchLevel(world.getBlockState(mutable.move(Direction.EAST, 2)).block))
-            result = result.coerceAtMost(getTorchLevel(world.getBlockState(mutable.move(Direction.NORTH, 2)).block))
-            result = result.coerceAtMost(getTorchLevel(world.getBlockState(mutable.move(Direction.WEST, 2)).block))
-            result = result.coerceAtMost(getTorchLevel(world.getBlockState(mutable.move(Direction.WEST, 2)).block))
-            result = result.coerceAtMost(getTorchLevel(world.getBlockState(mutable.move(Direction.SOUTH, 2)).block))
-            result = result.coerceAtMost(getTorchLevel(world.getBlockState(mutable.move(Direction.SOUTH, 2)).block))
-            result = result.coerceAtMost(getTorchLevel(world.getBlockState(mutable.move(Direction.EAST, 2)).block))
-            result = result.coerceAtMost(getTorchLevel(world.getBlockState(mutable.move(Direction.EAST, 2)).block))
+            result = result.coerceAtMost(getTorchLevel(world.getBlockState(mutable.move(Direction.EAST, 2))))
+            result = result.coerceAtMost(getTorchLevel(world.getBlockState(mutable.move(Direction.NORTH, 2))))
+            result = result.coerceAtMost(getTorchLevel(world.getBlockState(mutable.move(Direction.WEST, 2))))
+            result = result.coerceAtMost(getTorchLevel(world.getBlockState(mutable.move(Direction.WEST, 2))))
+            result = result.coerceAtMost(getTorchLevel(world.getBlockState(mutable.move(Direction.SOUTH, 2))))
+            result = result.coerceAtMost(getTorchLevel(world.getBlockState(mutable.move(Direction.SOUTH, 2))))
+            result = result.coerceAtMost(getTorchLevel(world.getBlockState(mutable.move(Direction.EAST, 2))))
+            result = result.coerceAtMost(getTorchLevel(world.getBlockState(mutable.move(Direction.EAST, 2))))
 
             return result
         }
@@ -242,10 +243,11 @@ class RitualTable(settings: Settings) : Block(settings) {
             }
         }
 
-        private fun getTorchLevel(block: Block): Int {
+        private fun getTorchLevel(blockState: BlockState): Int {
             return when {
-                level1RitualTorchesTag.contains(block) -> 1
-                level0RitualTorchesTag.contains(block) -> 0
+                blockState.contains(Properties.LIT) && !blockState[Properties.LIT] -> -1
+                blockState.isIn(level1RitualTorchesTag) -> 1
+                blockState.isIn(level0RitualTorchesTag) -> 0
                 else -> -1
             }
         }

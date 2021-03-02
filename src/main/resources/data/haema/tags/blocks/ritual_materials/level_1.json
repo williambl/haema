@@ -1,5 +1,18 @@
 {
   "values": [
-    "minecraft:polished_blackstone_bricks"
+    "minecraft:polished_blackstone_bricks",
+    "minecraft:cracked_polished_blackstone_bricks",
+    {
+      "id": "blockus:lava_polished_blackstone_bricks",
+      "required": false
+    },
+    {
+      "id": "blockus:crimson_warty_blackstone_bricks",
+      "required": false
+    },
+    {
+      "id": "blockus:warped_warty_blackstone_bricks",
+      "required": false
+    }
   ]
 }
