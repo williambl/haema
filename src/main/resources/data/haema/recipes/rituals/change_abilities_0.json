@@ -13,9 +13,8 @@
   ],
   "fluid": "minecraft:water",
   "repeatable": true,
-  "minLevel": 1,
+  "minLevel": 0,
   "action": {
-    "name": "add_level",
-    "arg": 1
+    "name": "change_abilities"
   }
 }
