@@ -34,21 +34,23 @@ class RitualCategory: RecipeCategory<RitualCategory.Display> {
 
     override fun setupDisplay(recipeDisplay: Display, bounds: Rectangle): MutableList<Widget> {
         val inputsPoint = Point(bounds.centerX - 64, bounds.centerY - 16)
-        val outputPoint = Point(bounds.centerX + 32, bounds.centerY - 8)
+        val outputPoint = Point(bounds.centerX + 26, bounds.centerY - 8)
         val widgets = mutableListOf<Widget>()
+
+        widgets.add(Widgets.createRecipeBase(bounds))
 
         val inputEntries = recipeDisplay.inputEntries
         widgets.addAll(inputEntries.mapIndexed { i, stacks ->
             Widgets.createSlot(Point(inputsPoint.x+((i+1)%2)*18, inputsPoint.y+(i/2)*18)).entries(stacks)
         })
 
-        widgets.add(Widgets.createLabel(Point(bounds.centerX, bounds.centerY-32),
-            TranslatableText("gui.haema.altar_level", recipeDisplay.recipe.minLevel).formatted(Formatting.UNDERLINE))
-        )
+        widgets.add(Widgets.createLabel(Point(bounds.centerX, bounds.centerY-28),
+            TranslatableText("gui.haema.altar_level", recipeDisplay.recipe.minLevel).formatted(Formatting.UNDERLINE).formatted(Formatting.DARK_GRAY)
+        ).noShadow())
 
-        widgets.add(Widgets.createLabel(Point(bounds.centerX+16, bounds.centerY+16), TranslatableText("gui.haema.repeatable.${recipeDisplay.recipe.isRepeatable}").formatted(if (recipeDisplay.recipe.isRepeatable) Formatting.GREEN else Formatting.RED)))
+        widgets.add(Widgets.createLabel(Point(bounds.centerX+16, bounds.centerY+16), TranslatableText("gui.haema.repeatable.${recipeDisplay.recipe.isRepeatable}").formatted(if (recipeDisplay.recipe.isRepeatable) Formatting.GREEN else Formatting.RED)).noShadow())
 
-        widgets.add(Widgets.createLabel(outputPoint, TranslatableText("ritual.action.${recipeDisplay.recipe.actionName}", recipeDisplay.recipe.actionArg)))
+        widgets.add(Widgets.createLabel(outputPoint, TranslatableText("ritual.action.${recipeDisplay.recipe.actionName}", recipeDisplay.recipe.actionArg).formatted(Formatting.DARK_GRAY)).noShadow())
 
         return widgets
     }
