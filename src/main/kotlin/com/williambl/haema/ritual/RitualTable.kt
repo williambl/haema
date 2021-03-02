@@ -35,18 +35,20 @@ class RitualTable(settings: Settings) : Block(settings) {
         state: BlockState,
         world: World,
         pos: BlockPos,
-        player: PlayerEntity?,
+        player: PlayerEntity,
         hand: Hand,
         hit: BlockHitResult
     ): ActionResult {
-        val level = min(checkBaseBlockStates(world, pos), checkTorchBlockStates(world, pos))
+        if (!world.isClient) {
+            if (pos != player.blockPos) return ActionResult.PASS
 
-        if (!world.isClient && player != null) {
+            val level = min(checkBaseBlockStates(world, pos), checkTorchBlockStates(world, pos))
+
             val inventory = getInventory(world, pos, player, level)
 
             (world as ServerWorld).server.recipeManager.listAllOfType(RitualRecipe.recipeType)
                 .firstOrNull { it.matches(inventory) }
-                ?.craft(inventory)
+                ?.craft(inventory) ?: return ActionResult.PASS
         }
         return ActionResult.SUCCESS
     }
