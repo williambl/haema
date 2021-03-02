@@ -124,6 +124,10 @@
   "gui.haema.message.conversion_blocked_by_gamerule": "Game Rule 'playerVampireConversion' is not set to true.",
   "gui.haema.message.conversion_not_possible": "Player is a permanent vampire and cannot be converted.",
 
+  "gui.haema.altar_level": "Requires Altar Level %d",
+  "gui.haema.repeatable.true": "Repeatable",
+  "gui.haema.repeatable.false": "Not Repeatable",
+
   "text.autoconfig.haema.title": "Haema",
   "text.autoconfig.haema.option.vampireHudPlacement": "Vampire HUD placement",
   "text.autoconfig.haema.option.vampireShaderEnabled": "Enable Vampire Shader",
@@ -138,5 +142,10 @@
   "ability.haema.dash.description": "Your dash ability is a short-range teleport.",
   "ability.haema.invisibility.description": "A short-lasting invisibility when you sneak.",
   "ability.haema.immortality.description": "The power of immortality! Survive practically anything.",
-  "ability.haema.vision.description": "A vampire's vision is better in the dark - but worse in the light."
+  "ability.haema.vision.description": "A vampire's vision is better in the dark - but worse in the light.",
+
+  "ritual.action.add_level": "+%d ability points",
+  "ritual.action.change_abilities": "Customise abilities",
+
+  "rei.haema.ritual": "Ritual"
 }

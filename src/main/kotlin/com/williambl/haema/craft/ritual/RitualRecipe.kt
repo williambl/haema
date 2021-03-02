@@ -30,7 +30,7 @@ import net.minecraft.world.World
 class RitualRecipe(
     private val id: Identifier,
     val fluid: Fluid,
-    private val ingredients: List<Ingredient>,
+    val ingredients: List<Ingredient>,
     val minLevel: Int,
     val isRepeatable: Boolean,
     val actionName: String,
@@ -164,7 +164,7 @@ class RitualRecipe(
                     json.get("minLevel").asInt,
                     json.get("repeatable").asBoolean,
                     actionElement.get("name").asString,
-                    actionElement.get("arg").asInt
+                    actionElement.get("arg")?.asInt ?: 0
                 )
             }
 
