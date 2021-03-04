@@ -66,7 +66,7 @@ dependencies {
     }
     include "com.jamieswhiteshirt:reach-entity-attributes:${project.rea_version}"
 
-    modRuntime("vazkii.patchouli:Patchouli:${project.patchouli_version}") {
+    modImplementation("vazkii.patchouli:Patchouli:${project.patchouli_version}") {
         exclude module: "fabric-dimensions-v1"
         exclude module: "fabric-biomes-v1"
     }

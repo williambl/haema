@@ -20,6 +20,11 @@
       "type": "text",
       "title": "bookOfBlood.6.text.4.title",
       "text": "bookOfBlood.6.text.4.text"
+    },
+    {
+      "type": "multiblock",
+      "title": "The Ritual Altar",
+      "multiblock_id": "haema:ritual_altar"
     }
   ]
 }

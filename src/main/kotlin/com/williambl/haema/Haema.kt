@@ -37,12 +37,8 @@ import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
 import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.fabricmc.fabric.api.tag.TagRegistry
-import net.fabricmc.loader.api.FabricLoader
-import net.minecraft.block.AbstractBlock
 import net.fabricmc.fabric.api.util.TriState
-import net.minecraft.block.BedBlock
-import net.minecraft.block.DispenserBlock
-import net.minecraft.block.Material
+import net.minecraft.block.*
 import net.minecraft.block.dispenser.FallibleItemDispenserBehavior
 import net.minecraft.block.enums.BedPart
 import net.minecraft.client.item.TooltipContext
@@ -70,6 +66,8 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
+import net.minecraft.state.property.Properties
+import net.minecraft.tag.Tag
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.ActionResult
@@ -86,6 +84,9 @@ import net.minecraft.world.World
 import org.apache.logging.log4j.LogManager
 import top.theillusivec4.somnus.api.PlayerSleepEvents
 import top.theillusivec4.somnus.api.WorldSleepEvents
+import vazkii.patchouli.common.multiblock.DenseMultiblock
+import vazkii.patchouli.common.multiblock.MultiblockRegistry
+import vazkii.patchouli.common.multiblock.StateMatcher
 
 val bloodLevelPackeId = Identifier("haema:bloodlevelsync")
 
@@ -447,6 +448,51 @@ fun init() {
     })
     vampireHunterNoticeChance = GameRuleRegistry.register("vampireHunterNoticeChance", GameRules.Category.MOBS, GameRuleFactory.createDoubleRule(0.1, 0.0, 1.0))
     playerVampireConversion = GameRuleRegistry.register("playerVampireConversion", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(true))
+
+    MultiblockRegistry.registerMultiblock(Identifier("haema:ritual_altar"), DenseMultiblock(
+        arrayOf(
+            arrayOf(
+                "T T T",
+                "     ",
+                "T   T",
+                "     ",
+                "T T T"
+            ), arrayOf(
+                "B B B",
+                "     ",
+                "B 0 B",
+                "     ",
+                "B B B"
+            ), arrayOf(
+                "BBBBB",
+                "B   B",
+                "B B B",
+                "B   B",
+                "BBBBB"
+            ), arrayOf(
+                "BBBBB",
+                "BBBBB",
+                "BBBBB",
+                "BBBBB",
+                "BBBBB"
+            )
+        ), mapOf(
+            'T' to MultiTagMatcher(
+                listOf(
+                    level0RitualTorchesTag as Tag.Identified<Block>,
+                    level1RitualTorchesTag as Tag.Identified<Block>
+                ), mapOf(Properties.LIT to true)
+            ),
+            'B' to MultiTagMatcher(
+                listOf(
+                    level0RitualMaterialsTag as Tag.Identified<Block>,
+                    level1RitualMaterialsTag as Tag.Identified<Block>
+                ), mapOf()
+            ),
+            '0' to StateMatcher.fromBlockLoose(ritualTable),
+            ' ' to StateMatcher.ANY
+        )
+    ))
 
     logger.info("Everything registered. It's vampire time!")
 }
