@@ -1,9 +1,8 @@
 package com.williambl.haema.ritual
 
 import com.williambl.haema.Vampirable
-import com.williambl.haema.VampireAbility
-import com.williambl.haema.craft.ritual.RitualInventory
-import com.williambl.haema.ritualTable
+import com.williambl.haema.abilities.VampireAbility
+import com.williambl.haema.ritual.craft.RitualInventory
 import io.netty.buffer.Unpooled
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
@@ -62,7 +61,7 @@ class RitualTableScreenHandler(syncId: Int, val inv: RitualInventory, val contex
         ClientPlayNetworking.send(Identifier("haema:transferlevels"), PacketByteBuf(Unpooled.buffer().writeInt(syncId).writeInt(amount).writeInt(from).writeInt(to)))
     }
 
-    override fun canUse(player: PlayerEntity): Boolean = canUse(context, player, ritualTable)
+    override fun canUse(player: PlayerEntity): Boolean = canUse(context, player, RitualTable.instance)
 
     class Factory(private val inv: RitualInventory): ExtendedScreenHandlerFactory {
         override fun createMenu(syncId: Int, playerInv: PlayerInventory, player: PlayerEntity): ScreenHandler? {

@@ -1,7 +1,7 @@
 package com.williambl.haema.client.gui
 
 import com.mojang.blaze3d.systems.RenderSystem
-import com.williambl.haema.VampireAbility
+import com.williambl.haema.abilities.VampireAbility
 import com.williambl.haema.ritual.RitualTableScreenHandler
 import net.minecraft.advancement.AdvancementFrame
 import net.minecraft.client.MinecraftClient

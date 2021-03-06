@@ -1,4 +1,4 @@
-package com.williambl.haema.plugin.origins
+package com.williambl.haema.compat.origins
 
 import com.williambl.haema.Vampirable
 import com.williambl.haema.logger

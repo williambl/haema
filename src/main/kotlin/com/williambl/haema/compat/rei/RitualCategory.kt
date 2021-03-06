@@ -1,7 +1,7 @@
-package com.williambl.haema.plugin.rei
+package com.williambl.haema.compat.rei
 
-import com.williambl.haema.craft.ritual.RitualRecipe
-import com.williambl.haema.ritualTable
+import com.williambl.haema.ritual.RitualTable
+import com.williambl.haema.ritual.craft.RitualRecipe
 import me.shedaniel.math.Point
 import me.shedaniel.math.Rectangle
 import me.shedaniel.rei.api.EntryStack
@@ -55,5 +55,5 @@ class RitualCategory: RecipeCategory<RitualCategory.Display> {
         return widgets
     }
 
-    override fun getLogo(): EntryStack = EntryStack.create(ritualTable.asItem().defaultStack)
+    override fun getLogo(): EntryStack = EntryStack.create(RitualTable.instance.asItem().defaultStack)
 }

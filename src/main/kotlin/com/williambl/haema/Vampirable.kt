@@ -1,5 +1,6 @@
 package com.williambl.haema
 
+import com.williambl.haema.abilities.VampireAbility
 import com.williambl.haema.component.VampireComponent
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.particle.DustParticleEffect

@@ -1,4 +1,4 @@
-package com.williambl.haema.plugin.origins
+package com.williambl.haema.compat.origins
 
 import io.github.apace100.origins.power.Power
 import io.github.apace100.origins.power.PowerType

@@ -1,14 +1,18 @@
-package com.williambl.haema.entity
+package com.williambl.haema.hunter
 
 import com.williambl.haema.Vampirable
+import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
+import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
 import net.minecraft.block.entity.BannerPattern
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.enchantment.Enchantments
 import net.minecraft.entity.*
 import net.minecraft.entity.ai.goal.*
+import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.data.DataTracker
 import net.minecraft.entity.data.TrackedData
 import net.minecraft.entity.data.TrackedDataHandlerRegistry
+import net.minecraft.entity.mob.HostileEntity
 import net.minecraft.entity.mob.MobEntity
 import net.minecraft.entity.mob.PatrolEntity
 import net.minecraft.entity.passive.MerchantEntity
@@ -24,6 +28,8 @@ import net.minecraft.text.TranslatableText
 import net.minecraft.util.DyeColor
 import net.minecraft.util.Formatting
 import net.minecraft.util.Hand
+import net.minecraft.util.Identifier
+import net.minecraft.util.registry.Registry
 import net.minecraft.world.LocalDifficulty
 import net.minecraft.world.ServerWorldAccess
 import net.minecraft.world.World
@@ -231,4 +237,23 @@ class VampireHunterMeleeAttackGoal(private val actor: VampireHunterEntity, speed
             }
         }
     }
+}
+
+fun registerVampireHunter() {
+    Registry.register(
+        Registry.ENTITY_TYPE,
+        Identifier("haema:vampire_hunter"),
+        FabricEntityTypeBuilder.create<VampireHunterEntity>(SpawnGroup.CREATURE) { type, world -> VampireHunterEntity(type, world) }
+            .dimensions(EntityDimensions.fixed(0.5f, 2f))
+            .trackRangeBlocks(128).trackedUpdateRate(3).spawnableFarFromPlayer().build()
+    )
+
+    @Suppress("UNCHECKED_CAST")
+    FabricDefaultAttributeRegistry.register(
+        Registry.ENTITY_TYPE.get(Identifier("haema:vampire_hunter")) as EntityType<out LivingEntity>?,
+        HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3499999940395355)
+            .add(EntityAttributes.GENERIC_MAX_HEALTH, 20.0)
+            .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 5.0)
+            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 64.0)
+    )
 }

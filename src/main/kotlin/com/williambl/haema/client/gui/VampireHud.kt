@@ -1,6 +1,11 @@
 package com.williambl.haema.client.gui
 
-import com.williambl.haema.*
+import com.williambl.haema.Vampirable
+import com.williambl.haema.VampireBloodManager
+import com.williambl.haema.VampireBloodManager.Companion.goodBloodTag
+import com.williambl.haema.VampireBloodManager.Companion.mediumBloodTag
+import com.williambl.haema.VampireBloodManager.Companion.poorBloodTag
+import com.williambl.haema.abilities.VampireAbility
 import com.williambl.haema.client.ClientVampire
 import com.williambl.haema.client.DASH_KEY
 import com.williambl.haema.client.config

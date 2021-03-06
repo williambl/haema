@@ -1,4 +1,4 @@
-package com.williambl.haema
+package com.williambl.haema.abilities
 
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items

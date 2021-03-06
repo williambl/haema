@@ -1,37 +1,51 @@
 package com.williambl.haema.ritual
 
-import com.williambl.haema.*
-import com.williambl.haema.craft.ritual.RitualInventory
-import com.williambl.haema.craft.ritual.RitualRecipe
-import net.minecraft.block.Block
-import net.minecraft.block.BlockState
-import net.minecraft.block.ShapeContext
+import com.williambl.haema.Vampirable
+import com.williambl.haema.ritual.craft.RitualInventory
+import com.williambl.haema.ritual.craft.RitualRecipe
+import com.williambl.haema.util.MultiTagMatcher
+import net.fabricmc.fabric.api.tag.TagRegistry
+import net.minecraft.block.*
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.fluid.Fluid
 import net.minecraft.fluid.FluidState
 import net.minecraft.fluid.Fluids
+import net.minecraft.item.BlockItem
+import net.minecraft.item.Item
+import net.minecraft.item.ItemGroup
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.particle.ParticleTypes
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.state.property.Properties
+import net.minecraft.tag.Tag
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
+import net.minecraft.util.Identifier
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Direction
+import net.minecraft.util.registry.Registry
 import net.minecraft.util.shape.VoxelShape
 import net.minecraft.world.BlockView
 import net.minecraft.world.World
+import vazkii.patchouli.common.multiblock.DenseMultiblock
+import vazkii.patchouli.common.multiblock.MultiblockRegistry
+import vazkii.patchouli.common.multiblock.StateMatcher
 import java.util.*
 import kotlin.math.min
 
-class RitualTable(settings: Settings) : Block(settings) {
+val level0RitualMaterialsTag = TagRegistry.block(Identifier("haema:ritual_materials/level_0"))
+val level1RitualMaterialsTag = TagRegistry.block(Identifier("haema:ritual_materials/level_1"))
 
+val level0RitualTorchesTag = TagRegistry.block(Identifier("haema:ritual_torches/level_0"))
+val level1RitualTorchesTag = TagRegistry.block(Identifier("haema:ritual_torches/level_1"))
+
+class RitualTable(settings: Settings) : Block(settings) {
     override fun onUse(
         state: BlockState,
         world: World,
@@ -133,6 +147,8 @@ class RitualTable(settings: Settings) : Block(settings) {
     }
 
     companion object {
+        val instance: RitualTable by lazy { RitualTable(AbstractBlock.Settings.of(Material.METAL)) }
+
         val shape: VoxelShape = createCuboidShape(0.0, 0.0, 0.0, 16.0, 12.0, 16.0)
 
         fun checkBaseBlockStates(world: World, tablePos: BlockPos): Int {
@@ -252,4 +268,68 @@ class RitualTable(settings: Settings) : Block(settings) {
             }
         }
     }
+}
+
+fun registerRitualTable() {
+    Registry.register(
+        Registry.BLOCK,
+        Identifier("haema:ritual_table"),
+        RitualTable.instance
+    )
+    Registry.register(
+        Registry.ITEM,
+        Identifier("haema:ritual_table"),
+        BlockItem(RitualTable.instance, Item.Settings().group(ItemGroup.DECORATIONS))
+    )
+
+    //To make them load and register
+    RitualRecipe.recipeSerializer
+    RitualRecipe.recipeType
+
+    MultiblockRegistry.registerMultiblock(Identifier("haema:ritual_altar"), DenseMultiblock(
+        arrayOf(
+            arrayOf(
+                "T T T",
+                "     ",
+                "T   T",
+                "     ",
+                "T T T"
+            ), arrayOf(
+                "B B B",
+                "     ",
+                "B 0 B",
+                "     ",
+                "B B B"
+            ), arrayOf(
+                "BBBBB",
+                "B   B",
+                "B B B",
+                "B   B",
+                "BBBBB"
+            ), arrayOf(
+                "BBBBB",
+                "BBBBB",
+                "BBBBB",
+                "BBBBB",
+                "BBBBB"
+            )
+        ), mapOf(
+            'T' to MultiTagMatcher(
+                listOf(
+                    level0RitualTorchesTag as Tag.Identified<Block>,
+                    level1RitualTorchesTag as Tag.Identified<Block>
+                ), mapOf(Properties.LIT to true)
+            ),
+            'B' to MultiTagMatcher(
+                listOf(
+                    level0RitualMaterialsTag as Tag.Identified<Block>,
+                    level1RitualMaterialsTag as Tag.Identified<Block>
+                ), mapOf()
+            ),
+            '0' to StateMatcher.fromBlockLoose(RitualTable.instance),
+            ' ' to StateMatcher.ANY
+        )
+    )
+    )
+
 }

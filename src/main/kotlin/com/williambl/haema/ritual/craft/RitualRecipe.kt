@@ -1,8 +1,8 @@
-package com.williambl.haema.craft.ritual
+package com.williambl.haema.ritual.craft
 
 import com.google.gson.JsonObject
 import com.williambl.haema.Vampirable
-import com.williambl.haema.VampireAbility
+import com.williambl.haema.abilities.VampireAbility
 import com.williambl.haema.ritual.RitualTableScreenHandler
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -146,7 +146,9 @@ class RitualRecipe(
 
         val ritualActions = mapOf<String, (RitualInventory, Int) -> Unit>(
             "add_level" to { inv, arg ->
-                (inv.player as Vampirable).setAbilityLevel(VampireAbility.NONE, (inv.player as Vampirable).getAbilityLevel(VampireAbility.NONE)+arg)
+                (inv.player as Vampirable).setAbilityLevel(
+                    VampireAbility.NONE, (inv.player as Vampirable).getAbilityLevel(
+                        VampireAbility.NONE)+arg)
                 inv.player.openHandledScreen(RitualTableScreenHandler.Factory(inv))
             },
             "change_abilities" to { inv, _ -> inv.player.openHandledScreen(RitualTableScreenHandler.Factory(inv)) }

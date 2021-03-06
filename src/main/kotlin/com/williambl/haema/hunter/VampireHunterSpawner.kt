@@ -1,4 +1,4 @@
-package com.williambl.haema.entity
+package com.williambl.haema.hunter
 
 import com.williambl.haema.Vampirable
 import net.minecraft.entity.EntityData
@@ -7,7 +7,9 @@ import net.minecraft.entity.SpawnReason
 import net.minecraft.entity.mob.PatrolEntity
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.registry.Registry
 import net.minecraft.world.GameRules
 import net.minecraft.world.Heightmap
 import net.minecraft.world.SpawnHelper
@@ -120,5 +122,10 @@ class VampireHunterSpawner(val entityType: EntityType<out VampireHunterEntity>) 
             return true
         }
         return false
+    }
+
+    companion object {
+        @Suppress("UNCHECKED_CAST")
+        val instance: VampireHunterSpawner by lazy { VampireHunterSpawner(Registry.ENTITY_TYPE.get(Identifier("haema:vampire_hunter")) as EntityType<out VampireHunterEntity>) }
     }
 }

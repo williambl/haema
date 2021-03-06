@@ -1,8 +1,8 @@
 package com.williambl.haema.mixin;
 
 import com.google.common.collect.ImmutableList;
-import com.williambl.haema.entity.VampireHunterEntity;
-import com.williambl.haema.entity.VampireHunterSpawner;
+import com.williambl.haema.hunter.VampireHunterEntity;
+import com.williambl.haema.hunter.VampireHunterSpawner;
 import net.minecraft.entity.EntityType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;

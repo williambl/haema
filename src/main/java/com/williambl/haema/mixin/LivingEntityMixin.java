@@ -1,11 +1,11 @@
 package com.williambl.haema.mixin;
 
-import com.williambl.haema.HaemaKt;
 import com.williambl.haema.Vampirable;
-import com.williambl.haema.VampireAbility;
 import com.williambl.haema.VampireBloodManager;
+import com.williambl.haema.abilities.VampireAbility;
 import com.williambl.haema.damagesource.BloodLossDamageSource;
 import com.williambl.haema.damagesource.DamageSourceExtensionsKt;
+import com.williambl.haema.hunter.VampireHunterSpawner;
 import com.williambl.haema.util.HaemaGameRulesKt;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -67,7 +67,7 @@ public abstract class LivingEntityMixin extends Entity {
             ((ServerWorld) world).spawnParticles(new DustParticleEffect(1.0f,0.0f, 0.0f, 3.0f), getX(), getY()+1, getZ(), 30, 1.0, 1.0, 1.0, 0.1);
 
             if (random.nextDouble() < world.getGameRules().get(HaemaGameRulesKt.getVampireHunterNoticeChance()).get())
-                HaemaKt.getVampireHunterSpawner().trySpawnNear((ServerWorld)world, random, getBlockPos());
+                VampireHunterSpawner.Companion.getInstance().trySpawnNear((ServerWorld)world, random, getBlockPos());
         }
     }
 }

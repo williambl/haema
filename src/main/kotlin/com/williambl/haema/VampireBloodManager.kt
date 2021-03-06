@@ -1,14 +1,18 @@
 package com.williambl.haema
 
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes
+import com.williambl.haema.abilities.VampireAbility
 import com.williambl.haema.damagesource.BloodLossDamageSource
 import com.williambl.haema.effect.VampiricStrengthEffect
 import com.williambl.haema.effect.VampiricWeaknessEffect
+import com.williambl.haema.hunter.VampireHunterSpawner
 import com.williambl.haema.util.computeValueWithout
 import com.williambl.haema.util.feedCooldown
 import io.netty.buffer.Unpooled
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
+import net.fabricmc.fabric.api.tag.TagRegistry
+import net.minecraft.entity.EntityType
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.attribute.EntityAttributeModifier
 import net.minecraft.entity.attribute.EntityAttributes
@@ -25,6 +29,7 @@ import net.minecraft.particle.DustParticleEffect
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundEvents
+import net.minecraft.tag.Tag
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
 import net.minecraft.village.VillageGossipType
@@ -47,6 +52,12 @@ class VampireBloodManager() : HungerManager() {
         private val VAMPIRE_REACH = EntityAttributeModifier(VAMPIRE_REACH_UUID, "Vampire reach extension", 2.0, EntityAttributeModifier.Operation.ADDITION)
         private val VAMPIRE_ATTACK_RANGE = EntityAttributeModifier(VAMPIRE_ATTACK_RANGE_UUID, "Vampire attack range extension", 2.0, EntityAttributeModifier.Operation.ADDITION)
         private val VAMPIRE_HEALTH_BOOST = EntityAttributeModifier(VAMPIRE_HEALTH_BOOST_UUID, "Vampire health boost", 1.0, EntityAttributeModifier.Operation.MULTIPLY_BASE)
+
+        val goodBloodTag: Tag<EntityType<*>> = TagRegistry.entityType(Identifier("haema:good_blood_sources"))
+        val mediumBloodTag: Tag<EntityType<*>> = TagRegistry.entityType(Identifier("haema:medium_blood_sources"))
+        val poorBloodTag: Tag<EntityType<*>> = TagRegistry.entityType(Identifier("haema:poor_blood_sources"))
+
+        val bloodLevelPacket = Identifier("haema:bloodlevelsync")
 
         fun getFeedCooldown(world: World): Int = world.gameRules[feedCooldown].get()
     }
@@ -202,7 +213,7 @@ class VampireBloodManager() : HungerManager() {
         if (entity is VillagerEntity && !entity.isSleeping) {
             entity.gossip.startGossip(player.uuid, VillageGossipType.MAJOR_NEGATIVE, 20)
             if (player.world is ServerWorld)
-                vampireHunterSpawner.trySpawnNear(player.world as ServerWorld, player.random, player.blockPos)
+                VampireHunterSpawner.instance.trySpawnNear(player.world as ServerWorld, player.random, player.blockPos)
         }
     }
 
@@ -210,7 +221,7 @@ class VampireBloodManager() : HungerManager() {
         val buf = PacketByteBuf(Unpooled.buffer())
         buf.writeDouble(absoluteBloodLevel)
         buf.writeLong(lastFed)
-        ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, bloodLevelPackeId, buf)
+        ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, bloodLevelPacket, buf)
     }
 
     private fun heal(player: PlayerEntity) {

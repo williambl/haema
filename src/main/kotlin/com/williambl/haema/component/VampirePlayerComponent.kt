@@ -1,6 +1,6 @@
 package com.williambl.haema.component
 
-import com.williambl.haema.VampireAbility
+import com.williambl.haema.abilities.VampireAbility
 import dev.onyxstudios.cca.api.v3.component.CopyableComponent
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent
 import nerdhub.cardinal.components.api.ComponentType

@@ -1,4 +1,4 @@
-package com.williambl.haema.plugin.rei
+package com.williambl.haema.compat.rei
 
 import com.williambl.haema.craft.BookOfBloodRecipe
 import me.shedaniel.rei.api.EntryStack

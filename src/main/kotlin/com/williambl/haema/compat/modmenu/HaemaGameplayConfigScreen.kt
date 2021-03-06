@@ -1,4 +1,4 @@
-package com.williambl.haema.plugin.modmenu
+package com.williambl.haema.compat.modmenu
 
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawableHelper

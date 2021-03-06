@@ -2,8 +2,8 @@ package com.williambl.haema.mixin;
 
 import com.mojang.authlib.GameProfile;
 import com.williambl.haema.Vampirable;
-import com.williambl.haema.VampireAbility;
 import com.williambl.haema.VampireBloodManager;
+import com.williambl.haema.abilities.VampireAbility;
 import com.williambl.haema.client.ClientVampire;
 import com.williambl.haema.client.HaemaClientKt;
 import com.williambl.haema.util.RaytraceUtilKt;

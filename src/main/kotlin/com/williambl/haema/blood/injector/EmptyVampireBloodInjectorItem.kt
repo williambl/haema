@@ -1,8 +1,10 @@
-package com.williambl.haema.item
+package com.williambl.haema.blood.injector
 
 import com.williambl.haema.Vampirable
 import com.williambl.haema.VampireBloodManager
 import com.williambl.haema.util.playerVampireConversion
+import net.minecraft.block.DispenserBlock
+import net.minecraft.block.dispenser.FallibleItemDispenserBehavior
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.entity.player.PlayerEntity
@@ -14,11 +16,12 @@ import net.minecraft.util.Formatting
 import net.minecraft.util.Hand
 import net.minecraft.util.Identifier
 import net.minecraft.util.TypedActionResult
+import net.minecraft.util.math.BlockPointer
+import net.minecraft.util.math.Box
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.World
 
 class EmptyVampireBloodInjectorItem(settings: Settings?) : Item(settings) {
-
     override fun use(world: World, user: PlayerEntity, hand: Hand): TypedActionResult<ItemStack> {
         return if (tryUse(user, hand))
             TypedActionResult.consume(ItemStack(Registry.ITEM.get(Identifier("haema:vampire_blood_injector"))))
@@ -56,5 +59,17 @@ class EmptyVampireBloodInjectorItem(settings: Settings?) : Item(settings) {
         }
 
         return false
+    }
+
+    companion object DispenserBehavior : FallibleItemDispenserBehavior() {
+        override fun dispenseSilently(pointer: BlockPointer, stack: ItemStack): ItemStack {
+            val blockPos = pointer.blockPos.offset(pointer.blockState.get(DispenserBlock.FACING))
+            val user = pointer.world.getEntitiesByClass(PlayerEntity::class.java, Box(blockPos), null)
+                .firstOrNull() ?: return stack
+            return if ((stack.item as EmptyVampireBloodInjectorItem).tryUse(user))
+                ItemStack(Registry.ITEM.get(Identifier("haema:vampire_blood_injector")))
+            else
+                stack
+        }
     }
 }

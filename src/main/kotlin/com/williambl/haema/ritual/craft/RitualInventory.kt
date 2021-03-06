@@ -1,4 +1,4 @@
-package com.williambl.haema.craft.ritual
+package com.williambl.haema.ritual.craft
 
 import net.minecraft.entity.ItemEntity
 import net.minecraft.entity.player.PlayerEntity

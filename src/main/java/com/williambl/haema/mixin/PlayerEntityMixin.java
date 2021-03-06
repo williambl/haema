@@ -1,8 +1,8 @@
 package com.williambl.haema.mixin;
 
 import com.williambl.haema.Vampirable;
-import com.williambl.haema.VampireAbility;
 import com.williambl.haema.VampireBloodManager;
+import com.williambl.haema.abilities.VampireAbility;
 import com.williambl.haema.damagesource.DamageSourceExtensionsKt;
 import com.williambl.haema.effect.SunlightSicknessEffect;
 import com.williambl.haema.util.HaemaGameRulesKt;

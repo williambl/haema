@@ -1,4 +1,4 @@
-package com.williambl.haema.plugin.modmenu
+package com.williambl.haema.compat.modmenu
 
 import com.williambl.haema.client.config.HaemaConfig
 import me.sargunvohra.mcmods.autoconfig1u.AutoConfig

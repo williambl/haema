@@ -1,8 +1,8 @@
-package com.williambl.haema.plugin.rei
+package com.williambl.haema.compat.rei
 
 import com.williambl.haema.craft.BookOfBloodRecipe
-import com.williambl.haema.craft.ritual.RitualRecipe
 import com.williambl.haema.logger
+import com.williambl.haema.ritual.craft.RitualRecipe
 import me.shedaniel.rei.api.RecipeHelper
 import me.shedaniel.rei.api.plugins.REIPluginV0
 import net.minecraft.util.Identifier

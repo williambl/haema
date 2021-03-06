@@ -1,4 +1,4 @@
-package com.williambl.haema.plugin.modmenu
+package com.williambl.haema.compat.modmenu
 
 import io.github.prospector.modmenu.api.ConfigScreenFactory
 import io.github.prospector.modmenu.api.ModMenuApi
