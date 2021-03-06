@@ -9,7 +9,6 @@ import com.williambl.haema.hunter.VampireHunterSpawner
 import com.williambl.haema.util.computeValueWithout
 import com.williambl.haema.util.feedCooldown
 import io.netty.buffer.Unpooled
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.fabricmc.fabric.api.tag.TagRegistry
 import net.minecraft.entity.EntityType
@@ -221,7 +220,7 @@ class VampireBloodManager() : HungerManager() {
         val buf = PacketByteBuf(Unpooled.buffer())
         buf.writeDouble(absoluteBloodLevel)
         buf.writeLong(lastFed)
-        ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, bloodLevelPacket, buf)
+        ServerPlayNetworking.send(player as ServerPlayerEntity, bloodLevelPacket, buf)
     }
 
     private fun heal(player: PlayerEntity) {

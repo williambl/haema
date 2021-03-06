@@ -22,8 +22,7 @@ import net.minecraft.util.hit.EntityHitResult
 import net.minecraft.util.hit.HitResult
 
 object VampireHud : DrawableHelper() {
-
-    fun render(matrixStack: MatrixStack, tickDelta: Float) {
+    fun render(matrixStack: MatrixStack, @Suppress("UNUSED_PARAMETER") tickDelta: Float) {
         if (config.vampireHudPlacement == HudPlacement.NONE) return
 
         matrixStack.push()
@@ -100,7 +99,6 @@ object VampireHud : DrawableHelper() {
         }
         matrixStack.pop()
     }
-
 
     private fun createText(key: MutableText, available: Boolean, description: Text): Text {
         val keyText = key.formatted(if (available) Formatting.GREEN else Formatting.RED)

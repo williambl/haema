@@ -22,7 +22,7 @@ import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 
-class RitualTableScreenHandler(syncId: Int, val inv: RitualInventory, val context: ScreenHandlerContext)
+class RitualTableScreenHandler(syncId: Int, val inv: RitualInventory, private val context: ScreenHandlerContext)
     : ScreenHandler(ritualTableScreenHandlerType, syncId) {
 
     constructor(syncId: Int, playerInventory: PlayerInventory, packetByteBuf: PacketByteBuf) : this(
@@ -37,7 +37,7 @@ class RitualTableScreenHandler(syncId: Int, val inv: RitualInventory, val contex
         ScreenHandlerContext.EMPTY
     )
 
-    val propertyDelegate = object : PropertyDelegate {
+    private val propertyDelegate = object : PropertyDelegate {
         val abilities = VampireAbility.values()
         val player = (inv.player as Vampirable)
 

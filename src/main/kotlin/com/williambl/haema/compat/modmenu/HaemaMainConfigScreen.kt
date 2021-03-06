@@ -5,7 +5,6 @@ import me.sargunvohra.mcmods.autoconfig1u.AutoConfig
 import net.minecraft.client.gui.DrawableHelper
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.widget.ButtonWidget
-import net.minecraft.client.gui.widget.ButtonWidget.PressAction
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.text.LiteralText
 import net.minecraft.text.TranslatableText
@@ -18,15 +17,15 @@ class HaemaMainConfigScreen(private val parent: Screen?) : Screen(LiteralText("H
 
     override fun init() {
         super.init()
-        addButton(ButtonWidget(width / 4 - 75, 120, 150, 20, TranslatableText("gui.haema.config.client"), PressAction {
+        addButton(ButtonWidget(width / 4 - 75, 120, 150, 20, TranslatableText("gui.haema.config.client")) {
             client?.openScreen(AutoConfig.getConfigScreen(HaemaConfig::class.java, this).get())
-        }))
-        addButton(ButtonWidget(3 * width / 4 - 75, 120, 150, 20, TranslatableText("gui.haema.config.gameplay"), PressAction {
+        })
+        addButton(ButtonWidget(3 * width / 4 - 75, 120, 150, 20, TranslatableText("gui.haema.config.gameplay")) {
             client?.openScreen(HaemaGameplayConfigScreen(this))
-        }))
-        addButton(ButtonWidget(width / 2 - 100, 180, 200, 20, TranslatableText("gui.done"), PressAction {
+        })
+        addButton(ButtonWidget(width / 2 - 100, 180, 200, 20, TranslatableText("gui.done")) {
             onClose()
-        }))
+        })
     }
 
     override fun render(matrices: MatrixStack?, mouseX: Int, mouseY: Int, delta: Float) {

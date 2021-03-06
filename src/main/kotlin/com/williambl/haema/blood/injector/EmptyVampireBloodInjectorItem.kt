@@ -23,7 +23,7 @@ import net.minecraft.world.World
 
 class EmptyVampireBloodInjectorItem(settings: Settings?) : Item(settings) {
     override fun use(world: World, user: PlayerEntity, hand: Hand): TypedActionResult<ItemStack> {
-        return if (tryUse(user, hand))
+        return if (tryUse(user))
             TypedActionResult.consume(ItemStack(Registry.ITEM.get(Identifier("haema:vampire_blood_injector"))))
         else
             TypedActionResult.pass(user.getStackInHand(hand))
@@ -34,7 +34,7 @@ class EmptyVampireBloodInjectorItem(settings: Settings?) : Item(settings) {
         tooltip.add(TranslatableText("item.haema.empty_vampire_blood_injector.desc").formatted(Formatting.DARK_RED))
     }
 
-    fun tryUse(user: PlayerEntity, hand: Hand? = null): Boolean {
+    fun tryUse(user: PlayerEntity): Boolean {
         if ((user as Vampirable).isVampire && !user.world.isClient) {
             if (user.hasStatusEffect(StatusEffects.WEAKNESS)) {
                 if (!user.world.gameRules[playerVampireConversion].get()) {

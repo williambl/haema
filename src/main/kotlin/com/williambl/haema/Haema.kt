@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.DoubleArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.williambl.haema.abilities.VampireAbility
 import com.williambl.haema.abilities.VampireAbilityArgumentType
+import com.williambl.haema.abilities.registerAbilities
 import com.williambl.haema.blood.registerBlood
 import com.williambl.haema.component.VampireComponent
 import com.williambl.haema.component.VampirePlayerComponent
@@ -76,9 +77,11 @@ fun init() {
         if (!world.isDay) {
             newTime
         } else {
-            curTime + (13000L - (world.getTimeOfDay() % 24000L))
+            curTime + (13000L - (world.timeOfDay % 24000L))
         }
     })
+
+    registerAbilities()
 
     registerRitualTable()
 

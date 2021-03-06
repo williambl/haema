@@ -20,7 +20,6 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.options.KeyBinding
 import net.minecraft.client.render.RenderLayer
@@ -58,14 +57,14 @@ fun setSaturation(value: Float) {
 }
 
 fun init() {
-    ClientSidePacketRegistry.INSTANCE.register(Identifier("haema:bloodlevelsync")) { packetContext, packetByteBuf ->
-        if (packetContext.player is Vampirable) {
-            (packetContext.player as Vampirable).checkBloodManager()
-            (packetContext.player.hungerManager as VampireBloodManager).absoluteBloodLevel = packetByteBuf.readDouble()
+    ClientPlayNetworking.registerGlobalReceiver(Identifier("haema:bloodlevelsync")) { client, handler, buf, sender ->
+        if (client.player is Vampirable) {
+            (client.player as Vampirable).checkBloodManager()
+            (client.player?.hungerManager as VampireBloodManager).absoluteBloodLevel = buf.readDouble()
         }
     }
-    ClientSidePacketRegistry.INSTANCE.register(Identifier("haema:updatedashcooldown")) { packetContext, packetByteBuf ->
-        dashCooldownValue = packetByteBuf.readInt()
+    ClientPlayNetworking.registerGlobalReceiver(Identifier("haema:updatedashcooldown")) { client, handler, buf, sender ->
+        dashCooldownValue = buf.readInt()
     }
     ClientPlayNetworking.registerGlobalReceiver(Identifier("haema:updateinvisticks")) { client, handler, buf, sender ->
         (client.player!!.hungerManager as VampireBloodManager).invisTicks = client.world!!.time
@@ -76,7 +75,8 @@ fun init() {
     ShaderEffectRenderCallback.EVENT.register(ShaderEffectRenderCallback {
         if (config.vampireShaderEnabled && (MinecraftClient.getInstance().player as Vampirable).isVampire && (MinecraftClient.getInstance().player as Vampirable).getAbilityLevel(
                 VampireAbility.VISION) > 0) {
-            RenderSystem.disableAlphaTest();
+            @Suppress("DEPRECATION")
+            RenderSystem.disableAlphaTest()
             VAMPIRE_SHADER.render(it)
         }
     })

@@ -26,8 +26,8 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
 
     private var movingTab = false
 
-    var panX = 117 / 2.0
-    var panY = 56 / 2.0
+    private var panX = 117 / 2.0
+    private var panY = 56 / 2.0
 
     override fun drawBackground(matrices: MatrixStack?, delta: Float, mouseX: Int, mouseY: Int) {}
 

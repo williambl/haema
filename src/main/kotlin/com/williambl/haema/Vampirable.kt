@@ -45,8 +45,8 @@ interface Vampirable {
         VampireComponent.entityKey.sync(this)
     }
 
-    fun checkBloodManager();
-    fun removeBloodManager();
+    fun checkBloodManager()
+    fun removeBloodManager()
 
     companion object {
         fun convert(entity: PlayerEntity) {

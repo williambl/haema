@@ -18,7 +18,7 @@ import net.minecraft.world.gen.Spawner
 import java.util.*
 import kotlin.math.ceil
 
-class VampireHunterSpawner(val entityType: EntityType<out VampireHunterEntity>) : Spawner {
+class VampireHunterSpawner(private val entityType: EntityType<out VampireHunterEntity>) : Spawner {
     private var ticksUntilNextSpawn = 0
 
     private var amountSpawnedSinceLast = 0

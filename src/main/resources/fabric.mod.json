@@ -23,19 +23,19 @@
   "entrypoints": {
     "main": [
       "com.williambl.haema.HaemaKt::init",
-      "com.williambl.haema.plugin.origins.HaemaOriginsPluginKt::init"
+      "com.williambl.haema.compat.origins.HaemaOriginsPluginKt::init"
     ],
     "client": [
       "com.williambl.haema.client.HaemaClientKt::init"
     ],
     "rei_plugins": [
-      "com.williambl.haema.plugin.rei.HaemaREIPlugin"
+      "com.williambl.haema.compat.rei.HaemaREIPlugin"
     ],
     "cardinal-components-entity": [
       "com.williambl.haema.HaemaKt::registerEntityComponentFactories"
     ],
     "modmenu": [
-      "com.williambl.haema.plugin.modmenu.HaemaModMenuPlugin"
+      "com.williambl.haema.compat.modmenu.HaemaModMenuPlugin"
     ]
   },
   "mixins": [

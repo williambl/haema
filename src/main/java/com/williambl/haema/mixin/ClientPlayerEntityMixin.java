@@ -8,7 +8,7 @@ import com.williambl.haema.client.ClientVampire;
 import com.williambl.haema.client.HaemaClientKt;
 import com.williambl.haema.util.RaytraceUtilKt;
 import io.netty.buffer.Unpooled;
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
@@ -42,7 +42,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
             if (pressedTicks > 0 && !(HaemaClientKt.getDASH_KEY().isPressed()) && canDash()) {
                 PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-                ClientSidePacketRegistry.INSTANCE.sendToServer(new Identifier("haema:dash"), buf);
+                ClientPlayNetworking.send(new Identifier("haema:dash"), buf);
                 lastDashed = world.getTime();
             } else if (HaemaClientKt.getDASH_KEY().isPressed() && canDash()) {
                 Vec3d target = RaytraceUtilKt.raytraceForDash(this);

@@ -6,9 +6,10 @@ import net.fabricmc.fabric.api.gamerule.v1.CustomGameRuleCategory
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry
 import net.fabricmc.fabric.api.gamerule.v1.rule.DoubleRule
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.network.PacketByteBuf
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
@@ -34,13 +35,13 @@ fun registerGameRules() {
     dashCooldown = GameRuleRegistry.register("dashCooldown", GameRules.Category.PLAYER, GameRuleFactory.createIntRule(10, 0, 24000) { server, rule ->
         val buf = PacketByteBuf(Unpooled.buffer())
         buf.writeInt(rule.get())
-        server.playerManager.sendToAll(ServerSidePacketRegistry.INSTANCE.toPacket(Identifier("haema:updatedashcooldown"), buf))
+        server.playerManager.sendToAll(ServerPlayNetworking.createS2CPacket(Identifier("haema:updatedashcooldown"), buf))
     })
     ServerEntityEvents.ENTITY_LOAD.register(ServerEntityEvents.Load { entity, serverWorld ->
         if (entity is PlayerEntity) {
             val buf = PacketByteBuf(Unpooled.buffer())
             buf.writeInt(serverWorld.gameRules.get(dashCooldown).get())
-            ServerSidePacketRegistry.INSTANCE.sendToPlayer(entity, Identifier("haema:updatedashcooldown"), buf)
+            ServerPlayNetworking.send(entity as ServerPlayerEntity, Identifier("haema:updatedashcooldown"), buf)
         }
     })
 

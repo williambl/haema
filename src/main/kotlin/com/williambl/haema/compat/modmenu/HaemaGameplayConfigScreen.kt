@@ -17,10 +17,11 @@ import java.net.URI
 import java.net.URISyntaxException
 
 class HaemaGameplayConfigScreen(private val parent: Screen?) : Screen(LiteralText("HAEMA").formatted(Formatting.UNDERLINE)) {
-
     val icon = Identifier("haema:icon.png")
 
-    val keys = listOf(
+    var isShowingMore = false
+
+    private val keys = listOf(
         GLFW.GLFW_KEY_UP,
         GLFW.GLFW_KEY_UP,
         GLFW.GLFW_KEY_DOWN,
@@ -33,12 +34,10 @@ class HaemaGameplayConfigScreen(private val parent: Screen?) : Screen(LiteralTex
         GLFW.GLFW_KEY_A
     )
 
-    var wasKeyDown = false
-    var currentKey = 0
-    var currentHue = 0.0
-    var isDoingAnim = false
-
-    var isShowingMore = false
+    private var wasKeyDown = false
+    private var currentKey = 0
+    private var currentHue = 0.0
+    private var isDoingAnim = false
 
     private val texts = listOf(
         TranslatableText("gui.haema.config.gameplay.main").formatted(Formatting.UNDERLINE),
@@ -80,9 +79,9 @@ class HaemaGameplayConfigScreen(private val parent: Screen?) : Screen(LiteralTex
                 return TranslatableText(if (isShowingMore) "gui.haema.lessinfo" else "gui.haema.moreinfo")
             }
         })
-        addButton(ButtonWidget(width/2+10, 180, 200, 20, TranslatableText("gui.done"), PressAction {
+        addButton(ButtonWidget(width/2+10, 180, 200, 20, TranslatableText("gui.done")) {
             onClose()
-        }))
+        })
     }
 
     override fun render(matrices: MatrixStack?, mouseX: Int, mouseY: Int, delta: Float) {

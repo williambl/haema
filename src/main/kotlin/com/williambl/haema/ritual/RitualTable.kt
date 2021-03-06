@@ -5,7 +5,10 @@ import com.williambl.haema.ritual.craft.RitualInventory
 import com.williambl.haema.ritual.craft.RitualRecipe
 import com.williambl.haema.util.MultiTagMatcher
 import net.fabricmc.fabric.api.tag.TagRegistry
-import net.minecraft.block.*
+import net.minecraft.block.Block
+import net.minecraft.block.BlockState
+import net.minecraft.block.Material
+import net.minecraft.block.ShapeContext
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.player.PlayerEntity
@@ -39,11 +42,11 @@ import vazkii.patchouli.common.multiblock.StateMatcher
 import java.util.*
 import kotlin.math.min
 
-val level0RitualMaterialsTag = TagRegistry.block(Identifier("haema:ritual_materials/level_0"))
-val level1RitualMaterialsTag = TagRegistry.block(Identifier("haema:ritual_materials/level_1"))
+val level0RitualMaterialsTag: Tag<Block> = TagRegistry.block(Identifier("haema:ritual_materials/level_0"))
+val level1RitualMaterialsTag: Tag<Block> = TagRegistry.block(Identifier("haema:ritual_materials/level_1"))
 
-val level0RitualTorchesTag = TagRegistry.block(Identifier("haema:ritual_torches/level_0"))
-val level1RitualTorchesTag = TagRegistry.block(Identifier("haema:ritual_torches/level_1"))
+val level0RitualTorchesTag: Tag<Block> = TagRegistry.block(Identifier("haema:ritual_torches/level_0"))
+val level1RitualTorchesTag: Tag<Block> = TagRegistry.block(Identifier("haema:ritual_torches/level_1"))
 
 class RitualTable(settings: Settings) : Block(settings) {
     override fun onUse(
@@ -147,7 +150,7 @@ class RitualTable(settings: Settings) : Block(settings) {
     }
 
     companion object {
-        val instance: RitualTable by lazy { RitualTable(AbstractBlock.Settings.of(Material.METAL)) }
+        val instance: RitualTable by lazy { RitualTable(Settings.of(Material.METAL)) }
 
         val shape: VoxelShape = createCuboidShape(0.0, 0.0, 0.0, 16.0, 12.0, 16.0)
 
@@ -329,7 +332,5 @@ fun registerRitualTable() {
             '0' to StateMatcher.fromBlockLoose(RitualTable.instance),
             ' ' to StateMatcher.ANY
         )
-    )
-    )
-
+    ))
 }

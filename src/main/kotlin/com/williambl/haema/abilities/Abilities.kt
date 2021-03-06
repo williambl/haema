@@ -2,7 +2,6 @@ package com.williambl.haema.abilities
 
 import com.williambl.haema.ritual.RitualTableScreenHandler
 import com.williambl.haema.util.raytraceForDash
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
 import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.minecraft.network.PacketByteBuf
@@ -31,8 +30,7 @@ fun registerAbilities() {
         }
     }
 
-    ServerSidePacketRegistry.INSTANCE.register(Identifier("haema:dash")) { packetContext, packetByteBuf ->
-        val player = packetContext.player
+    ServerPlayNetworking.registerGlobalReceiver(Identifier("haema:dash")) { server: MinecraftServer, player: ServerPlayerEntity, networkHandler: ServerPlayNetworkHandler, buf: PacketByteBuf, sender: PacketSender ->
         val world = player.world
         val target = raytraceForDash(player)
 
