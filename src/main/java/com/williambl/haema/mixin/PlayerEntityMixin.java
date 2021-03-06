@@ -61,7 +61,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
     @Inject(method = "damage", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/LivingEntity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
     void damage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (isVampire()) {
-            boolean isDamageSourceEffective = DamageSourceExtensionsKt.isEffectiveAgainstVampires(source);
+            boolean isDamageSourceEffective = DamageSourceExtensionsKt.isEffectiveAgainstVampires(source, world);
             this.setKilled(this.getHealth() <= 0 && isDamageSourceEffective);
         }
     }
@@ -73,7 +73,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
             index = 2
     )
     float tweakDamageIfVampire(float amount, DamageSource source) {
-        float result = this.isVampire() && DamageSourceExtensionsKt.isEffectiveAgainstVampires(source) ?
+        float result = this.isVampire() && DamageSourceExtensionsKt.isEffectiveAgainstVampires(source, world) ?
                 amount * 1.25f
                 : amount;
 
@@ -83,6 +83,11 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
     @Redirect(method = "isInvulnerableTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$Key;)Z", ordinal = 1))
     boolean makeVampiresImmuneToFalling(GameRules gameRules, GameRules.Key<GameRules.BooleanRule> rule) {
         return gameRules.getBoolean(rule) && !isVampire();
+    }
+
+    @Redirect(method = "isInvulnerableTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$Key;)Z", ordinal = 0))
+    boolean makeVampiresImmuneToDrowning(GameRules gameRules, GameRules.Key<GameRules.BooleanRule> rule) {
+        return gameRules.getBoolean(rule) && (!isVampire() || gameRules.getBoolean(HaemaGameRulesKt.getVampiresDrown()));
     }
 
     @Override

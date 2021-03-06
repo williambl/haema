@@ -47,7 +47,7 @@ public abstract class LivingEntityMixin extends Entity {
         if (livingEntity instanceof PlayerEntity && ((Vampirable)livingEntity).isVampire() && currentSource != null && ((Vampirable)this).getAbilityLevel(VampireAbility.IMMORTALITY) > 0) {
             DamageSource theCurrentSource = currentSource;
             currentSource = null;
-            boolean result = this.getHealth() <= 0 && DamageSourceExtensionsKt.isEffectiveAgainstVampires(theCurrentSource);
+            boolean result = this.getHealth() <= 0 && DamageSourceExtensionsKt.isEffectiveAgainstVampires(theCurrentSource, livingEntity.world);
             if (result) {
                 ((VampireBloodManager)((PlayerEntity) livingEntity).getHungerManager()).setAbsoluteBloodLevel(0.0);
             }

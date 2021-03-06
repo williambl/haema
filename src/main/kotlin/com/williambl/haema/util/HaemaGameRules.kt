@@ -17,6 +17,8 @@ import net.minecraft.world.GameRules
 
 lateinit var vampiresBurn: GameRules.Key<GameRules.BooleanRule>
 
+lateinit var vampiresDrown: GameRules.Key<GameRules.BooleanRule>
+
 lateinit var feedCooldown: GameRules.Key<GameRules.IntRule>
 
 lateinit var dashCooldown: GameRules.Key<GameRules.IntRule>
@@ -30,6 +32,7 @@ val haemaCategory = CustomGameRuleCategory(Identifier("haema:haema"), Translatab
 
 fun registerGameRules() {
     vampiresBurn = GameRuleRegistry.register("vampiresBurn", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(true))
+    vampiresDrown = GameRuleRegistry.register("vampiresDrown", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(true))
     feedCooldown = GameRuleRegistry.register("feedCooldown", GameRules.Category.PLAYER, GameRuleFactory.createIntRule(10, 0, 24000))
 
     dashCooldown = GameRuleRegistry.register("dashCooldown", GameRules.Category.PLAYER, GameRuleFactory.createIntRule(10, 0, 24000) { server, rule ->
