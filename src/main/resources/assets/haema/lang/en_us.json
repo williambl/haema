@@ -8,6 +8,7 @@
   "item.haema.vampire_converter": "[DEBUG ITEM] Vampire Converter",
 
   "block.haema.righteous_banner": "Righteous Banner",
+  "block.haema.ritual_table": "Ritual Table",
 
   "entity.haema.vampire_hunter": "Vampire Hunter",
 
@@ -104,6 +105,7 @@
   "gui.haema.title": "HAEMA",
 
   "gui.haema.hud.vampiredash": "Vampire Dash",
+  "gui.haema.hud.invisibility": "Invisibility",
   "gui.haema.hud.feed": "Feed",
   "gui.haema.hud.bloodquality": "Blood Quality: ",
   "gui.haema.hud.bloodquality.good": "Good",
@@ -122,6 +124,10 @@
   "gui.haema.message.conversion_blocked_by_gamerule": "Game Rule 'playerVampireConversion' is not set to true.",
   "gui.haema.message.conversion_not_possible": "Player is a permanent vampire and cannot be converted.",
 
+  "gui.haema.altar_level": "Requires Altar Level %d",
+  "gui.haema.repeatable.true": "Repeatable",
+  "gui.haema.repeatable.false": "Not Repeatable",
+
   "text.autoconfig.haema.title": "Haema",
   "text.autoconfig.haema.option.vampireHudPlacement": "Vampire HUD placement",
   "text.autoconfig.haema.option.vampireShaderEnabled": "Enable Vampire Shader",
@@ -130,5 +136,16 @@
   "text.autoconfig.haema.option.distortionAdjust": "Vampire Dash distortion strength",
   "text.autoconfig.haema.option.distortionAdjust.@Tooltip": "0 = no distortion. 1 = default distortion. This multiplies with the vanilla 'Distortion Effects' setting.",
   "text.autoconfig.haema.option.saturationAdjust": "Vampire Vision saturation effect strength",
-  "text.autoconfig.haema.option.saturationAdjust.@Tooltip": "0 = no saturation change. 1 = default vampire saturation change."
+  "text.autoconfig.haema.option.saturationAdjust.@Tooltip": "0 = no saturation change. 1 = default vampire saturation change.",
+
+  "ability.haema.strength.description": "Vampiric Strength gives you increased attack strength and speed.",
+  "ability.haema.dash.description": "Your dash ability is a short-range teleport.",
+  "ability.haema.invisibility.description": "A short-lasting invisibility when you sneak.",
+  "ability.haema.immortality.description": "The power of immortality! Survive practically anything.",
+  "ability.haema.vision.description": "A vampire's vision is better in the dark - but worse in the light.",
+
+  "ritual.action.add_level": "+%d ability points",
+  "ritual.action.change_abilities": "Customise abilities",
+
+  "rei.haema.ritual": "Ritual"
 }

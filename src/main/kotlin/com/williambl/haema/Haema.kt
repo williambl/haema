@@ -1,9 +1,11 @@
 package com.williambl.haema
 
 import com.mojang.brigadier.arguments.DoubleArgumentType
+import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.williambl.haema.component.VampireComponent
 import com.williambl.haema.component.VampirePlayerComponent
 import com.williambl.haema.craft.BookOfBloodRecipe
+import com.williambl.haema.craft.ritual.RitualRecipe
 import com.williambl.haema.effect.SunlightSicknessEffect
 import com.williambl.haema.effect.VampiricStrengthEffect
 import com.williambl.haema.effect.VampiricWeaknessEffect
@@ -11,6 +13,8 @@ import com.williambl.haema.entity.VampireHunterEntity
 import com.williambl.haema.entity.VampireHunterSpawner
 import com.williambl.haema.item.EmptyVampireBloodInjectorItem
 import com.williambl.haema.item.VampireBloodInjectorItem
+import com.williambl.haema.ritual.RitualTable
+import com.williambl.haema.ritual.RitualTableScreenHandler
 import com.williambl.haema.util.*
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactory
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
@@ -30,14 +34,16 @@ import net.fabricmc.fabric.api.loot.v1.FabricLootSupplierBuilder
 import net.fabricmc.fabric.api.loot.v1.event.LootTableLoadingCallback
 import net.fabricmc.fabric.api.loot.v1.event.LootTableLoadingCallback.LootTableSetter
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
+import net.fabricmc.fabric.api.networking.v1.PacketSender
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.fabricmc.fabric.api.tag.TagRegistry
 import net.fabricmc.fabric.api.util.TriState
-import net.minecraft.block.BedBlock
-import net.minecraft.block.DispenserBlock
+import net.minecraft.block.*
 import net.minecraft.block.dispenser.FallibleItemDispenserBehavior
 import net.minecraft.block.enums.BedPart
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.command.argument.EntityArgumentType
+import net.minecraft.command.argument.IdentifierArgumentType
 import net.minecraft.entity.EntityDimensions
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.LivingEntity
@@ -45,21 +51,23 @@ import net.minecraft.entity.SpawnGroup
 import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.mob.HostileEntity
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.item.Item
-import net.minecraft.item.ItemGroup
-import net.minecraft.item.ItemStack
-import net.minecraft.item.Items
+import net.minecraft.item.*
 import net.minecraft.loot.ConstantLootTableRange
 import net.minecraft.loot.LootManager
 import net.minecraft.loot.entry.ItemEntry
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.resource.ResourceManager
+import net.minecraft.server.MinecraftServer
 import net.minecraft.server.command.CommandManager.argument
 import net.minecraft.server.command.CommandManager.literal
+import net.minecraft.server.network.ServerPlayNetworkHandler
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
+import net.minecraft.state.property.Properties
+import net.minecraft.tag.Tag
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.ActionResult
@@ -76,6 +84,9 @@ import net.minecraft.world.World
 import org.apache.logging.log4j.LogManager
 import top.theillusivec4.somnus.api.PlayerSleepEvents
 import top.theillusivec4.somnus.api.WorldSleepEvents
+import vazkii.patchouli.common.multiblock.DenseMultiblock
+import vazkii.patchouli.common.multiblock.MultiblockRegistry
+import vazkii.patchouli.common.multiblock.StateMatcher
 
 val bloodLevelPackeId = Identifier("haema:bloodlevelsync")
 
@@ -85,11 +96,19 @@ val poorBloodTag = TagRegistry.entityType(Identifier("haema:poor_blood_sources")
 
 val vampireEffectiveWeaponsTag = TagRegistry.item(Identifier("haema:vampire_weapons"))
 
+val level0RitualMaterialsTag = TagRegistry.block(Identifier("haema:ritual_materials/level_0"))
+val level1RitualMaterialsTag = TagRegistry.block(Identifier("haema:ritual_materials/level_1"))
+
+val level0RitualTorchesTag = TagRegistry.block(Identifier("haema:ritual_torches/level_0"))
+val level1RitualTorchesTag = TagRegistry.block(Identifier("haema:ritual_torches/level_1"))
+
 val dungeonLootTable = Identifier("minecraft:chests/simple_dungeon")
 val jungleTempleLootTable = Identifier("minecraft:chests/jungle_temple")
 val desertPyramidLootTable = Identifier("minecraft:chests/desert_pyramid")
 
 val haemaCategory = CustomGameRuleCategory(Identifier("haema:haema"), TranslatableText("gamerule.category.haema").formatted(Formatting.BOLD).formatted(Formatting.YELLOW))
+
+lateinit var ritualTable: RitualTable
 
 lateinit var vampireHunterSpawner: VampireHunterSpawner
 
@@ -132,13 +151,15 @@ fun init() {
         if (id == dungeonLootTable || id == jungleTempleLootTable || id == desertPyramidLootTable) {
             val poolBuilder: FabricLootPoolBuilder = FabricLootPoolBuilder.builder()
                 .rolls(ConstantLootTableRange.create(1))
-                .withEntry(ItemEntry.builder(Registry.ITEM.get(Identifier("haema:vampire_blood")))
-                    .weight(if (id == dungeonLootTable) 10 else 5)
-                    .build()
+                .withEntry(
+                    ItemEntry.builder(Registry.ITEM.get(Identifier("haema:vampire_blood")))
+                        .weight(if (id == dungeonLootTable) 10 else 5)
+                        .build()
                 )
-                .withEntry(ItemEntry.builder(Items.AIR)
-                    .weight(10)
-                    .build()
+                .withEntry(
+                    ItemEntry.builder(Items.AIR)
+                        .weight(10)
+                        .build()
                 )
             supplier.withPool(poolBuilder.build())
         }
@@ -167,6 +188,7 @@ fun init() {
         val world = player.world
         val target = raytraceForDash(player)
 
+        //TODO: don't trust the client
         if (target != null) {
             val rand = world.random
             for (j in 0 until 3) {
@@ -181,8 +203,32 @@ fun init() {
                     0.0
                 )
             }
-            world.playSound(null, target.x, target.y, target.z, SoundEvents.ENTITY_GHAST_SHOOT, SoundCategory.PLAYERS, 1f, 1.5f)
+            world.playSound(
+                null,
+                target.x,
+                target.y,
+                target.z,
+                SoundEvents.ENTITY_GHAST_SHOOT,
+                SoundCategory.PLAYERS,
+                1f,
+                1.5f
+            )
             player.teleport(target.x, target.y, target.z)
+        }
+    }
+
+    ServerPlayNetworking.registerGlobalReceiver(Identifier("haema:transferlevels")) { server: MinecraftServer, player: ServerPlayerEntity, networkHandler: ServerPlayNetworkHandler, buf: PacketByteBuf, sender: PacketSender ->
+        if (player.currentScreenHandler.syncId == buf.readInt() && player.currentScreenHandler is RitualTableScreenHandler) {
+            val amount = buf.readInt()
+            val from = buf.readInt()
+            val to = buf.readInt()
+            val currentAmountFrom = (player.currentScreenHandler as RitualTableScreenHandler).getProperty(from)
+            val currentAmountTo = (player.currentScreenHandler as RitualTableScreenHandler).getProperty(to)
+
+            if (currentAmountFrom-amount >= 0 && currentAmountTo+amount <= VampireAbility.values()[to].maxLevel) {
+                player.currentScreenHandler.setProperty(from, currentAmountFrom-amount)
+                player.currentScreenHandler.setProperty(to, currentAmountTo+amount)
+            }
         }
     }
 
@@ -202,6 +248,20 @@ fun init() {
         Registry.STATUS_EFFECT,
         Identifier("haema:vampiric_weakness"),
         VampiricWeaknessEffect.instance
+    )
+
+    ritualTable = RitualTable(AbstractBlock.Settings.of(Material.METAL))
+
+    Registry.register(
+        Registry.BLOCK,
+        Identifier("haema:ritual_table"),
+        ritualTable
+    )
+
+    Registry.register(
+        Registry.ITEM,
+        Identifier("haema:ritual_table"),
+        BlockItem(ritualTable, Item.Settings().group(ItemGroup.DECORATIONS))
     )
 
     Registry.register(
@@ -232,6 +292,10 @@ fun init() {
         Identifier("haema:book_of_blood"),
         BookOfBloodRecipe.Serializer
     )
+
+    //To make them load and register
+    RitualRecipe.recipeSerializer
+    RitualRecipe.recipeType
 
     Registry.register(
         Registry.ENTITY_TYPE,
@@ -320,7 +384,57 @@ fun init() {
                             }
                         }
                         return@executes 1
+                    })))
+                .then(literal("abilities")
+                    .then(literal("get").then(argument("targets", EntityArgumentType.players()).executes {  context ->
+                        EntityArgumentType.getPlayers(context, "targets").forEach {
+                            if ((it as Vampirable).isVampire) {
+                                context.source.sendFeedback(it.name.copy().append(" has abilities:"), false)
+                                VampireAbility.values().forEach { ability ->
+                                    context.source.sendFeedback(Text.of("${ability.name}: ${it.getAbilityLevel(ability)}"), false)
+                                }
+                            }
+                        }
+                        return@executes 1
                     }))
+                    .then(literal("set").then(argument("targets", EntityArgumentType.players()).then(argument("ability", VampireAbilityArgumentType.ability()).then(
+                        argument("level", IntegerArgumentType.integer(0)).executes { context ->
+                            EntityArgumentType.getPlayers(context, "targets").forEach {
+                                if ((it as Vampirable).isVampire) {
+                                    it.setAbilityLevel(VampireAbilityArgumentType.getAbility(context, "ability"), IntegerArgumentType.getInteger(context, "level"))
+                                }
+                            }
+                            return@executes 1
+                        }))))
+                )
+                .then(literal("rituals")
+                    .then(literal("get").then(argument("targets", EntityArgumentType.players()).executes { context ->
+                        EntityArgumentType.getPlayers(context, "targets").forEach {
+                            if ((it as Vampirable).isVampire) {
+                                context.source.sendFeedback(it.name.copy().append(" has used rituals:"), false)
+                                VampireComponent.entityKey.get(it).ritualsUsed.forEach { ritual ->
+                                    context.source.sendFeedback(Text.of(ritual.toString()), false)
+                                }
+                            }
+                        }
+                        return@executes 1
+                    }))
+                    .then(literal("add").then(argument("targets", EntityArgumentType.players()).then(argument("ritual", IdentifierArgumentType.identifier()).executes { context ->
+                        EntityArgumentType.getPlayers(context, "targets").forEach {
+                            if ((it as Vampirable).isVampire) {
+                                it.setHasUsedRitual(IdentifierArgumentType.getIdentifier(context, "ritual"), true)
+                            }
+                        }
+                        return@executes 1
+                    })))
+                    .then(literal("remove").then(argument("targets", EntityArgumentType.players()).then(argument("ritual", IdentifierArgumentType.identifier()).executes { context ->
+                        EntityArgumentType.getPlayers(context, "targets").forEach {
+                            if ((it as Vampirable).isVampire) {
+                                it.setHasUsedRitual(IdentifierArgumentType.getIdentifier(context, "ritual"), false)
+                            }
+                        }
+                        return@executes 1
+                    })))
                 )
         )
     }
@@ -334,6 +448,51 @@ fun init() {
     })
     vampireHunterNoticeChance = GameRuleRegistry.register("vampireHunterNoticeChance", GameRules.Category.MOBS, GameRuleFactory.createDoubleRule(0.1, 0.0, 1.0))
     playerVampireConversion = GameRuleRegistry.register("playerVampireConversion", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(true))
+
+    MultiblockRegistry.registerMultiblock(Identifier("haema:ritual_altar"), DenseMultiblock(
+        arrayOf(
+            arrayOf(
+                "T T T",
+                "     ",
+                "T   T",
+                "     ",
+                "T T T"
+            ), arrayOf(
+                "B B B",
+                "     ",
+                "B 0 B",
+                "     ",
+                "B B B"
+            ), arrayOf(
+                "BBBBB",
+                "B   B",
+                "B B B",
+                "B   B",
+                "BBBBB"
+            ), arrayOf(
+                "BBBBB",
+                "BBBBB",
+                "BBBBB",
+                "BBBBB",
+                "BBBBB"
+            )
+        ), mapOf(
+            'T' to MultiTagMatcher(
+                listOf(
+                    level0RitualTorchesTag as Tag.Identified<Block>,
+                    level1RitualTorchesTag as Tag.Identified<Block>
+                ), mapOf(Properties.LIT to true)
+            ),
+            'B' to MultiTagMatcher(
+                listOf(
+                    level0RitualMaterialsTag as Tag.Identified<Block>,
+                    level1RitualMaterialsTag as Tag.Identified<Block>
+                ), mapOf()
+            ),
+            '0' to StateMatcher.fromBlockLoose(ritualTable),
+            ' ' to StateMatcher.ANY
+        )
+    ))
 
     logger.info("Everything registered. It's vampire time!")
 }

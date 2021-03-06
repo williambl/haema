@@ -36,11 +36,21 @@ object VampireHud : DrawableHelper() {
 
         val texts = mutableListOf<Text>()
 
-        if ((player.hungerManager as VampireBloodManager).getBloodLevel() > 18f) {
+        val dashLevel = (player as Vampirable).getAbilityLevel(VampireAbility.DASH)
+        if (dashLevel > 0 && (player.hungerManager as VampireBloodManager).getBloodLevel() > 18f) {
             texts.add(createText(
                 DASH_KEY.boundKeyLocalizedText.copy(),
                 (player as Vampirable).isVampire && (player as ClientVampire).canDash(),
                 TranslatableText("gui.haema.hud.vampiredash"))
+            )
+        }
+
+        val invisLevel = (player as Vampirable).getAbilityLevel(VampireAbility.INVISIBILITY)
+        if (invisLevel > 0 && (player.hungerManager as VampireBloodManager).getBloodLevel() >= 18f) {
+            texts.add(createText(
+                MinecraftClient.getInstance().options.keySneak.boundKeyLocalizedText.copy(),
+                (player as Vampirable).isVampire && player.world.time-(player.hungerManager as VampireBloodManager).invisTicks >= 120 + invisLevel*20,
+                TranslatableText("gui.haema.hud.invisibility"))
             )
         }
 

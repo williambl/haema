@@ -4,6 +4,7 @@ import com.williambl.haema.component.VampireComponent
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.util.Identifier
 
 interface Vampirable {
 
@@ -24,6 +25,24 @@ interface Vampirable {
         set(value) {
             VampireComponent.entityKey.get(this).isKilled = value
         }
+
+    fun getAbilityLevel(ability: VampireAbility): Int = VampireComponent.entityKey.get(this).abilities[ability] ?: 0
+
+    fun setAbilityLevel(ability: VampireAbility, level: Int) {
+        VampireComponent.entityKey.get(this).abilities[ability] = level
+        VampireComponent.entityKey.sync(this)
+    }
+
+    fun hasUsedRitual(identifier: Identifier) = VampireComponent.entityKey.get(this).ritualsUsed.contains(identifier)
+
+    fun setHasUsedRitual(identifier: Identifier, has: Boolean) {
+        val component = VampireComponent.entityKey.get(this)
+        if (has)
+            component.ritualsUsed.add(identifier)
+        else
+            component.ritualsUsed.remove(identifier)
+        VampireComponent.entityKey.sync(this)
+    }
 
     fun checkBloodManager();
     fun removeBloodManager();

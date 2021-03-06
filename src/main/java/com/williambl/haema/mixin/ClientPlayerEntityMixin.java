@@ -2,6 +2,7 @@ package com.williambl.haema.mixin;
 
 import com.mojang.authlib.GameProfile;
 import com.williambl.haema.Vampirable;
+import com.williambl.haema.VampireAbility;
 import com.williambl.haema.VampireBloodManager;
 import com.williambl.haema.client.ClientVampire;
 import com.williambl.haema.client.HaemaClientKt;
@@ -74,6 +75,13 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
     @Override
     public boolean canDash() {
-        return world.getTime() > lastDashed+HaemaClientKt.getDashCooldownValue() && hungerManager instanceof VampireBloodManager && (((VampireBloodManager)hungerManager).getBloodLevel() > 18 || abilities.creativeMode);
+        int abilityLevel = ((Vampirable)this).getAbilityLevel(VampireAbility.DASH);
+        return world.getTime() > lastDashed+(HaemaClientKt.getDashCooldownValue()*(1+VampireAbility.DASH.getMaxLevel()-abilityLevel))
+                && hungerManager instanceof VampireBloodManager
+                && (
+                        ((VampireBloodManager)hungerManager).getBloodLevel() > 18
+                                || abilities.creativeMode
+        )
+                && abilityLevel > 0;
     }
 }

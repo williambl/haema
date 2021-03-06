@@ -8,6 +8,7 @@ import com.williambl.haema.util.computeValueWithout
 import com.williambl.haema.util.feedCooldown
 import io.netty.buffer.Unpooled
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.attribute.EntityAttributeModifier
 import net.minecraft.entity.attribute.EntityAttributes
@@ -21,9 +22,11 @@ import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.particle.DustParticleEffect
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundEvents
 import net.minecraft.util.ActionResult
+import net.minecraft.util.Identifier
 import net.minecraft.village.VillageGossipType
 import net.minecraft.world.GameRules
 import net.minecraft.world.World
@@ -54,7 +57,7 @@ class VampireBloodManager() : HungerManager() {
     var absoluteBloodLevel: Double = 7.0
 
     var lastFed: Long = -24000
-    var lastBloodLevel: Double = -1.0
+    var invisTicks: Long = 0
 
     override fun update(player: PlayerEntity?) {
         owner = player!!
@@ -87,16 +90,19 @@ class VampireBloodManager() : HungerManager() {
         }
 
 
-        if (getBloodLevel() >= 10) {
+        if (getBloodLevel() >= 10 && (player as Vampirable).getAbilityLevel(VampireAbility.STRENGTH) > 0) {
             player.addStatusEffect(StatusEffectInstance(VampiricStrengthEffect.instance, 10, when {
                 getBloodLevel() >= 19 -> 2
                 getBloodLevel() >= 14 -> 1
                 else -> 0
-            }))
+            }.coerceAtMost((player as Vampirable).getAbilityLevel(VampireAbility.STRENGTH)-1)))
         }
 
-        if (getBloodLevel() >= 20) {
-            player.addStatusEffect(StatusEffectInstance(StatusEffects.INVISIBILITY, 10, 0))
+        val invisLevel = (player as Vampirable).getAbilityLevel(VampireAbility.INVISIBILITY)
+        if (getBloodLevel() >= 18 && invisLevel > 0 && player.isSneaking && player.world.time-invisTicks >= 120 + invisLevel*20) {
+            invisTicks = player.world.time
+            player.addStatusEffect(StatusEffectInstance(StatusEffects.INVISIBILITY, invisLevel*20, 0))
+            ServerPlayNetworking.send(player as ServerPlayerEntity, Identifier("haema:updateinvisticks"), PacketByteBuf(Unpooled.buffer()))
         }
 
         //Healing at the bottom, so that the health boosts aren't wiped

@@ -1,0 +1,10 @@
+{
+  "values": [
+    "minecraft:soul_torch",
+    "minecraft:soul_campfire",
+    {
+      "id": "bewitchment:netherite_candelabra",
+      "required": false
+    }
+  ]
+}

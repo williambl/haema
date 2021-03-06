@@ -2,6 +2,7 @@ package com.williambl.haema.mixin;
 
 import com.williambl.haema.HaemaKt;
 import com.williambl.haema.Vampirable;
+import com.williambl.haema.VampireAbility;
 import com.williambl.haema.VampireBloodManager;
 import com.williambl.haema.damagesource.BloodLossDamageSource;
 import com.williambl.haema.damagesource.DamageSourceExtensionsKt;
@@ -43,7 +44,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Redirect(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isDead()Z", ordinal = 1))
     boolean isActuallyDead(LivingEntity livingEntity) {
-        if (livingEntity instanceof PlayerEntity && ((Vampirable)livingEntity).isVampire() && currentSource != null) {
+        if (livingEntity instanceof PlayerEntity && ((Vampirable)livingEntity).isVampire() && currentSource != null && ((Vampirable)this).getAbilityLevel(VampireAbility.IMMORTALITY) > 0) {
             DamageSource theCurrentSource = currentSource;
             currentSource = null;
             boolean result = this.getHealth() <= 0 && DamageSourceExtensionsKt.isEffectiveAgainstVampires(theCurrentSource);

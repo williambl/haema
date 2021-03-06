@@ -2,22 +2,30 @@ package com.williambl.haema.client
 
 import com.mojang.blaze3d.systems.RenderSystem
 import com.williambl.haema.Vampirable
+import com.williambl.haema.VampireAbility
 import com.williambl.haema.VampireBloodManager
 import com.williambl.haema.client.config.HaemaConfig
+import com.williambl.haema.client.gui.RitualTableScreen
 import com.williambl.haema.client.gui.VampireHud
+import com.williambl.haema.ritual.RitualTableScreenHandler
+import com.williambl.haema.ritualTable
 import ladysnake.satin.api.event.ShaderEffectRenderCallback
 import ladysnake.satin.api.managed.ManagedShaderEffect
 import ladysnake.satin.api.managed.ShaderEffectManager
 import me.sargunvohra.mcmods.autoconfig1u.AutoConfig
 import me.sargunvohra.mcmods.autoconfig1u.serializer.Toml4jConfigSerializer
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry
-import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback
+import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry
 import net.minecraft.client.MinecraftClient
-import net.minecraft.client.color.item.ItemColorProvider
 import net.minecraft.client.options.KeyBinding
+import net.minecraft.client.render.RenderLayer
+import net.minecraft.entity.player.PlayerInventory
+import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 import org.lwjgl.glfw.GLFW
@@ -60,11 +68,14 @@ fun init() {
     ClientSidePacketRegistry.INSTANCE.register(Identifier("haema:updatedashcooldown")) { packetContext, packetByteBuf ->
         dashCooldownValue = packetByteBuf.readInt()
     }
+    ClientPlayNetworking.registerGlobalReceiver(Identifier("haema:updateinvisticks")) { client, handler, buf, sender ->
+        (client.player!!.hungerManager as VampireBloodManager).invisTicks = client.world!!.time
+    }
 
     HudRenderCallback.EVENT.register(VampireHud::render)
 
     ShaderEffectRenderCallback.EVENT.register(ShaderEffectRenderCallback {
-        if (config.vampireShaderEnabled && (MinecraftClient.getInstance().player as Vampirable).isVampire) {
+        if (config.vampireShaderEnabled && (MinecraftClient.getInstance().player as Vampirable).isVampire && (MinecraftClient.getInstance().player as Vampirable).getAbilityLevel(VampireAbility.VISION) > 0) {
             RenderSystem.disableAlphaTest();
             VAMPIRE_SHADER.render(it)
         }
@@ -76,7 +87,13 @@ fun init() {
     //    if (index > 0) -1 else 0xA23C3A
     //}, Registry.ITEM.get(Identifier("haema:vampire_blood")))
 
+    BlockRenderLayerMap.INSTANCE.putBlock(ritualTable, RenderLayer.getCutout())
+
     EntityRendererRegistry.INSTANCE.register(Registry.ENTITY_TYPE.get(Identifier("haema:vampire_hunter"))) { dispatcher, _ -> VampireHunterEntityRenderer(dispatcher) }
 
     AutoConfig.register(HaemaConfig::class.java) { config, clazz -> Toml4jConfigSerializer(config, clazz) }
+
+    ScreenRegistry.register(RitualTableScreenHandler.ritualTableScreenHandlerType) {
+            screenHandler: RitualTableScreenHandler, inv: PlayerInventory, title: Text -> RitualTableScreen(screenHandler, inv, title)
+    }
 }
