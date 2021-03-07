@@ -82,7 +82,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
 
     @Redirect(method = "isInvulnerableTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$Key;)Z", ordinal = 1))
     boolean makeVampiresImmuneToFalling(GameRules gameRules, GameRules.Key<GameRules.BooleanRule> rule) {
-        return gameRules.getBoolean(rule) && !isVampire();
+        return gameRules.getBoolean(rule) && !(isVampire() && getAbilityLevel(VampireAbility.DASH) >= 3);
     }
 
     @Redirect(method = "isInvulnerableTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$Key;)Z", ordinal = 0))
