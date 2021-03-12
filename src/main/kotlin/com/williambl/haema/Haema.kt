@@ -5,7 +5,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.williambl.haema.abilities.VampireAbility
 import com.williambl.haema.abilities.VampireAbilityArgumentType
 import com.williambl.haema.abilities.registerAbilities
-import com.williambl.haema.api.WillVampireBurn
+import com.williambl.haema.api.VampireBurningEvents
 import com.williambl.haema.blood.registerBlood
 import com.williambl.haema.component.VampireComponent
 import com.williambl.haema.component.VampirePlayerComponent
@@ -20,19 +20,24 @@ import nerdhub.cardinal.components.api.util.RespawnCopyStrategy
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
+import net.fabricmc.fabric.api.tag.TagRegistry
 import net.fabricmc.fabric.api.util.TriState
 import net.minecraft.block.BedBlock
 import net.minecraft.block.enums.BedPart
 import net.minecraft.command.argument.EntityArgumentType
 import net.minecraft.command.argument.IdentifierArgumentType
 import net.minecraft.entity.LivingEntity
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.command.CommandManager.argument
 import net.minecraft.server.command.CommandManager.literal
+import net.minecraft.sound.SoundCategory
+import net.minecraft.sound.SoundEvents
 import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.Box
 import net.minecraft.util.registry.Registry
+import net.minecraft.world.World
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import top.theillusivec4.somnus.api.PlayerSleepEvents
@@ -83,14 +88,37 @@ fun init() {
         }
     })
 
-    WillVampireBurn.EVENT.register(WillVampireBurn { _, world ->
-        if (!world.gameRules[vampiresBurn].get()) TriState.FALSE else TriState.DEFAULT
-    })
-    WillVampireBurn.EVENT.register(WillVampireBurn { player, world ->
+    VampireBurningEvents.TRIGGER.register(VampireBurningEvents.Trigger { player, world ->
         if (world.isDay && !world.isRaining && world.isSkyVisible(player.blockPos)) TriState.TRUE else TriState.DEFAULT
     })
-    WillVampireBurn.EVENT.register(WillVampireBurn { player, world ->
+    VampireBurningEvents.VETO.register(VampireBurningEvents.Veto { _, world ->
+        if (world.gameRules[vampiresBurn].get()) TriState.DEFAULT else TriState.FALSE
+    })
+    VampireBurningEvents.VETO.register(VampireBurningEvents.Veto { player, _ ->
         if (player.abilities.creativeMode) TriState.FALSE else TriState.DEFAULT
+    })
+    val vampireProtectiveClothingTag = TagRegistry.item(Identifier("haema:vampire_protective_clothing"))
+    VampireBurningEvents.VETO.register(object : VampireBurningEvents.Veto {
+        override fun getPriority(): Int = 10
+
+        override fun willVampireBurn(player: PlayerEntity, world: World): TriState {
+            return if (player.armorItems.all { it.item.isIn(vampireProtectiveClothingTag) }) {
+                player.armorItems.forEachIndexed { i, stack ->
+                    if (world.random.nextFloat() < 0.025)
+                    stack.damage((world.random.nextFloat() * (i + 2)).toInt(), player) {
+                        world.playSoundFromEntity(
+                            null,
+                            player,
+                            SoundEvents.ENTITY_GENERIC_BURN,
+                            SoundCategory.PLAYERS,
+                            1f,
+                            1f
+                        )
+                    }
+                }
+                TriState.FALSE
+            } else TriState.DEFAULT
+        }
     })
 
     registerAbilities()

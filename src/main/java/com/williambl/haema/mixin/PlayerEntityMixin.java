@@ -3,7 +3,7 @@ package com.williambl.haema.mixin;
 import com.williambl.haema.Vampirable;
 import com.williambl.haema.VampireBloodManager;
 import com.williambl.haema.abilities.VampireAbility;
-import com.williambl.haema.api.WillVampireBurn;
+import com.williambl.haema.api.VampireBurningEvents;
 import com.williambl.haema.damagesource.DamageSourceExtensionsKt;
 import com.williambl.haema.effect.SunlightSicknessEffect;
 import com.williambl.haema.util.HaemaGameRulesKt;
@@ -20,7 +20,6 @@ import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -53,7 +52,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
         if (isVampire()) {
             checkBloodManager();
 
-            if (!this.world.isClient && WillVampireBurn.Companion.getEVENT().invoker().willVampireBurn((PlayerEntity) (Object) this, world).get()) {
+            if (!this.world.isClient
+                    && VampireBurningEvents.INSTANCE.getTRIGGER().invoker().willVampireBurn((PlayerEntity) (Object) this, world).get()
+                    && VampireBurningEvents.INSTANCE.getVETO().invoker().willVampireBurn((PlayerEntity) (Object) this, world).get()
+            ) {
                 this.addStatusEffect(new StatusEffectInstance(SunlightSicknessEffect.Companion.getInstance(), 5, 0));
             }
         }
