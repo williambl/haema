@@ -33,6 +33,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
     @Shadow protected HungerManager hungerManager;
 
     @Shadow @Final public PlayerAbilities abilities;
+
+    @Shadow public abstract void setAbsorptionAmount(float amount);
+
     protected VampireBloodManager bloodManager = null; // to avoid a load of casts
     protected CompoundTag nbt;
 
@@ -51,6 +54,11 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
     void vampireTick(CallbackInfo ci) {
         if (isVampire()) {
             checkBloodManager();
+
+            if (!Float.isFinite(getHealth()) || !Float.isFinite(getAbsorptionAmount())) {
+                setAbsorptionAmount(0.0f);
+                setHealth(0.0f);
+            }
 
             if (!this.world.isClient
                     && VampireBurningEvents.INSTANCE.getTRIGGER().invoker().willVampireBurn((PlayerEntity) (Object) this, world).get()
