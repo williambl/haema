@@ -7,5 +7,6 @@ fun init() {
     if (FabricLoader.getInstance().isModLoaded("origins")) {
         logger.info("Origins detected. Adding the vampire origin powers.")
         registerPowerTypes()
+        registerOriginsCompatEvents()
     }
 }
