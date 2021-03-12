@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.williambl.haema.abilities.VampireAbility
 import com.williambl.haema.abilities.VampireAbilityArgumentType
 import com.williambl.haema.abilities.registerAbilities
+import com.williambl.haema.api.WillVampireBurn
 import com.williambl.haema.blood.registerBlood
 import com.williambl.haema.component.VampireComponent
 import com.williambl.haema.component.VampirePlayerComponent
@@ -13,6 +14,7 @@ import com.williambl.haema.effect.registerEffects
 import com.williambl.haema.hunter.registerVampireHunter
 import com.williambl.haema.ritual.registerRitualTable
 import com.williambl.haema.util.registerGameRules
+import com.williambl.haema.util.vampiresBurn
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
 import nerdhub.cardinal.components.api.util.RespawnCopyStrategy
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
@@ -79,6 +81,16 @@ fun init() {
         } else {
             curTime + (13000L - (world.timeOfDay % 24000L))
         }
+    })
+
+    WillVampireBurn.EVENT.register(WillVampireBurn { _, world ->
+        if (!world.gameRules[vampiresBurn].get()) TriState.FALSE else TriState.DEFAULT
+    })
+    WillVampireBurn.EVENT.register(WillVampireBurn { player, world ->
+        if (world.isDay && !world.isRaining && world.isSkyVisible(player.blockPos)) TriState.TRUE else TriState.DEFAULT
+    })
+    WillVampireBurn.EVENT.register(WillVampireBurn { player, world ->
+        if (player.abilities.creativeMode) TriState.FALSE else TriState.DEFAULT
     })
 
     registerAbilities()

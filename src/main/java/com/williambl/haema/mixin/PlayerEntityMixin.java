@@ -3,6 +3,7 @@ package com.williambl.haema.mixin;
 import com.williambl.haema.Vampirable;
 import com.williambl.haema.VampireBloodManager;
 import com.williambl.haema.abilities.VampireAbility;
+import com.williambl.haema.api.WillVampireBurn;
 import com.williambl.haema.damagesource.DamageSourceExtensionsKt;
 import com.williambl.haema.effect.SunlightSicknessEffect;
 import com.williambl.haema.util.HaemaGameRulesKt;
@@ -52,7 +53,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
         if (isVampire()) {
             checkBloodManager();
 
-            if (world.getGameRules().get(HaemaGameRulesKt.getVampiresBurn()).get() && this.isInDaylight() && !abilities.creativeMode) {
+            if (!this.world.isClient && WillVampireBurn.Companion.getEVENT().invoker().willVampireBurn((PlayerEntity) (Object) this, world).get()) {
                 this.addStatusEffect(new StatusEffectInstance(SunlightSicknessEffect.Companion.getInstance(), 5, 0));
             }
         }
@@ -100,11 +101,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
     @Override
     public boolean isAlive() {
         return isVampire() ? !isDead() : super.isAlive();
-    }
-
-    @Unique
-    protected boolean isInDaylight() {
-        return !this.world.isClient && this.world.isDay() && !this.world.isRaining() && this.world.isSkyVisible(this.getBlockPos());
     }
 
     @Override
