@@ -48,6 +48,9 @@
   "gamerule.vampiresBurn": "Vampires Burn",
   "gamerule.vampiresBurn.description": "Whether vampires are affected by sunlight",
 
+  "gamerule.vampiresDrown": "Vampires Drown",
+  "gamerule.vampiresDrown.description": "Whether vampires are affected by drowning",
+
   "gamerule.feedCooldown": "Vampire Feeding Cooldown",
   "gamerule.feedCooldown.description": "Ticks between which a vampire can feed",
 
