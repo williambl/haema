@@ -105,6 +105,9 @@ dependencies {
     modImplementation "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
     include "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
 
+    include "io.github.cottonmc:LibCD:${project.libcd_version}"
+    modRuntime "io.github.cottonmc:LibCD:${project.libcd_version}"
+
     //include "io.github.ladysnake:vanguard:${vanguard_version}"
 
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
