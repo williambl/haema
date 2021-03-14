@@ -52,13 +52,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
 
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;tick()V"))
     void vampireTick(CallbackInfo ci) {
+        if (!Float.isFinite(getHealth()) || !Float.isFinite(getAbsorptionAmount())) {
+            setAbsorptionAmount(0.0f);
+            setHealth(0.0f);
+        }
         if (isVampire()) {
             checkBloodManager();
-
-            if (!Float.isFinite(getHealth()) || !Float.isFinite(getAbsorptionAmount())) {
-                setAbsorptionAmount(0.0f);
-                setHealth(0.0f);
-            }
 
             if (!this.world.isClient
                     && VampireBurningEvents.INSTANCE.getTRIGGER().invoker().willVampireBurn((PlayerEntity) (Object) this, world).get()
