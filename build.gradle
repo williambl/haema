@@ -20,10 +20,6 @@ repositories {
     maven { url 'https://jitpack.io' }
     maven { url "https://maven.jamieswhiteshirt.com/libs-release/" }
     maven {
-        name = "Cotton"
-        url = "https://server.bbkr.space/artifactory/libs-release/"
-    }
-    maven {
         name = "AdrianTodt's Maven"
         url = "https://dl.bintray.com/adriantodt/maven"
     }
@@ -35,6 +31,13 @@ repositories {
     maven {
         url = "https://maven.theillusivec4.top"
     }
+    maven {
+        url = "https://repo.repsy.io/mvn/gandiber/geckolib"
+    }
+    /*maven {
+        name = "Cotton"
+        url = "https://server.bbkr.space/artifactory/libs-release/"
+    }*/
 }
 
 dependencies {
@@ -102,11 +105,14 @@ dependencies {
     }
     include "me.sargunvohra.mcmods:autoconfig1u:${project.acu_version}"
 
+    modImplementation "com.github.Ladysnake:Rats-Mischief:${project.rats_version}"
+    modImplementation 'software.bernie.geckolib:geckolib-fabric-1.16.5:3.0.15:dev'
+
     modImplementation "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
     include "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
 
-    include "io.github.cottonmc:LibCD:${project.libcd_version}"
-    modRuntime "io.github.cottonmc:LibCD:${project.libcd_version}"
+    //include "io.github.cottonmc:LibCD:${project.libcd_version}"
+    //modRuntime "io.github.cottonmc:LibCD:${project.libcd_version}"
 
     //include "io.github.ladysnake:vanguard:${vanguard_version}"
 
