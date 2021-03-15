@@ -75,7 +75,8 @@ public abstract class RatEntityMixin extends TameableEntity implements Vampirabl
 
     @Override
     public void setVampire(boolean value) {
-        setCustomName(new LiteralText("VampiRat").formatted(Formatting.DARK_RED));
+        if (!hasCustomName())
+            setCustomName(new LiteralText(random.nextFloat() < 0.01 ? "Count D-Rat-Cula" : "VampiRat").formatted(Formatting.DARK_RED));
         VampireComponent.Companion.getEntityKey().get(this).setVampire(value);
     }
 
