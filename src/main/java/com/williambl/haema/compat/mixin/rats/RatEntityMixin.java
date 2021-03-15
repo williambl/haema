@@ -2,6 +2,7 @@ package com.williambl.haema.compat.mixin.rats;
 
 import com.williambl.haema.Vampirable;
 import com.williambl.haema.abilities.VampireAbility;
+import com.williambl.haema.compat.rats.VampiRatAttackGoal;
 import com.williambl.haema.component.VampireComponent;
 import com.williambl.haema.damagesource.SunlightDamageSource;
 import com.williambl.haema.effect.SunlightSicknessEffect;
@@ -44,23 +45,15 @@ public abstract class RatEntityMixin extends TameableEntity implements Vampirabl
         super(entityType, world);
     }
 
-    @Inject(method = "tryAttack", at = @At("HEAD"))
-    void vampirifyTargets(Entity target, CallbackInfoReturnable<Boolean> cir) {
-        if (isVampire()) {
-            if (target instanceof Vampirable && !((Vampirable) target).isVampire()) {
-                ((Vampirable) target).setVampire(true);
-            } else if (!(target instanceof Vampirable)) {
-                Vec3d towards = getPos().subtract(target.getPos()).normalize().multiply(0.1);
-                ((ServerWorld) world).spawnParticles(DustParticleEffect.RED, target.getX() - 0.5, target.getY(), target.getZ() - 0.5, 20, towards.x, towards.y, towards.z, 0.5);
-                addStatusEffect(new StatusEffectInstance(VampiricStrengthEffect.Companion.getInstance(), 20, 2));
-            }
-        }
-    }
-
     @Inject(method = "initGoals", at = @At("TAIL"))
     void addVampireGoal(CallbackInfo ci) {
+        goalSelector.add(3, new VampiRatAttackGoal((RatEntity) (Object) this, 1.0, true));
+
         targetSelector.add(8, new FollowTargetGoal<>(this, LivingEntity.class, 10, true, false, (livingEntity) ->
-                this.isVampire() && (!(livingEntity instanceof Vampirable) || !((Vampirable) livingEntity).isVampire())
+                this.isVampire() && !(livingEntity instanceof Vampirable) && !this.hasStatusEffect(VampiricStrengthEffect.Companion.getInstance())
+        ));
+        targetSelector.add(9, new FollowTargetGoal<>(this, LivingEntity.class, 10, true, false, (livingEntity) ->
+                this.isVampire() && livingEntity instanceof Vampirable && !((Vampirable) livingEntity).isVampire()
         ));
     }
 
@@ -70,7 +63,7 @@ public abstract class RatEntityMixin extends TameableEntity implements Vampirabl
             if (world.isDay() && !world.isRaining() && world.isSkyVisible(getBlockPos()) && world.getGameRules().getBoolean(HaemaGameRulesKt.getVampiresBurn())) {
                 if (age % 10 == 0) {
                     damage(SunlightDamageSource.Companion.getInstance(), 0.2f);
-                    ((ServerWorld) world).spawnParticles(ParticleTypes.FLAME, getX() - 0.5, getY(), getZ() - 0.5, 20, 0.2, 0.2, 0.2, 0.5);
+                    ((ServerWorld) world).spawnParticles(ParticleTypes.FLAME, getX() - 0.5, getY(), getZ() - 0.5, 20, 0.2, 0.2, 0.2, 0.1);
                 }
             }
 
@@ -88,11 +81,9 @@ public abstract class RatEntityMixin extends TameableEntity implements Vampirabl
 
     @Override
     public void checkBloodManager() {
-
     }
 
     @Override
     public void removeBloodManager() {
-
     }
 }
