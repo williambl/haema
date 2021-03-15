@@ -2,6 +2,7 @@ package com.williambl.haema
 
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes
 import com.williambl.haema.abilities.VampireAbility
+import com.williambl.haema.api.DrinkBloodEvent
 import com.williambl.haema.damagesource.BloodLossDamageSource
 import com.williambl.haema.effect.VampiricStrengthEffect
 import com.williambl.haema.effect.VampiricWeaknessEffect
@@ -209,11 +210,7 @@ class VampireBloodManager() : HungerManager() {
             val vel = towards.multiply(i.toDouble())
             player.world.addParticle(DustParticleEffect.RED, entity.x+player.random.nextDouble()-0.5, entity.y+player.random.nextDouble(), entity.z+player.random.nextDouble()-0.5, vel.x, vel.y, vel.z)
         }
-        if (entity is VillagerEntity && !entity.isSleeping) {
-            entity.gossip.startGossip(player.uuid, VillageGossipType.MAJOR_NEGATIVE, 20)
-            if (player.world is ServerWorld)
-                VampireHunterSpawner.instance.trySpawnNear(player.world as ServerWorld, player.random, player.blockPos)
-        }
+        DrinkBloodEvent.EVENT.invoker().onDrink(player, entity, player.world)
     }
 
     private fun sync(player: PlayerEntity) {

@@ -23,7 +23,8 @@
   "entrypoints": {
     "main": [
       "com.williambl.haema.HaemaKt::init",
-      "com.williambl.haema.compat.origins.HaemaOriginsPluginKt::init"
+      "com.williambl.haema.compat.origins.HaemaOriginsPluginKt::init",
+      "com.williambl.haema.compat.rats.RatsMischiefCompatKt::init"
     ],
     "client": [
       "com.williambl.haema.client.HaemaClientKt::init"
@@ -32,14 +33,16 @@
       "com.williambl.haema.compat.rei.HaemaREIPlugin"
     ],
     "cardinal-components-entity": [
-      "com.williambl.haema.HaemaKt::registerEntityComponentFactories"
+      "com.williambl.haema.HaemaKt::registerEntityComponentFactories",
+      "com.williambl.haema.compat.rats.RatsMischiefCompatKt::registerEntityComponentFactories"
     ],
     "modmenu": [
       "com.williambl.haema.compat.modmenu.HaemaModMenuPlugin"
     ]
   },
   "mixins": [
-    "haema.mixins.json"
+    "haema.mixins.json",
+    "haema_compat.mixins.json"
   ],
   "depends": {
     "fabricloader": "*",
