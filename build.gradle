@@ -34,10 +34,10 @@ repositories {
     maven {
         url = "https://repo.repsy.io/mvn/gandiber/geckolib"
     }
-    /*maven {
+    maven {
         name = "Cotton"
         url = "https://server.bbkr.space/artifactory/libs-release/"
-    }*/
+    }
 }
 
 dependencies {
@@ -111,8 +111,8 @@ dependencies {
     modImplementation "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
     include "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
 
-    //include "io.github.cottonmc:LibCD:${project.libcd_version}"
-    //modRuntime "io.github.cottonmc:LibCD:${project.libcd_version}"
+    include "io.github.cottonmc:LibCD:${project.libcd_version}"
+    modRuntime "io.github.cottonmc:LibCD:${project.libcd_version}"
 
     //include "io.github.ladysnake:vanguard:${vanguard_version}"
 
