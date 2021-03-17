@@ -1,39 +1,27 @@
 package com.williambl.haema.compat.mixin.rats;
 
 import com.williambl.haema.Vampirable;
-import com.williambl.haema.abilities.VampireAbility;
 import com.williambl.haema.compat.rats.VampiRatAttackGoal;
 import com.williambl.haema.component.VampireComponent;
 import com.williambl.haema.damagesource.SunlightDamageSource;
-import com.williambl.haema.effect.SunlightSicknessEffect;
 import com.williambl.haema.effect.VampiricStrengthEffect;
 import com.williambl.haema.util.HaemaGameRulesKt;
 import ladysnake.ratsmischief.common.entity.RatEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.FollowTargetGoal;
-import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.passive.TameableEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(RatEntity.class)
 public abstract class RatEntityMixin extends TameableEntity implements Vampirable {
@@ -76,7 +64,7 @@ public abstract class RatEntityMixin extends TameableEntity implements Vampirabl
     @Override
     public void setVampire(boolean value) {
         if (!hasCustomName())
-            setCustomName(new LiteralText(random.nextFloat() < 0.01 ? "Count D-Rat-Cula" : "VampiRat").formatted(Formatting.DARK_RED));
+            setCustomName(new LiteralText(random.nextFloat() < 0.02 ? (random.nextBoolean() ? "Count D-Rat-Cula" : "Capri-Sun") : "VampiRat").formatted(Formatting.DARK_RED));
         VampireComponent.Companion.getEntityKey().get(this).setVampire(value);
     }
 
