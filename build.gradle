@@ -105,8 +105,8 @@ dependencies {
     }
     include "me.sargunvohra.mcmods:autoconfig1u:${project.acu_version}"
 
-    modImplementation "com.github.Ladysnake:Rats-Mischief:${project.rats_version}"
-    modImplementation "software.bernie.geckolib:geckolib-fabric-1.16.5:${project.geckolib_version}:dev"
+    modCompileOnly "com.github.Ladysnake:Rats-Mischief:${project.rats_version}"
+    modCompileOnly "software.bernie.geckolib:geckolib-fabric-1.16.5:${project.geckolib_version}:dev"
 
     modImplementation "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
     include "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
