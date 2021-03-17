@@ -36,7 +36,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         if (((Vampirable) this).isVampire() && this.hungerManager instanceof VampireBloodManager) {
             float bloodLevel = ((float) ((VampireBloodManager)this.hungerManager).getBloodLevel()) / 20.0f;
             HaemaClientKt.setSaturation(0.8f * bloodLevel);
-            HaemaClientKt.setColorScale(bloodLevel + 1.2f);
+            HaemaClientKt.setBrightnessAdjust(bloodLevel/4f+0.05f);
 
             HaemaClientKt.setRedAmount(Math.max(1.3f, 2.3f - (this.world.getTime() - ((VampireBloodManager) this.hungerManager).getLastFed()) / (float) VampireBloodManager.Companion.getFeedCooldown(world)));
 

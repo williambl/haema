@@ -48,8 +48,8 @@ fun setRedAmount(value: Float) {
     VAMPIRE_SHADER.setUniformValue("RedMatrix", value, 0.0f, 0.0f)
 }
 
-fun setColorScale(value: Float) {
-    VAMPIRE_SHADER.setUniformValue("ColorScale", value*config.brightAdjust, value*config.brightAdjust, value* config.brightAdjust)
+fun setBrightnessAdjust(value: Float) {
+    VAMPIRE_SHADER.setUniformValue("BrightnessAdjust", value*config.brightAdjust)
 }
 
 fun setSaturation(value: Float) {
