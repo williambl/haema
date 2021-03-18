@@ -45,10 +45,10 @@ class RitualCategory: RecipeCategory<RitualCategory.Display> {
         })
 
         widgets.add(Widgets.createLabel(Point(bounds.centerX, bounds.centerY-28),
-            TranslatableText("gui.haema.altar_level", recipeDisplay.recipe.minLevel).formatted(Formatting.UNDERLINE).formatted(Formatting.DARK_GRAY)
+            (TranslatableText("gui.haema.requires").append(TranslatableText("gui.haema.altar_level."+recipeDisplay.recipe.minLevel))).formatted(Formatting.UNDERLINE).formatted(Formatting.DARK_GRAY)
         ).noShadow())
 
-        widgets.add(Widgets.createLabel(Point(bounds.centerX+16, bounds.centerY+16), TranslatableText("gui.haema.repeatable.${recipeDisplay.recipe.isRepeatable}").formatted(if (recipeDisplay.recipe.isRepeatable) Formatting.GREEN else Formatting.RED)).noShadow())
+        widgets.add(Widgets.createLabel(Point(bounds.centerX+16, bounds.centerY+16), TranslatableText("gui.haema.repeatable.${recipeDisplay.recipe.isRepeatable}").formatted(if (recipeDisplay.recipe.isRepeatable) Formatting.DARK_GREEN else Formatting.DARK_RED)).noShadow())
 
         widgets.add(Widgets.createLabel(outputPoint, TranslatableText("ritual.action.${recipeDisplay.recipe.actionName}", recipeDisplay.recipe.actionArg).formatted(Formatting.DARK_GRAY)).noShadow())
 

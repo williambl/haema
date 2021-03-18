@@ -149,7 +149,7 @@
   "gui.haema.message.conversion_blocked_by_gamerule": "Game Rule 'playerVampireConversion' is not set to true.",
   "gui.haema.message.conversion_not_possible": "Player is a permanent vampire and cannot be converted.",
 
-  "gui.haema.requires": "Requires",
+  "gui.haema.requires": "Requires ",
   "gui.haema.altar_level.0": "Basic Altar",
   "gui.haema.altar_level.1": "Blackstone Altar",
   "gui.haema.repeatable.true": "Repeatable",
