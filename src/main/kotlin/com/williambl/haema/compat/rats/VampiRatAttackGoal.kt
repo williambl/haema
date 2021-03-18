@@ -1,6 +1,7 @@
 package com.williambl.haema.compat.rats
 
 import com.williambl.haema.Vampirable
+import com.williambl.haema.VampireBloodManager
 import com.williambl.haema.damagesource.BloodLossDamageSource
 import com.williambl.haema.effect.VampiricStrengthEffect
 import ladysnake.ratsmischief.common.entity.RatEntity
@@ -17,10 +18,14 @@ class VampiRatAttackGoal(private val actor: RatEntity, speed: Double, pauseWhenM
 
     override fun shouldContinue(): Boolean = super.shouldContinue() && hasValidTarget() && actor.isVampire()
 
-    private fun hasValidTarget(): Boolean = actor.target != null && actor.target!!.isAlive && (!actor.target!!.isVampire() || ((actor.target !is Vampirable) && !actor.hasStatusEffect(VampiricStrengthEffect.instance)))
+    private fun hasValidTarget(): Boolean = actor.target != null && actor.target!!.isAlive && (!actor.target!!.isVampire() || ((actor.target !is Vampirable && actor.target!!.isBloodSource()) && !actor.hasStatusEffect(VampiricStrengthEffect.instance)))
 
     private fun LivingEntity.isVampire(): Boolean {
         return (this is Vampirable && this.isVampire)
+    }
+
+    private fun LivingEntity.isBloodSource(): Boolean {
+        return this.type.run { isIn(VampireBloodManager.goodBloodTag) || isIn(VampireBloodManager.mediumBloodTag) || isIn(VampireBloodManager.poorBloodTag) }
     }
 
     override fun tick() {
