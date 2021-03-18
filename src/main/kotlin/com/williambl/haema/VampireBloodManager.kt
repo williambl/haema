@@ -110,7 +110,7 @@ class VampireBloodManager() : HungerManager() {
         }
 
         val invisLevel = (player as Vampirable).getAbilityLevel(VampireAbility.INVISIBILITY)
-        if (getBloodLevel() >= 18 && invisLevel > 0 && player.isSneaking && player.world.time-invisTicks >= 120 + invisLevel*20) {
+        if (getBloodLevel() >= 16 && invisLevel > 0 && player.isSneaking && player.world.time-invisTicks >= 120 + invisLevel*20) {
             invisTicks = player.world.time
             player.addStatusEffect(StatusEffectInstance(StatusEffects.INVISIBILITY, invisLevel*20, 0))
             ServerPlayNetworking.send(player as ServerPlayerEntity, Identifier("haema:updateinvisticks"), PacketByteBuf(Unpooled.buffer()))
@@ -148,9 +148,9 @@ class VampireBloodManager() : HungerManager() {
     override fun eat(item: Item?, stack: ItemStack?) {}
     @Deprecated("use blood")
     override fun setFoodLevel(foodLevel: Int) {}
-    @Deprecated("use blood", ReplaceWith("getBloodLevel().roundToInt()", "kotlin.math.roundToInt"))
+    @Deprecated("use blood", ReplaceWith("getIntBloodLevel()"))
     override fun getFoodLevel(): Int {
-        return getBloodLevel().roundToInt()
+        return getIntBloodLevel()
     }
 
     override fun fromTag(tag: CompoundTag?) {
@@ -165,8 +165,12 @@ class VampireBloodManager() : HungerManager() {
         tag?.putLong("LastFed", lastFed)
     }
 
+    fun getIntBloodLevel(): Int {
+        return floor(getBloodLevel()).toInt()
+    }
+
     fun getBloodLevel(): Double {
-        return if (owner?.isCreative == true) 19.0 else 20.0 * (sin((absoluteBloodLevel * PI) / 40.0))
+        return if (owner?.isCreative == true) 20.0 else 20.0 * (sin((absoluteBloodLevel * PI) / 40.0))
     }
 
     fun removeBlood(blood: Double) {

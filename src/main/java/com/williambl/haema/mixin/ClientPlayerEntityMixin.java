@@ -79,7 +79,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         return world.getTime() > lastDashed+(HaemaClientKt.getDashCooldownValue()*(1+VampireAbility.DASH.getMaxLevel()-abilityLevel))
                 && hungerManager instanceof VampireBloodManager
                 && (
-                        ((VampireBloodManager)hungerManager).getBloodLevel() > 18
+                        ((VampireBloodManager)hungerManager).getBloodLevel() >= 18
                                 || abilities.creativeMode
         )
                 && abilityLevel > 0;
