@@ -1,6 +1,10 @@
 {
   "replace": false,
   "values": [
-    "minecraft:wooden_sword"
+    "minecraft:wooden_sword",
+    {
+      "id": "#bewitchment:silver_tools",
+      "required": false
+    }
   ]
 }

@@ -4,6 +4,42 @@
     "minecraft:leather_helmet",
     "minecraft:leather_chestplate",
     "minecraft:leather_leggings",
-    "minecraft:leather_boots"
+    "minecraft:leather_boots",
+    {
+      "id": "bewitchment:alchemist_hood",
+      "required": false
+    },
+    {
+      "id": "bewitchment:alchemist_robes",
+      "required": false
+    },
+    {
+      "id": "bewitchment:alchemist_pants",
+      "required": false
+    },
+    {
+      "id": "bewitchment:besmirched_hood",
+      "required": false
+    },
+    {
+      "id": "bewitchment:besmirched_robes",
+      "required": false
+    },
+    {
+      "id": "bewitchment:besmirched_pants",
+      "required": false
+    },
+    {
+      "id": "bewitchment:hedgewitch_hood",
+      "required": false
+    },
+    {
+      "id": "bewitchment:hedgewitch_robes",
+      "required": false
+    },
+    {
+      "id": "bewitchment:hedgewitch_pants",
+      "required": false
+    }
   ]
 }
