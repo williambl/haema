@@ -2,18 +2,18 @@
   "type": "haema:ritual",
   "ingredients": [
     {
-      "item": "minecraft:pumpkin_seeds"
+      "item": "minecraft:brown_mushroom"
     },
     {
       "item": "minecraft:fermented_spider_eye"
     },
     {
-      "item": "minecraft:charcoal"
+      "item": "minecraft:lapis_lazuli"
     }
   ],
   "fluid": "minecraft:water",
   "repeatable": false,
-  "minLevel": 0,
+  "minLevel": 1,
   "action": {
     "name": "add_level",
     "arg": 1
