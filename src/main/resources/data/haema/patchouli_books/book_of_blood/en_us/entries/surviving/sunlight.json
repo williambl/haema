@@ -1,6 +1,6 @@
 {
   "name": "bookOfBlood.surviving.sunlight.title",
-  "icon": "haema:textures/mob_effect/sunlight_sickness.png",
+  "icon": "haema:textures/gui/16x_sprites/mob_effect/sunlight_sickness.png",
   "category": "haema:surviving",
   "pages": [
     {

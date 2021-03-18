@@ -1,6 +1,6 @@
 {
   "name": "bookOfBlood.powers.strength.title",
-  "icon": "haema:textures/mob_effect/vampiric_strength.png",
+  "icon": "haema:textures/gui/16x_sprites/mob_effect/vampiric_strength.png",
   "category": "haema:powers",
   "pages": [
     {

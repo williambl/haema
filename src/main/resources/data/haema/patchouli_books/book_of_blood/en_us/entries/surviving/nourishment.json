@@ -1,6 +1,6 @@
 {
   "name": "bookOfBlood.surviving.nourishment.title",
-  "icon": "minecraft:cooked_beef",
+  "icon": "haema:textures/gui/16x_sprites/blood_full.png",
   "category": "haema:surviving",
   "pages": [
     {
