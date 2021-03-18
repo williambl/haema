@@ -1,5 +1,5 @@
 {
-  "name": "bookOfBlood.2.title",
+  "name": "bookOfBlood.beginning.injector.title",
   "icon": "haema:empty_vampire_blood_injector",
   "category": "haema:beginning",
   "pages": [
@@ -10,7 +10,7 @@
     },
     {
       "type": "text",
-      "text": "bookOfBlood.2.text.1.text"
+      "text": "bookOfBlood.beginning.injector.text.1.text"
     }
   ]
 }

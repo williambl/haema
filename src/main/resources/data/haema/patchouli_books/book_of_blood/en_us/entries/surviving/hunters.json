@@ -1,15 +1,15 @@
 {
-  "name": "bookOfBlood.5.title",
+  "name": "bookOfBlood.surviving.hunters.title",
   "icon": "minecraft:crossbow",
   "category": "haema:surviving",
   "pages": [
     {
       "type": "text",
-      "text": "bookOfBlood.5.text.1.text"
+      "text": "bookOfBlood.surviving.hunters.text.1.text"
     },
     {
       "type": "text",
-      "text": "bookOfBlood.5.text.2.text"
+      "text": "bookOfBlood.surviving.hunters.text.2.text"
     },
     {
       "type": "entity",
@@ -18,7 +18,7 @@
     },
     {
       "type": "text",
-      "text": "bookOfBlood.5.text.3.text"
+      "text": "bookOfBlood.surviving.hunters.text.3.text"
     }
   ]
 }

@@ -289,7 +289,7 @@ fun registerRitualTable() {
     RitualRecipe.recipeSerializer
     RitualRecipe.recipeType
 
-    MultiblockRegistry.registerMultiblock(Identifier("haema:ritual_altar"), DenseMultiblock(
+    MultiblockRegistry.registerMultiblock(Identifier("haema:basic_altar"), DenseMultiblock(
         arrayOf(
             arrayOf(
                 "T T T",
@@ -317,18 +317,43 @@ fun registerRitualTable() {
                 "BBBBB"
             )
         ), mapOf(
-            'T' to MultiTagMatcher(
-                listOf(
-                    level0RitualTorchesTag as Tag.Identified<Block>,
-                    level1RitualTorchesTag as Tag.Identified<Block>
-                ), mapOf(Properties.LIT to true)
-            ),
-            'B' to MultiTagMatcher(
-                listOf(
-                    level0RitualMaterialsTag as Tag.Identified<Block>,
-                    level1RitualMaterialsTag as Tag.Identified<Block>
-                ), mapOf()
-            ),
+            'T' to MultiTagMatcher(listOf(level0RitualTorchesTag as Tag.Identified<Block>), mapOf(Properties.LIT to true)),
+            'B' to MultiTagMatcher(listOf(level0RitualMaterialsTag as Tag.Identified<Block>), mapOf()),
+            '0' to StateMatcher.fromBlockLoose(RitualTable.instance),
+            ' ' to StateMatcher.ANY
+        )
+    ))
+
+    MultiblockRegistry.registerMultiblock(Identifier("haema:blackstone_altar"), DenseMultiblock(
+        arrayOf(
+            arrayOf(
+                "T T T",
+                "     ",
+                "T   T",
+                "     ",
+                "T T T"
+            ), arrayOf(
+                "B B B",
+                "     ",
+                "B 0 B",
+                "     ",
+                "B B B"
+            ), arrayOf(
+                "BBBBB",
+                "B   B",
+                "B B B",
+                "B   B",
+                "BBBBB"
+            ), arrayOf(
+                "BBBBB",
+                "BBBBB",
+                "BBBBB",
+                "BBBBB",
+                "BBBBB"
+            )
+        ), mapOf(
+            'T' to MultiTagMatcher(listOf(level1RitualTorchesTag as Tag.Identified<Block>), mapOf(Properties.LIT to true)),
+            'B' to MultiTagMatcher(listOf(level1RitualMaterialsTag as Tag.Identified<Block>), mapOf()),
             '0' to StateMatcher.fromBlockLoose(RitualTable.instance),
             ' ' to StateMatcher.ANY
         )
