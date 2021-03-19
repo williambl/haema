@@ -5,10 +5,7 @@ import com.williambl.haema.ritual.craft.RitualInventory
 import com.williambl.haema.ritual.craft.RitualRecipe
 import com.williambl.haema.util.MultiTagMatcher
 import net.fabricmc.fabric.api.tag.TagRegistry
-import net.minecraft.block.Block
-import net.minecraft.block.BlockState
-import net.minecraft.block.Material
-import net.minecraft.block.ShapeContext
+import net.minecraft.block.*
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.player.PlayerEntity
@@ -18,11 +15,13 @@ import net.minecraft.fluid.Fluids
 import net.minecraft.item.BlockItem
 import net.minecraft.item.Item
 import net.minecraft.item.ItemGroup
+import net.minecraft.item.ItemPlacementContext
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.particle.ParticleTypes
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
+import net.minecraft.state.StateManager
 import net.minecraft.state.property.Properties
 import net.minecraft.tag.Tag
 import net.minecraft.util.ActionResult
@@ -48,7 +47,10 @@ val level1RitualMaterialsTag: Tag<Block> = TagRegistry.block(Identifier("haema:r
 val level0RitualTorchesTag: Tag<Block> = TagRegistry.block(Identifier("haema:ritual_torches/level_0"))
 val level1RitualTorchesTag: Tag<Block> = TagRegistry.block(Identifier("haema:ritual_torches/level_1"))
 
-class RitualTable(settings: Settings) : Block(settings) {
+class RitualTable(settings: Settings) : HorizontalFacingBlock(settings) {
+    init {
+        defaultState = stateManager.defaultState.with(FACING, Direction.NORTH)
+    }
     override fun onUse(
         state: BlockState,
         world: World,
@@ -88,7 +90,16 @@ class RitualTable(settings: Settings) : Block(settings) {
                     spawnParticles(world, pos, world.random.nextDouble() * 0.4, showExtras, level)
                 }
                 if (world.random.nextDouble() < 0.1) {
-                    world.playSound(pos.x+0.5, pos.y+1.0, pos.z+0.5, SoundEvents.BLOCK_BEACON_AMBIENT, SoundCategory.BLOCKS, 1.0f, 1.0f, false)
+                    world.playSound(
+                        pos.x + 0.5,
+                        pos.y + 1.0,
+                        pos.z + 0.5,
+                        SoundEvents.BLOCK_BEACON_AMBIENT,
+                        SoundCategory.BLOCKS,
+                        1.0f,
+                        1.0f,
+                        false
+                    )
                 }
             }
         }
@@ -107,15 +118,86 @@ class RitualTable(settings: Settings) : Block(settings) {
         super.randomDisplayTick(state, world, pos, random)
     }
 
+    override fun appendProperties(builder: StateManager.Builder<Block, BlockState>) {
+        super.appendProperties(builder)
+        builder.add(FACING)
+    }
+
+    override fun getPlacementState(ctx: ItemPlacementContext): BlockState = defaultState.with(FACING, ctx.playerFacing.opposite)
+
     private fun spawnParticles(world: World, pos: BlockPos, speed: Double, showExtras: Boolean, level: Int) {
-        world.addParticle(if (level > 0) ParticleTypes.SOUL_FIRE_FLAME else ParticleTypes.FLAME, pos.x + 2.5, pos.y + 1.5, pos.z + 0.5, -speed, 0.0, 0.0)
-        world.addParticle(if (level > 0) ParticleTypes.SOUL_FIRE_FLAME else ParticleTypes.FLAME, pos.x + 2.5, pos.y + 1.5, pos.z + 2.5, -speed, 0.0, -speed)
-        world.addParticle(if (level > 0) ParticleTypes.SOUL_FIRE_FLAME else ParticleTypes.FLAME, pos.x + 2.5, pos.y + 1.5, pos.z - 1.5, -speed, 0.0, speed)
-        world.addParticle(if (level > 0) ParticleTypes.SOUL_FIRE_FLAME else ParticleTypes.FLAME, pos.x + 0.5, pos.y + 1.5, pos.z + 2.5, 0.0, 0.0, -speed)
-        world.addParticle(if (level > 0) ParticleTypes.SOUL_FIRE_FLAME else ParticleTypes.FLAME, pos.x + 0.5, pos.y + 1.5, pos.z - 1.5, 0.0, 0.0, speed)
-        world.addParticle(if (level > 0) ParticleTypes.SOUL_FIRE_FLAME else ParticleTypes.FLAME, pos.x - 1.5, pos.y + 1.5, pos.z + 0.5, speed, 0.0, 0.0)
-        world.addParticle(if (level > 0) ParticleTypes.SOUL_FIRE_FLAME else ParticleTypes.FLAME, pos.x - 1.5, pos.y + 1.5, pos.z + 2.5, speed, 0.0, -speed)
-        world.addParticle(if (level > 0) ParticleTypes.SOUL_FIRE_FLAME else ParticleTypes.FLAME, pos.x - 1.5, pos.y + 1.5, pos.z - 1.5, speed, 0.0, speed)
+        world.addParticle(
+            if (level > 0) ParticleTypes.SOUL_FIRE_FLAME else ParticleTypes.FLAME,
+            pos.x + 2.5,
+            pos.y + 1.5,
+            pos.z + 0.5,
+            -speed,
+            0.0,
+            0.0
+        )
+        world.addParticle(
+            if (level > 0) ParticleTypes.SOUL_FIRE_FLAME else ParticleTypes.FLAME,
+            pos.x + 2.5,
+            pos.y + 1.5,
+            pos.z + 2.5,
+            -speed,
+            0.0,
+            -speed
+        )
+        world.addParticle(
+            if (level > 0) ParticleTypes.SOUL_FIRE_FLAME else ParticleTypes.FLAME,
+            pos.x + 2.5,
+            pos.y + 1.5,
+            pos.z - 1.5,
+            -speed,
+            0.0,
+            speed
+        )
+        world.addParticle(
+            if (level > 0) ParticleTypes.SOUL_FIRE_FLAME else ParticleTypes.FLAME,
+            pos.x + 0.5,
+            pos.y + 1.5,
+            pos.z + 2.5,
+            0.0,
+            0.0,
+            -speed
+        )
+        world.addParticle(
+            if (level > 0) ParticleTypes.SOUL_FIRE_FLAME else ParticleTypes.FLAME,
+            pos.x + 0.5,
+            pos.y + 1.5,
+            pos.z - 1.5,
+            0.0,
+            0.0,
+            speed
+        )
+        world.addParticle(
+            if (level > 0) ParticleTypes.SOUL_FIRE_FLAME else ParticleTypes.FLAME,
+            pos.x - 1.5,
+            pos.y + 1.5,
+            pos.z + 0.5,
+            speed,
+            0.0,
+            0.0
+        )
+        world.addParticle(
+            if (level > 0) ParticleTypes.SOUL_FIRE_FLAME else ParticleTypes.FLAME,
+            pos.x - 1.5,
+            pos.y + 1.5,
+            pos.z + 2.5,
+            speed,
+            0.0,
+            -speed
+        )
+        world.addParticle(
+            if (level > 0) ParticleTypes.SOUL_FIRE_FLAME else ParticleTypes.FLAME,
+            pos.x - 1.5,
+            pos.y + 1.5,
+            pos.z - 1.5,
+            speed,
+            0.0,
+            speed
+        )
 
         if (showExtras) {
             repeat(20) {
@@ -145,7 +227,16 @@ class RitualTable(settings: Settings) : Block(settings) {
                 )
             }
 
-            world.playSound(3*world.random.nextDouble() - 1.0, pos.y.toDouble(),  3*world.random.nextDouble() - 1.0, SoundEvents.BLOCK_LAVA_POP, SoundCategory.BLOCKS, 1.0f, 1.0f, false)
+            world.playSound(
+                3 * world.random.nextDouble() - 1.0,
+                pos.y.toDouble(),
+                3 * world.random.nextDouble() - 1.0,
+                SoundEvents.BLOCK_LAVA_POP,
+                SoundCategory.BLOCKS,
+                1.0f,
+                1.0f,
+                false
+            )
         }
     }
 
@@ -289,73 +380,83 @@ fun registerRitualTable() {
     RitualRecipe.recipeSerializer
     RitualRecipe.recipeType
 
-    MultiblockRegistry.registerMultiblock(Identifier("haema:basic_altar"), DenseMultiblock(
-        arrayOf(
+    MultiblockRegistry.registerMultiblock(
+        Identifier("haema:basic_altar"), DenseMultiblock(
             arrayOf(
-                "T T T",
-                "     ",
-                "T   T",
-                "     ",
-                "T T T"
-            ), arrayOf(
-                "B B B",
-                "     ",
-                "B 0 B",
-                "     ",
-                "B B B"
-            ), arrayOf(
-                "BBBBB",
-                "B   B",
-                "B B B",
-                "B   B",
-                "BBBBB"
-            ), arrayOf(
-                "BBBBB",
-                "BBBBB",
-                "BBBBB",
-                "BBBBB",
-                "BBBBB"
+                arrayOf(
+                    "T T T",
+                    "     ",
+                    "T   T",
+                    "     ",
+                    "T T T"
+                ), arrayOf(
+                    "B B B",
+                    "     ",
+                    "B 0 B",
+                    "     ",
+                    "B B B"
+                ), arrayOf(
+                    "BBBBB",
+                    "B   B",
+                    "B B B",
+                    "B   B",
+                    "BBBBB"
+                ), arrayOf(
+                    "BBBBB",
+                    "BBBBB",
+                    "BBBBB",
+                    "BBBBB",
+                    "BBBBB"
+                )
+            ), mapOf(
+                'T' to MultiTagMatcher(
+                    listOf(level0RitualTorchesTag as Tag.Identified<Block>),
+                    mapOf(Properties.LIT to true)
+                ),
+                'B' to MultiTagMatcher(listOf(level0RitualMaterialsTag as Tag.Identified<Block>), mapOf()),
+                '0' to StateMatcher.fromBlockLoose(RitualTable.instance),
+                ' ' to StateMatcher.ANY
             )
-        ), mapOf(
-            'T' to MultiTagMatcher(listOf(level0RitualTorchesTag as Tag.Identified<Block>), mapOf(Properties.LIT to true)),
-            'B' to MultiTagMatcher(listOf(level0RitualMaterialsTag as Tag.Identified<Block>), mapOf()),
-            '0' to StateMatcher.fromBlockLoose(RitualTable.instance),
-            ' ' to StateMatcher.ANY
         )
-    ))
+    )
 
-    MultiblockRegistry.registerMultiblock(Identifier("haema:blackstone_altar"), DenseMultiblock(
-        arrayOf(
+    MultiblockRegistry.registerMultiblock(
+        Identifier("haema:blackstone_altar"), DenseMultiblock(
             arrayOf(
-                "T T T",
-                "     ",
-                "T   T",
-                "     ",
-                "T T T"
-            ), arrayOf(
-                "B B B",
-                "     ",
-                "B 0 B",
-                "     ",
-                "B B B"
-            ), arrayOf(
-                "BBBBB",
-                "B   B",
-                "B B B",
-                "B   B",
-                "BBBBB"
-            ), arrayOf(
-                "BBBBB",
-                "BBBBB",
-                "BBBBB",
-                "BBBBB",
-                "BBBBB"
+                arrayOf(
+                    "T T T",
+                    "     ",
+                    "T   T",
+                    "     ",
+                    "T T T"
+                ), arrayOf(
+                    "B B B",
+                    "     ",
+                    "B 0 B",
+                    "     ",
+                    "B B B"
+                ), arrayOf(
+                    "BBBBB",
+                    "B   B",
+                    "B B B",
+                    "B   B",
+                    "BBBBB"
+                ), arrayOf(
+                    "BBBBB",
+                    "BBBBB",
+                    "BBBBB",
+                    "BBBBB",
+                    "BBBBB"
+                )
+            ), mapOf(
+                'T' to MultiTagMatcher(
+                    listOf(level1RitualTorchesTag as Tag.Identified<Block>),
+                    mapOf(Properties.LIT to true)
+                ),
+                'B' to MultiTagMatcher(listOf(level1RitualMaterialsTag as Tag.Identified<Block>), mapOf()),
+                '0' to StateMatcher.fromBlockLoose(RitualTable.instance),
+                ' ' to StateMatcher.ANY
             )
-        ), mapOf(
-            'T' to MultiTagMatcher(listOf(level1RitualTorchesTag as Tag.Identified<Block>), mapOf(Properties.LIT to true)),
-            'B' to MultiTagMatcher(listOf(level1RitualMaterialsTag as Tag.Identified<Block>), mapOf()),
-            '0' to StateMatcher.fromBlockLoose(RitualTable.instance),
-            ' ' to StateMatcher.ANY
         )
-    ))
+    )
 }

@@ -1,7 +1,19 @@
 {
   "variants": {
-    "": {
+    "facing=east": {
+      "model": "haema:block/ritual_table",
+      "y": 270
+    },
+    "facing=south": {
       "model": "haema:block/ritual_table"
+    },
+    "facing=west": {
+      "model": "haema:block/ritual_table",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "haema:block/ritual_table",
+      "y": 180
     }
   }
 }
