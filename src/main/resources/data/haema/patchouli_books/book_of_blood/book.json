@@ -2,7 +2,7 @@
   "name": "bookOfBlood.name",
   "landing_text": "",
   "model": "haema:book_of_blood",
-  "book_texture": "haema:textures/gui/book_of_blood_gui.png",
+  "book_texture": "haema:textures/gui/book_of_blood/book_of_blood_gui.png",
   "i18n": true,
   "version": 2
 }
