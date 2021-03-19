@@ -2,13 +2,13 @@
   "type": "haema:ritual",
   "ingredients": [
     {
-      "tag": "#bewitchment:average_pentacles"
+      "tag": "bewitchment:average_pentacles"
     },
     {
       "item": "minecraft:fermented_spider_eye"
     },
     {
-      "item": "#bewitchment:barks"
+      "tag": "bewitchment:barks"
     }
   ],
   "fluid": "minecraft:water",
