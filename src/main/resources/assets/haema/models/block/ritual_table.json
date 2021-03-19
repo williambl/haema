@@ -1,8 +1,8 @@
 {
   "parent": "block/block",
   "textures": {
-    "particle": "block/polished_blackstone",
-    "inner": "block/polished_blackstone",
+    "particle": "haema:block/ritual_table_side",
+    "inner": "haema:block/ritual_table_bottom",
     "top": "haema:block/ritual_table_top",
     "side": "haema:block/ritual_table_side"
   },
