@@ -1,6 +1,7 @@
 package com.williambl.haema.component
 
 import com.williambl.haema.abilities.VampireAbility
+import com.williambl.haema.abilities.abilityRegistry
 import dev.onyxstudios.cca.api.v3.component.CopyableComponent
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent
 import nerdhub.cardinal.components.api.ComponentType
@@ -36,7 +37,7 @@ class VampirePlayerComponent(player: Entity) : VampireComponent, AutoSyncedCompo
         tag.putBoolean("isVampire", isVampire)
         tag.putBoolean("isPermanentVampire", isPermanentVampire)
         tag.putBoolean("isKilled", isKilled)
-        tag.put("abilities", CompoundTag().also { abilitiesTag -> abilities.forEach { (ability, value) -> abilitiesTag.putInt(ability.name, value) } })
+        tag.put("abilities", CompoundTag().also { abilitiesTag -> abilities.forEach { (ability, value) -> abilitiesTag.putInt(abilityRegistry.getId(ability).toString(), value) } })
         tag.put("ritualsUsed", CompoundTag().also {
             it.putInt("Length", ritualsUsed.size)
             ritualsUsed.forEachIndexed { idx, id -> it.putString(idx.toString(), id.toString()) }
@@ -48,7 +49,7 @@ class VampirePlayerComponent(player: Entity) : VampireComponent, AutoSyncedCompo
         isPermanentVampire = tag.getBoolean("isPermanentVampire")
         isKilled = tag.getBoolean("isKilled")
         val abilitiesTag = tag.getCompound("abilities")
-        VampireAbility.values().filter { abilitiesTag.contains(it.name) }.forEach { abilities[it] = abilitiesTag.getInt(it.name) }
+        abilityRegistry.entries.filter { abilitiesTag.contains(it.key.value.toString()) }.forEach { abilities[it.value] = abilitiesTag.getInt(it.key.value.toString()) }
         val ritualsUsedTag = tag.getCompound("ritualsUsed")
         ritualsUsed = List(ritualsUsedTag.getInt("Length")) { idx -> Identifier(ritualsUsedTag.getString(idx.toString())) }.toMutableSet()
     }

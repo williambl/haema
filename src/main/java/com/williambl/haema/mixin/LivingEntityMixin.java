@@ -44,7 +44,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Redirect(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isDead()Z", ordinal = 1))
     boolean isActuallyDead(LivingEntity livingEntity) {
-        if (livingEntity instanceof PlayerEntity && ((Vampirable)livingEntity).isVampire() && currentSource != null && ((Vampirable)this).getAbilityLevel(VampireAbility.IMMORTALITY) > 0) {
+        if (livingEntity instanceof PlayerEntity && ((Vampirable)livingEntity).isVampire() && currentSource != null && ((Vampirable)this).getAbilityLevel(VampireAbility.Companion.getIMMORTALITY()) > 0) {
             DamageSource theCurrentSource = currentSource;
             currentSource = null;
             boolean result = this.getHealth() <= 0 && DamageSourceExtensionsKt.isEffectiveAgainstVampires(theCurrentSource, livingEntity.world);

@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.DoubleArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.williambl.haema.abilities.VampireAbility
 import com.williambl.haema.abilities.VampireAbilityArgumentType
+import com.williambl.haema.abilities.abilityRegistry
 import com.williambl.haema.abilities.registerAbilities
 import com.williambl.haema.api.DrinkBloodEvent
 import com.williambl.haema.api.VampireBurningEvents
@@ -37,6 +38,7 @@ import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.text.Text
+import net.minecraft.text.TranslatableText
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.Box
@@ -187,8 +189,8 @@ fun init() {
                         EntityArgumentType.getPlayers(context, "targets").forEach {
                             if ((it as Vampirable).isVampire) {
                                 context.source.sendFeedback(it.name.copy().append(" has abilities:"), false)
-                                VampireAbility.values().forEach { ability ->
-                                    context.source.sendFeedback(Text.of("${ability.name}: ${it.getAbilityLevel(ability)}"), false)
+                                abilityRegistry.entries.forEach { (key, ability) ->
+                                    context.source.sendFeedback(TranslatableText("ability.${key.value.namespace}.${key.value.path}").append(": ${it.getAbilityLevel(ability)}"), false)
                                 }
                             }
                         }

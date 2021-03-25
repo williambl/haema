@@ -2,6 +2,8 @@ package com.williambl.haema.client.gui
 
 import com.mojang.blaze3d.systems.RenderSystem
 import com.williambl.haema.abilities.VampireAbility
+import com.williambl.haema.abilities.abilityRegistry
+import com.williambl.haema.abilities.noneIdentifier
 import com.williambl.haema.ritual.RitualTableScreenHandler
 import net.minecraft.advancement.AdvancementFrame
 import net.minecraft.client.MinecraftClient
@@ -20,9 +22,9 @@ import java.util.*
 class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInventory, title: Text) :
     HandledScreen<RitualTableScreenHandler>(handler, inventory, title) {
 
-    private val widgets = VampireAbility.values()
-        .filterNot { it == VampireAbility.NONE }
-        .map { List(it.maxLevel) { idx -> AbilityWidget(it, idx + 1) } }
+    private val widgets = abilityRegistry.entries
+        .filterNot { it.value == VampireAbility.NONE }
+        .map { val ids = Pair(it.key.value, abilityRegistry.getRawId(it.value)); ids to List(it.value.maxLevel) { idx -> AbilityWidget(ids, it.value, idx + 1) } }
 
     private var movingTab = false
 
@@ -64,7 +66,7 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
         }
 
         widgets.forEachIndexed { i, widgets ->
-            widgets.forEachIndexed { j, widget ->
+            widgets.second.forEachIndexed { j, widget ->
                 widget.render(
                     matrices,
                     (panX + 3 + i * 30).toInt(),
@@ -72,9 +74,7 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
                     xBase,
                     yBase,
                     client!!,
-                    handler.getProperty(
-                        i + 1
-                    )
+                    handler.getProperty(widgets.first.second)
                 )
             }
         }
@@ -119,9 +119,9 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
         if (widget != null) {
             renderTooltip(
                 matrices, listOf(
-                    LiteralText(widget.ability.name + " " + widget.level).formatted(Formatting.BOLD)
-                        .formatted(Formatting.UNDERLINE),
-                    TranslatableText("ability.haema.${widget.ability.name.toLowerCase(Locale.ROOT)}.description")
+                    TranslatableText("ability.${widget.abilityIds.first.namespace}.${widget.abilityIds.first.path}").append(" ${widget.level}")
+                        .formatted(Formatting.BOLD).formatted(Formatting.UNDERLINE),
+                    TranslatableText("ability.${widget.abilityIds.first.namespace}.${widget.abilityIds.first.path}.description")
                 ), mouseX, mouseY
             )
         }
@@ -136,18 +136,18 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
         val widget = getWidgetHovered(xBase, yBase, mouseX.toInt(), mouseY.toInt())
 
         if (widget != null) {
-            val currentLevel = handler.getProperty(widget.ability.ordinal)
+            val currentLevel = handler.getProperty(widget.abilityIds.second)
             val spareLevels = handler.getProperty(0)
             val widgetLevel = widget.level
 
             if (widgetLevel > currentLevel) {
                 if (widgetLevel - currentLevel <= spareLevels) {
-                    handler.transferLevels(widgetLevel - currentLevel, 0, widget.ability.ordinal)
+                    handler.transferLevels(widgetLevel - currentLevel, 0, widget.abilityIds.second)
                 }
             } else if (widgetLevel < currentLevel) {
-                handler.transferLevels(currentLevel - widgetLevel, widget.ability.ordinal, 0)
+                handler.transferLevels(currentLevel - widgetLevel, widget.abilityIds.second, 0)
             } else if (widgetLevel == currentLevel) {
-                handler.transferLevels(1, widget.ability.ordinal, 0)
+                handler.transferLevels(1, widget.abilityIds.second, 0)
             }
         }
         return super.mouseClicked(mouseX, mouseY, button)
@@ -174,18 +174,18 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
     }
 
     private fun getWidgetHovered(xBase: Int, yBase: Int, mouseX: Int, mouseY: Int): AbilityWidget? {
-        for (i in widgets.indices) for (j in widgets[i].indices) {
+        for (i in widgets.indices) for (j in widgets[i].second.indices) {
             x = xBase + panX.toInt() + 15 + i * 30
             y = yBase + panY.toInt() + 20 + j * 30
 
             if (mouseX in x..x+22 && mouseY in y..y+26) {
-                return widgets[i][j]
+                return widgets[i].second[j]
             }
         }
         return null
     }
 
-    class AbilityWidget(val ability: VampireAbility, val level: Int): DrawableHelper() {
+    class AbilityWidget(val abilityIds: Pair<Identifier, Int>, val ability: VampireAbility, val level: Int): DrawableHelper() {
         fun render(
             matrices: MatrixStack,
             x: Int,
