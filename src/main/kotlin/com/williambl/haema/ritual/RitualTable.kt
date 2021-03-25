@@ -1,6 +1,7 @@
 package com.williambl.haema.ritual
 
 import com.williambl.haema.Vampirable
+import com.williambl.haema.api.RitualTableUseEvent
 import com.williambl.haema.ritual.craft.RitualInventory
 import com.williambl.haema.ritual.craft.RitualRecipe
 import com.williambl.haema.util.MultiTagMatcher
@@ -70,6 +71,7 @@ class RitualTable(settings: Settings) : HorizontalFacingBlock(settings) {
                 .firstOrNull { it.matches(inventory) }
                 ?.craft(inventory) ?: return ActionResult.PASS
         }
+        RitualTableUseEvent.EVENT.invoker().onUse(state, world, pos, player, hand, hit)
         return ActionResult.SUCCESS
     }
 
@@ -244,6 +246,10 @@ class RitualTable(settings: Settings) : HorizontalFacingBlock(settings) {
         val instance: RitualTable by lazy { RitualTable(Settings.of(Material.METAL)) }
 
         val shape: VoxelShape = createCuboidShape(0.0, 0.0, 0.0, 16.0, 12.0, 16.0)
+
+        init {
+
+        }
 
         fun checkBaseBlockStates(world: World, tablePos: BlockPos): Int {
             var result = 4
