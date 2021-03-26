@@ -22,9 +22,11 @@ import java.util.*
 class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInventory, title: Text) :
     HandledScreen<RitualTableScreenHandler>(handler, inventory, title) {
 
-    private val widgets = abilityRegistry.entries
+    private val widgets = abilityRegistry.entries.asSequence()
         .filterNot { it.value == VampireAbility.NONE }
+        .filter { it.value.isVisible(inventory.player) }
         .map { val ids = Pair(it.key.value, abilityRegistry.getRawId(it.value)); ids to List(it.value.maxLevel) { idx -> AbilityWidget(ids, it.value, idx + 1) } }
+        .toList()
 
     private var movingTab = false
 

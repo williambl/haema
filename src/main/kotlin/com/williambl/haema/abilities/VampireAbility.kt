@@ -1,11 +1,14 @@
 package com.williambl.haema.abilities
 
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.potion.PotionUtil
 import net.minecraft.potion.Potions
 
 open class VampireAbility(val maxLevel: Int = Int.MAX_VALUE, val iconItem: ItemStack = ItemStack.EMPTY) {
+    open fun isVisible(player: PlayerEntity): Boolean = true
+
     companion object {
         public val NONE = VampireAbility()
         public val STRENGTH = VampireAbility(3, PotionUtil.setPotion(ItemStack(Items.POTION), Potions.STRENGTH))
