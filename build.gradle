@@ -38,6 +38,12 @@ repositories {
         name = "Cotton"
         url = "https://server.bbkr.space/artifactory/libs-release/"
     }
+    maven {
+        url "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 dependencies {
@@ -113,6 +119,8 @@ dependencies {
 
     include "io.github.cottonmc:LibCD:${project.libcd_version}"
     modRuntime "io.github.cottonmc:LibCD:${project.libcd_version}"
+
+    modCompileOnly "curse.maven:bewitchment-394915:${project.bewitchment_version}"
 
     //include "io.github.ladysnake:vanguard:${vanguard_version}"
 

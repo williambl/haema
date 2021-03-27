@@ -24,7 +24,8 @@
     "main": [
       "com.williambl.haema.HaemaKt::init",
       "com.williambl.haema.compat.origins.HaemaOriginsPluginKt::init",
-      "com.williambl.haema.compat.rats.RatsMischiefCompatKt::init"
+      "com.williambl.haema.compat.rats.RatsMischiefCompatKt::init",
+      "com.williambl.haema.compat.bewitchment.BewitchmentEntrypointKt::init"
     ],
     "client": [
       "com.williambl.haema.client.HaemaClientKt::init"
