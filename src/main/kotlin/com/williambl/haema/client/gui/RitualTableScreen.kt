@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem
 import com.williambl.haema.abilities.VampireAbility
 import com.williambl.haema.abilities.abilityRegistry
 import com.williambl.haema.abilities.noneIdentifier
+import com.williambl.haema.api.AbilityVisibilityEvent
 import com.williambl.haema.ritual.RitualTableScreenHandler
 import net.minecraft.advancement.AdvancementFrame
 import net.minecraft.client.MinecraftClient
@@ -24,7 +25,7 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
 
     private val widgets = abilityRegistry.entries.asSequence()
         .filterNot { it.value == VampireAbility.NONE }
-        .filter { it.value.isVisible(inventory.player) }
+        .filter { AbilityVisibilityEvent.EVENT.invoker().onVisibilityTest(inventory.player, it.value).orElse(it.value.isVisible(inventory.player)) }
         .map { val ids = Pair(it.key.value, abilityRegistry.getRawId(it.value)); ids to List(it.value.maxLevel) { idx -> AbilityWidget(ids, it.value, idx + 1) } }
         .toList()
 
