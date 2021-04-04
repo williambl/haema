@@ -15,11 +15,12 @@ import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.util.Identifier
+import net.minecraft.util.registry.DefaultedRegistry
 import net.minecraft.util.registry.Registry
+import net.minecraft.util.registry.RegistryKey
 
-val noneIdentifier = Identifier("haema:none")
-val abilityRegistryKey = RegistryAccessor.createRegistryKey<VampireAbility>("haema:ability")
-val abilityRegistry = RegistryAccessor.create(abilityRegistryKey, noneIdentifier.toString()) { VampireAbility.NONE }
+val abilityRegistryKey: RegistryKey<Registry<VampireAbility>> = RegistryAccessor.createRegistryKey("haema:ability")
+val abilityRegistry: DefaultedRegistry<VampireAbility> = RegistryAccessor.create(abilityRegistryKey, "haema:none") { VampireAbility.NONE }
 
 fun registerAbilities() {
     ArgumentTypes.register("haema:ability", VampireAbilityArgumentType::class.java, VampireAbilityArgumentType.Serialiser)
