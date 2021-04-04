@@ -1,5 +1,6 @@
 package com.williambl.haema.criteria
 
+import com.williambl.haema.api.AbilityChangeEvent
 import com.williambl.haema.api.DrinkBloodEvent
 import com.williambl.haema.api.VampireConversionEvents
 import net.fabricmc.fabric.api.`object`.builder.v1.advancement.CriterionRegistry
@@ -24,4 +25,9 @@ fun registerCriteria() {
             DrinkBloodCriterion.trigger(drinker, target)
     }
 
+    CriterionRegistry.register(AbilityChangeCriterion)
+    AbilityChangeEvent.EVENT.register { vampire, ability, level ->
+        if (vampire is ServerPlayerEntity)
+            AbilityChangeCriterion.trigger(vampire, ability, level)
+    }
 }
