@@ -2,6 +2,7 @@ package com.williambl.haema.criteria
 
 import com.google.gson.JsonObject
 import com.williambl.haema.abilities.VampireAbility
+import com.williambl.haema.abilities.abilityRegistry
 import net.minecraft.advancement.criterion.AbstractCriterion
 import net.minecraft.advancement.criterion.AbstractCriterionConditions
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer
@@ -28,7 +29,7 @@ object AbilityChangeCriterion: AbstractCriterion<AbilityChangeCriterion.Conditio
             fun matches(ability: VampireAbility, abilityLevel: Int): Boolean {
                 var result = true
                 if (abilityId != null)
-                    result = result and TODO("ability registry")
+                    result = result and (abilityRegistry.getId(ability) == abilityId)
                 if (level != null)
                     result = result and (abilityLevel == level)
 
