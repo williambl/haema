@@ -5,6 +5,7 @@ import com.williambl.haema.ritual.RitualTableScreenHandler
 import com.williambl.haema.util.raytraceForDash
 import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
+import net.minecraft.command.argument.ArgumentTypes
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.server.MinecraftServer
@@ -21,6 +22,8 @@ val abilityRegistryKey = RegistryAccessor.createRegistryKey<VampireAbility>("hae
 val abilityRegistry = RegistryAccessor.create(abilityRegistryKey, noneIdentifier.toString()) { VampireAbility.NONE }
 
 fun registerAbilities() {
+    ArgumentTypes.register("haema:ability", VampireAbilityArgumentType::class.java, VampireAbilityArgumentType.Serialiser)
+
     ServerPlayNetworking.registerGlobalReceiver(Identifier("haema:transferlevels")) { server: MinecraftServer, player: ServerPlayerEntity, networkHandler: ServerPlayNetworkHandler, buf: PacketByteBuf, sender: PacketSender ->
         if (player.currentScreenHandler.syncId == buf.readVarInt() && player.currentScreenHandler is RitualTableScreenHandler) {
             val amount = buf.readVarInt()

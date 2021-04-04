@@ -1,5 +1,6 @@
 package com.williambl.haema.abilities
 
+import com.google.gson.JsonObject
 import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.context.CommandContext
@@ -12,6 +13,8 @@ import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.LiteralText
 import net.minecraft.util.Identifier
 import java.util.concurrent.CompletableFuture
+import net.minecraft.command.argument.serialize.ArgumentSerializer
+import net.minecraft.network.PacketByteBuf
 
 class VampireAbilityArgumentType private constructor() : ArgumentType<VampireAbility> {
     @Throws(CommandSyntaxException::class)
@@ -47,5 +50,13 @@ class VampireAbilityArgumentType private constructor() : ArgumentType<VampireAbi
                 VampireAbility::class.java
             ) as VampireAbility
         }
+    }
+
+    object Serialiser: ArgumentSerializer<VampireAbilityArgumentType> {
+        override fun toPacket(argumentType: VampireAbilityArgumentType, packetByteBuf: PacketByteBuf) = Unit
+
+        override fun fromPacket(packetByteBuf: PacketByteBuf): VampireAbilityArgumentType = VampireAbilityArgumentType()
+
+        override fun toJson(argumentType: VampireAbilityArgumentType, jsonObject: JsonObject) = Unit
     }
 }
