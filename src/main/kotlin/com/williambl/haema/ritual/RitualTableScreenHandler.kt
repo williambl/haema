@@ -2,6 +2,7 @@ package com.williambl.haema.ritual
 
 import com.williambl.haema.Vampirable
 import com.williambl.haema.abilities.VampireAbility
+import com.williambl.haema.abilities.abilityRegistry
 import com.williambl.haema.ritual.craft.RitualInventory
 import io.netty.buffer.Unpooled
 import net.fabricmc.api.EnvType
@@ -12,10 +13,7 @@ import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.network.PacketByteBuf
-import net.minecraft.screen.PropertyDelegate
-import net.minecraft.screen.ScreenHandler
-import net.minecraft.screen.ScreenHandlerContext
-import net.minecraft.screen.ScreenHandlerType
+import net.minecraft.screen.*
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.LiteralText
 import net.minecraft.text.Text
@@ -32,21 +30,23 @@ class RitualTableScreenHandler(syncId: Int, val inv: RitualInventory, private va
             Registry.FLUID.get(packetByteBuf.readIdentifier()),
             packetByteBuf.readBlockPos(),
             playerInventory.player,
-            packetByteBuf.readInt()
+            packetByteBuf.readVarInt()
         ),
         ScreenHandlerContext.EMPTY
     )
 
     private val propertyDelegate = object : PropertyDelegate {
-        val abilities = VampireAbility.values()
+        val abilities = abilityRegistry.entries.map { abilityRegistry.getRawId(it.value) to it.value }.toMap()
         val player = (inv.player as Vampirable)
 
         override fun size(): Int = abilities.size
 
-        override fun get(index: Int): Int = player.getAbilityLevel(abilities[index])
+        override fun get(index: Int): Int {
+            return player.getAbilityLevel(abilities[index] ?: return 0)
+        }
 
         override fun set(index: Int, value: Int) {
-            player.setAbilityLevel(abilities[index], value)
+            player.setAbilityLevel(abilities[index] ?: return, value)
         }
     }
 
@@ -58,13 +58,13 @@ class RitualTableScreenHandler(syncId: Int, val inv: RitualInventory, private va
 
     @Environment(EnvType.CLIENT)
     fun transferLevels(amount: Int, from: Int, to: Int) {
-        ClientPlayNetworking.send(Identifier("haema:transferlevels"), PacketByteBuf(Unpooled.buffer().writeInt(syncId).writeInt(amount).writeInt(from).writeInt(to)))
+        ClientPlayNetworking.send(Identifier("haema:transferlevels"), PacketByteBuf(Unpooled.buffer()).writeVarInt(syncId).writeVarInt(amount).writeVarInt(from).writeVarInt(to))
     }
 
     override fun canUse(player: PlayerEntity): Boolean = canUse(context, player, RitualTable.instance)
 
     class Factory(private val inv: RitualInventory): ExtendedScreenHandlerFactory {
-        override fun createMenu(syncId: Int, playerInv: PlayerInventory, player: PlayerEntity): ScreenHandler? {
+        override fun createMenu(syncId: Int, playerInv: PlayerInventory, player: PlayerEntity): ScreenHandler {
             return RitualTableScreenHandler(syncId, inv, ScreenHandlerContext.create(inv.player.world, inv.pos))
         }
 
@@ -75,7 +75,7 @@ class RitualTableScreenHandler(syncId: Int, val inv: RitualInventory, private va
         override fun writeScreenOpeningData(player: ServerPlayerEntity, buf: PacketByteBuf) {
             buf.writeIdentifier(Registry.FLUID.getId(inv.fluid))
             buf.writeBlockPos(inv.pos)
-            buf.writeInt(inv.level)
+            buf.writeVarInt(inv.level)
         }
     }
 
