@@ -1,0 +1,21 @@
+{
+  "type": "haema:ritual",
+  "ingredients": [
+    {
+      "item": "minecraft:pumpkin_seeds"
+    },
+    {
+      "item": "minecraft:fermented_spider_eye"
+    },
+    {
+      "item": "minecraft:charcoal"
+    }
+  ],
+  "fluid": "minecraft:water",
+  "repeatable": false,
+  "minLevel": 0,
+  "action": {
+    "name": "add_level",
+    "arg": 1
+  }
+}

@@ -1,7 +1,8 @@
 {
   "name": "bookOfBlood.name",
   "landing_text": "",
-  "book_texture": "patchouli:textures/gui/book_red.png",
+  "model": "haema:book_of_blood",
+  "book_texture": "haema:textures/gui/book_of_blood/book_of_blood_gui.png",
   "i18n": true,
-  "version": 1
+  "version": 2
 }

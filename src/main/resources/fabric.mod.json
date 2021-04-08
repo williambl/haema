@@ -8,6 +8,9 @@
   "authors": [
     "Will BL"
   ],
+  "contributors": [
+    "AzazelTheDemonLord"
+  ],
   "contact": {
     "homepage": "https://curseforge.com/minecraft/mc-mods/haema",
     "sources": "https://github.com/williambl/haema"
@@ -20,23 +23,26 @@
   "entrypoints": {
     "main": [
       "com.williambl.haema.HaemaKt::init",
-      "com.williambl.haema.plugin.origins.HaemaOriginsPluginKt::init"
+      "com.williambl.haema.compat.origins.HaemaOriginsPluginKt::init",
+      "com.williambl.haema.compat.rats.RatsMischiefCompatKt::init"
     ],
     "client": [
       "com.williambl.haema.client.HaemaClientKt::init"
     ],
     "rei_plugins": [
-      "com.williambl.haema.plugin.rei.HaemaREIPlugin"
+      "com.williambl.haema.compat.rei.HaemaREIPlugin"
     ],
     "cardinal-components-entity": [
-      "com.williambl.haema.HaemaKt::registerEntityComponentFactories"
+      "com.williambl.haema.HaemaKt::registerEntityComponentFactories",
+      "com.williambl.haema.compat.rats.RatsMischiefCompatKt::registerEntityComponentFactories"
     ],
     "modmenu": [
-      "com.williambl.haema.plugin.modmenu.HaemaModMenuPlugin"
+      "com.williambl.haema.compat.modmenu.HaemaModMenuPlugin"
     ]
   },
   "mixins": [
-    "haema.mixins.json"
+    "haema.mixins.json",
+    "haema_compat.mixins.json"
   ],
   "depends": {
     "fabricloader": "*",
@@ -45,7 +51,7 @@
     "minecraft": "1.16.x"
   },
   "suggests": {
-    "origins": ">=3.0.0"
+    "origins": ">=0.4.7"
   },
   "breaks": {
     "gunpowder": "*"

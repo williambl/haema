@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Mixin(AbstractClientPlayerEntity.class)
 public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity {
-    private static UUID movementSpeedAttributeUUID = UUID.fromString("7a47b1b8-16a5-4877-905a-07ffd5d2189b");
+    private static final UUID movementSpeedAttributeUUID = UUID.fromString("7a47b1b8-16a5-4877-905a-07ffd5d2189b");
 
     public AbstractClientPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile profile) {
         super(world, pos, yaw, profile);

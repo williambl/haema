@@ -1,7 +1,7 @@
 package com.williambl.haema.client
 
 import com.google.common.collect.ImmutableList
-import com.williambl.haema.entity.VampireHunterEntity
+import com.williambl.haema.hunter.VampireHunterEntity
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.model.ModelPart

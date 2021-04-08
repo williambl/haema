@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "com.williambl.haema.compat.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "rats.RatEntityMixin"
+  ],
+  "client": [
+  ],
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

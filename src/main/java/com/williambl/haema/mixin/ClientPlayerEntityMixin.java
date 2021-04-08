@@ -3,11 +3,12 @@ package com.williambl.haema.mixin;
 import com.mojang.authlib.GameProfile;
 import com.williambl.haema.Vampirable;
 import com.williambl.haema.VampireBloodManager;
+import com.williambl.haema.abilities.VampireAbility;
 import com.williambl.haema.client.ClientVampire;
 import com.williambl.haema.client.HaemaClientKt;
 import com.williambl.haema.util.RaytraceUtilKt;
 import io.netty.buffer.Unpooled;
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
@@ -35,13 +36,13 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         if (((Vampirable) this).isVampire() && this.hungerManager instanceof VampireBloodManager) {
             float bloodLevel = ((float) ((VampireBloodManager)this.hungerManager).getBloodLevel()) / 20.0f;
             HaemaClientKt.setSaturation(0.8f * bloodLevel);
-            HaemaClientKt.setColorScale(bloodLevel + 1.2f);
+            HaemaClientKt.setBrightnessAdjust(bloodLevel/4f+0.05f);
 
             HaemaClientKt.setRedAmount(Math.max(1.3f, 2.3f - (this.world.getTime() - ((VampireBloodManager) this.hungerManager).getLastFed()) / (float) VampireBloodManager.Companion.getFeedCooldown(world)));
 
             if (pressedTicks > 0 && !(HaemaClientKt.getDASH_KEY().isPressed()) && canDash()) {
                 PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-                ClientSidePacketRegistry.INSTANCE.sendToServer(new Identifier("haema:dash"), buf);
+                ClientPlayNetworking.send(new Identifier("haema:dash"), buf);
                 lastDashed = world.getTime();
             } else if (HaemaClientKt.getDASH_KEY().isPressed() && canDash()) {
                 Vec3d target = RaytraceUtilKt.raytraceForDash(this);
@@ -74,6 +75,13 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
     @Override
     public boolean canDash() {
-        return world.getTime() > lastDashed+HaemaClientKt.getDashCooldownValue() && hungerManager instanceof VampireBloodManager && (((VampireBloodManager)hungerManager).getBloodLevel() > 18 || abilities.creativeMode);
+        int abilityLevel = ((Vampirable)this).getAbilityLevel(VampireAbility.Companion.getDASH());
+        return world.getTime() > lastDashed+(HaemaClientKt.getDashCooldownValue()*(1+VampireAbility.Companion.getDASH().getMaxLevel()-abilityLevel))
+                && hungerManager instanceof VampireBloodManager
+                && (
+                        ((VampireBloodManager)hungerManager).getBloodLevel() >= 18
+                                || abilities.creativeMode
+        )
+                && abilityLevel > 0;
     }
 }

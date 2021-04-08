@@ -15,6 +15,11 @@
     "minecraft:piglin",
     "minecraft:rabbit",
     "minecraft:wolf",
-    "minecraft:trader_llama"
+    "minecraft:trader_llama",
+    "minecraft:hoglin",
+    {
+      "id": "ratsmischief:rat",
+      "required": false
+    }
   ]
 }

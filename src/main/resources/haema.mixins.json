@@ -8,8 +8,7 @@
     "LivingEntityMixin",
     "MinecraftServerMixin",
     "PlayerEntityMixin",
-    "ServerPlayerEntityMixin",
-    "ServerWorldMixin"
+    "RegistryAccessor"
   ],
   "client": [
     "AbstractClientPlayerEntityMixin",

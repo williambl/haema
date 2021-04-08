@@ -1,6 +1,11 @@
 package com.williambl.haema.client.gui
 
-import com.williambl.haema.*
+import com.williambl.haema.Vampirable
+import com.williambl.haema.VampireBloodManager
+import com.williambl.haema.VampireBloodManager.Companion.goodBloodTag
+import com.williambl.haema.VampireBloodManager.Companion.mediumBloodTag
+import com.williambl.haema.VampireBloodManager.Companion.poorBloodTag
+import com.williambl.haema.abilities.VampireAbility
 import com.williambl.haema.client.ClientVampire
 import com.williambl.haema.client.DASH_KEY
 import com.williambl.haema.client.config
@@ -17,8 +22,7 @@ import net.minecraft.util.hit.EntityHitResult
 import net.minecraft.util.hit.HitResult
 
 object VampireHud : DrawableHelper() {
-
-    fun render(matrixStack: MatrixStack, tickDelta: Float) {
+    fun render(matrixStack: MatrixStack, @Suppress("UNUSED_PARAMETER") tickDelta: Float) {
         if (config.vampireHudPlacement == HudPlacement.NONE) return
 
         matrixStack.push()
@@ -36,11 +40,21 @@ object VampireHud : DrawableHelper() {
 
         val texts = mutableListOf<Text>()
 
-        if ((player.hungerManager as VampireBloodManager).getBloodLevel() > 18f) {
+        val dashLevel = (player as Vampirable).getAbilityLevel(VampireAbility.DASH)
+        if (dashLevel > 0 && (player.hungerManager as VampireBloodManager).getBloodLevel() > 18f) {
             texts.add(createText(
                 DASH_KEY.boundKeyLocalizedText.copy(),
                 (player as Vampirable).isVampire && (player as ClientVampire).canDash(),
                 TranslatableText("gui.haema.hud.vampiredash"))
+            )
+        }
+
+        val invisLevel = (player as Vampirable).getAbilityLevel(VampireAbility.INVISIBILITY)
+        if (invisLevel > 0 && (player.hungerManager as VampireBloodManager).getBloodLevel() >= 18f) {
+            texts.add(createText(
+                MinecraftClient.getInstance().options.keySneak.boundKeyLocalizedText.copy(),
+                (player as Vampirable).isVampire && player.world.time-(player.hungerManager as VampireBloodManager).invisTicks >= 120 + invisLevel*20,
+                TranslatableText("gui.haema.hud.invisibility"))
             )
         }
 
@@ -85,7 +99,6 @@ object VampireHud : DrawableHelper() {
         }
         matrixStack.pop()
     }
-
 
     private fun createText(key: MutableText, available: Boolean, description: Text): Text {
         val keyText = key.formatted(if (available) Formatting.GREEN else Formatting.RED)

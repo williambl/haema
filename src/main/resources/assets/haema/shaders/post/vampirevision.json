@@ -10,9 +10,15 @@
             "uniforms": []
         },
         {
-            "name": "color_convolve",
+            "name": "haema:brightness_adjust",
             "intarget": "swap",
             "outtarget": "minecraft:main",
+            "uniforms": []
+        },
+        {
+            "name": "color_convolve",
+            "intarget": "minecraft:main",
+            "outtarget": "swap",
             "uniforms": [
                 {
                     "name": "RedMatrix",
@@ -27,6 +33,11 @@
                     "values": [ 0.0, 0.0, 1.5 ]
                 }
             ]
+        },
+        {
+            "name": "blit",
+            "intarget": "swap",
+            "outtarget": "minecraft:main"
         }
     ]
 }

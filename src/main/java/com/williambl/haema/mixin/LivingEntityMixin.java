@@ -1,10 +1,11 @@
 package com.williambl.haema.mixin;
 
-import com.williambl.haema.HaemaKt;
 import com.williambl.haema.Vampirable;
 import com.williambl.haema.VampireBloodManager;
+import com.williambl.haema.abilities.VampireAbility;
 import com.williambl.haema.damagesource.BloodLossDamageSource;
 import com.williambl.haema.damagesource.DamageSourceExtensionsKt;
+import com.williambl.haema.hunter.VampireHunterSpawner;
 import com.williambl.haema.util.HaemaGameRulesKt;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -43,10 +44,10 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Redirect(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isDead()Z", ordinal = 1))
     boolean isActuallyDead(LivingEntity livingEntity) {
-        if (livingEntity instanceof PlayerEntity && ((Vampirable)livingEntity).isVampire() && currentSource != null) {
+        if (livingEntity instanceof PlayerEntity && ((Vampirable)livingEntity).isVampire() && currentSource != null && ((Vampirable)this).getAbilityLevel(VampireAbility.Companion.getIMMORTALITY()) > 0) {
             DamageSource theCurrentSource = currentSource;
             currentSource = null;
-            boolean result = this.getHealth() <= 0 && DamageSourceExtensionsKt.isEffectiveAgainstVampires(theCurrentSource);
+            boolean result = this.getHealth() <= 0 && DamageSourceExtensionsKt.isEffectiveAgainstVampires(theCurrentSource, livingEntity.world);
             if (result) {
                 ((VampireBloodManager)((PlayerEntity) livingEntity).getHungerManager()).setAbsoluteBloodLevel(0.0);
             }
@@ -66,7 +67,7 @@ public abstract class LivingEntityMixin extends Entity {
             ((ServerWorld) world).spawnParticles(new DustParticleEffect(1.0f,0.0f, 0.0f, 3.0f), getX(), getY()+1, getZ(), 30, 1.0, 1.0, 1.0, 0.1);
 
             if (random.nextDouble() < world.getGameRules().get(HaemaGameRulesKt.getVampireHunterNoticeChance()).get())
-                HaemaKt.getVampireHunterSpawner().trySpawnNear((ServerWorld)world, random, getBlockPos());
+                VampireHunterSpawner.Companion.getInstance().trySpawnNear((ServerWorld)world, random, getBlockPos());
         }
     }
 }

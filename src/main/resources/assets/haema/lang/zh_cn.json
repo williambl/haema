@@ -45,7 +45,7 @@
   "gamerule.category.haema": "血族",
 
   "gamerule.vampiresBurn": "吸血鬼燃烧",
-  "gamerule.vampiresBurn.description": "吸血鬼是否会被日光点燃。"
+  "gamerule.vampiresBurn.description": "吸血鬼是否会被日光点燃。",
   
   "gamerule.feedCooldown": "吸血冷却",
   "gamerule.feedCooldown.description": "吸血鬼能两次吸血之间的冷却时间。单位：刻。",

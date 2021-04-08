@@ -1,0 +1,21 @@
+{
+  "type": "haema:ritual",
+  "ingredients": [
+    {
+      "item": "minecraft:wither_rose"
+    },
+    {
+      "item": "minecraft:sugar"
+    },
+    {
+      "item": "minecraft:glowstone_dust"
+    }
+  ],
+  "fluid": "minecraft:water",
+  "repeatable": false,
+  "minLevel": 1,
+  "action": {
+    "name": "add_level",
+    "arg": 1
+  }
+}

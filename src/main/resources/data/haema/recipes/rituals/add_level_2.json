@@ -1,0 +1,21 @@
+{
+  "type": "haema:ritual",
+  "ingredients": [
+    {
+      "item": "minecraft:blaze_powder"
+    },
+    {
+      "item": "minecraft:fermented_spider_eye"
+    },
+    {
+      "item": "minecraft:dried_kelp"
+    }
+  ],
+  "fluid": "minecraft:water",
+  "repeatable": false,
+  "minLevel": 1,
+  "action": {
+    "name": "add_level",
+    "arg": 1
+  }
+}

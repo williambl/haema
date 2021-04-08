@@ -1,0 +1,21 @@
+{
+  "type": "haema:ritual",
+  "ingredients": [
+    {
+      "tag": "bewitchment:weak_pentacles"
+    },
+    {
+      "item": "minecraft:fermented_spider_eye"
+    },
+    {
+      "tag": "bewitchment:barks"
+    }
+  ],
+  "fluid": "minecraft:water",
+  "repeatable": false,
+  "minLevel": 0,
+  "action": {
+    "name": "add_level",
+    "arg": 1
+  }
+}

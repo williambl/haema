@@ -20,10 +20,6 @@ repositories {
     maven { url 'https://jitpack.io' }
     maven { url "https://maven.jamieswhiteshirt.com/libs-release/" }
     maven {
-        name = "Cotton"
-        url = "https://server.bbkr.space/artifactory/libs-release/"
-    }
-    maven {
         name = "AdrianTodt's Maven"
         url = "https://dl.bintray.com/adriantodt/maven"
     }
@@ -31,6 +27,16 @@ repositories {
     maven {
         name = "Ladysnake Libs"
         url = "https://dl.bintray.com/ladysnake/libs"
+    }
+    maven {
+        url = "https://maven.theillusivec4.top"
+    }
+    maven {
+        url = "https://repo.repsy.io/mvn/gandiber/geckolib"
+    }
+    maven {
+        name = "Cotton"
+        url = "https://server.bbkr.space/artifactory/libs-release/"
     }
 }
 
@@ -63,7 +69,7 @@ dependencies {
     }
     include "com.jamieswhiteshirt:reach-entity-attributes:${project.rea_version}"
 
-    modRuntime("vazkii.patchouli:Patchouli:${project.patchouli_version}") {
+    modImplementation("vazkii.patchouli:Patchouli:${project.patchouli_version}") {
         exclude module: "fabric-dimensions-v1"
         exclude module: "fabric-biomes-v1"
     }
@@ -98,6 +104,15 @@ dependencies {
         exclude(group: "net.fabricmc.fabric-api")
     }
     include "me.sargunvohra.mcmods:autoconfig1u:${project.acu_version}"
+
+    modCompileOnly "com.github.Ladysnake:Rats-Mischief:${project.rats_version}"
+    modCompileOnly "software.bernie.geckolib:geckolib-fabric-1.16.5:${project.geckolib_version}:dev"
+
+    modImplementation "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
+    include "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
+
+    include "io.github.cottonmc:LibCD:${project.libcd_version}"
+    modRuntime "io.github.cottonmc:LibCD:${project.libcd_version}"
 
     //include "io.github.ladysnake:vanguard:${vanguard_version}"
 

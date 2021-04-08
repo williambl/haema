@@ -2,6 +2,8 @@ package com.williambl.haema.mixin;
 
 import com.williambl.haema.Vampirable;
 import com.williambl.haema.VampireBloodManager;
+import com.williambl.haema.abilities.VampireAbility;
+import com.williambl.haema.api.VampireBurningEvents;
 import com.williambl.haema.damagesource.DamageSourceExtensionsKt;
 import com.williambl.haema.effect.SunlightSicknessEffect;
 import com.williambl.haema.util.HaemaGameRulesKt;
@@ -18,7 +20,6 @@ import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -32,6 +33,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
     @Shadow protected HungerManager hungerManager;
 
     @Shadow @Final public PlayerAbilities abilities;
+
+    @Shadow public abstract void setAbsorptionAmount(float amount);
+
     protected VampireBloodManager bloodManager = null; // to avoid a load of casts
     protected CompoundTag nbt;
 
@@ -48,10 +52,17 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
 
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;tick()V"))
     void vampireTick(CallbackInfo ci) {
+        if (!Float.isFinite(getHealth()) || !Float.isFinite(getAbsorptionAmount())) {
+            setAbsorptionAmount(0.0f);
+            setHealth(0.0f);
+        }
         if (isVampire()) {
             checkBloodManager();
 
-            if (world.getGameRules().get(HaemaGameRulesKt.getVampiresBurn()).get() && this.isInDaylight() && !abilities.creativeMode) {
+            if (!this.world.isClient
+                    && VampireBurningEvents.INSTANCE.getTRIGGER().invoker().willVampireBurn((PlayerEntity) (Object) this, world).get()
+                    && VampireBurningEvents.INSTANCE.getVETO().invoker().willVampireBurn((PlayerEntity) (Object) this, world).get()
+            ) {
                 this.addStatusEffect(new StatusEffectInstance(SunlightSicknessEffect.Companion.getInstance(), 5, 0));
             }
         }
@@ -60,7 +71,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
     @Inject(method = "damage", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/LivingEntity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
     void damage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (isVampire()) {
-            boolean isDamageSourceEffective = DamageSourceExtensionsKt.isEffectiveAgainstVampires(source);
+            boolean isDamageSourceEffective = DamageSourceExtensionsKt.isEffectiveAgainstVampires(source, world);
             this.setKilled(this.getHealth() <= 0 && isDamageSourceEffective);
         }
     }
@@ -72,24 +83,26 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
             index = 2
     )
     float tweakDamageIfVampire(float amount, DamageSource source) {
-        return this.isVampire() && DamageSourceExtensionsKt.isEffectiveAgainstVampires(source) ?
+        float result = this.isVampire() && DamageSourceExtensionsKt.isEffectiveAgainstVampires(source, world) ?
                 amount * 1.25f
                 : amount;
-    }
 
-    @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;isDay()Z"))
-    boolean allowVampiresToSleepInDay(World world) {
-        return world.isDay() && !this.isVampire();
+        return Float.isFinite(result) ? result : amount;
     }
 
     @Redirect(method = "isInvulnerableTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$Key;)Z", ordinal = 1))
     boolean makeVampiresImmuneToFalling(GameRules gameRules, GameRules.Key<GameRules.BooleanRule> rule) {
-        return gameRules.getBoolean(rule) && !isVampire();
+        return gameRules.getBoolean(rule) && !(isVampire() && getAbilityLevel(VampireAbility.Companion.getDASH()) >= 3);
+    }
+
+    @Redirect(method = "isInvulnerableTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$Key;)Z", ordinal = 0))
+    boolean makeVampiresImmuneToDrowning(GameRules gameRules, GameRules.Key<GameRules.BooleanRule> rule) {
+        return gameRules.getBoolean(rule) && (!isVampire() || gameRules.getBoolean(HaemaGameRulesKt.getVampiresDrown()));
     }
 
     @Override
     public boolean isDead() {
-        if (isVampire() && bloodManager != null)
+        if (isVampire() && bloodManager != null && getAbilityLevel(VampireAbility.Companion.getIMMORTALITY()) > 0)
             return super.isDead() && bloodManager.getBloodLevel() <= 0 && isKilled();
         return super.isDead();
     }
@@ -97,11 +110,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
     @Override
     public boolean isAlive() {
         return isVampire() ? !isDead() : super.isAlive();
-    }
-
-    @Unique
-    protected boolean isInDaylight() {
-        return !this.world.isClient && this.world.isDay() && !this.world.isRaining() && this.world.isSkyVisible(this.getBlockPos());
     }
 
     @Override
@@ -115,5 +123,11 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
             }
             bloodManager.setOwner((PlayerEntity) (Object) this);
         }
+    }
+
+    @Override
+    public void removeBloodManager() {
+        hungerManager = new HungerManager();
+        bloodManager = null;
     }
 }

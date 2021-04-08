@@ -1,13 +1,18 @@
 package com.williambl.haema
 
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes
+import com.williambl.haema.abilities.VampireAbility
+import com.williambl.haema.api.DrinkBloodEvent
 import com.williambl.haema.damagesource.BloodLossDamageSource
 import com.williambl.haema.effect.VampiricStrengthEffect
 import com.williambl.haema.effect.VampiricWeaknessEffect
+import com.williambl.haema.hunter.VampireHunterSpawner
 import com.williambl.haema.util.computeValueWithout
 import com.williambl.haema.util.feedCooldown
 import io.netty.buffer.Unpooled
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
+import net.fabricmc.fabric.api.tag.TagRegistry
+import net.minecraft.entity.EntityType
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.attribute.EntityAttributeModifier
 import net.minecraft.entity.attribute.EntityAttributes
@@ -21,9 +26,12 @@ import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.particle.DustParticleEffect
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundEvents
+import net.minecraft.tag.Tag
 import net.minecraft.util.ActionResult
+import net.minecraft.util.Identifier
 import net.minecraft.village.VillageGossipType
 import net.minecraft.world.GameRules
 import net.minecraft.world.World
@@ -45,6 +53,12 @@ class VampireBloodManager() : HungerManager() {
         private val VAMPIRE_ATTACK_RANGE = EntityAttributeModifier(VAMPIRE_ATTACK_RANGE_UUID, "Vampire attack range extension", 2.0, EntityAttributeModifier.Operation.ADDITION)
         private val VAMPIRE_HEALTH_BOOST = EntityAttributeModifier(VAMPIRE_HEALTH_BOOST_UUID, "Vampire health boost", 1.0, EntityAttributeModifier.Operation.MULTIPLY_BASE)
 
+        val goodBloodTag: Tag<EntityType<*>> = TagRegistry.entityType(Identifier("haema:good_blood_sources"))
+        val mediumBloodTag: Tag<EntityType<*>> = TagRegistry.entityType(Identifier("haema:medium_blood_sources"))
+        val poorBloodTag: Tag<EntityType<*>> = TagRegistry.entityType(Identifier("haema:poor_blood_sources"))
+
+        val bloodLevelPacket = Identifier("haema:bloodlevelsync")
+
         fun getFeedCooldown(world: World): Int = world.gameRules[feedCooldown].get()
     }
 
@@ -54,7 +68,7 @@ class VampireBloodManager() : HungerManager() {
     var absoluteBloodLevel: Double = 7.0
 
     var lastFed: Long = -24000
-    var lastBloodLevel: Double = -1.0
+    var invisTicks: Long = 0
 
     override fun update(player: PlayerEntity?) {
         owner = player!!
@@ -87,16 +101,19 @@ class VampireBloodManager() : HungerManager() {
         }
 
 
-        if (getBloodLevel() >= 10) {
+        if (getBloodLevel() >= 10 && (player as Vampirable).getAbilityLevel(VampireAbility.STRENGTH) > 0) {
             player.addStatusEffect(StatusEffectInstance(VampiricStrengthEffect.instance, 10, when {
                 getBloodLevel() >= 19 -> 2
                 getBloodLevel() >= 14 -> 1
                 else -> 0
-            }))
+            }.coerceAtMost((player as Vampirable).getAbilityLevel(VampireAbility.STRENGTH)-1)))
         }
 
-        if (getBloodLevel() >= 20) {
-            player.addStatusEffect(StatusEffectInstance(StatusEffects.INVISIBILITY, 10, 0))
+        val invisLevel = (player as Vampirable).getAbilityLevel(VampireAbility.INVISIBILITY)
+        if (getBloodLevel() >= 16 && invisLevel > 0 && player.isSneaking && player.world.time-invisTicks >= 120 + invisLevel*20) {
+            invisTicks = player.world.time
+            player.addStatusEffect(StatusEffectInstance(StatusEffects.INVISIBILITY, invisLevel*20, 0))
+            ServerPlayNetworking.send(player as ServerPlayerEntity, Identifier("haema:updateinvisticks"), PacketByteBuf(Unpooled.buffer()))
         }
 
         //Healing at the bottom, so that the health boosts aren't wiped
@@ -131,9 +148,9 @@ class VampireBloodManager() : HungerManager() {
     override fun eat(item: Item?, stack: ItemStack?) {}
     @Deprecated("use blood")
     override fun setFoodLevel(foodLevel: Int) {}
-    @Deprecated("use blood", ReplaceWith("getBloodLevel().roundToInt()", "kotlin.math.roundToInt"))
+    @Deprecated("use blood", ReplaceWith("getIntBloodLevel()"))
     override fun getFoodLevel(): Int {
-        return getBloodLevel().roundToInt()
+        return getIntBloodLevel()
     }
 
     override fun fromTag(tag: CompoundTag?) {
@@ -148,8 +165,12 @@ class VampireBloodManager() : HungerManager() {
         tag?.putLong("LastFed", lastFed)
     }
 
+    fun getIntBloodLevel(): Int {
+        return floor(getBloodLevel()).toInt()
+    }
+
     fun getBloodLevel(): Double {
-        return if (owner?.isCreative == true) 19.0 else 20.0 * (sin((absoluteBloodLevel * PI) / 40.0))
+        return if (owner?.isCreative == true) 20.0 else 20.0 * (sin((absoluteBloodLevel * PI) / 40.0))
     }
 
     fun removeBlood(blood: Double) {
@@ -193,18 +214,14 @@ class VampireBloodManager() : HungerManager() {
             val vel = towards.multiply(i.toDouble())
             player.world.addParticle(DustParticleEffect.RED, entity.x+player.random.nextDouble()-0.5, entity.y+player.random.nextDouble(), entity.z+player.random.nextDouble()-0.5, vel.x, vel.y, vel.z)
         }
-        if (entity is VillagerEntity && !entity.isSleeping) {
-            entity.gossip.startGossip(player.uuid, VillageGossipType.MAJOR_NEGATIVE, 20)
-            if (player.world is ServerWorld)
-                vampireHunterSpawner.trySpawnNear(player.world as ServerWorld, player.random, player.blockPos)
-        }
+        DrinkBloodEvent.EVENT.invoker().onDrink(player, entity, player.world)
     }
 
     private fun sync(player: PlayerEntity) {
         val buf = PacketByteBuf(Unpooled.buffer())
         buf.writeDouble(absoluteBloodLevel)
         buf.writeLong(lastFed)
-        ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, bloodLevelPackeId, buf)
+        ServerPlayNetworking.send(player as ServerPlayerEntity, bloodLevelPacket, buf)
     }
 
     private fun heal(player: PlayerEntity) {
