@@ -17,7 +17,7 @@
     },
     "criteria": {
         "becomevampire": {
-            "trigger": "minecraft:impossible"
+            "trigger": "haema:conversion"
         }
     },
     "parent": "haema:get_blood"

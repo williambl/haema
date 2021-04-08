@@ -17,7 +17,7 @@
     },
     "criteria": {
         "drinkblood": {
-            "trigger": "minecraft:impossible"
+            "trigger": "haema:drink_blood"
         }
     },
     "rewards": {

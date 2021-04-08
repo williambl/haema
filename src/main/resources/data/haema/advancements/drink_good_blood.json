@@ -17,7 +17,14 @@
     },
     "criteria": {
         "drinkgoodblood": {
-            "trigger": "minecraft:impossible"
+            "trigger": "haema:drink_blood",
+            "conditions": [
+                {
+                    "entity": {
+                        "type": "#haema:good_blood_sources"
+                    }
+                }
+            ]
         }
     },
     "parent": "haema:drink_blood"
