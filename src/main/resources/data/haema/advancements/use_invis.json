@@ -2,7 +2,7 @@
     "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
     "display": {
         "title": {
-            "text": "Now you see me"
+            "text": "Now you see me, now you don't"
         },
         "description": {
             "text": "Use vampire invisibility"
@@ -18,7 +18,7 @@
     },
     "criteria": {
         "usevampireinvis": {
-            "trigger": "minecraft:impossible"
+            "trigger": "haema:use_invisibility"
         }
     },
     "parent": "haema:use_dash"

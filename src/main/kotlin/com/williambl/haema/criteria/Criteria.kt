@@ -30,4 +30,7 @@ fun registerCriteria() {
         if (vampire is ServerPlayerEntity)
             AbilityChangeCriterion.trigger(vampire, ability, level)
     }
+
+    CriterionRegistry.register(UseDashCriterion)
+    CriterionRegistry.register(UseInvisibilityCriterion)
 }

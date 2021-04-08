@@ -17,7 +17,7 @@
     },
     "criteria": {
         "usedash": {
-            "trigger": "minecraft:impossible"
+            "trigger": "haema:use_dash"
         }
     },
     "parent": "haema:drink_blood"
