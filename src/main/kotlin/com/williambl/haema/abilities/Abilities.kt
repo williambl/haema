@@ -79,4 +79,5 @@ fun registerAbilities() {
     Registry.register(abilityRegistry, Identifier("haema:invisibility"), VampireAbility.INVISIBILITY)
     Registry.register(abilityRegistry, Identifier("haema:immortality"), VampireAbility.IMMORTALITY)
     Registry.register(abilityRegistry, Identifier("haema:vision"), VampireAbility.VISION)
+    Registry.register(abilityRegistry, Identifier("haema:bat_form"), VampireAbility.BAT_FORM)
 }

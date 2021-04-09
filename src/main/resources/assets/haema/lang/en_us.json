@@ -133,6 +133,7 @@
 
   "gui.haema.hud.vampiredash": "Vampire Dash",
   "gui.haema.hud.invisibility": "Invisibility",
+  "gui.haema.hud.bat_form": "Bat Form",
   "gui.haema.hud.feed": "Feed",
   "gui.haema.hud.bloodquality": "Blood Quality: ",
   "gui.haema.hud.bloodquality.good": "Good",
@@ -178,6 +179,8 @@
   "ability.haema.immortality.description": "The power of immortality! Survive practically anything.",
   "ability.haema.vision": "VISION",
   "ability.haema.vision.description": "A vampire's vision is better in the dark - but worse in the light.",
+  "ability.haema.bat_form": "BAT FORM",
+  "ability.haema.bat_form.description": "Temporary metamorphosis into a bat - fly!",
 
   "ritual.action.add_level": "+%d ability points",
   "ritual.action.change_abilities": "Customise abilities",

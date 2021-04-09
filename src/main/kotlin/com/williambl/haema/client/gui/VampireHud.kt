@@ -6,6 +6,7 @@ import com.williambl.haema.VampireBloodManager.Companion.goodBloodTag
 import com.williambl.haema.VampireBloodManager.Companion.mediumBloodTag
 import com.williambl.haema.VampireBloodManager.Companion.poorBloodTag
 import com.williambl.haema.abilities.VampireAbility
+import com.williambl.haema.client.BAT_FORM_KEY
 import com.williambl.haema.client.ClientVampire
 import com.williambl.haema.client.DASH_KEY
 import com.williambl.haema.client.config
@@ -56,6 +57,15 @@ object VampireHud : DrawableHelper() {
                 (player as Vampirable).isVampire && player.world.time-(player.hungerManager as VampireBloodManager).invisTicks >= 120 + invisLevel*20,
                 TranslatableText("gui.haema.hud.invisibility"))
             )
+        }
+
+        val batLevel = (player as Vampirable).getAbilityLevel(VampireAbility.BAT_FORM)
+        if (batLevel > 0) {
+            texts.add(createText(
+                BAT_FORM_KEY.boundKeyLocalizedText.copy(),
+                (player as Vampirable).isVampire && (player as ClientVampire).canUseBatForm(),
+                TranslatableText("gui.haema.hud.bat_form")
+            ))
         }
 
         if (mc.crosshairTarget != null && mc.crosshairTarget!!.type == HitResult.Type.ENTITY) {

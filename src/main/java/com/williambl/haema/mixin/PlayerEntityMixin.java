@@ -3,6 +3,7 @@ package com.williambl.haema.mixin;
 import com.williambl.haema.Vampirable;
 import com.williambl.haema.VampireBloodManager;
 import com.williambl.haema.abilities.VampireAbility;
+import com.williambl.haema.abilities.bat.BatFormable;
 import com.williambl.haema.api.VampireBurningEvents;
 import com.williambl.haema.damagesource.DamageSourceExtensionsKt;
 import com.williambl.haema.effect.SunlightSicknessEffect;
@@ -28,7 +29,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin extends LivingEntity implements Vampirable {
+public abstract class PlayerEntityMixin extends LivingEntity implements Vampirable, BatFormable {
 
     @Shadow protected HungerManager hungerManager;
 

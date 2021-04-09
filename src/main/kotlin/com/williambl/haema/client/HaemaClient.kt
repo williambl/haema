@@ -18,18 +18,25 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry
+import net.minecraft.block.SideShapeType
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.options.KeyBinding
+import net.minecraft.entity.EntityType
+import net.minecraft.entity.passive.BatEntity
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
+import net.minecraft.util.math.Direction
 import net.minecraft.util.registry.Registry
+import net.minecraft.world.World
 import org.lwjgl.glfw.GLFW
 
 val VAMPIRE_SHADER: ManagedShaderEffect = ShaderEffectManager.getInstance()
     .manage(Identifier("haema", "shaders/post/vampirevision.json"))
 
 val DASH_KEY = KeyBinding("key.haema.dash", GLFW.GLFW_KEY_Z, "key.categories.movement")
+val BAT_FORM_KEY = KeyBinding("key.haema.bat_form", GLFW.GLFW_KEY_B, "key.categories.movement")
 
 val config: HaemaConfig by lazy { AutoConfig.getConfigHolder(HaemaConfig::class.java).config }
 
@@ -40,6 +47,17 @@ var distortAmount = 0.0f
         field = value * config.distortionAdjust * MinecraftClient.getInstance().options.distortionEffectScale
         VAMPIRE_SHADER.setUniformValue("DistortAmount", field)
     }
+
+private var batEntity: BatEntity? = null
+fun getBatEntity(player: PlayerEntity): BatEntity {
+    if (batEntity == null || batEntity!!.world != player.world) {
+        batEntity = BatEntity(EntityType.BAT, player.world)
+    }
+    batEntity!!.updatePositionAndAngles(player.x, player.y, player.z, player.yaw, player.pitch)
+    batEntity!!.isRoosting = batEntity!!.world.getBlockState(batEntity!!.blockPos.up()).isSideSolid(batEntity!!.world, batEntity!!.blockPos.up(), Direction.DOWN, SideShapeType.FULL)
+    batEntity!!.age = player.age
+    return batEntity!!
+}
 
 fun setRedAmount(value: Float) {
     VAMPIRE_SHADER.setUniformValue("RedMatrix", value, 0.0f, 0.0f)

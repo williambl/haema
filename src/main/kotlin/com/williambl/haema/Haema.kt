@@ -9,6 +9,8 @@ import com.williambl.haema.abilities.registerAbilities
 import com.williambl.haema.api.DrinkBloodEvent
 import com.williambl.haema.api.VampireBurningEvents
 import com.williambl.haema.blood.registerBlood
+import com.williambl.haema.component.BatFormComponent
+import com.williambl.haema.component.BatFormPlayerComponent
 import com.williambl.haema.component.VampireComponent
 import com.williambl.haema.component.VampirePlayerComponent
 import com.williambl.haema.craft.BookOfBloodRecipe
@@ -243,4 +245,5 @@ fun init() {
 
 fun registerEntityComponentFactories(registry: EntityComponentFactoryRegistry) {
     registry.registerForPlayers(VampireComponent.entityKey, { player ->  VampirePlayerComponent(player) }, RespawnCopyStrategy.ALWAYS_COPY)
+    registry.registerForPlayers(BatFormComponent.entityKey, { player ->  BatFormPlayerComponent(player) }, RespawnCopyStrategy.NEVER_COPY)
 }

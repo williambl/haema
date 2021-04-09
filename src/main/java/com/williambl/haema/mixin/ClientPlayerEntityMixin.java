@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.williambl.haema.Vampirable;
 import com.williambl.haema.VampireBloodManager;
 import com.williambl.haema.abilities.VampireAbility;
+import com.williambl.haema.abilities.bat.BatFormable;
 import com.williambl.haema.client.ClientVampire;
 import com.williambl.haema.client.HaemaClientKt;
 import com.williambl.haema.util.RaytraceUtilKt;
@@ -24,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientPlayerEntity.class)
 public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity implements ClientVampire {
 
-    private int pressedTicks = 0;
+    private int dashPressedTicks = 0;
     private long lastDashed = -24000;
 
     public ClientPlayerEntityMixin(ClientWorld world, GameProfile profile) {
@@ -40,7 +41,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
             HaemaClientKt.setRedAmount(Math.max(1.3f, 2.3f - (this.world.getTime() - ((VampireBloodManager) this.hungerManager).getLastFed()) / (float) VampireBloodManager.Companion.getFeedCooldown(world)));
 
-            if (pressedTicks > 0 && !(HaemaClientKt.getDASH_KEY().isPressed()) && canDash()) {
+            if (dashPressedTicks > 0 && !(HaemaClientKt.getDASH_KEY().isPressed()) && canDash()) {
                 PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
                 ClientPlayNetworking.send(new Identifier("haema:dash"), buf);
                 lastDashed = world.getTime();
@@ -50,13 +51,13 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                     world.addParticle(new DustParticleEffect(0, 0, 0, 1), target.x - 0.5 + random.nextDouble(), target.y + random.nextDouble() * 2, target.z - 0.5 + random.nextDouble(), 0.0, 0.5, 0.0);
                 }
             }
-            pressedTicks = HaemaClientKt.getDASH_KEY().isPressed() ? pressedTicks + 1 : 0;
+            dashPressedTicks = HaemaClientKt.getDASH_KEY().isPressed() ? dashPressedTicks + 1 : 0;
 
 
             long timeSinceDash = world.getTime() - lastDashed;
 
             float distortAmount = HaemaClientKt.getDistortAmount();
-            if (pressedTicks > 0 && canDash()) {
+            if (dashPressedTicks > 0 && canDash()) {
                 HaemaClientKt.setDistortAmount(Math.max(HaemaClientKt.getDistortAmount() - 0.05f, -0.2f));
             } else if (timeSinceDash <= 8) {
                 if (timeSinceDash == 0)
@@ -69,6 +70,10 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                 } else {
                     HaemaClientKt.setDistortAmount(distortAmount - Math.copySign(0.1f, distortAmount));
                 }
+            }
+
+            if (HaemaClientKt.getBAT_FORM_KEY().isPressed() && !((BatFormable) this).isBat() && canUseBatForm()) {
+                ((BatFormable)this).setBat(true);
             }
         }
     }
@@ -83,5 +88,10 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                                 || abilities.creativeMode
         )
                 && abilityLevel > 0;
+    }
+
+    @Override
+    public boolean canUseBatForm() {
+        return true;
     }
 }

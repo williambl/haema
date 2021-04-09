@@ -58,7 +58,8 @@
   },
   "custom": {
     "cardinal-components": [
-      "haema:vampire"
+      "haema:vampire",
+      "haema:bat_form"
     ],
     "vanguard": {
       "curse-project-id": "391257"

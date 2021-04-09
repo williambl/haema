@@ -16,5 +16,6 @@ open class VampireAbility(val maxLevel: Int = Int.MAX_VALUE, val iconItem: ItemS
         val INVISIBILITY = VampireAbility(2, PotionUtil.setPotion(ItemStack(Items.POTION), Potions.INVISIBILITY))
         val IMMORTALITY = VampireAbility(1, ItemStack(Items.TOTEM_OF_UNDYING))
         val VISION = VampireAbility(1, ItemStack(Items.ENDER_EYE))
+        val BAT_FORM = VampireAbility(2, ItemStack(Items.BAT_SPAWN_EGG))
     }
 }
