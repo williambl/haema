@@ -1,14 +1,14 @@
 package com.williambl.haema.compat.rats
 
 import com.williambl.haema.Vampirable
-import com.williambl.haema.api.DrinkBloodEvent
+import com.williambl.haema.api.BloodDrinkingEvents
 import com.williambl.haema.component.VampireComponent
 import com.williambl.haema.component.VampirePlayerComponent
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
 import ladysnake.ratsmischief.common.entity.RatEntity
 
 fun initRatsMischiefIntegration() {
-    DrinkBloodEvent.EVENT.register(DrinkBloodEvent { drinker, target, world ->
+    BloodDrinkingEvents.ON_BLOOD_DRINK.register(BloodDrinkingEvents.DrinkBloodEvent { drinker, target, world ->
         if (target is RatEntity) {
             (target as Vampirable).isVampire = true
         }

@@ -2,11 +2,10 @@ package com.williambl.haema
 
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes
 import com.williambl.haema.abilities.VampireAbility
-import com.williambl.haema.api.DrinkBloodEvent
+import com.williambl.haema.api.BloodDrinkingEvents
 import com.williambl.haema.damagesource.BloodLossDamageSource
 import com.williambl.haema.effect.VampiricStrengthEffect
 import com.williambl.haema.effect.VampiricWeaknessEffect
-import com.williambl.haema.hunter.VampireHunterSpawner
 import com.williambl.haema.util.computeValueWithout
 import com.williambl.haema.util.feedCooldown
 import io.netty.buffer.Unpooled
@@ -18,7 +17,6 @@ import net.minecraft.entity.attribute.EntityAttributeModifier
 import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.effect.StatusEffects
-import net.minecraft.entity.passive.VillagerEntity
 import net.minecraft.entity.player.HungerManager
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.Item
@@ -27,12 +25,10 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundEvents
 import net.minecraft.tag.Tag
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
-import net.minecraft.village.VillageGossipType
 import net.minecraft.world.GameRules
 import net.minecraft.world.World
 import java.util.*
@@ -214,7 +210,7 @@ class VampireBloodManager() : HungerManager() {
             val vel = towards.multiply(i.toDouble())
             player.world.addParticle(DustParticleEffect.RED, entity.x+player.random.nextDouble()-0.5, entity.y+player.random.nextDouble(), entity.z+player.random.nextDouble()-0.5, vel.x, vel.y, vel.z)
         }
-        DrinkBloodEvent.EVENT.invoker().onDrink(player, entity, player.world)
+        BloodDrinkingEvents.ON_BLOOD_DRINK.invoker().onDrink(player, entity, player.world)
     }
 
     private fun sync(player: PlayerEntity) {
