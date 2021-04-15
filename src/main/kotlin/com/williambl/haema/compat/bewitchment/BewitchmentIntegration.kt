@@ -34,6 +34,9 @@ fun registerBewitchmentEventListeners() {
             else -> currentBloodToGive
         }
     })
+    BloodSuckEvents.ON_BLOOD_SUCK.register(BloodSuckEvents.OnBloodSuck { player, target, amount ->
+        BloodDrinkingEvents.ON_BLOOD_DRINK.invoker().onDrink(player, target, player.world)
+    })
     OnTransformationSet.EVENT.register(OnTransformationSet { player, transformation ->
         if (transformation == BWTransformations.VAMPIRE) {
             (player as Vampirable).isVampire = true
