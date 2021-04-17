@@ -53,7 +53,7 @@ object VampireHud : DrawableHelper() {
         if (invisLevel > 0 && (player.hungerManager as VampireBloodManager).getBloodLevel() >= 18f) {
             texts.add(createText(
                 MinecraftClient.getInstance().options.keySneak.boundKeyLocalizedText.copy(),
-                (player as Vampirable).isVampire && player.world.time-(player.hungerManager as VampireBloodManager).invisTicks >= 120 + invisLevel*20,
+                (player as Vampirable).isVampire && player.world.time-(player.hungerManager as VampireBloodManager).invisTicks >= 120 + invisLevel*60,
                 TranslatableText("gui.haema.hud.invisibility"))
             )
         }

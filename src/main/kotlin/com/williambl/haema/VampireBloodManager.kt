@@ -6,7 +6,6 @@ import com.williambl.haema.api.DrinkBloodEvent
 import com.williambl.haema.damagesource.BloodLossDamageSource
 import com.williambl.haema.effect.VampiricStrengthEffect
 import com.williambl.haema.effect.VampiricWeaknessEffect
-import com.williambl.haema.hunter.VampireHunterSpawner
 import com.williambl.haema.util.computeValueWithout
 import com.williambl.haema.util.feedCooldown
 import io.netty.buffer.Unpooled
@@ -18,7 +17,6 @@ import net.minecraft.entity.attribute.EntityAttributeModifier
 import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.effect.StatusEffects
-import net.minecraft.entity.passive.VillagerEntity
 import net.minecraft.entity.player.HungerManager
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.Item
@@ -27,12 +25,10 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundEvents
 import net.minecraft.tag.Tag
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
-import net.minecraft.village.VillageGossipType
 import net.minecraft.world.GameRules
 import net.minecraft.world.World
 import java.util.*
@@ -110,9 +106,9 @@ class VampireBloodManager() : HungerManager() {
         }
 
         val invisLevel = (player as Vampirable).getAbilityLevel(VampireAbility.INVISIBILITY)
-        if (getBloodLevel() >= 16 && invisLevel > 0 && player.isSneaking && player.world.time-invisTicks >= 120 + invisLevel*20) {
+        if (getBloodLevel() >= 16 && invisLevel > 0 && player.isSneaking && player.world.time-invisTicks >= 120 + invisLevel*60) {
             invisTicks = player.world.time
-            player.addStatusEffect(StatusEffectInstance(StatusEffects.INVISIBILITY, invisLevel*20, 0))
+            player.addStatusEffect(StatusEffectInstance(StatusEffects.INVISIBILITY, invisLevel*60, 0))
             ServerPlayNetworking.send(player as ServerPlayerEntity, Identifier("haema:updateinvisticks"), PacketByteBuf(Unpooled.buffer()))
         }
 
