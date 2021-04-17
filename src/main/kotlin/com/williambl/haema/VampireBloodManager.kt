@@ -76,7 +76,7 @@ class VampireBloodManager() : HungerManager() {
         }
 
         if (getBloodLevel() <= 3) {
-            player.addStatusEffect(StatusEffectInstance(VampiricWeaknessEffect.instance, 5, 3 - getBloodLevel().roundToInt()))
+            player.addStatusEffect(StatusEffectInstance(VampiricWeaknessEffect.instance, 5, 3 - getBloodLevel().roundToInt(), false, false, true))
             if (player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.hasModifier(VAMPIRE_HEALTH_BOOST) == true) {
                 player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)!!.removeModifier(VAMPIRE_HEALTH_BOOST)
             }
@@ -98,11 +98,11 @@ class VampireBloodManager() : HungerManager() {
 
 
         if (getBloodLevel() >= 10 && (player as Vampirable).getAbilityLevel(VampireAbility.STRENGTH) > 0) {
-            player.addStatusEffect(StatusEffectInstance(VampiricStrengthEffect.instance, 10, when {
+            player.addStatusEffect(StatusEffectInstance(VampiricStrengthEffect.instance, 40, when {
                 getBloodLevel() >= 19 -> 2
                 getBloodLevel() >= 14 -> 1
                 else -> 0
-            }.coerceAtMost((player as Vampirable).getAbilityLevel(VampireAbility.STRENGTH)-1)))
+            }.coerceAtMost((player as Vampirable).getAbilityLevel(VampireAbility.STRENGTH)-1), false, false, true))
         }
 
         val invisLevel = (player as Vampirable).getAbilityLevel(VampireAbility.INVISIBILITY)
