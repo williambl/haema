@@ -36,6 +36,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
 
     @Shadow public abstract void setAbsorptionAmount(float amount);
 
+    @Shadow public abstract float getAbsorptionAmount();
+
     protected VampireBloodManager bloodManager = null; // to avoid a load of casts
     protected CompoundTag nbt;
 
@@ -52,7 +54,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
 
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;tick()V"))
     void vampireTick(CallbackInfo ci) {
-        if (!Float.isFinite(getHealth()) || !Float.isFinite(getAbsorptionAmount())) {
+        if (!Float.isFinite(getHealth()) || !Float.isFinite(getAbsorptionAmount()) || getHealth() < 0 || getAbsorptionAmount() < 0) {
             setAbsorptionAmount(0.0f);
             setHealth(0.0f);
         }
