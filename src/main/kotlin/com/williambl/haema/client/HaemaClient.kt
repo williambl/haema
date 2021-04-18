@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem
 import com.williambl.haema.Vampirable
 import com.williambl.haema.VampireBloodManager
 import com.williambl.haema.abilities.VampireAbility
+import com.williambl.haema.api.client.VampireHudAddTextEvent
 import com.williambl.haema.client.config.HaemaConfig
 import com.williambl.haema.client.gui.RitualTableScreen
 import com.williambl.haema.client.gui.VampireHud
@@ -22,7 +23,11 @@ import net.minecraft.client.MinecraftClient
 import net.minecraft.client.options.KeyBinding
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.text.Text
+import net.minecraft.text.TranslatableText
+import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
+import net.minecraft.util.hit.EntityHitResult
+import net.minecraft.util.hit.HitResult
 import net.minecraft.util.registry.Registry
 import org.lwjgl.glfw.GLFW
 
@@ -87,4 +92,64 @@ fun init() {
     ScreenRegistry.register(RitualTableScreenHandler.ritualTableScreenHandlerType) {
             screenHandler: RitualTableScreenHandler, inv: PlayerInventory, title: Text -> RitualTableScreen(screenHandler, inv, title)
     }
+
+    VampireHudAddTextEvent.EVENT.register(VampireHudAddTextEvent { player, createText ->
+        val dashLevel = (player as Vampirable).getAbilityLevel(VampireAbility.DASH)
+        if (dashLevel > 0 && (player.hungerManager as VampireBloodManager).getBloodLevel() > 18f) {
+            return@VampireHudAddTextEvent listOf(createText(
+                DASH_KEY.boundKeyLocalizedText.copy(),
+                (player as Vampirable).isVampire && (player as ClientVampire).canDash(),
+                TranslatableText("gui.haema.hud.vampiredash")
+            ))
+        }
+        return@VampireHudAddTextEvent emptyList()
+    })
+
+    VampireHudAddTextEvent.EVENT.register(VampireHudAddTextEvent { player, createText ->
+        val invisLevel = (player as Vampirable).getAbilityLevel(VampireAbility.INVISIBILITY)
+        if (invisLevel > 0 && (player.hungerManager as VampireBloodManager).getBloodLevel() >= 18f) {
+            return@VampireHudAddTextEvent listOf(
+                createText(
+                    MinecraftClient.getInstance().options.keySneak.boundKeyLocalizedText.copy(),
+                    (player as Vampirable).isVampire && player.world.time - (player.hungerManager as VampireBloodManager).invisTicks >= 120 + invisLevel * 20,
+                    TranslatableText("gui.haema.hud.invisibility")
+                )
+            )
+        }
+        return@VampireHudAddTextEvent emptyList()
+    })
+
+    VampireHudAddTextEvent.EVENT.register(VampireHudAddTextEvent { player, createText ->
+        val texts = mutableListOf<Text>()
+        val mc = MinecraftClient.getInstance()
+        if (mc.crosshairTarget != null && mc.crosshairTarget!!.type == HitResult.Type.ENTITY) {
+            val lookingAt = (mc.crosshairTarget as EntityHitResult).entity.type
+            if (VampireBloodManager.poorBloodTag.contains(lookingAt) || VampireBloodManager.mediumBloodTag.contains(lookingAt) || VampireBloodManager.goodBloodTag.contains(lookingAt)) {
+                if (player.isSneaking) {
+                    texts.add(
+                        TranslatableText("gui.haema.hud.bloodquality").append(
+                            when {
+                                VampireBloodManager.goodBloodTag.contains(lookingAt) -> TranslatableText("gui.haema.hud.bloodquality.good").formatted(
+                                    Formatting.GREEN
+                                )
+                                VampireBloodManager.mediumBloodTag.contains(lookingAt) -> TranslatableText("gui.haema.hud.bloodquality.medium").formatted(
+                                    Formatting.YELLOW
+                                )
+                                else -> TranslatableText("gui.haema.hud.bloodquality.poor").formatted(Formatting.RED)
+                            }
+                        )
+                    )
+                }
+
+                texts.add(
+                    createText(
+                        TranslatableText("key.sneak").append(" + ").append(mc.options.keyUse.boundKeyLocalizedText),
+                        true,
+                        TranslatableText("gui.haema.hud.feed")
+                    )
+                )
+            }
+        }
+        return@VampireHudAddTextEvent texts
+    })
 }
