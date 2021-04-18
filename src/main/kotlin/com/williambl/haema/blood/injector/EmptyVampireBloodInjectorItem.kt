@@ -46,8 +46,7 @@ class EmptyVampireBloodInjectorItem(settings: Settings?) : Item(settings) {
                     return false
                 }
 
-                user.isVampire = false
-                user.removeBloodManager()
+                Vampirable.deconvert(user)
                 return true
             }
             if ((user.hungerManager as VampireBloodManager).absoluteBloodLevel < 6.0) {

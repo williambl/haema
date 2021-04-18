@@ -35,6 +35,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
 
     @Shadow public abstract void setAbsorptionAmount(float amount);
 
+    @Shadow public abstract float getAbsorptionAmount();
+
     protected VampireBloodManager bloodManager = null; // to avoid a load of casts
     protected CompoundTag nbt;
 
@@ -51,7 +53,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
 
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;tick()V"))
     void vampireTick(CallbackInfo ci) {
-        if (!Float.isFinite(getHealth()) || !Float.isFinite(getAbsorptionAmount())) {
+        if (!Float.isFinite(getHealth()) || !Float.isFinite(getAbsorptionAmount()) || getHealth() < 0 || getAbsorptionAmount() < 0) {
             setAbsorptionAmount(0.0f);
             setHealth(0.0f);
         }
@@ -83,7 +85,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
 
     @Redirect(method = "isInvulnerableTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$Key;)Z", ordinal = 1))
     boolean makeVampiresImmuneToFalling(GameRules gameRules, GameRules.Key<GameRules.BooleanRule> rule) {
-        return gameRules.getBoolean(rule) && !(isVampire() && getAbilityLevel(VampireAbility.DASH) >= 3);
+        return gameRules.getBoolean(rule) && !(isVampire() && getAbilityLevel(VampireAbility.Companion.getDASH()) >= 3);
     }
 
     @Redirect(method = "isInvulnerableTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$Key;)Z", ordinal = 0))
@@ -93,7 +95,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
 
     @Override
     public boolean isDead() {
-        if (isVampire() && getAbilityLevel(VampireAbility.IMMORTALITY) > 0)
+        if (isVampire() && getAbilityLevel(VampireAbility.Companion.getIMMORTALITY()) > 0)
             return super.isDead() && isKilled();
         return super.isDead();
     }

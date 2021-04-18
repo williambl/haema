@@ -44,7 +44,7 @@ public abstract class LivingEntityMixin extends Entity {
     void haema$setDeadVampireAsKilled(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         //noinspection ConstantConditions
         if (((Object) this) instanceof PlayerEntity && ((Vampirable) this).isVampire()
-                && source != null && ((Vampirable) this).getAbilityLevel(VampireAbility.IMMORTALITY) > 0) {
+                && source != null && ((Vampirable) this).getAbilityLevel(VampireAbility.Companion.getIMMORTALITY()) > 0) {
             if (this.getHealth() <= 0 && DamageSourceExtensionsKt.isEffectiveAgainstVampires(source, this.world)) {
                 ((VampireBloodManager) ((PlayerEntity) (Object) this).getHungerManager()).setAbsoluteBloodLevel(0.0);
                 ((Vampirable) this).setKilled(true);
@@ -56,7 +56,7 @@ public abstract class LivingEntityMixin extends Entity {
     void haema$keepVampireAlive(DamageSource source, CallbackInfoReturnable<Boolean> cir) {
         //noinspection ConstantConditions
         if (((Object) this) instanceof PlayerEntity && ((Vampirable)this).isVampire()
-                && source != null && ((Vampirable)this).getAbilityLevel(VampireAbility.IMMORTALITY) > 0) {
+                && source != null && ((Vampirable)this).getAbilityLevel(VampireAbility.Companion.getIMMORTALITY()) > 0) {
             if (!(this.getHealth() <= 0 && DamageSourceExtensionsKt.isEffectiveAgainstVampires(source, this.world))) {
                 cir.setReturnValue(true);
             }

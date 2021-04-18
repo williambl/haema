@@ -1,6 +1,7 @@
 package com.williambl.haema
 
 import com.williambl.haema.abilities.VampireAbility
+import com.williambl.haema.api.VampireConversionEvents
 import com.williambl.haema.component.VampireComponent
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.particle.DustParticleEffect
@@ -58,6 +59,15 @@ interface Vampirable {
                     (entity.world as ServerWorld).spawnParticles(DustParticleEffect.RED, entity.x, entity.y+1, entity.z, 25, 0.5, 1.0, 0.5, 1.0)
                     (entity.world as ServerWorld).spawnParticles(DustParticleEffect(0f, 0f, 0f, 1f), entity.x, entity.y+1, entity.z, 25, 0.5, 1.0, 0.5, 1.0)
                 }
+                VampireConversionEvents.CONVERT.invoker().onConvert(entity)
+            }
+        }
+
+        fun deconvert(entity: PlayerEntity) {
+            if ((entity as Vampirable).isVampire) {
+                entity.isVampire = false
+                entity.removeBloodManager()
+                VampireConversionEvents.DECONVERT.invoker().onDeconvert(entity)
             }
         }
     }
