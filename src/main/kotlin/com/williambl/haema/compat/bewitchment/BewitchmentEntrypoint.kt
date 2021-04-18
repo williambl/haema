@@ -1,5 +1,11 @@
 package com.williambl.haema.compat.bewitchment
 
+import com.williambl.haema.logger
+import net.fabricmc.loader.api.FabricLoader
+
 fun init() {
-    registerBewitchmentEventListeners()
+    if (FabricLoader.getInstance().isModLoaded("bewitchment")) {
+        logger.info("Bewitchment detected.")
+        registerBewitchmentEventListeners()
+    }
 }
