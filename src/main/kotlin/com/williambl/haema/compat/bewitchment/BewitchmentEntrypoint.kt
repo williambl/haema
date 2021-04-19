@@ -9,3 +9,10 @@ fun init() {
         registerBewitchmentEventListeners()
     }
 }
+
+fun clientInit() {
+    if (FabricLoader.getInstance().isModLoaded("bewitchment")) {
+        logger.info("Bewitchment detected.")
+        registerBewitchmentClientEventListeners()
+    }
+}

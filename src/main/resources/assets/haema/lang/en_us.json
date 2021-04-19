@@ -182,5 +182,8 @@
   "ritual.action.add_level": "+%d ability points",
   "ritual.action.change_abilities": "Customise abilities",
 
-  "rei.haema.ritual": "Ritual"
+  "rei.haema.ritual": "Ritual",
+
+  "compat.bewitchment.gui.haema.hud.untransform": "Untransform",
+  "compat.bewitchment.gui.haema.hud.transform": "Transform"
 }

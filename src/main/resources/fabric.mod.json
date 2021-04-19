@@ -28,7 +28,8 @@
       "com.williambl.haema.compat.bewitchment.BewitchmentEntrypointKt::init"
     ],
     "client": [
-      "com.williambl.haema.client.HaemaClientKt::init"
+      "com.williambl.haema.client.HaemaClientKt::init",
+      "com.williambl.haema.compat.bewitchment.BewitchmentEntrypointKt::clientInit"
     ],
     "rei_plugins": [
       "com.williambl.haema.compat.rei.HaemaREIPlugin"
