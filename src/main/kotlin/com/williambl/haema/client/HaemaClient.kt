@@ -111,7 +111,7 @@ fun init() {
             return@VampireHudAddTextEvent listOf(
                 createText(
                     MinecraftClient.getInstance().options.keySneak.boundKeyLocalizedText.copy(),
-                    (player as Vampirable).isVampire && player.world.time - (player.hungerManager as VampireBloodManager).invisTicks >= 120 + invisLevel * 20,
+                    (player as Vampirable).isVampire && player.world.time - (player.hungerManager as VampireBloodManager).invisTicks >= 120 + invisLevel * 60,
                     TranslatableText("gui.haema.hud.invisibility")
                 )
             )

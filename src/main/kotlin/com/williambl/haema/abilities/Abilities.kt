@@ -1,9 +1,11 @@
 package com.williambl.haema.abilities
 
+import com.williambl.haema.mixin.RegistryAccessor
 import com.williambl.haema.ritual.RitualTableScreenHandler
 import com.williambl.haema.util.raytraceForDash
 import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
+import net.minecraft.command.argument.ArgumentTypes
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.server.MinecraftServer
@@ -13,17 +15,25 @@ import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.util.Identifier
+import net.minecraft.util.registry.DefaultedRegistry
+import net.minecraft.util.registry.Registry
+import net.minecraft.util.registry.RegistryKey
+
+val abilityRegistryKey: RegistryKey<Registry<VampireAbility>> = RegistryAccessor.createRegistryKey("haema:ability")
+val abilityRegistry: DefaultedRegistry<VampireAbility> = RegistryAccessor.create(abilityRegistryKey, "haema:none") { VampireAbility.NONE }
 
 fun registerAbilities() {
+    ArgumentTypes.register("haema:ability", VampireAbilityArgumentType::class.java, VampireAbilityArgumentType.Serialiser)
+
     ServerPlayNetworking.registerGlobalReceiver(Identifier("haema:transferlevels")) { server: MinecraftServer, player: ServerPlayerEntity, networkHandler: ServerPlayNetworkHandler, buf: PacketByteBuf, sender: PacketSender ->
-        if (player.currentScreenHandler.syncId == buf.readInt() && player.currentScreenHandler is RitualTableScreenHandler) {
-            val amount = buf.readInt()
-            val from = buf.readInt()
-            val to = buf.readInt()
+        if (player.currentScreenHandler.syncId == buf.readVarInt() && player.currentScreenHandler is RitualTableScreenHandler) {
+            val amount = buf.readVarInt()
+            val from = buf.readVarInt()
+            val to = buf.readVarInt()
             val currentAmountFrom = (player.currentScreenHandler as RitualTableScreenHandler).getProperty(from)
             val currentAmountTo = (player.currentScreenHandler as RitualTableScreenHandler).getProperty(to)
 
-            if (currentAmountFrom-amount >= 0 && currentAmountTo+amount <= VampireAbility.values()[to].maxLevel) {
+            if (currentAmountFrom-amount >= 0 && currentAmountTo+amount <= abilityRegistry[to].maxLevel) {
                 player.currentScreenHandler.setProperty(from, currentAmountFrom-amount)
                 player.currentScreenHandler.setProperty(to, currentAmountTo+amount)
             }
@@ -62,4 +72,11 @@ fun registerAbilities() {
             player.teleport(target.x, target.y, target.z)
         }
     }
+
+    Registry.register(abilityRegistry, Identifier("haema:none"), VampireAbility.NONE)
+    Registry.register(abilityRegistry, Identifier("haema:strength"), VampireAbility.STRENGTH)
+    Registry.register(abilityRegistry, Identifier("haema:dash"), VampireAbility.DASH)
+    Registry.register(abilityRegistry, Identifier("haema:invisibility"), VampireAbility.INVISIBILITY)
+    Registry.register(abilityRegistry, Identifier("haema:immortality"), VampireAbility.IMMORTALITY)
+    Registry.register(abilityRegistry, Identifier("haema:vision"), VampireAbility.VISION)
 }

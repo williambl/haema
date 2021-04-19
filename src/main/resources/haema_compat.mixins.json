@@ -8,6 +8,7 @@
     "rats.RatEntityMixin"
   ],
   "client": [
+    "rats.client.RatEntityModelMixin"
   ],
   "server": [
   ],

@@ -167,10 +167,16 @@
   "text.autoconfig.haema.option.saturationAdjust": "Vampire Vision saturation effect strength",
   "text.autoconfig.haema.option.saturationAdjust.@Tooltip": "0 = no saturation change. 1 = default vampire saturation change.",
 
+  "ability.haema.none": "NONE",
+  "ability.haema.strength": "STRENGTH",
   "ability.haema.strength.description": "Vampiric Strength gives you increased attack strength and speed.",
+  "ability.haema.dash": "DASH",
   "ability.haema.dash.description": "Your dash ability is a short-range teleport.",
+  "ability.haema.invisibility": "INVISIBILITY",
   "ability.haema.invisibility.description": "A short-lasting invisibility when you sneak.",
+  "ability.haema.immortality": "IMMORTALITY",
   "ability.haema.immortality.description": "The power of immortality! Survive practically anything.",
+  "ability.haema.vision": "VISION",
   "ability.haema.vision.description": "A vampire's vision is better in the dark - but worse in the light.",
 
   "ritual.action.add_level": "+%d ability points",
