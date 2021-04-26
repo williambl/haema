@@ -122,7 +122,7 @@ dependencies {
     modRuntime "io.github.cottonmc:LibCD:${project.libcd_version}"
 
     //modCompileOnly "curse.maven:bewitchment-394915:${project.bewitchment_version}"
-    modCompileOnly "moriyashiine:bewitchment:1.16.5-8" // no jitpack, curse outdated
+    modCompileOnly "moriyashiine:bewitchment:1.16.5-9" // no jitpack, curse outdated
 
     //include "io.github.ladysnake:vanguard:${vanguard_version}"
 
