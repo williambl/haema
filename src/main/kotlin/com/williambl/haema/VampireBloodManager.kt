@@ -2,6 +2,7 @@ package com.williambl.haema
 
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes
 import com.williambl.haema.abilities.VampireAbility
+import com.williambl.haema.api.BloodChangeEvents
 import com.williambl.haema.api.BloodDrinkingEvents
 import com.williambl.haema.damagesource.BloodLossDamageSource
 import com.williambl.haema.effect.VampiricStrengthEffect
@@ -170,10 +171,12 @@ class VampireBloodManager() : HungerManager() {
     }
 
     fun removeBlood(blood: Double) {
+        owner?.let { BloodChangeEvents.ON_BLOOD_REMOVE.invoker().onRemove(it, blood) }
         absoluteBloodLevel = max(absoluteBloodLevel - blood, 0.0)
     }
 
     fun addBlood(blood: Double) {
+        owner?.let { BloodChangeEvents.ON_BLOOD_ADD.invoker().onAdd(it, blood) }
         absoluteBloodLevel = min(absoluteBloodLevel + blood, 20.0)
     }
 

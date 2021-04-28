@@ -2,6 +2,7 @@ package com.williambl.haema.compat.bewitchment
 
 import com.williambl.haema.Vampirable
 import com.williambl.haema.VampireBloodManager
+import com.williambl.haema.api.BloodChangeEvents
 import com.williambl.haema.api.BloodDrinkingEvents
 import com.williambl.haema.api.client.VampireHudAddTextEvent
 import moriyashiine.bewitchment.api.BewitchmentAPI
@@ -18,18 +19,19 @@ import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 
 fun registerBewitchmentEventListeners() {
-    BloodSetEvents.ON_BLOOD_FILL.register(BloodSetEvents.OnFillBlood { entity, amount, simulated ->
-        if (!simulated) {
-            if (entity is Vampirable && entity is PlayerEntity && entity.hungerManager is VampireBloodManager) {
-                (entity.hungerManager as VampireBloodManager).addBlood(amount*0.2)
-            }
+    BloodSetEvents.ON_BLOOD_SET.register(BloodSetEvents.OnSetBlood { entity, amount ->
+        if (entity is Vampirable && entity is PlayerEntity && entity.hungerManager is VampireBloodManager) {
+            (entity.hungerManager as VampireBloodManager).absoluteBloodLevel = amount*0.2
         }
     })
-    BloodSetEvents.ON_BLOOD_DRAIN.register(BloodSetEvents.OnDrainBlood { entity, amount, simulated ->
-        if (!simulated) {
-            if (entity is Vampirable && entity is PlayerEntity && entity.hungerManager is VampireBloodManager) {
-                (entity.hungerManager as VampireBloodManager).removeBlood(amount*0.2)
-            }
+    BloodChangeEvents.ON_BLOOD_ADD.register(BloodChangeEvents.AddBloodEvent { player, amount ->
+        if (BewitchmentAPI.isVampire(player, true)) {
+            (player as BloodAccessor).fillBlood((amount * 5).toInt(), true)
+        }
+    })
+    BloodChangeEvents.ON_BLOOD_REMOVE.register(BloodChangeEvents.RemoveBloodEvent { player, amount ->
+        if (BewitchmentAPI.isVampire(player, true)) {
+            (player as BloodAccessor).drainBlood((amount * 5).toInt(), true)
         }
     })
     BloodSuckEvents.BLOOD_AMOUNT.register(BloodSuckEvents.SetBloodAmount { player, target, currentBloodToGive ->
