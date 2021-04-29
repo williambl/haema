@@ -132,6 +132,8 @@ dependencies {
     //modCompileOnly "curse.maven:bewitchment-394915:${project.bewitchment_version}"
     modCompileOnly "moriyashiine:bewitchment:1.16.5-11" // no jitpack, curse outdated
 
+    modCompileOnly "com.github.Flemmli97:Flan:${project.flan_version}"
+
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
     //include "io.github.ladysnake:vanguard:${vanguard_version}"
