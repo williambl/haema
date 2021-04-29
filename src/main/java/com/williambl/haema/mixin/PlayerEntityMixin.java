@@ -25,7 +25,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements Vampirable {
@@ -58,7 +57,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
             setAbsorptionAmount(0.0f);
             setHealth(0.0f);
         }
-        if (isVampire()) {
+        if (isVampire() && !isDead()) {
             checkBloodManager();
 
             if (!this.world.isClient
@@ -67,14 +66,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
             ) {
                 this.addStatusEffect(new StatusEffectInstance(SunlightSicknessEffect.Companion.getInstance(), 5, 0));
             }
-        }
-    }
-
-    @Inject(method = "damage", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/LivingEntity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
-    void damage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        if (isVampire()) {
-            boolean isDamageSourceEffective = DamageSourceExtensionsKt.isEffectiveAgainstVampires(source, world);
-            this.setKilled(this.getHealth() <= 0 && isDamageSourceEffective);
         }
     }
 
@@ -104,8 +95,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
 
     @Override
     public boolean isDead() {
-        if (isVampire() && bloodManager != null && getAbilityLevel(VampireAbility.Companion.getIMMORTALITY()) > 0)
-            return super.isDead() && bloodManager.getBloodLevel() <= 0 && isKilled();
+        if (isVampire() && getAbilityLevel(VampireAbility.Companion.getIMMORTALITY()) > 0)
+            return super.isDead() && isKilled();
         return super.isDead();
     }
 
