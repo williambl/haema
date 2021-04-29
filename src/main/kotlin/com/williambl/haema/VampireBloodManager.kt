@@ -115,7 +115,7 @@ class VampireBloodManager() : HungerManager() {
 
         //Healing at the bottom, so that the health boosts aren't wiped
         if (getBloodLevel() >= 8 || (getBloodLevel() > 0 && player.health <= 0 && player.isAlive)) {
-            if (player.world.gameRules.get(GameRules.NATURAL_REGENERATION).get() && player.canFoodHeal()) {
+            if (player.world.gameRules.get(GameRules.NATURAL_REGENERATION).get() && player.health > 0 && player.health < player.maxHealth) {
                 val defaultMaxHealth = player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.computeValueWithout(UUID.fromString("858a6a28-5092-49ea-a94e-eb74db018a92")) ?: 20.0
                 if (player.health >= defaultMaxHealth) {
                     if (player.age % 20 == 0 && (player.health - defaultMaxHealth) < when {

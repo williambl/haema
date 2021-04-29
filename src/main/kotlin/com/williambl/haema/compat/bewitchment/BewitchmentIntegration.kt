@@ -6,9 +6,7 @@ import com.williambl.haema.api.BloodChangeEvents
 import com.williambl.haema.api.BloodDrinkingEvents
 import com.williambl.haema.api.client.VampireHudAddTextEvent
 import moriyashiine.bewitchment.api.BewitchmentAPI
-import moriyashiine.bewitchment.api.event.BloodSetEvents
-import moriyashiine.bewitchment.api.event.BloodSuckEvents
-import moriyashiine.bewitchment.api.event.OnTransformationSet
+import moriyashiine.bewitchment.api.event.*
 import moriyashiine.bewitchment.api.interfaces.entity.BloodAccessor
 import moriyashiine.bewitchment.api.interfaces.entity.TransformationAccessor
 import moriyashiine.bewitchment.client.BewitchmentClient
@@ -57,6 +55,10 @@ fun registerBewitchmentEventListeners() {
     BloodDrinkingEvents.CANCEL.register(BloodDrinkingEvents.CancelBloodDrinkEvent { player, world, hand, target, entityHitResult ->
         !BewitchmentAPI.isVampire(player, true)
     })
+    // Let Haema handle burning
+    AllowVampireBurn.EVENT.register(AllowVampireBurn { player -> false })
+    // Let Haema handle healing
+    AllowVampireHeal.EVENT.register(AllowVampireHeal { playerEntity, isPledgedToLilith -> false })
 }
 
 fun registerBewitchmentClientEventListeners() {
