@@ -17,21 +17,39 @@ import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 
 fun registerBewitchmentEventListeners() {
+    //
+    // == Blood Syncing ==
+    //
+
+    // Sync blood Bewitchment -> Haema
     BloodSetEvents.ON_BLOOD_SET.register(BloodSetEvents.OnSetBlood { entity, amount ->
         if (entity is Vampirable && entity is PlayerEntity && entity.hungerManager is VampireBloodManager) {
+            @Suppress("DEPRECATION")
             (entity.hungerManager as VampireBloodManager).absoluteBloodLevel = amount*0.2
         }
     })
+    // Sync blood changes Haema -> Bewitchment
     BloodChangeEvents.ON_BLOOD_ADD.register(BloodChangeEvents.AddBloodEvent { player, amount ->
         if (BewitchmentAPI.isVampire(player, true)) {
-            (player as BloodAccessor).fillBlood((amount * 5).toInt(), true)
+            (player as BloodAccessor).fillBlood((amount * 5).toInt(), false)
         }
     })
+    // Sync blood changes Haema -> Bewitchment
     BloodChangeEvents.ON_BLOOD_REMOVE.register(BloodChangeEvents.RemoveBloodEvent { player, amount ->
         if (BewitchmentAPI.isVampire(player, true)) {
-            (player as BloodAccessor).drainBlood((amount * 5).toInt(), true)
+            (player as BloodAccessor).drainBlood((amount * 5).toInt(), false)
         }
     })
+
+    //
+    // == Blood Drinking ==
+    //
+
+    // Let Bewitchment handle drinking
+    BloodDrinkingEvents.CANCEL.register(BloodDrinkingEvents.CancelBloodDrinkEvent { player, world, hand, target, entityHitResult ->
+        !BewitchmentAPI.isVampire(player, true)
+    })
+    // Get blood from mobs based on Haema's tags
     BloodSuckEvents.BLOOD_AMOUNT.register(BloodSuckEvents.SetBloodAmount { player, target, currentBloodToGive ->
         when {
             VampireBloodManager.goodBloodTag.contains(target.type) -> 5
@@ -40,9 +58,16 @@ fun registerBewitchmentEventListeners() {
             else -> currentBloodToGive
         }
     })
+    // Run Haema blood drink events when Bewitchment ones do
     BloodSuckEvents.ON_BLOOD_SUCK.register(BloodSuckEvents.OnBloodSuck { player, target, amount ->
         BloodDrinkingEvents.ON_BLOOD_DRINK.invoker().onDrink(player, target, player.world)
     })
+
+    //
+    // == Misc ==
+    //
+
+    // Sync vampirism status Bewitchment -> Haema
     OnTransformationSet.EVENT.register(OnTransformationSet { player, transformation ->
         if (transformation == BWTransformations.VAMPIRE) {
             (player as Vampirable).isVampire = true
@@ -51,9 +76,6 @@ fun registerBewitchmentEventListeners() {
             (player as Vampirable).isVampire = false
             player.isPermanentVampire = false
         }
-    })
-    BloodDrinkingEvents.CANCEL.register(BloodDrinkingEvents.CancelBloodDrinkEvent { player, world, hand, target, entityHitResult ->
-        !BewitchmentAPI.isVampire(player, true)
     })
     // Let Haema handle burning
     AllowVampireBurn.EVENT.register(AllowVampireBurn { player -> false })
