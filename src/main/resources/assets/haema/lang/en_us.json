@@ -61,7 +61,10 @@
   "gamerule.vampireHunterNoticeChance.description": "Chance that a vampire hunter group will spawn when killing a mob through feeding",
 
   "gamerule.playerVampireConversion": "Player Vampire Conversion",
-  "gamerule.playerVampireConversion.description": "Whether players can convert to being vampires and back with injectors.",
+  "gamerule.playerVampireConversion.description": "Whether players can convert to being vampires and back with injectors",
+
+  "gamerule.sunlightDamagesArmour": "Sunlight damages vampire-protecting armour",
+  "gamerule.sunlightDamagesArmour.description": "Whether armour protecting a vampire from sun damage takes damage itself",
 
   "bookOfBlood.name": "Book Of Blood",
 

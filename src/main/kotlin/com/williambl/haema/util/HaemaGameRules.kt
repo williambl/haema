@@ -27,6 +27,8 @@ lateinit var vampireHunterNoticeChance: GameRules.Key<DoubleRule>
 
 lateinit var playerVampireConversion: GameRules.Key<GameRules.BooleanRule>
 
+lateinit var sunlightDamagesArmour: GameRules.Key<GameRules.BooleanRule>
+
 val haemaCategory = CustomGameRuleCategory(Identifier("haema:haema"), TranslatableText("gamerule.category.haema").formatted(
     Formatting.BOLD).formatted(Formatting.YELLOW))
 
@@ -50,4 +52,5 @@ fun registerGameRules() {
 
     vampireHunterNoticeChance = GameRuleRegistry.register("vampireHunterNoticeChance", GameRules.Category.MOBS, GameRuleFactory.createDoubleRule(0.1, 0.0, 1.0))
     playerVampireConversion = GameRuleRegistry.register("playerVampireConversion", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(true))
+    sunlightDamagesArmour = GameRuleRegistry.register("sunlightDamagesArmour", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(true))
 }
