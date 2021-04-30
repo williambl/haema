@@ -26,7 +26,7 @@ repositories {
     maven { url 'https://maven.blamejared.com' }
     maven {
         name = "Ladysnake Libs"
-        url = "https://dl.bintray.com/ladysnake/libs"
+        url = 'https://ladysnake.jfrog.io/artifactory/mods'
     }
     maven {
         url = "https://maven.theillusivec4.top"
@@ -37,6 +37,9 @@ repositories {
     maven {
         name = "Cotton"
         url = "https://server.bbkr.space/artifactory/libs-release/"
+    }
+    maven {
+        url = "https://maven.shedaniel.me"
     }
 }
 
@@ -87,11 +90,13 @@ dependencies {
     modImplementation("com.github.apace100:origins-fabric:${project.origins_version}") {
         exclude module: "fabric-dimensions-v1"
         exclude module: "fabric-biomes-v1"
+        exclude module: "modmenu"
         exclude group: "io.github.OnyxStudios.Cardinal-Components-API"
     }
     modRuntime ("com.github.apace100:origins-fabric:${project.origins_version}") {
         exclude module: "fabric-dimensions-v1"
         exclude module: "fabric-biomes-v1"
+        exclude module: "modmenu"
         exclude group: "io.github.OnyxStudios.Cardinal-Components-API"
     }
 
