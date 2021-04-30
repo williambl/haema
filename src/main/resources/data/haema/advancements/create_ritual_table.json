@@ -2,13 +2,13 @@
     "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
     "display": {
         "title": {
-            "text": "Coursing through my veins"
+            "text": "Potential for power..."
         },
         "description": {
-            "text": "Get a full blood bar"
+            "text": "Create a ritual table"
         },
         "icon": {
-            "item": "haema:vampire_blood"
+            "item": "haema:ritual_table"
         },
         "frame": "task",
         "show_toast": true,
@@ -16,8 +16,15 @@
         "hidden": false
     },
     "criteria": {
-        "fullblood": {
-            "trigger": "minecraft:impossible"
+        "gettable": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "item": "haema:ritual_table"
+                    }
+                ]
+            }
         }
     },
     "parent": "haema:drink_blood"

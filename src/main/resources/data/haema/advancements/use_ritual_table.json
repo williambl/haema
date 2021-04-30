@@ -1,0 +1,23 @@
+{
+    "display": {
+        "title": {
+            "text": "Power potential achieved"
+        },
+        "description": {
+            "text": "Perform a Ritual"
+        },
+        "icon": {
+            "item": "minecraft:fermented_spider_eye"
+        },
+        "frame": "task",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false
+    },
+    "criteria": {
+        "useritual": {
+            "trigger": "haema:use_ritual"
+        }
+    },
+    "parent": "haema:create_ritual_table"
+}

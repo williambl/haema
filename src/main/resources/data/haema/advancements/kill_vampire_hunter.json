@@ -1,0 +1,32 @@
+{
+    "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
+    "display": {
+        "title": {
+            "text": "Don't mess with vampires"
+        },
+        "description": {
+            "text": "Kill a vampire hunter"
+        },
+        "icon": {
+            "item": "minecraft:crossbow"
+        },
+        "frame": "goal",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false
+    },
+    "criteria": {
+        "killhunter": {
+            "trigger": "minecraft:player_killed_entity",
+            "conditions": {
+                "entity": {
+                    "type": "haema:vampire_hunters"
+                }
+            }
+        }
+    },
+    "rewards": {
+        "experience": 20
+    },
+    "parent": "haema:trigger_vampire_hunters"
+}
