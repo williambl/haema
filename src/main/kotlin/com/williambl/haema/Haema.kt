@@ -19,6 +19,7 @@ import com.williambl.haema.hunter.registerVampireHunter
 import com.williambl.haema.ritual.registerRitualTable
 import com.williambl.haema.util.registerGameRules
 import com.williambl.haema.util.vampiresBurn
+import com.williambl.haema.util.sunlightDamagesArmour
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
 import nerdhub.cardinal.components.api.util.RespawnCopyStrategy
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
@@ -112,16 +113,17 @@ fun init() {
         override fun willVampireBurn(player: PlayerEntity, world: World): TriState {
             return if (player.armorItems.all { it.item.isIn(vampireProtectiveClothingTag) }) {
                 player.armorItems.forEachIndexed { i, stack ->
-                    if (world.random.nextFloat() < 0.025)
-                    stack.damage((world.random.nextFloat() * (i + 2)).toInt(), player) {
-                        world.playSoundFromEntity(
-                            null,
-                            player,
-                            SoundEvents.ENTITY_GENERIC_BURN,
-                            SoundCategory.PLAYERS,
-                            1f,
-                            1f
-                        )
+                    if (world.random.nextFloat() < 0.025 && world.gameRules[sunlightDamagesArmour].get()) {
+                        stack.damage((world.random.nextFloat() * (i + 2)).toInt(), player) {
+                            world.playSoundFromEntity(
+                                null,
+                                player,
+                                SoundEvents.ENTITY_GENERIC_BURN,
+                                SoundCategory.PLAYERS,
+                                1f,
+                                1f
+                            )
+                        }
                     }
                 }
                 TriState.FALSE

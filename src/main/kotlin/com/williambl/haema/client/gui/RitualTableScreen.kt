@@ -3,7 +3,6 @@ package com.williambl.haema.client.gui
 import com.mojang.blaze3d.systems.RenderSystem
 import com.williambl.haema.abilities.VampireAbility
 import com.williambl.haema.abilities.abilityRegistry
-import com.williambl.haema.abilities.noneIdentifier
 import com.williambl.haema.api.AbilityVisibilityEvent
 import com.williambl.haema.ritual.RitualTableScreenHandler
 import net.minecraft.advancement.AdvancementFrame

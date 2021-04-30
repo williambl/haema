@@ -35,6 +35,8 @@ val config: HaemaConfig by lazy { AutoConfig.getConfigHolder(HaemaConfig::class.
 
 var dashCooldownValue = 10
 
+var invisLengthValue = 10
+
 var distortAmount = 0.0f
     set(value) {
         field = value * config.distortionAdjust * MinecraftClient.getInstance().options.distortionEffectScale
@@ -62,6 +64,9 @@ fun init() {
     }
     ClientPlayNetworking.registerGlobalReceiver(Identifier("haema:updatedashcooldown")) { client, handler, buf, sender ->
         dashCooldownValue = buf.readInt()
+    }
+    ClientPlayNetworking.registerGlobalReceiver(Identifier("haema:updateinvislength")) { client, handler, buf, sender ->
+        invisLengthValue = buf.readInt()
     }
     ClientPlayNetworking.registerGlobalReceiver(Identifier("haema:updateinvisticks")) { client, handler, buf, sender ->
         (client.player!!.hungerManager as VampireBloodManager).invisTicks = client.world!!.time

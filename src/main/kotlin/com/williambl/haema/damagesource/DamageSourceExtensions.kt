@@ -18,5 +18,6 @@ fun DamageSource.isEffectiveAgainstVampires(world: World): Boolean {
             || this == DamageSource.LIGHTNING_BOLT
             || (this == DamageSource.DROWN && world.gameRules.getBoolean(vampiresDrown))
             || this == DamageSource.DRAGON_BREATH
-            || this == DamageSource.OUT_OF_WORLD
+            || this.isOutOfWorld
+            || this.magic
 }
