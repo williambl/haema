@@ -51,6 +51,7 @@
     "fabricloader": "*",
     "fabric": "*",
     "fabric-language-kotlin": "*",
+    "fabric-permissions-api-v0": "*",
     "minecraft": "1.16.x"
   },
   "suggests": {

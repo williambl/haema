@@ -130,6 +130,9 @@ dependencies {
     include "io.github.cottonmc:LibCD:${project.libcd_version}"
     modRuntime "io.github.cottonmc:LibCD:${project.libcd_version}"
 
+    modImplementation "me.lucko:fabric-permissions-api:${project.fpa_version}"
+    include "me.lucko:fabric-permissions-api:${project.fpa_version}"
+
     //modCompileOnly "curse.maven:bewitchment-394915:${project.bewitchment_version}"
     modCompileOnly "moriyashiine:bewitchment:1.16.5-11" // no jitpack, curse outdated
 
