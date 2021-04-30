@@ -18,13 +18,11 @@
     "criteria": {
         "drinkfromplayer": {
             "trigger": "haema:drink_blood",
-            "conditions": [
-                {
-                    "entity": {
-                        "type": "minecraft:player"
-                    }
+            "conditions": {
+                "entity": {
+                    "type": "minecraft:player"
                 }
-            ]
+            }
         }
     },
     "parent": "haema:drink_good_blood"

@@ -20,7 +20,7 @@
             "trigger": "minecraft:player_killed_entity",
             "conditions": {
                 "entity": {
-                    "type": "haema:vampire_hunters"
+                    "type": "haema:vampire_hunter"
                 }
             }
         }

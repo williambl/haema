@@ -18,13 +18,11 @@
     "criteria": {
         "drinkgoodblood": {
             "trigger": "haema:drink_blood",
-            "conditions": [
-                {
-                    "entity": {
-                        "type": "#haema:good_blood_sources"
-                    }
+            "conditions": {
+                "entity": {
+                    "type": "#haema:good_blood_sources"
                 }
-            ]
+            }
         }
     },
     "parent": "haema:drink_blood"
