@@ -23,6 +23,8 @@ lateinit var feedCooldown: GameRules.Key<GameRules.IntRule>
 
 lateinit var dashCooldown: GameRules.Key<GameRules.IntRule>
 
+lateinit var invisLength: GameRules.Key<GameRules.IntRule>
+
 lateinit var vampireHunterNoticeChance: GameRules.Key<DoubleRule>
 
 lateinit var playerVampireConversion: GameRules.Key<GameRules.BooleanRule>
@@ -47,6 +49,19 @@ fun registerGameRules() {
             val buf = PacketByteBuf(Unpooled.buffer())
             buf.writeInt(serverWorld.gameRules.get(dashCooldown).get())
             ServerPlayNetworking.send(entity as ServerPlayerEntity, Identifier("haema:updatedashcooldown"), buf)
+        }
+    })
+
+    invisLength = GameRuleRegistry.register("vampireInvisibilityLength", GameRules.Category.PLAYER, GameRuleFactory.createIntRule(80, 0, 24000) { server, rule ->
+        val buf = PacketByteBuf(Unpooled.buffer())
+        buf.writeInt(rule.get())
+        server.playerManager.sendToAll(ServerPlayNetworking.createS2CPacket(Identifier("haema:updateinvislength"), buf))
+    })
+    ServerEntityEvents.ENTITY_LOAD.register(ServerEntityEvents.Load { entity, serverWorld ->
+        if (entity is ServerPlayerEntity) {
+            val buf = PacketByteBuf(Unpooled.buffer())
+            buf.writeInt(serverWorld.gameRules.get(invisLength).get())
+            ServerPlayNetworking.send(entity, Identifier("haema:updateinvislength"), buf)
         }
     })
 

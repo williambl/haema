@@ -10,6 +10,7 @@ import com.williambl.haema.client.ClientVampire
 import com.williambl.haema.client.DASH_KEY
 import com.williambl.haema.client.config
 import com.williambl.haema.client.config.HudPlacement
+import com.williambl.haema.client.invisLengthValue
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawableHelper
 import net.minecraft.client.util.math.MatrixStack
@@ -53,7 +54,7 @@ object VampireHud : DrawableHelper() {
         if (invisLevel > 0 && (player.hungerManager as VampireBloodManager).getBloodLevel() >= 18f) {
             texts.add(createText(
                 MinecraftClient.getInstance().options.keySneak.boundKeyLocalizedText.copy(),
-                (player as Vampirable).isVampire && player.world.time-(player.hungerManager as VampireBloodManager).invisTicks >= 120 + invisLevel*60,
+                (player as Vampirable).isVampire && player.world.time-(player.hungerManager as VampireBloodManager).invisTicks >= 120 + invisLevel*invisLengthValue,
                 TranslatableText("gui.haema.hud.invisibility"))
             )
         }
