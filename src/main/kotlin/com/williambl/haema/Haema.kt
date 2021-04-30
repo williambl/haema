@@ -21,6 +21,7 @@ import com.williambl.haema.util.registerGameRules
 import com.williambl.haema.util.sunlightDamagesArmour
 import com.williambl.haema.util.vampiresBurn
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
+import me.lucko.fabric.api.permissions.v0.Permissions
 import nerdhub.cardinal.components.api.util.RespawnCopyStrategy
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
@@ -171,14 +172,15 @@ fun init() {
     CommandRegistrationCallback.EVENT.register { dispatcher, isDedicated ->
         dispatcher.register(
             literal("haema")
-                .requires { it.hasPermissionLevel(2) }
                 .then(literal("convert")
+                    .requires(Permissions.require("haema.command.convert", 2))
                     .then(argument("targets", EntityArgumentType.players()).executes { context ->
                         EntityArgumentType.getPlayers(context, "targets").forEach(Vampirable.Companion::convert)
                         return@executes 1
                     })
                 )
                 .then(literal("deconvert")
+                    .requires(Permissions.require("haema.command.deconvert", 2))
                     .then(argument("targets", EntityArgumentType.players()).executes { context ->
                         EntityArgumentType.getPlayers(context, "targets").forEach {
                             if (!(it as Vampirable).isPermanentVampire) {
@@ -190,6 +192,7 @@ fun init() {
                     })
                 )
                 .then(literal("blood")
+                    .requires(Permissions.require("haema.command.blood", 2))
                     .then(argument("targets", EntityArgumentType.players()).then(argument("amount", DoubleArgumentType.doubleArg(0.0, 20.0)).executes { context ->
                         EntityArgumentType.getPlayers(context, "targets").forEach {
                             if ((it as Vampirable).isVampire && it.hungerManager is VampireBloodManager) {
@@ -199,6 +202,7 @@ fun init() {
                         return@executes 1
                     })))
                 .then(literal("abilities")
+                    .requires(Permissions.require("haema.command.abilities", 2))
                     .then(literal("get").then(argument("targets", EntityArgumentType.players()).executes {  context ->
                         EntityArgumentType.getPlayers(context, "targets").forEach {
                             if ((it as Vampirable).isVampire) {
@@ -221,6 +225,7 @@ fun init() {
                         }))))
                 )
                 .then(literal("rituals")
+                    .requires(Permissions.require("haema.command.rituals", 2))
                     .then(literal("get").then(argument("targets", EntityArgumentType.players()).executes { context ->
                         EntityArgumentType.getPlayers(context, "targets").forEach {
                             if ((it as Vampirable).isVampire) {
