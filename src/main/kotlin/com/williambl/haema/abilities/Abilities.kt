@@ -1,5 +1,6 @@
 package com.williambl.haema.abilities
 
+import com.williambl.haema.criteria.UseDashCriterion
 import com.williambl.haema.mixin.RegistryAccessor
 import com.williambl.haema.ritual.RitualTableScreenHandler
 import com.williambl.haema.util.raytraceForDash
@@ -70,6 +71,7 @@ fun registerAbilities() {
                 1.5f
             )
             player.teleport(target.x, target.y, target.z)
+            UseDashCriterion.trigger(player)
         }
     }
 

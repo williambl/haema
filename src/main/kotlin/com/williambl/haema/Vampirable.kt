@@ -1,6 +1,7 @@
 package com.williambl.haema
 
 import com.williambl.haema.abilities.VampireAbility
+import com.williambl.haema.api.AbilityChangeEvent
 import com.williambl.haema.api.VampireConversionEvents
 import com.williambl.haema.component.VampireComponent
 import net.minecraft.entity.player.PlayerEntity
@@ -31,6 +32,7 @@ interface Vampirable {
     fun getAbilityLevel(ability: VampireAbility): Int = VampireComponent.entityKey.get(this).abilities[ability] ?: 0
 
     fun setAbilityLevel(ability: VampireAbility, level: Int) {
+        AbilityChangeEvent.EVENT.invoker().onAbilityChange(this, ability, level)
         VampireComponent.entityKey.get(this).abilities[ability] = level
         VampireComponent.entityKey.sync(this)
     }

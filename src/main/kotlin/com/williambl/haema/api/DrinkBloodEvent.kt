@@ -10,9 +10,9 @@ import net.minecraft.world.World
 fun interface DrinkBloodEvent {
     companion object {
         val EVENT: Event<DrinkBloodEvent> = createArrayBacked(DrinkBloodEvent::class.java) { listeners ->
-            DrinkBloodEvent { drinker, world, target ->
+            DrinkBloodEvent { drinker, target, world ->
                 for (listener in listeners) {
-                    listener.onDrink(drinker, world, target)
+                    listener.onDrink(drinker, target, world)
                 }
             }
         }

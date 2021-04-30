@@ -1,0 +1,27 @@
+{
+    "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
+    "display": {
+        "title": {
+            "text": "Quenching Thirst"
+        },
+        "description": {
+            "text": "Schlurp a mob."
+        },
+        "icon": {
+            "item": "haema:vampire_blood"
+        },
+        "frame": "task",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false
+    },
+    "criteria": {
+        "drinkblood": {
+            "trigger": "haema:drink_blood"
+        }
+    },
+    "rewards": {
+        "experience": 15
+    },
+    "parent": "haema:use_blood"
+}

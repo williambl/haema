@@ -3,6 +3,7 @@ package com.williambl.haema
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes
 import com.williambl.haema.abilities.VampireAbility
 import com.williambl.haema.api.DrinkBloodEvent
+import com.williambl.haema.criteria.UseInvisibilityCriterion
 import com.williambl.haema.damagesource.BloodLossDamageSource
 import com.williambl.haema.effect.VampiricStrengthEffect
 import com.williambl.haema.effect.VampiricWeaknessEffect
@@ -108,6 +109,7 @@ class VampireBloodManager() : HungerManager() {
 
         val invisLevel = (player as Vampirable).getAbilityLevel(VampireAbility.INVISIBILITY)
         if (getBloodLevel() >= 16 && invisLevel > 0 && player.isSneaking && player.world.time-invisTicks >= 120 + invisLevel*60) {
+            UseInvisibilityCriterion.trigger(player as ServerPlayerEntity)
             invisTicks = player.world.time
             player.addStatusEffect(StatusEffectInstance(StatusEffects.INVISIBILITY, invisLevel*player.world.gameRules[invisLength].get(), 0))
             ServerPlayNetworking.send(player as ServerPlayerEntity, Identifier("haema:updateinvisticks"), PacketByteBuf(Unpooled.buffer()))

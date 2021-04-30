@@ -3,6 +3,7 @@ package com.williambl.haema.mixin;
 import com.williambl.haema.Vampirable;
 import com.williambl.haema.VampireBloodManager;
 import com.williambl.haema.abilities.VampireAbility;
+import com.williambl.haema.criteria.VampireHunterTriggerCriterion;
 import com.williambl.haema.damagesource.BloodLossDamageSource;
 import com.williambl.haema.damagesource.DamageSourceExtensionsKt;
 import com.williambl.haema.hunter.VampireHunterSpawner;
@@ -13,6 +14,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.DustParticleEffect;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -73,8 +75,13 @@ public abstract class LivingEntityMixin extends Entity {
         if (source == BloodLossDamageSource.Companion.getInstance() && world instanceof ServerWorld) {
             ((ServerWorld) world).spawnParticles(new DustParticleEffect(1.0f,0.0f, 0.0f, 3.0f), getX(), getY()+1, getZ(), 30, 1.0, 1.0, 1.0, 0.1);
 
-            if (random.nextDouble() < world.getGameRules().get(HaemaGameRulesKt.getVampireHunterNoticeChance()).get())
-                VampireHunterSpawner.Companion.getInstance().trySpawnNear((ServerWorld)world, random, getBlockPos());
+            if (random.nextDouble() < world.getGameRules().get(HaemaGameRulesKt.getVampireHunterNoticeChance()).get()) {
+                //noinspection ConstantConditions
+                if ((Object) this instanceof ServerPlayerEntity) {
+                    VampireHunterTriggerCriterion.INSTANCE.trigger((ServerPlayerEntity) (Object) this);
+                }
+                VampireHunterSpawner.Companion.getInstance().trySpawnNear((ServerWorld) world, random, getBlockPos());
+            }
         }
     }
 }
