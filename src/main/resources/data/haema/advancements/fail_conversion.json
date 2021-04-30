@@ -18,7 +18,7 @@
     },
     "criteria": {
         "failconversion": {
-            "trigger": "minecraft:impossible"
+            "trigger": "haema:fail_conversion"
         }
     },
     "parent": "haema:get_blood"

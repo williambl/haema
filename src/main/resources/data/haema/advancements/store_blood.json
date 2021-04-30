@@ -17,7 +17,7 @@
     },
     "criteria": {
         "storeblood": {
-            "trigger": "minecraft:impossible"
+            "trigger": "haema:store_blood"
         }
     },
     "parent": "haema:use_blood"

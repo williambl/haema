@@ -33,4 +33,7 @@ fun registerCriteria() {
 
     CriterionRegistry.register(UseDashCriterion)
     CriterionRegistry.register(UseInvisibilityCriterion)
+    CriterionRegistry.register(VampireConversionFailureCriterion)
+    CriterionRegistry.register(StoreBloodCriterion)
+    CriterionRegistry.register(VampireHunterTriggerCriterion)
 }

@@ -2,7 +2,6 @@ package com.williambl.haema
 
 import com.mojang.brigadier.arguments.DoubleArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType
-import com.williambl.haema.abilities.VampireAbility
 import com.williambl.haema.abilities.VampireAbilityArgumentType
 import com.williambl.haema.abilities.abilityRegistry
 import com.williambl.haema.abilities.registerAbilities
@@ -12,14 +11,15 @@ import com.williambl.haema.blood.registerBlood
 import com.williambl.haema.component.VampireComponent
 import com.williambl.haema.component.VampirePlayerComponent
 import com.williambl.haema.craft.BookOfBloodRecipe
+import com.williambl.haema.criteria.VampireHunterTriggerCriterion
 import com.williambl.haema.criteria.registerCriteria
 import com.williambl.haema.effect.registerEffects
 import com.williambl.haema.hunter.VampireHunterSpawner
 import com.williambl.haema.hunter.registerVampireHunter
 import com.williambl.haema.ritual.registerRitualTable
 import com.williambl.haema.util.registerGameRules
-import com.williambl.haema.util.vampiresBurn
 import com.williambl.haema.util.sunlightDamagesArmour
+import com.williambl.haema.util.vampiresBurn
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
 import nerdhub.cardinal.components.api.util.RespawnCopyStrategy
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
@@ -36,6 +36,7 @@ import net.minecraft.entity.passive.VillagerEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.command.CommandManager.argument
 import net.minecraft.server.command.CommandManager.literal
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
@@ -134,8 +135,16 @@ fun init() {
     DrinkBloodEvent.EVENT.register(DrinkBloodEvent { drinker, target, world ->
         if (target is VillagerEntity && !target.isSleeping) {
             target.gossip.startGossip(drinker.uuid, VillageGossipType.MAJOR_NEGATIVE, 20)
-            if (drinker.world is ServerWorld)
-                VampireHunterSpawner.instance.trySpawnNear(drinker.world as ServerWorld, drinker.random, drinker.blockPos)
+            if (drinker.world is ServerWorld) {
+                if (drinker is ServerPlayerEntity) {
+                    VampireHunterTriggerCriterion.trigger(drinker)
+                }
+                VampireHunterSpawner.instance.trySpawnNear(
+                    drinker.world as ServerWorld,
+                    drinker.random,
+                    drinker.blockPos
+                )
+            }
         }
     })
 
