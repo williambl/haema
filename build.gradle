@@ -41,6 +41,9 @@ repositories {
     maven {
         url = "https://maven.shedaniel.me"
     }
+    maven {
+        url = "https://maven.terraformersmc.com/releases/"
+    }
 }
 
 dependencies {
@@ -118,6 +121,8 @@ dependencies {
 
     include "io.github.cottonmc:LibCD:${project.libcd_version}"
     modRuntime "io.github.cottonmc:LibCD:${project.libcd_version}"
+
+    modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
     //include "io.github.ladysnake:vanguard:${vanguard_version}"
 
