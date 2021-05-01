@@ -6,7 +6,7 @@ import net.fabricmc.loader.api.FabricLoader
 
 fun init() {
     if (FabricLoader.getInstance().isModLoaded("ratsmischief")) {
-        logger.info("Rat's Mischief detected.")
+        logger.info("Rat's Mischief is installed, it's VampiRat time!")
         initRatsMischiefIntegration()
     }
 }

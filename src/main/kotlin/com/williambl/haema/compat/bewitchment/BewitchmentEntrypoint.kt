@@ -5,14 +5,14 @@ import net.fabricmc.loader.api.FabricLoader
 
 fun init() {
     if (FabricLoader.getInstance().isModLoaded("bewitchment")) {
-        logger.info("Bewitchment detected.")
+        logger.info("Hey Bewitchment, mind if I modify your vampires a little?")
         registerBewitchmentEventListeners()
     }
 }
 
 fun clientInit() {
     if (FabricLoader.getInstance().isModLoaded("bewitchment")) {
-        logger.info("Bewitchment detected.")
+        logger.info("Haema's gotta change some Bewitchment client stuff too...")
         registerBewitchmentClientEventListeners()
     }
 }
