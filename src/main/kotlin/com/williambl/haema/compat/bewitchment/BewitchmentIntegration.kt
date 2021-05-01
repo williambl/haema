@@ -15,6 +15,7 @@ import moriyashiine.bewitchment.common.registry.BWTransformations
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
+import kotlin.math.ceil
 
 fun registerBewitchmentEventListeners() {
     //
@@ -31,13 +32,13 @@ fun registerBewitchmentEventListeners() {
     // Sync blood changes Haema -> Bewitchment
     BloodChangeEvents.ON_BLOOD_ADD.register(BloodChangeEvents.AddBloodEvent { player, amount ->
         if (BewitchmentAPI.isVampire(player, true)) {
-            (player as BloodAccessor).fillBlood((amount * 5).toInt(), false)
+            (player as BloodAccessor).fillBlood(ceil(amount * 5).toInt(), false)
         }
     })
     // Sync blood changes Haema -> Bewitchment
     BloodChangeEvents.ON_BLOOD_REMOVE.register(BloodChangeEvents.RemoveBloodEvent { player, amount ->
         if (BewitchmentAPI.isVampire(player, true)) {
-            (player as BloodAccessor).drainBlood((amount * 5).toInt(), false)
+            (player as BloodAccessor).drainBlood(ceil(amount * 5).toInt(), false)
         }
     })
 
