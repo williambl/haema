@@ -1,6 +1,7 @@
 package com.williambl.haema.compat.origins
 
 import com.williambl.haema.Vampirable
+import com.williambl.haema.criteria.VampireConversionCriterion
 import com.williambl.haema.logger
 import com.williambl.haema.util.getSpawn
 import io.github.apace100.origins.power.Power
@@ -45,6 +46,9 @@ class VampirePower(type: PowerType<*>?, player: PlayerEntity?) : Power(type, pla
     }
 
     override fun onChosen(isOrbOfOrigin: Boolean) {
+        if (player is ServerPlayerEntity) {
+            VampireConversionCriterion.trigger(player as ServerPlayerEntity)
+        }
         val bookStack = ItemStack(Registry.ITEM[Identifier("patchouli:guide_book")])
         val tag = CompoundTag()
         tag.putString("patchouli:book", "haema:book_of_blood")
