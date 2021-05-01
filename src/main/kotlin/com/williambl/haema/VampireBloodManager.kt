@@ -5,6 +5,7 @@ import com.williambl.haema.abilities.VampireAbility
 import com.williambl.haema.api.DrinkBloodEvent
 import com.williambl.haema.criteria.UseInvisibilityCriterion
 import com.williambl.haema.damagesource.BloodLossDamageSource
+import com.williambl.haema.effect.SunlightSicknessEffect
 import com.williambl.haema.effect.VampiricStrengthEffect
 import com.williambl.haema.effect.VampiricWeaknessEffect
 import com.williambl.haema.util.computeValueWithout
@@ -128,7 +129,7 @@ class VampireBloodManager() : HungerManager() {
                         }) {
                         heal(player)
                     }
-                } else {
+                } else if (!player.hasStatusEffect(SunlightSicknessEffect.instance)) {
                     heal(player)
                 }
             } else if (player.health <= 0) {
