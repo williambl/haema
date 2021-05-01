@@ -44,6 +44,13 @@ repositories {
     maven {
         url = "https://maven.terraformersmc.com/releases/"
     }
+    maven {
+        url "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+    mavenLocal()
 }
 
 dependencies {
@@ -121,6 +128,9 @@ dependencies {
 
     include "io.github.cottonmc:LibCD:${project.libcd_version}"
     modRuntime "io.github.cottonmc:LibCD:${project.libcd_version}"
+
+    //modCompileOnly "curse.maven:bewitchment-394915:${project.bewitchment_version}"
+    modCompileOnly "moriyashiine:bewitchment:1.16.5-11" // no jitpack, curse outdated
 
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 

@@ -3,6 +3,8 @@
   "package": "com.williambl.haema.compat.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "bewitchment.BWDamageSourcesMixin",
+    "bewitchment.VampireEntityMixin",
     "rats.RatEntityMixin"
   ],
   "client": [

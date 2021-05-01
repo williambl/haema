@@ -4,9 +4,7 @@ import com.williambl.haema.abilities.VampireAbility
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory.createArrayBacked
 import net.fabricmc.fabric.api.util.TriState
-import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.world.World
 
 fun interface AbilityVisibilityEvent {
     companion object {

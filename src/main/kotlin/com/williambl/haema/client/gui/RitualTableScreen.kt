@@ -17,7 +17,6 @@ import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
-import java.util.*
 
 class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInventory, title: Text) :
     HandledScreen<RitualTableScreenHandler>(handler, inventory, title) {

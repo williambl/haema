@@ -1,7 +1,6 @@
 package com.williambl.haema.ritual
 
 import com.williambl.haema.Vampirable
-import com.williambl.haema.abilities.VampireAbility
 import com.williambl.haema.abilities.abilityRegistry
 import com.williambl.haema.ritual.craft.RitualInventory
 import io.netty.buffer.Unpooled
@@ -13,7 +12,10 @@ import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.network.PacketByteBuf
-import net.minecraft.screen.*
+import net.minecraft.screen.PropertyDelegate
+import net.minecraft.screen.ScreenHandler
+import net.minecraft.screen.ScreenHandlerContext
+import net.minecraft.screen.ScreenHandlerType
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.LiteralText
 import net.minecraft.text.Text

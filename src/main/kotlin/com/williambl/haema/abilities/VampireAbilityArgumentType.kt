@@ -9,12 +9,12 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import net.minecraft.command.CommandSource
+import net.minecraft.command.argument.serialize.ArgumentSerializer
+import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.LiteralText
 import net.minecraft.util.Identifier
 import java.util.concurrent.CompletableFuture
-import net.minecraft.command.argument.serialize.ArgumentSerializer
-import net.minecraft.network.PacketByteBuf
 
 class VampireAbilityArgumentType private constructor() : ArgumentType<VampireAbility> {
     @Throws(CommandSyntaxException::class)

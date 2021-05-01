@@ -5,7 +5,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.williambl.haema.abilities.VampireAbilityArgumentType
 import com.williambl.haema.abilities.abilityRegistry
 import com.williambl.haema.abilities.registerAbilities
-import com.williambl.haema.api.DrinkBloodEvent
+import com.williambl.haema.api.BloodDrinkingEvents
 import com.williambl.haema.api.VampireBurningEvents
 import com.williambl.haema.blood.registerBlood
 import com.williambl.haema.component.VampireComponent
@@ -57,7 +57,7 @@ val logger: Logger = LogManager.getLogger("Haema")
 
 fun init() {
     UseEntityCallback.EVENT.register(UseEntityCallback { player, world, hand, entity, entityHitResult ->
-        if ((player as Vampirable).isVampire && entity is LivingEntity && player.isSneaking)
+        if ((player as Vampirable).isVampire && entity is LivingEntity && player.isSneaking && BloodDrinkingEvents.CANCEL.invoker().canDrink(player, world, hand, entity, entityHitResult))
             (player.hungerManager as VampireBloodManager).feed(entity, player)
         else ActionResult.PASS
     })
@@ -132,7 +132,7 @@ fun init() {
         }
     })
 
-    DrinkBloodEvent.EVENT.register(DrinkBloodEvent { drinker, target, world ->
+    BloodDrinkingEvents.ON_BLOOD_DRINK.register(BloodDrinkingEvents.DrinkBloodEvent { drinker, target, world ->
         if (target is VillagerEntity && !target.isSleeping) {
             target.gossip.startGossip(drinker.uuid, VillageGossipType.MAJOR_NEGATIVE, 20)
             if (drinker.world is ServerWorld) {

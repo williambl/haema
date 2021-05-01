@@ -1,5 +1,7 @@
 package com.williambl.haema.api
 
+import com.williambl.haema.api.VampireConversionEvents.ConversionEvent
+import com.williambl.haema.api.VampireConversionEvents.DeconversionEvent
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory.createArrayBacked
 import net.minecraft.entity.player.PlayerEntity
