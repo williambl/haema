@@ -25,7 +25,8 @@
       "com.williambl.haema.HaemaKt::init",
       "com.williambl.haema.compat.origins.HaemaOriginsPluginKt::init",
       "com.williambl.haema.compat.rats.RatsMischiefCompatKt::init",
-      "com.williambl.haema.compat.bewitchment.BewitchmentEntrypointKt::init"
+      "com.williambl.haema.compat.bewitchment.BewitchmentEntrypointKt::init",
+      "com.williambl.haema.compat.flan.FlanEntrypointKt::init"
     ],
     "client": [
       "com.williambl.haema.client.HaemaClientKt::init",
@@ -50,6 +51,7 @@
     "fabricloader": "*",
     "fabric": "*",
     "fabric-language-kotlin": "*",
+    "fabric-permissions-api-v0": "*",
     "minecraft": "1.16.x"
   },
   "suggests": {
