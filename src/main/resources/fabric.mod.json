@@ -54,7 +54,6 @@
     "origins": ">=0.4.7"
   },
   "breaks": {
-    "gunpowder": "*"
   },
   "custom": {
     "cardinal-components": [
