@@ -49,6 +49,7 @@ class VampirePlayerComponent(player: Entity) : VampireComponent, AutoSyncedCompo
         isPermanentVampire = tag.getBoolean("isPermanentVampire")
         isKilled = tag.getBoolean("isKilled")
         val abilitiesTag = tag.getCompound("abilities")
+        abilitiesTag.fixAbilityData()
         abilityRegistry.entries.filter { abilitiesTag.contains(it.key.value.toString()) }.forEach { abilities[it.value] = abilitiesTag.getInt(it.key.value.toString()) }
         val ritualsUsedTag = tag.getCompound("ritualsUsed")
         ritualsUsed = List(ritualsUsedTag.getInt("Length")) { idx -> Identifier(ritualsUsedTag.getString(idx.toString())) }.toMutableSet()
@@ -63,6 +64,23 @@ class VampirePlayerComponent(player: Entity) : VampireComponent, AutoSyncedCompo
 
     override fun getComponentType(): ComponentType<*> {
         throw UnsupportedOperationException()
+    }
+
+    private fun CompoundTag.fixAbilityData() {
+        fun fixAbility(oldName: String, ability: VampireAbility) {
+            val newName = abilityRegistry.getId(ability).toString()
+            if (this.contains(oldName) && !this.contains(newName)) {
+                this.putInt(newName, this.getInt(oldName))
+                this.remove(oldName)
+            }
+        }
+
+        fixAbility("NONE", VampireAbility.STRENGTH)
+        fixAbility("STRENGTH", VampireAbility.STRENGTH)
+        fixAbility("DASH", VampireAbility.STRENGTH)
+        fixAbility("INVISIBILITY", VampireAbility.STRENGTH)
+        fixAbility("IMMORTALITY", VampireAbility.STRENGTH)
+        fixAbility("VISION", VampireAbility.STRENGTH)
     }
 
 }

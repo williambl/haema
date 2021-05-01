@@ -26,7 +26,7 @@ repositories {
     maven { url 'https://maven.blamejared.com' }
     maven {
         name = "Ladysnake Libs"
-        url = "https://dl.bintray.com/ladysnake/libs"
+        url = 'https://ladysnake.jfrog.io/artifactory/mods'
     }
     maven {
         url = "https://maven.theillusivec4.top"
@@ -37,6 +37,12 @@ repositories {
     maven {
         name = "Cotton"
         url = "https://server.bbkr.space/artifactory/libs-release/"
+    }
+    maven {
+        url = "https://maven.shedaniel.me"
+    }
+    maven {
+        url = "https://maven.terraformersmc.com/releases/"
     }
     maven {
         url "https://www.cursemaven.com"
@@ -94,11 +100,13 @@ dependencies {
     modImplementation("com.github.apace100:origins-fabric:${project.origins_version}") {
         exclude module: "fabric-dimensions-v1"
         exclude module: "fabric-biomes-v1"
+        exclude module: "modmenu"
         exclude group: "io.github.OnyxStudios.Cardinal-Components-API"
     }
     modRuntime ("com.github.apace100:origins-fabric:${project.origins_version}") {
         exclude module: "fabric-dimensions-v1"
         exclude module: "fabric-biomes-v1"
+        exclude module: "modmenu"
         exclude group: "io.github.OnyxStudios.Cardinal-Components-API"
     }
 
@@ -123,6 +131,8 @@ dependencies {
 
     //modCompileOnly "curse.maven:bewitchment-394915:${project.bewitchment_version}"
     modCompileOnly "moriyashiine:bewitchment:1.16.5-11" // no jitpack, curse outdated
+
+    modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
     //include "io.github.ladysnake:vanguard:${vanguard_version}"
 

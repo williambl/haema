@@ -1,0 +1,24 @@
+{
+    "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
+    "display": {
+        "title": {
+            "text": "Into My Veins"
+        },
+        "description": {
+            "text": "Take the blood into your body... just remember to have Strength II."
+        },
+        "icon": {
+            "item": "haema:vampire_blood_injector"
+        },
+        "frame": "task",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false
+    },
+    "criteria": {
+        "becomevampire": {
+            "trigger": "haema:conversion"
+        }
+    },
+    "parent": "haema:get_blood"
+}

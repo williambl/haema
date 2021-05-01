@@ -29,8 +29,9 @@ fun registerPowerTypes() {
 
 fun registerOriginsCompatEvents() {
     VampireBurningEvents.VETO.register(VampireBurningEvents.Veto { player, _ ->
-        if (OriginComponent.hasPower(player, PhasingPower::class.java)) {
-            (player.hungerManager as VampireBloodManager).removeBlood(0.05)
+        val phasingPowers = OriginComponent.getPowers(player, PhasingPower::class.java)
+        if (phasingPowers.isNotEmpty() && phasingPowers.any { it.isActive }) {
+            (player.hungerManager as VampireBloodManager).removeBlood(0.001)
             TriState.FALSE
         } else TriState.DEFAULT
     })

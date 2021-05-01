@@ -2,6 +2,7 @@ package com.williambl.haema.ritual
 
 import com.williambl.haema.Vampirable
 import com.williambl.haema.api.RitualTableUseEvent
+import com.williambl.haema.criteria.UseRitualCriterion
 import com.williambl.haema.ritual.craft.RitualInventory
 import com.williambl.haema.ritual.craft.RitualRecipe
 import com.williambl.haema.util.MultiTagMatcher
@@ -19,6 +20,7 @@ import net.minecraft.item.ItemGroup
 import net.minecraft.item.ItemPlacementContext
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.particle.ParticleTypes
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
@@ -70,6 +72,7 @@ class RitualTable(settings: Settings) : HorizontalFacingBlock(settings) {
             (world as ServerWorld).server.recipeManager.listAllOfType(RitualRecipe.recipeType)
                 .firstOrNull { it.matches(inventory) }
                 ?.craft(inventory) ?: return ActionResult.PASS
+            UseRitualCriterion.trigger(player as ServerPlayerEntity)
         }
         RitualTableUseEvent.EVENT.invoker().onUse(state, world, pos, player, hand, hit)
         return ActionResult.SUCCESS
