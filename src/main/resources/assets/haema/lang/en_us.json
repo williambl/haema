@@ -31,8 +31,8 @@
   "power.haema.vampire.name": "Bloodthirsty",
   "power.haema.vampire.description": "You do not need food, but instead drink blood to get your nourishment. Drink from mobs with shift+right click - more humanoid mobs give better blood.",
 
-  "power.haema.immortality.name": "Immortal",
-  "power.haema.immortality.description": "Even if your health goes to zero, you cannot die unless harmed by a few specific things, including the sun, lightning, and wooden swords.",
+  "power.haema.ritualistic.name": "Ritualistic",
+  "power.haema.ritualistic.description": "Your abilities can be upgraded, and new ones gained, by performing rituals.",
 
   "power.haema.night_vision.name": "Night Vision",
   "power.haema.night_vision.description": "Your vision, though dull and unsaturated, is better at picking out details in the dark.",
