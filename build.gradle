@@ -14,136 +14,177 @@ group = project.maven_group
 minecraft {
 }
 
-
 repositories {
-    maven { url = "http://maven.fabricmc.net/" }
-    maven { url 'https://jitpack.io' }
-    maven { url "https://maven.jamieswhiteshirt.com/libs-release/" }
     maven {
-        name = "AdrianTodt's Maven"
-        url = "https://dl.bintray.com/adriantodt/maven"
+        name = "FabricMC"
+        url = "http://maven.fabricmc.net/"
     }
-    maven { url 'https://maven.blamejared.com' }
+    maven {
+        name = "JitPack"
+        url 'https://jitpack.io'
+    }
+    maven {
+        name = "Sonatype"
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
+    maven {
+        name = "Jamies"
+        url "https://maven.jamieswhiteshirt.com/libs-release/"
+        content {
+            includeGroup "com.jamieswhiteshirt"
+        }
+    }
+    maven {
+        name = "Jared"
+        url 'https://maven.blamejared.com'
+        content {
+            includeGroup "vazkii.patchouli"
+        }
+    }
     maven {
         name = "Ladysnake Libs"
         url = 'https://ladysnake.jfrog.io/artifactory/mods'
+        content {
+            includeGroup "io.github.ladysnake"
+        }
     }
     maven {
+        name = "TheIllusiveC4"
         url = "https://maven.theillusivec4.top"
+        content {
+            includeGroup "top.theillusivec4.somnus"
+        }
     }
     maven {
+        name = "GeckoLib"
         url = "https://repo.repsy.io/mvn/gandiber/geckolib"
+        content {
+            includeGroup "software.bernie.geckolib"
+        }
     }
     maven {
         name = "Cotton"
         url = "https://server.bbkr.space/artifactory/libs-release/"
+        content {
+            includeGroup "io.github.cottonmc"
+        }
     }
     maven {
+        name = "Shedaniel"
         url = "https://maven.shedaniel.me"
+        content {
+            includeGroupByRegex "me\\.shedaniel.*"
+        }
     }
     maven {
+        name = "Terraformers"
         url = "https://maven.terraformersmc.com/releases/"
+        content {
+            includeGroup "io.github.prospector"
+            includeGroup "com.terraformersmc"
+        }
     }
     maven {
+        name = "CurseMaven"
         url "https://www.cursemaven.com"
         content {
             includeGroup "curse.maven"
         }
     }
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+
     mavenLocal()
 }
 
 dependencies {
-    //to change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    // Fabric API. This is technically optional, but you probably want it anyway.
+    ///
+    /// HARD DEPS
+    ///
+
+    // Fabric API
     modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}") {
         exclude module: "fabric-dimensions-v1"
         exclude module: "fabric-biomes-v1"
     }
 
+    // Fabric Language Kotlin
     modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
 
-    modImplementation("io.github.ladysnake:Satin:${project.satin_version}") {
-        exclude module: "fabric-dimensions-v1"
-        exclude module: "fabric-biomes-v1"
-    }
-    include("io.github.ladysnake:Satin:${project.satin_version}") {
-        exclude module: "fabric-dimensions-v1"
-        exclude module: "fabric-biomes-v1"
-    }
+    ///
+    /// INCLUDED
+    ///
 
-    modImplementation("com.jamieswhiteshirt:reach-entity-attributes:${project.rea_version}") {
-        exclude module: "fabric-dimensions-v1"
-        exclude module: "fabric-biomes-v1"
-    }
+    // Satin
+    modImplementation "io.github.ladysnake:Satin:${project.satin_version}"
+    include "io.github.ladysnake:Satin:${project.satin_version}"
+
+    // Reach Entity Attributes
+    modImplementation "com.jamieswhiteshirt:reach-entity-attributes:${project.rea_version}"
     include "com.jamieswhiteshirt:reach-entity-attributes:${project.rea_version}"
 
-    modImplementation("vazkii.patchouli:Patchouli:${project.patchouli_version}") {
-        exclude module: "fabric-dimensions-v1"
-        exclude module: "fabric-biomes-v1"
-    }
+    // Patchouli
+    modImplementation "vazkii.patchouli:Patchouli:${project.patchouli_version}"
     include "vazkii.patchouli:Patchouli:${project.patchouli_version}"
 
-    modApi("me.shedaniel:RoughlyEnoughItems:${project.rei_version}") {
-        exclude module: "fabric-dimensions-v1"
-        exclude module: "fabric-biomes-v1"
-    }
-    modRuntime ("me.shedaniel:RoughlyEnoughItems:${project.rei_version}") {
-        exclude module: "fabric-dimensions-v1"
-        exclude module: "fabric-biomes-v1"
-    }
-
-    modImplementation("com.github.apace100:origins-fabric:${project.origins_version}") {
-        exclude module: "fabric-dimensions-v1"
-        exclude module: "fabric-biomes-v1"
-        exclude module: "modmenu"
-        exclude group: "io.github.OnyxStudios.Cardinal-Components-API"
-    }
-    modRuntime ("com.github.apace100:origins-fabric:${project.origins_version}") {
-        exclude module: "fabric-dimensions-v1"
-        exclude module: "fabric-biomes-v1"
-        exclude module: "modmenu"
-        exclude group: "io.github.OnyxStudios.Cardinal-Components-API"
-    }
-
-    modApi "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cc_version}"
-    modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cc_version}"
-    include "io.github.OnyxStudios.Cardinal-Components-API:cardinal-components-base:${project.cc_version}"
-    include "io.github.OnyxStudios.Cardinal-Components-API:cardinal-components-entity:${project.cc_version}"
-
+    // AutoConfig 1u
     modApi("me.sargunvohra.mcmods:autoconfig1u:${project.acu_version}") {
-        exclude(group: "net.fabricmc.fabric-api")
+        exclude group: "net.fabricmc.fabric-api"
     }
     include "me.sargunvohra.mcmods:autoconfig1u:${project.acu_version}"
 
-    modCompileOnly "com.github.Ladysnake:Rats-Mischief:${project.rats_version}"
-    modCompileOnly "software.bernie.geckolib:geckolib-fabric-1.16.5:${project.geckolib_version}:dev"
+    // CCA
+    modApi "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cc_version}"
+    include "io.github.OnyxStudios.Cardinal-Components-API:cardinal-components-base:${project.cc_version}"
+    modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cc_version}"
+    include "io.github.OnyxStudios.Cardinal-Components-API:cardinal-components-entity:${project.cc_version}"
 
+    // Somnus
     modImplementation "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
     include "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
 
+    // LibCD
     include "io.github.cottonmc:LibCD:${project.libcd_version}"
     modRuntime "io.github.cottonmc:LibCD:${project.libcd_version}"
 
+    // Fabric Permissions API
     modImplementation "me.lucko:fabric-permissions-api:${project.fpa_version}"
     include "me.lucko:fabric-permissions-api:${project.fpa_version}"
 
-    //modCompileOnly "curse.maven:bewitchment-394915:${project.bewitchment_version}"
-    modCompileOnly "moriyashiine:bewitchment:1.16.5-11" // no jitpack, curse outdated
+    ///
+    /// SOFT DEPS
+    ///
 
+    // REI
+    modApi "me.shedaniel:RoughlyEnoughItems:${project.rei_version}"
+    modRuntime "me.shedaniel:RoughlyEnoughItems:${project.rei_version}"
+
+    // Origins
+    modImplementation("com.github.apace100:origins-fabric:${project.origins_version}") {
+        exclude module: "modmenu"
+        exclude group: "io.github.OnyxStudios.Cardinal-Components-API"
+        exclude group: "net.adriantodt.fabricmc"
+    }
+    modRuntime ("com.github.apace100:origins-fabric:${project.origins_version}") {
+        exclude module: "modmenu"
+        exclude group: "io.github.OnyxStudios.Cardinal-Components-API"
+        exclude group: "net.adriantodt.fabricmc"
+    }
+
+    // Rat's Mischief
+    modCompileOnly "com.github.Ladysnake:Rats-Mischief:${project.rats_version}"
+    modCompileOnly "software.bernie.geckolib:geckolib-fabric-1.16.5:${project.geckolib_version}:dev"
+
+    // Bewitchment
+    modCompileOnly "curse.maven:bewitchment-394915:${project.bewitchment_version}"
+
+    // Flan
     modCompileOnly "com.github.Flemmli97:Flan:${project.flan_version}"
 
+    // ModMenu
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
-
-    //include "io.github.ladysnake:vanguard:${vanguard_version}"
-
-    // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
-    // You may need to force-disable transitiveness on them.
 }
 
 processResources {
@@ -178,11 +219,9 @@ jar {
     from "LICENSE"
 }
 
-// configure the maven publication
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            // add all the jars that should be included when publishing to maven
             artifact(remapJar) {
                 builtBy remapJar
             }
@@ -192,10 +231,7 @@ publishing {
         }
     }
 
-    // select the repositories you want to publish to
     repositories {
-        // uncomment to publish to the local maven
-        // mavenLocal()
     }
 }
 
