@@ -158,19 +158,12 @@ dependencies {
     ///
 
     // REI
-    modApi "me.shedaniel:RoughlyEnoughItems:${project.rei_version}"
-    modRuntime "me.shedaniel:RoughlyEnoughItems:${project.rei_version}"
+    modImplementation "me.shedaniel:RoughlyEnoughItems:${project.rei_version}"
 
     // Origins
     modImplementation("com.github.apace100:origins-fabric:${project.origins_version}") {
         exclude module: "modmenu"
         exclude group: "io.github.OnyxStudios.Cardinal-Components-API"
-        exclude group: "net.adriantodt.fabricmc"
-    }
-    modRuntime ("com.github.apace100:origins-fabric:${project.origins_version}") {
-        exclude module: "modmenu"
-        exclude group: "io.github.OnyxStudios.Cardinal-Components-API"
-        exclude group: "net.adriantodt.fabricmc"
     }
 
     // Rat's Mischief
