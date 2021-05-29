@@ -20,19 +20,18 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.projectile.ProjectileEntity
 import net.minecraft.inventory.SimpleInventory
 import net.minecraft.item.Item
+import net.minecraft.item.ItemGroup
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.ListTag
 import net.minecraft.text.TranslatableText
-import net.minecraft.util.DyeColor
-import net.minecraft.util.Formatting
-import net.minecraft.util.Hand
-import net.minecraft.util.Identifier
+import net.minecraft.util.*
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.LocalDifficulty
 import net.minecraft.world.ServerWorldAccess
 import net.minecraft.world.World
+import kotlin.Pair
 
 class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, world: World?) : PatrolEntity(entityType, world), CrossbowUser {
     val inventory = SimpleInventory(5)
@@ -166,6 +165,14 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
         }
     }
 
+    override fun interactMob(player: PlayerEntity, hand: Hand): ActionResult {
+        if (!world.isClient && hand == Hand.MAIN_HAND && this.isPatrolLeader && !((player as Vampirable).isVampire)) {
+            player.giveItemStack(Registry.ITEM.get(Identifier("haema:vampire_hunter_contract")).defaultStack)
+            return ActionResult.SUCCESS
+        }
+        return ActionResult.PASS
+    }
+
     companion object {
         val CHARGING: TrackedData<Boolean> = DataTracker.registerData(VampireHunterEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
     }
@@ -246,6 +253,12 @@ fun registerVampireHunter() {
         FabricEntityTypeBuilder.create<VampireHunterEntity>(SpawnGroup.CREATURE) { type, world -> VampireHunterEntity(type, world) }
             .dimensions(EntityDimensions.fixed(0.5f, 2f))
             .trackRangeBlocks(128).trackedUpdateRate(3).spawnableFarFromPlayer().build()
+    )
+
+    Registry.register(
+        Registry.ITEM,
+        Identifier("haema:vampire_hunter_contract"),
+        VampireHunterContract(Item.Settings().group(ItemGroup.MISC))
     )
 
     @Suppress("UNCHECKED_CAST")
