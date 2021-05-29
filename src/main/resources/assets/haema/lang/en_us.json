@@ -6,8 +6,8 @@
   "item.haema.empty_vampire_blood_injector": "Empty Vampire Blood Injector",
   "item.haema.empty_vampire_blood_injector.desc": "If you are Weak, you can become normal again",
   "item.haema.vampire_hunter_contract": "Vampire Hunter Contract",
-  "item.haema.vampire_hunter_contract.incomplete": "Incomplete",
-  "item.haema.vampire_hunter_contract.complete": "Complete",
+  "item.haema.vampire_hunter_contract.unfulfilled": "Unfulfilled",
+  "item.haema.vampire_hunter_contract.fulfilled": "Fulfilled",
   "item.haema.vampire_converter": "[DEBUG ITEM] Vampire Converter",
 
   "block.haema.righteous_banner": "Righteous Banner",

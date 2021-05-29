@@ -168,7 +168,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
     override fun interactMob(player: PlayerEntity, hand: Hand): ActionResult {
         if (!world.isClient && hand == Hand.MAIN_HAND && this.isPatrolLeader && !((player as Vampirable).isVampire)) {
             val stack = player.mainHandStack
-            if (stack.item is VampireHunterContract && stack.isContractComplete()) {
+            if (stack.item is VampireHunterContract && stack.isContractFulfilled()) {
                 player.inventory.removeOne(stack)
                 val reward = Items.GOLD_INGOT.defaultStack
                 reward.count += 2

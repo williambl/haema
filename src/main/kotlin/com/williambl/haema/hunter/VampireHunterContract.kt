@@ -18,8 +18,8 @@ class VampireHunterContract(settings: Settings): Item(settings) {
         ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register { world, entity, target ->
             if (entity is PlayerEntity && target is Vampirable && target.isVampire) {
                 (0 until entity.inventory.size()).asSequence().map { entity.inventory.getStack(it) }
-                    .find { it.item == this && !it.isContractComplete() }
-                    ?.setContractComplete()
+                    .find { it.item == this && !it.isContractFulfilled() }
+                    ?.fulfilContract()
             }
         }
     }
@@ -31,16 +31,21 @@ class VampireHunterContract(settings: Settings): Item(settings) {
         tooltip: MutableList<Text>,
         context: TooltipContext?
     ) {
-        if (stack.isContractComplete()) {
-            tooltip.add(TranslatableText("$translationKey.complete").formatted(Formatting.AQUA))
+        if (stack.isContractFulfilled()) {
+            tooltip.add(TranslatableText("$translationKey.fulfilled").formatted(Formatting.AQUA))
         } else {
-            tooltip.add(TranslatableText("$translationKey.incomplete").formatted(Formatting.RED))
+            tooltip.add(TranslatableText("$translationKey.unfulfilled").formatted(Formatting.RED))
         }
         super.appendTooltip(stack, world, tooltip, context)
     }
 
-@Suppress("UsePropertyAccessSyntax")
-fun ItemStack.isContractComplete() = this.getOrCreateTag().getBoolean("ContractComplete")
+    override fun hasGlint(stack: ItemStack): Boolean {
+        return super.hasGlint(stack) || stack.isContractFulfilled()
+    }
+}
 
 @Suppress("UsePropertyAccessSyntax")
-fun ItemStack.setContractComplete() = this.getOrCreateTag().putBoolean("ContractComplete", true)
+fun ItemStack.isContractFulfilled() = this.getOrCreateTag().getBoolean("ContractFulfilled")
+
+@Suppress("UsePropertyAccessSyntax")
+fun ItemStack.fulfilContract() = this.getOrCreateTag().putBoolean("ContractFulfilled", true)
