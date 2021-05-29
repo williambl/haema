@@ -53,9 +53,7 @@ class VampireHunterSpawner(private val entityType: EntityType<out VampireHunterE
         if (serverWorld.isNearOccupiedPointOfInterest(player.blockPos, 2))
             return 0
 
-        val amountSpawned = trySpawnNear(serverWorld, random, player.blockPos)
-        println("spawned $amountSpawned")
-        return amountSpawned
+        return trySpawnNear(serverWorld, random, player.blockPos)
     }
 
     fun trySpawnNear(serverWorld: ServerWorld, random: Random, pos: BlockPos): Int {
