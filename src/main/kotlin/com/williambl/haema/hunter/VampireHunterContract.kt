@@ -15,11 +15,11 @@ import net.minecraft.world.World
 
 class VampireHunterContract(settings: Settings): Item(settings) {
     init {
-        ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register { world, target, entity ->
+        ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register { world, entity, target ->
             if (entity is PlayerEntity && target is Vampirable && target.isVampire) {
                 (0 until entity.inventory.size()).asSequence().map { entity.inventory.getStack(it) }
-                    .find { it.item == this && !it.isComplete() }
-                    ?.setComplete()
+                    .find { it.item == this && !it.isContractComplete() }
+                    ?.setContractComplete()
             }
         }
     }
@@ -31,7 +31,7 @@ class VampireHunterContract(settings: Settings): Item(settings) {
         tooltip: MutableList<Text>,
         context: TooltipContext?
     ) {
-        if (stack.isComplete()) {
+        if (stack.isContractComplete()) {
             tooltip.add(TranslatableText("$translationKey.complete").formatted(Formatting.AQUA))
         } else {
             tooltip.add(TranslatableText("$translationKey.incomplete").formatted(Formatting.RED))
@@ -39,9 +39,8 @@ class VampireHunterContract(settings: Settings): Item(settings) {
         super.appendTooltip(stack, world, tooltip, context)
     }
 
-    @Suppress("UsePropertyAccessSyntax")
-    private fun ItemStack.isComplete() = this.getOrCreateTag().getBoolean("ContractComplete")
+@Suppress("UsePropertyAccessSyntax")
+fun ItemStack.isContractComplete() = this.getOrCreateTag().getBoolean("ContractComplete")
 
-    @Suppress("UsePropertyAccessSyntax")
-    private fun ItemStack.setComplete() = this.getOrCreateTag().putBoolean("ContractComplete", true)
-}
+@Suppress("UsePropertyAccessSyntax")
+fun ItemStack.setContractComplete() = this.getOrCreateTag().putBoolean("ContractComplete", true)
