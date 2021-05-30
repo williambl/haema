@@ -1,0 +1,69 @@
+{
+  "type": "minecraft:barter",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "weight": 10,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 4,
+                "max": 20,
+                "type": "minecraft:uniform"
+              }
+            }
+          ],
+          "name": "minecraft:gold_ingot"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 40,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 2,
+                "max": 27,
+                "type": "minecraft:uniform"
+              }
+            }
+          ],
+          "name": "minecraft:emerald"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 40,
+          "functions": [
+            {
+              "function": "enchant_randomly",
+              "enchantments": [
+                "minecraft:quick_charge",
+                "minecraft:piercing"
+              ]
+            }
+          ],
+          "name": "minecraft:crossbow"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 40,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 9.0,
+                "max": 20.0,
+                "type": "minecraft:uniform"
+              }
+            }
+          ],
+          "name": "minecraft:spectral_arrow"
+        }
+      ]
+    }
+  ]
+}

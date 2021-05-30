@@ -3,6 +3,7 @@ package com.williambl.haema.hunter
 import com.williambl.haema.Vampirable
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
+import net.fabricmc.fabric.api.loot.v1.FabricLootSupplierBuilder
 import net.minecraft.block.entity.BannerPattern
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.enchantment.Enchantments
@@ -19,12 +20,15 @@ import net.minecraft.entity.passive.MerchantEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.projectile.ProjectileEntity
 import net.minecraft.inventory.SimpleInventory
-import net.minecraft.item.Item
-import net.minecraft.item.ItemGroup
-import net.minecraft.item.ItemStack
-import net.minecraft.item.Items
+import net.minecraft.item.*
+import net.minecraft.loot.LootTable
+import net.minecraft.loot.LootTables
+import net.minecraft.loot.context.LootContext
+import net.minecraft.loot.context.LootContextParameters
+import net.minecraft.loot.context.LootContextTypes
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.ListTag
+import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.*
 import net.minecraft.util.registry.Registry
@@ -34,6 +38,7 @@ import net.minecraft.world.World
 import kotlin.Pair
 
 class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, world: World?) : PatrolEntity(entityType, world), CrossbowUser {
+    private var hasGivenContract = false
     val inventory = SimpleInventory(5)
 
     override fun initialize(world: ServerWorldAccess?, difficulty: LocalDifficulty?, spawnReason: SpawnReason?, entityData: EntityData?, entityTag: CompoundTag?): EntityData? {
@@ -125,6 +130,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
             }
         }
         tag.put("Inventory", listTag)
+        tag.putBoolean("HasGivenContract", hasGivenContract)
     }
 
     override fun readCustomDataFromTag(tag: CompoundTag) {
@@ -137,6 +143,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
             }
         }
         setCanPickUpLoot(true)
+        hasGivenContract = tag.getBoolean("HasGivenContract")
     }
 
     override fun attack(target: LivingEntity?, pullProgress: Float) {
@@ -170,11 +177,14 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
             val stack = player.mainHandStack
             if (stack.item is VampireHunterContract && stack.isContractFulfilled()) {
                 player.inventory.removeOne(stack)
-                val reward = Items.GOLD_INGOT.defaultStack
-                reward.count += 2
-                player.giveItemStack(reward)
-            } else {
+                world?.server?.lootManager?.getTable(paymentLootTable)?.generateLoot(
+                    LootContext.Builder(world as ServerWorld)
+                        .parameter(LootContextParameters.THIS_ENTITY, this).random(world.random)
+                        .build(LootContextTypes.BARTER)
+                )?.forEach { player.giveItemStack(it) }
+            } else if (!hasGivenContract) {
                 player.giveItemStack(Registry.ITEM.get(Identifier("haema:vampire_hunter_contract")).defaultStack)
+                hasGivenContract = true
             }
             return ActionResult.SUCCESS
         }
@@ -182,7 +192,11 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
     }
 
     companion object {
-        val CHARGING: TrackedData<Boolean> = DataTracker.registerData(VampireHunterEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
+        val CHARGING: TrackedData<Boolean> = DataTracker.registerData(
+            VampireHunterEntity::class.java,
+            TrackedDataHandlerRegistry.BOOLEAN
+        )
+        val paymentLootTable = Identifier("haema:gameplay/contract_payment")
     }
 }
 
