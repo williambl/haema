@@ -163,7 +163,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
     }
 
     override fun canPickupItem(stack: ItemStack): Boolean {
-        return stack.item is ToolItem || stack.item is CrossbowItem || stack.item is VampireHunterContract
+        return stack.item is VampireHunterContract
     }
 
     override fun attack(target: LivingEntity?, pullProgress: Float) {
