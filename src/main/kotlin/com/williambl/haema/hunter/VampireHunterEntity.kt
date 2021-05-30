@@ -41,7 +41,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
     private var hasGivenContract = false
     val inventory = SimpleInventory(5)
 
-    override fun initialize(world: ServerWorldAccess?, difficulty: LocalDifficulty?, spawnReason: SpawnReason?, entityData: EntityData?, entityTag: CompoundTag?): EntityData? {
+    override fun initialize(world: ServerWorldAccess?, difficulty: LocalDifficulty, spawnReason: SpawnReason?, entityData: EntityData?, entityTag: CompoundTag?): EntityData? {
         val result =  super.initialize(world, difficulty, spawnReason, entityData, entityTag)
         initEquipment(difficulty)
         return result
@@ -65,7 +65,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
         dataTracker.startTracking(CHARGING, false)
     }
 
-    override fun initEquipment(difficulty: LocalDifficulty?) {
+    override fun initEquipment(difficulty: LocalDifficulty) {
         val crossbow = ItemStack(Items.CROSSBOW)
 
         val crossbowEnchants = mutableMapOf(Pair(Enchantments.QUICK_CHARGE, 3))
@@ -75,7 +75,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
         EnchantmentHelper.set(crossbowEnchants, crossbow)
         equip(300, crossbow)
 
-        val sword = ItemStack(Items.WOODEN_SWORD)
+        val sword = ItemStack(if (random.nextDouble()+1.0 > difficulty.localDifficulty) Items.IRON_SWORD else Items.WOODEN_SWORD)
         sword.addEnchantment(Enchantments.SMITE, 2)
         equip(301, sword)
 
