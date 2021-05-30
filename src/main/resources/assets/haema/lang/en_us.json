@@ -8,6 +8,7 @@
   "item.haema.vampire_hunter_contract": "Vampire Hunter Contract",
   "item.haema.vampire_hunter_contract.unfulfilled": "Unfulfilled",
   "item.haema.vampire_hunter_contract.fulfilled": "Fulfilled",
+  "item.haema.vampire_hunter_contract.target": "Target: %1$s",
   "item.haema.vampire_converter": "[DEBUG ITEM] Vampire Converter",
 
   "block.haema.righteous_banner": "Righteous Banner",

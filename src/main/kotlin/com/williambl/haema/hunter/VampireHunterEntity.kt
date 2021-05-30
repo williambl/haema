@@ -3,7 +3,6 @@ package com.williambl.haema.hunter
 import com.williambl.haema.Vampirable
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
-import net.fabricmc.fabric.api.loot.v1.FabricLootSupplierBuilder
 import net.minecraft.block.entity.BannerPattern
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.enchantment.Enchantments
@@ -21,8 +20,6 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.projectile.ProjectileEntity
 import net.minecraft.inventory.SimpleInventory
 import net.minecraft.item.*
-import net.minecraft.loot.LootTable
-import net.minecraft.loot.LootTables
 import net.minecraft.loot.context.LootContext
 import net.minecraft.loot.context.LootContextParameters
 import net.minecraft.loot.context.LootContextTypes
@@ -206,12 +203,22 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
                         .build(LootContextTypes.BARTER)
                 )?.forEach { player.giveItemStack(it) }
             } else if (!hasGivenContract) {
-                player.giveItemStack(Registry.ITEM.get(Identifier("haema:vampire_hunter_contract")).defaultStack)
+                player.giveItemStack(createContract())
                 hasGivenContract = true
             }
             return ActionResult.SUCCESS
         }
         return ActionResult.PASS
+    }
+
+    private fun createContract(): ItemStack {
+        if (random.nextDouble() < 0.3) {
+            val target = world.players.filter { (it as Vampirable).isVampire }.randomOrNull()
+            if (target != null) {
+                return contractItem.defaultStack.also { it.setContractTarget(target) }
+            }
+        }
+        return contractItem.defaultStack
     }
 
     companion object {
@@ -220,6 +227,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
             TrackedDataHandlerRegistry.BOOLEAN
         )
         val paymentLootTable = Identifier("haema:gameplay/contract_payment")
+        val contractItem: Item by lazy { Registry.ITEM.get(Identifier("haema:vampire_hunter_contract")) }
     }
 }
 
