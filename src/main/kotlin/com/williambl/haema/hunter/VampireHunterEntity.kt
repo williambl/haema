@@ -146,6 +146,29 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
         hasGivenContract = tag.getBoolean("HasGivenContract")
     }
 
+    override fun mobTick() {
+        if (isHolding { it !is ToolItem && it !is CrossbowItem }) {
+            if (isHolding { it is VampireHunterContract } ) {
+                val stack = mainHandStack
+                if (stack.isContractFulfilled()) {
+                    world?.server?.lootManager?.getTable(paymentLootTable)?.generateLoot(
+                        LootContext.Builder(world as ServerWorld)
+                            .parameter(LootContextParameters.THIS_ENTITY, this).random(world.random)
+                            .build(LootContextTypes.BARTER)
+                    )?.forEach { dropStack(it) }
+                    equipStack(EquipmentSlot.MAINHAND, ItemStack.EMPTY)
+                }
+            } else {
+                inventory.addStack(mainHandStack)
+                equipStack(EquipmentSlot.MAINHAND, ItemStack.EMPTY)
+            }
+        }
+    }
+
+    override fun canPickupItem(stack: ItemStack): Boolean {
+        return stack.item is ToolItem || stack.item is CrossbowItem || stack.item is VampireHunterContract
+    }
+
     override fun attack(target: LivingEntity?, pullProgress: Float) {
         shoot(this, 1.6f)
     }
