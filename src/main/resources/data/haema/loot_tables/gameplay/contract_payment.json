@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "weight": 10,
+          "weight": 30,
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -36,7 +36,7 @@
         },
         {
           "type": "minecraft:item",
-          "weight": 40,
+          "weight": 10,
           "functions": [
             {
               "function": "enchant_randomly",
@@ -50,18 +50,33 @@
         },
         {
           "type": "minecraft:item",
-          "weight": 40,
+          "weight": 20,
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
-                "min": 9.0,
-                "max": 20.0,
+                "min": 9,
+                "max": 20,
                 "type": "minecraft:uniform"
               }
             }
           ],
           "name": "minecraft:spectral_arrow"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 5,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 3,
+                "max": 10,
+                "type": "minecraft:uniform"
+              }
+            }
+          ],
+          "name": "minecraft:diamond"
         }
       ]
     }
