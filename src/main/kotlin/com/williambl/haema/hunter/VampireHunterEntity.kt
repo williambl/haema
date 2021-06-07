@@ -40,6 +40,9 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
 
     override fun initialize(world: ServerWorldAccess?, difficulty: LocalDifficulty, spawnReason: SpawnReason?, entityData: EntityData?, entityTag: CompoundTag?): EntityData? {
         val result =  super.initialize(world, difficulty, spawnReason, entityData, entityTag)
+        if (spawnReason == SpawnReason.SPAWN_EGG && random.nextDouble() < 0.3) {
+            isPatrolLeader = true
+        }
         initEquipment(difficulty)
         return result
     }
