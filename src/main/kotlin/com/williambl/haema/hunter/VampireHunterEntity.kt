@@ -14,6 +14,7 @@ import net.minecraft.entity.data.TrackedData
 import net.minecraft.entity.data.TrackedDataHandlerRegistry
 import net.minecraft.entity.mob.HostileEntity
 import net.minecraft.entity.mob.MobEntity
+import net.minecraft.entity.mob.PathAwareEntity
 import net.minecraft.entity.mob.PatrolEntity
 import net.minecraft.entity.passive.MerchantEntity
 import net.minecraft.entity.player.PlayerEntity
@@ -34,11 +35,20 @@ import net.minecraft.world.ServerWorldAccess
 import net.minecraft.world.World
 import kotlin.Pair
 
-class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, world: World?) : PatrolEntity(entityType, world), CrossbowUser {
+class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, world: World?) : PatrolEntity(
+    entityType,
+    world
+), CrossbowUser {
     private var hasGivenContract = false
     val inventory = SimpleInventory(5)
 
-    override fun initialize(world: ServerWorldAccess?, difficulty: LocalDifficulty, spawnReason: SpawnReason?, entityData: EntityData?, entityTag: CompoundTag?): EntityData? {
+    override fun initialize(
+        world: ServerWorldAccess?,
+        difficulty: LocalDifficulty,
+        spawnReason: SpawnReason?,
+        entityData: EntityData?,
+        entityTag: CompoundTag?
+    ): EntityData? {
         val result =  super.initialize(world, difficulty, spawnReason, entityData, entityTag)
         if (spawnReason == SpawnReason.SPAWN_EGG && random.nextDouble() < 0.3) {
             isPatrolLeader = true
@@ -75,7 +85,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
         EnchantmentHelper.set(crossbowEnchants, crossbow)
         equip(300, crossbow)
 
-        val sword = ItemStack(if (random.nextDouble()+1.0 > difficulty.localDifficulty) Items.IRON_SWORD else Items.WOODEN_SWORD)
+        val sword = ItemStack(if (random.nextDouble() + 1.0 > difficulty.localDifficulty) Items.IRON_SWORD else Items.WOODEN_SWORD)
         sword.addEnchantment(Enchantments.SMITE, 2)
         equip(301, sword)
 
@@ -147,7 +157,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
     }
 
     override fun mobTick() {
-        if (isHolding { it !is ToolItem && it !is CrossbowItem }) {
+        if (isHolding { it !is ToolItem && it !is CrossbowItem && it != Items.AIR }) {
             if (isHolding { it is VampireHunterContract } ) {
                 val stack = mainHandStack
                 if (stack.isContractFulfilled()) {
@@ -181,7 +191,12 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
 
     fun isCharging(): Boolean = dataTracker[CHARGING]
 
-    override fun shoot(target: LivingEntity?, crossbow: ItemStack?, projectile: ProjectileEntity?, multiShotSpray: Float) {
+    override fun shoot(
+        target: LivingEntity?,
+        crossbow: ItemStack?,
+        projectile: ProjectileEntity?,
+        multiShotSpray: Float
+    ) {
         shoot(this, target, projectile, multiShotSpray, 1.6f)
     }
 
@@ -214,6 +229,13 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
         return ActionResult.PASS
     }
 
+    override fun tickRiding() {
+        super.tickRiding()
+        if (vehicle is PathAwareEntity) {
+            bodyYaw = (vehicle as PathAwareEntity).bodyYaw
+        }
+    }
+
     private fun createContract(): ItemStack {
         if (random.nextDouble() < 0.3) {
             val target = world.players.filter { (it as Vampirable).isVampire }.randomOrNull()
@@ -234,13 +256,19 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
     }
 }
 
-class VampireHunterCrossbowAttackGoal(private val actor: VampireHunterEntity, speed: Double, range: Float) : CrossbowAttackGoal<VampireHunterEntity>(actor, speed, range) {
+class VampireHunterCrossbowAttackGoal(private val actor: VampireHunterEntity, speed: Double, range: Float) : CrossbowAttackGoal<VampireHunterEntity>(
+    actor,
+    speed,
+    range
+) {
     override fun canStart(): Boolean = hasValidTarget() && actorHasCrossbow()
 
     override fun shouldContinue(): Boolean =
         hasValidTarget() && (canStart() || !this.actor.navigation.isIdle) && actorHasCrossbow()
 
-    private fun hasValidTarget(): Boolean = actor.target != null && actor.target!!.isAlive && actor.squaredDistanceTo(actor.target!!) > 16 && actor.target!!.health > 4
+    private fun hasValidTarget(): Boolean = actor.target != null && actor.target!!.isAlive && actor.squaredDistanceTo(
+        actor.target!!
+    ) > 16 && actor.target!!.health > 4
 
     private fun actorHasCrossbow(): Boolean =
         actor.isHolding(Items.CROSSBOW) || actor.inventory.containsAny(setOf(Items.CROSSBOW))
@@ -266,7 +294,11 @@ class VampireHunterCrossbowAttackGoal(private val actor: VampireHunterEntity, sp
     }
 }
 
-class VampireHunterMeleeAttackGoal(private val actor: VampireHunterEntity, speed: Double, pauseWhenMobIdle: Boolean) : MeleeAttackGoal(actor, speed, pauseWhenMobIdle) {
+class VampireHunterMeleeAttackGoal(private val actor: VampireHunterEntity, speed: Double, pauseWhenMobIdle: Boolean) : MeleeAttackGoal(
+    actor,
+    speed,
+    pauseWhenMobIdle
+) {
     override fun canStart(): Boolean = super.canStart() && hasValidTarget() && actorHasSword()
 
     override fun shouldContinue(): Boolean = super.shouldContinue() && hasValidTarget() && actorHasSword()
@@ -300,6 +332,14 @@ class VampireHunterMeleeAttackGoal(private val actor: VampireHunterEntity, speed
             }
         }
     }
+
+    override fun getSquaredMaxAttackDistance(entity: LivingEntity): Double {
+        var value = super.getSquaredMaxAttackDistance(entity)
+        if (entity.vehicle is LivingEntity) {
+            value *= 5
+        }
+        return value
+    }
 }
 
 fun registerVampireHunter() {
@@ -320,7 +360,7 @@ fun registerVampireHunter() {
     @Suppress("UNCHECKED_CAST")
     FabricDefaultAttributeRegistry.register(
         Registry.ENTITY_TYPE.get(Identifier("haema:vampire_hunter")) as EntityType<out LivingEntity>?,
-        HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3499999940395355)
+        HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.35)
             .add(EntityAttributes.GENERIC_MAX_HEALTH, 20.0)
             .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 5.0)
             .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 64.0)
