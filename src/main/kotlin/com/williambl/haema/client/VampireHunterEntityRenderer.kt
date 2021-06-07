@@ -5,7 +5,7 @@ import com.williambl.haema.hunter.VampireHunterEntity
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.model.ModelPart
-import net.minecraft.client.render.entity.EntityRenderDispatcher
+import net.minecraft.client.render.entity.EntityRendererFactory
 import net.minecraft.client.render.entity.MobEntityRenderer
 import net.minecraft.client.render.entity.feature.HeadFeatureRenderer
 import net.minecraft.client.render.entity.feature.HeldItemFeatureRenderer
@@ -20,11 +20,11 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.math.MathHelper
 
 @Environment(EnvType.CLIENT)
-class VampireHunterEntityRenderer(entityRenderDispatcher: EntityRenderDispatcher) : MobEntityRenderer<VampireHunterEntity, VampireHunterModel>(entityRenderDispatcher, VampireHunterModel(0f, 0f, 64, 64), 0.5f) {
+class VampireHunterEntityRenderer(context: EntityRendererFactory.Context) : MobEntityRenderer<VampireHunterEntity, VampireHunterModel>(context, VampireHunterModel(0f, 0f, 64, 64), 0.5f) {
     private val texture = Identifier("textures/entity/illager/pillager.png")
 
     init {
-        addFeature(HeadFeatureRenderer(this))
+        addFeature(HeadFeatureRenderer(this, context.modelLoader))
         addFeature(HeldItemFeatureRenderer(this))
     }
 
@@ -92,7 +92,7 @@ class VampireHunterModel(scale: Float, pivotY: Float, textureWidth: Int, texture
             }
         } else if (entity.isAttacking) {
             // hold arm up in the air
-            CrossbowPosing.method_29351(rightAttackingArm, leftAttackingArm, entity, handSwingProgress, h)
+            CrossbowPosing.meleeAttack(rightAttackingArm, leftAttackingArm, entity, handSwingProgress, h)
         }
     }
 

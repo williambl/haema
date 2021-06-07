@@ -21,8 +21,8 @@ import com.williambl.haema.util.registerGameRules
 import com.williambl.haema.util.sunlightDamagesArmour
 import com.williambl.haema.util.vampiresBurn
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
+import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy
 import me.lucko.fabric.api.permissions.v0.Permissions
-import nerdhub.cardinal.components.api.util.RespawnCopyStrategy
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
@@ -113,7 +113,7 @@ fun init() {
         override fun getPriority(): Int = 10
 
         override fun willVampireBurn(player: PlayerEntity, world: World): TriState {
-            return if (player.armorItems.all { it.item.isIn(vampireProtectiveClothingTag) }) {
+            return if (player.armorItems.all { vampireProtectiveClothingTag.contains(it.item) }) {
                 player.armorItems.forEachIndexed { i, stack ->
                     if (world.random.nextFloat() < 0.025 && world.gameRules[sunlightDamagesArmour].get()) {
                         stack.damage((world.random.nextFloat() * (i + 2)).toInt(), player) {

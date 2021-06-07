@@ -53,7 +53,7 @@ fun registerAbilities() {
                 val y: Double = (target.y - player.y) * rand.nextDouble() + player.y + 1
                 val z: Double = (target.z - player.z) * rand.nextDouble() + player.z - 0.5
                 (world as ServerWorld).spawnParticles(
-                    DustParticleEffect.RED,
+                    DustParticleEffect.DEFAULT,
                     x, y, z,
                     10,
                     0.5, 1.0, 0.5,

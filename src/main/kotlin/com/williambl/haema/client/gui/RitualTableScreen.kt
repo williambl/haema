@@ -93,7 +93,7 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
 
     private fun renderWindowBorder(matrices: MatrixStack, xBase: Int, yBase: Int) {
         matrices.push()
-        RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f)
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
         RenderSystem.enableBlend()
         client!!.textureManager.bindTexture(WINDOW_TEXTURE)
         drawTexture(matrices, xBase, yBase, 0, 0, 252, 140)

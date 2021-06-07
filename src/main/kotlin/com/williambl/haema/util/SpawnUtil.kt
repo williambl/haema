@@ -26,7 +26,7 @@ fun getSpawn(player: PlayerEntity): Pair<ServerWorld, BlockPos>? {
                         continue@yloop
                     if (world.getFluidState(mutable).fluid != Fluids.EMPTY)
                         continue@yloop
-                    val candidate = Dismounting.method_30769(EntityType.PLAYER, world, mutable, true)
+                    val candidate = Dismounting.findRespawnPos(EntityType.PLAYER, world, mutable, true)
                     if (candidate != null)
                         candidates.add(candidate)
                 }

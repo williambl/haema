@@ -87,7 +87,7 @@ class RitualRecipe(
 
         val mutable = inv.pos.mutableCopy().move(Direction.DOWN)
 
-        (inv.player.world as ServerWorld).spawnParticles(DustParticleEffect.RED, mutable.x.toDouble()+0.5, mutable.y.toDouble()+1.5, mutable.z.toDouble()+0.5, 10, 0.5, 1.0, 0.5, 0.5)
+        (inv.player.world as ServerWorld).spawnParticles(DustParticleEffect.DEFAULT, mutable.x.toDouble()+0.5, mutable.y.toDouble()+1.5, mutable.z.toDouble()+0.5, 10, 0.5, 1.0, 0.5, 0.5)
 
         (inv.player.world as ServerWorld).playSound(null, mutable.x.toDouble()+0.5, mutable.y.toDouble()+1.5, mutable.z.toDouble()+0.5, SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, SoundCategory.BLOCKS, 1f, 1f)
         (inv.player.world as ServerWorld).playSound(null, mutable.x.toDouble()+0.5, mutable.y.toDouble()+1.5, mutable.z.toDouble()+0.5, SoundEvents.BLOCK_END_GATEWAY_SPAWN, SoundCategory.BLOCKS, 1f, 1f)

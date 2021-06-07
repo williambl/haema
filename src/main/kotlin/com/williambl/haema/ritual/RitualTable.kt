@@ -34,6 +34,7 @@ import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Direction
+import net.minecraft.util.math.Vec3f
 import net.minecraft.util.registry.Registry
 import net.minecraft.util.shape.VoxelShape
 import net.minecraft.world.BlockView
@@ -85,7 +86,7 @@ class RitualTable(settings: Settings) : HorizontalFacingBlock(settings) {
         context: ShapeContext?
     ): VoxelShape = shape
 
-    override fun onSteppedOn(world: World, pos: BlockPos, entity: Entity) {
+    override fun onSteppedOn(world: World, pos: BlockPos, state: BlockState, entity: Entity) {
         if (world.isClient && entity is Vampirable && entity.isVampire && world.random.nextFloat() < 0.1) {
             val level = min(checkBaseBlockStates(world, pos), checkTorchBlockStates(world, pos))
 
@@ -108,7 +109,7 @@ class RitualTable(settings: Settings) : HorizontalFacingBlock(settings) {
                 }
             }
         }
-        super.onSteppedOn(world, pos, entity)
+        super.onSteppedOn(world, pos, state, entity)
     }
 
     override fun randomDisplayTick(state: BlockState, world: World, pos: BlockPos, random: Random) {
@@ -222,7 +223,7 @@ class RitualTable(settings: Settings) : HorizontalFacingBlock(settings) {
                 val offsetX = 3*world.random.nextDouble() - 1.0
                 val offsetZ = 3*world.random.nextDouble() - 1.0
                 world.addParticle(
-                    DustParticleEffect(speed.toFloat(), 0f, 0f, 1f),
+                    DustParticleEffect(Vec3f(speed.toFloat(), 0f, 0f), 1f),
                     pos.x + offsetX,
                     pos.y - 0.2,
                     pos.z + offsetZ,

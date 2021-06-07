@@ -10,9 +10,9 @@ import net.minecraft.item.Item
 import net.minecraft.item.ItemGroup
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
-import net.minecraft.loot.ConstantLootTableRange
 import net.minecraft.loot.LootManager
 import net.minecraft.loot.entry.ItemEntry
+import net.minecraft.loot.provider.number.ConstantLootNumberProvider
 import net.minecraft.resource.ResourceManager
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
@@ -46,7 +46,7 @@ fun registerBlood() {
     LootTableLoadingCallback.EVENT.register(LootTableLoadingCallback { resourceManager: ResourceManager?, lootManager: LootManager?, id: Identifier?, supplier: FabricLootSupplierBuilder, setter: LootTableLoadingCallback.LootTableSetter? ->
         if (id == dungeonLootTable || id == jungleTempleLootTable || id == desertPyramidLootTable) {
             val poolBuilder: FabricLootPoolBuilder = FabricLootPoolBuilder.builder()
-                .rolls(ConstantLootTableRange.create(1))
+                .rolls(ConstantLootNumberProvider.create(1f))
                 .withEntry(
                     ItemEntry.builder(Registry.ITEM.get(Identifier("haema:vampire_blood")))
                         .weight(if (id == dungeonLootTable) 10 else 5)

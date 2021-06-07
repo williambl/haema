@@ -25,7 +25,7 @@ import net.minecraft.entity.player.HungerManager
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.server.network.ServerPlayerEntity
@@ -154,16 +154,16 @@ class VampireBloodManager() : HungerManager() {
         return getIntBloodLevel()
     }
 
-    override fun fromTag(tag: CompoundTag?) {
-        super.fromTag(tag)
+    override fun readNbt(tag: NbtCompound?) {
+        super.readNbt(tag)
         absoluteBloodLevel = tag?.getDouble("BloodLevel") ?: 0.0
         lastFed = tag?.getLong("LastFed") ?: -6000
     }
 
-    override fun toTag(tag: CompoundTag?) {
-        super.toTag(tag)
-        tag?.putDouble("BloodLevel", absoluteBloodLevel)
-        tag?.putLong("LastFed", lastFed)
+    override fun writeNbt(tag: NbtCompound) {
+        super.writeNbt(tag)
+        tag.putDouble("BloodLevel", absoluteBloodLevel)
+        tag.putLong("LastFed", lastFed)
     }
 
     fun getIntBloodLevel(): Int {
@@ -215,7 +215,7 @@ class VampireBloodManager() : HungerManager() {
         val towards = player.pos.subtract(entity.pos).normalize().multiply(0.1)
         for (i in 0..20) {
             val vel = towards.multiply(i.toDouble())
-            player.world.addParticle(DustParticleEffect.RED, entity.x+player.random.nextDouble()-0.5, entity.y+player.random.nextDouble(), entity.z+player.random.nextDouble()-0.5, vel.x, vel.y, vel.z)
+            player.world.addParticle(DustParticleEffect.DEFAULT, entity.x+player.random.nextDouble()-0.5, entity.y+player.random.nextDouble(), entity.z+player.random.nextDouble()-0.5, vel.x, vel.y, vel.z)
         }
         BloodDrinkingEvents.ON_BLOOD_DRINK.invoker().onDrink(player, entity, player.world)
     }
