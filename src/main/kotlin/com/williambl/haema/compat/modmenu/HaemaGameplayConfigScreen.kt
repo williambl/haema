@@ -1,5 +1,6 @@
 package com.williambl.haema.compat.modmenu
 
+import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawableHelper
 import net.minecraft.client.gui.screen.Screen
@@ -87,7 +88,7 @@ class HaemaGameplayConfigScreen(private val parent: Screen?) : Screen(LiteralTex
     override fun render(matrices: MatrixStack?, mouseX: Int, mouseY: Int, delta: Float) {
         renderBackground(matrices)
         super.render(matrices, mouseX, mouseY, delta)
-        client!!.textureManager.bindTexture(icon)
+        RenderSystem.setShaderTexture(0, icon)
         DrawableHelper.drawTexture(
             matrices,
             width/2-20,
