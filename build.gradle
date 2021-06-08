@@ -74,6 +74,7 @@ repositories {
         name = "Shedaniel"
         url = "https://maven.shedaniel.me"
         content {
+            includeGroupByRegex "dev\\.architectury.*"
             includeGroupByRegex "me\\.shedaniel.*"
             includeGroupByRegex "me\\.sargunvohra.*"
         }
@@ -167,7 +168,7 @@ dependencies {
     ///
 
     // REI
-    modCompileOnly "me.shedaniel:RoughlyEnoughItems:${project.rei_version}"
+    modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 
     // Origins
     modCompileOnly("com.github.apace100:origins-fabric:${project.origins_version}") {
