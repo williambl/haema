@@ -16,6 +16,7 @@ import me.sargunvohra.mcmods.autoconfig1u.AutoConfig
 import me.sargunvohra.mcmods.autoconfig1u.serializer.Toml4jConfigSerializer
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
+import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityModelLayerRegistry
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry
@@ -89,6 +90,8 @@ fun init() {
 
     KeyBindingHelper.registerKeyBinding(DASH_KEY)
 
+    @Suppress("UnstableApiUsage", "DEPRECATION")
+    EntityModelLayerRegistry.registerModelLayer(VampireHunterModel.layer, VampireHunterModel.Companion::getTexturedModelData)
     @Suppress("UNCHECKED_CAST")
     EntityRendererRegistry.INSTANCE.register(Registry.ENTITY_TYPE.get(Identifier("haema:vampire_hunter")) as EntityType<VampireHunterEntity>) { context -> VampireHunterEntityRenderer(context) }
 
