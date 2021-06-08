@@ -152,8 +152,8 @@ dependencies {
     include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cc_version}"
 
     // Somnus (currently on mavenlocal)
-    // modImplementation "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
-    // include "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
+    modImplementation "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
+    include "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
 
     // LibCD
     //include "io.github.cottonmc:LibCD:${project.libcd_version}"
