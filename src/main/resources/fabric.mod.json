@@ -52,7 +52,7 @@
     "fabric": "*",
     "fabric-language-kotlin": "*",
     "fabric-permissions-api-v0": "*",
-    "minecraft": "1.16.x"
+    "minecraft": "1.17.x"
   },
   "suggests": {
     "origins": ">=0.4.7"

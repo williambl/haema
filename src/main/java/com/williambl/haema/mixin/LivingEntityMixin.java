@@ -73,7 +73,7 @@ public abstract class LivingEntityMixin extends Entity {
     @Inject(method = "onDeath", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setPose(Lnet/minecraft/entity/EntityPose;)V"))
     void alertVampireHuntersToDeath(DamageSource source, CallbackInfo ci) {
         if (source == BloodLossDamageSource.Companion.getInstance() && world instanceof ServerWorld) {
-            ((ServerWorld) world).spawnParticles(new DustParticleEffect(1.0f,0.0f, 0.0f, 3.0f), getX(), getY()+1, getZ(), 30, 1.0, 1.0, 1.0, 0.1);
+            ((ServerWorld) world).spawnParticles(new DustParticleEffect(DustParticleEffect.RED, 3.0f), getX(), getY()+1, getZ(), 30, 1.0, 1.0, 1.0, 0.1);
 
             if (random.nextDouble() < world.getGameRules().get(HaemaGameRulesKt.getVampireHunterNoticeChance()).get()) {
                 //noinspection ConstantConditions

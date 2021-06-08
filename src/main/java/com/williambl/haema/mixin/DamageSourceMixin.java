@@ -25,7 +25,7 @@ public class DamageSourceMixin {
     private static void addVampireEffectiveSources(PlayerEntity attacker, CallbackInfoReturnable<DamageSource> cir) {
         DamageSource source = cir.getReturnValue();
         ItemStack stack = attacker.getMainHandStack();
-        if (stack.getItem().isIn(vampireEffectiveWeaponsTag) || EnchantmentHelper.getLevel(Enchantments.SMITE, stack) >= 1)
+        if (vampireEffectiveWeaponsTag.contains(stack.getItem()) || EnchantmentHelper.getLevel(Enchantments.SMITE, stack) >= 1)
             DamageSourceExtensionsKt.setEffectiveAgainstVampires(source);
     }
 
@@ -33,7 +33,7 @@ public class DamageSourceMixin {
     private static void addVampireEffectiveSourcesMob(LivingEntity attacker, CallbackInfoReturnable<DamageSource> cir) {
         DamageSource source = cir.getReturnValue();
         ItemStack stack = attacker.getMainHandStack();
-        if (stack.getItem().isIn(vampireEffectiveWeaponsTag) || EnchantmentHelper.getLevel(Enchantments.SMITE, stack) >= 1)
+        if (vampireEffectiveWeaponsTag.contains(stack.getItem()) || EnchantmentHelper.getLevel(Enchantments.SMITE, stack) >= 1)
             DamageSourceExtensionsKt.setEffectiveAgainstVampires(source);
     }
 }
