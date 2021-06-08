@@ -1,38 +1,24 @@
 package com.williambl.haema.compat.rei
 
 import com.williambl.haema.ritual.RitualTable
-import com.williambl.haema.ritual.craft.RitualRecipe
 import me.shedaniel.math.Point
 import me.shedaniel.math.Rectangle
-import me.shedaniel.rei.api.EntryStack
-import me.shedaniel.rei.api.RecipeCategory
-import me.shedaniel.rei.api.RecipeDisplay
-import me.shedaniel.rei.api.widgets.Widgets
-import me.shedaniel.rei.gui.widget.Widget
-import net.minecraft.client.resource.language.I18n
+import me.shedaniel.rei.api.client.gui.Renderer
+import me.shedaniel.rei.api.client.gui.widgets.Widget
+import me.shedaniel.rei.api.client.gui.widgets.Widgets
+import me.shedaniel.rei.api.client.registry.display.DisplayCategory
+import me.shedaniel.rei.api.common.category.CategoryIdentifier
+import me.shedaniel.rei.api.common.util.EntryStacks
+import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
-import net.minecraft.util.Identifier
 
-class RitualCategory: RecipeCategory<RitualCategory.Display> {
-    class Display(val recipe: RitualRecipe): RecipeDisplay {
-        private val input: MutableList<List<EntryStack>> = EntryStack.ofIngredients(recipe.ingredients).toMutableList()
-        init {
-            input.add(mutableListOf(EntryStack.create(recipe.fluid)))
-        }
+class RitualCategory: DisplayCategory<RitualDisplay> {
+    override fun getCategoryIdentifier(): CategoryIdentifier<out RitualDisplay> = HaemaREIPlugin.ritualId
 
-        override fun getInputEntries(): List<List<EntryStack>> = input
+    override fun getTitle(): Text = TranslatableText("rei.${identifier.toString().replace(':', '.')}")
 
-        override fun getResultingEntries(): List<List<EntryStack>> = listOf(listOf())
-
-        override fun getRecipeCategory(): Identifier = Identifier("haema:ritual")
-    }
-
-    override fun getIdentifier(): Identifier = Identifier("haema:ritual")
-
-    override fun getCategoryName(): String = I18n.translate("rei.${identifier.toString().replace(':', '.')}")
-
-    override fun setupDisplay(recipeDisplay: Display, bounds: Rectangle): MutableList<Widget> {
+    override fun setupDisplay(recipeDisplay: RitualDisplay, bounds: Rectangle): MutableList<Widget> {
         val inputsPoint = Point(bounds.centerX - 64, bounds.centerY - 16)
         val outputPoint = Point(bounds.centerX + 26, bounds.centerY - 8)
         val widgets = mutableListOf<Widget>()
@@ -55,5 +41,5 @@ class RitualCategory: RecipeCategory<RitualCategory.Display> {
         return widgets
     }
 
-    override fun getLogo(): EntryStack = EntryStack.create(RitualTable.instance.asItem().defaultStack)
+    override fun getIcon(): Renderer = EntryStacks.of(RitualTable.instance.asItem().defaultStack)
 }

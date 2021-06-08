@@ -14,8 +14,7 @@ import net.minecraft.util.registry.Registry
 import net.minecraft.world.World
 
 class BookOfBloodRecipe(id: Identifier?) : SpecialCraftingRecipe(id) {
-
-    private val resultStack = ItemStack(Registry.ITEM[Identifier("patchouli:guide_book")])
+    val resultStack = ItemStack(Registry.ITEM[Identifier("patchouli:guide_book")])
 
     init {
         val tag = NbtCompound()

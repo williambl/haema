@@ -4,39 +4,33 @@ import com.williambl.haema.api.RitualTableUseEvent
 import com.williambl.haema.craft.BookOfBloodRecipe
 import com.williambl.haema.logger
 import com.williambl.haema.ritual.craft.RitualRecipe
-import me.shedaniel.rei.api.ClientHelper
-import me.shedaniel.rei.api.RecipeHelper
-import me.shedaniel.rei.api.plugins.REIPluginV0
-import net.minecraft.util.Identifier
+import me.shedaniel.rei.api.client.plugins.REIClientPlugin
+import me.shedaniel.rei.api.client.registry.category.CategoryRegistry
+import me.shedaniel.rei.api.client.registry.display.DisplayRegistry
+import me.shedaniel.rei.api.client.view.ViewSearchBuilder
+import me.shedaniel.rei.api.common.category.CategoryIdentifier
 import vazkii.patchouli.common.item.PatchouliItems
 
-class HaemaREIPlugin : REIPluginV0 {
+class HaemaREIPlugin : REIClientPlugin {
+    companion object {
+        val ritualId: CategoryIdentifier<RitualDisplay> = CategoryIdentifier.of("haema:ritual")
+    }
 
-    val id = Identifier("haema:haema_rei_plugin")
-
-    override fun getPluginIdentifier(): Identifier = id
-
-    override fun registerRecipeDisplays(recipeHelper: RecipeHelper) {
+    override fun registerDisplays(registry: DisplayRegistry) {
         logger.info("REI detected. Adding the Book of Blood & Ritual recipe displays.")
-        recipeHelper.recipeManager.get(Identifier("haema:book_of_blood")).ifPresent {
-            if (it is BookOfBloodRecipe)
-                recipeHelper.registerDisplay(BookOfBloodRecipeDisplay(it))
-        }
-        recipeHelper.recipeManager.listAllOfType(RitualRecipe.recipeType).forEach {
-            recipeHelper.registerDisplay(RitualCategory.Display(it))
-        }
+        registry.registerFiller(BookOfBloodRecipe::class.java, ::BookOfBloodRecipeDisplay)
+        registry.registerFiller(RitualRecipe::class.java, ::RitualDisplay)
     }
 
-    override fun registerPluginCategories(recipeHelper: RecipeHelper) {
-        recipeHelper.registerCategory(RitualCategory())
+    override fun registerCategories(registry: CategoryRegistry) {
+        registry.add(RitualCategory())
     }
 
-    override fun registerOthers(recipeHelper: RecipeHelper) {
+    init {
         RitualTableUseEvent.EVENT.register(RitualTableUseEvent { _, _, _, player, hand, _ ->
             if (player.getStackInHand(hand).item == PatchouliItems.book) {
-                ClientHelper.getInstance().openView(ClientHelper.ViewSearchBuilder.builder().addCategory(Identifier("haema:ritual")).fillPreferredOpenedCategory())
+                ViewSearchBuilder.builder().addCategory(ritualId).open()
             }
         })
     }
-
 }

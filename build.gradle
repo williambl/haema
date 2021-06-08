@@ -74,6 +74,7 @@ repositories {
         name = "Shedaniel"
         url = "https://maven.shedaniel.me"
         content {
+            includeGroupByRegex "dev\\.architectury.*"
             includeGroupByRegex "me\\.shedaniel.*"
             includeGroupByRegex "me\\.sargunvohra.*"
         }
@@ -151,8 +152,8 @@ dependencies {
     include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cc_version}"
 
     // Somnus (currently on mavenlocal)
-    modImplementation "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
-    include "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
+    // modImplementation "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
+    // include "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
 
     // LibCD
     //include "io.github.cottonmc:LibCD:${project.libcd_version}"
@@ -167,7 +168,7 @@ dependencies {
     ///
 
     // REI
-    modCompileOnly "me.shedaniel:RoughlyEnoughItems:${project.rei_version}"
+    modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 
     // Origins
     modCompileOnly("com.github.apace100:origins-fabric:${project.origins_version}") {
