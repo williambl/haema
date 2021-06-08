@@ -32,8 +32,6 @@ class HaemaREIPlugin : REIPluginV0 {
     }
 
     override fun registerOthers(recipeHelper: RecipeHelper) {
-        super.registerOthers(recipeHelper)
-
         RitualTableUseEvent.EVENT.register(RitualTableUseEvent { _, _, _, player, hand, _ ->
             if (player.getStackInHand(hand).item == PatchouliItems.book) {
                 ClientHelper.getInstance().openView(ClientHelper.ViewSearchBuilder.builder().addCategory(Identifier("haema:ritual")).fillPreferredOpenedCategory())
