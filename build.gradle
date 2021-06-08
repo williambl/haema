@@ -146,17 +146,17 @@ dependencies {
 
     // CCA
     modApi "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cc_version}"
-    include "io.github.OnyxStudios.Cardinal-Components-API:cardinal-components-base:${project.cc_version}"
+    include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cc_version}"
     modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cc_version}"
-    include "io.github.OnyxStudios.Cardinal-Components-API:cardinal-components-entity:${project.cc_version}"
+    include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cc_version}"
 
-    // Somnus
+    // Somnus (currently on mavenlocal)
     modImplementation "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
     include "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
 
     // LibCD
-    include "io.github.cottonmc:LibCD:${project.libcd_version}"
-    modRuntime "io.github.cottonmc:LibCD:${project.libcd_version}"
+    //include "io.github.cottonmc:LibCD:${project.libcd_version}"
+    //modRuntime "io.github.cottonmc:LibCD:${project.libcd_version}"
 
     // Fabric Permissions API
     modImplementation "me.lucko:fabric-permissions-api:${project.fpa_version}"
@@ -192,13 +192,8 @@ dependencies {
 processResources {
     inputs.property "version", project.version
 
-    from(sourceSets.main.resources.srcDirs) {
-        include "fabric.mod.json"
+    filesMatching("fabric.mod.json") {
         expand "version": project.version
-    }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude "fabric.mod.json"
     }
 }
 
