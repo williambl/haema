@@ -371,7 +371,7 @@ fun registerVampireHunter() {
         Registry.ENTITY_TYPE,
         Identifier("haema:vampire_hunter"),
         FabricEntityTypeBuilder.create<VampireHunterEntity>(SpawnGroup.CREATURE) { type, world -> VampireHunterEntity(type, world) }
-            .dimensions(EntityDimensions.fixed(0.5f, 2f))
+            .dimensions(EntityDimensions.fixed(0.6f, 1.95f))
             .trackRangeBlocks(128).trackedUpdateRate(3).spawnableFarFromPlayer().build()
     )
 
