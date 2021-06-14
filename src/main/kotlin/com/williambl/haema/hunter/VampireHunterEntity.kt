@@ -1,8 +1,10 @@
 package com.williambl.haema.hunter
 
 import com.williambl.haema.Vampirable
+import com.williambl.haema.util.contains
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
+import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags
 import net.minecraft.block.entity.BannerPattern
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.enchantment.Enchantments
@@ -19,6 +21,7 @@ import net.minecraft.entity.mob.PatrolEntity
 import net.minecraft.entity.passive.MerchantEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.projectile.ProjectileEntity
+import net.minecraft.entity.projectile.ProjectileUtil
 import net.minecraft.inventory.SimpleInventory
 import net.minecraft.item.*
 import net.minecraft.loot.context.LootContext
@@ -26,10 +29,13 @@ import net.minecraft.loot.context.LootContextParameters
 import net.minecraft.loot.context.LootContextTypes
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.ListTag
+import net.minecraft.potion.PotionUtil
+import net.minecraft.potion.Potions
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.*
 import net.minecraft.util.registry.Registry
+import net.minecraft.world.Difficulty
 import net.minecraft.world.LocalDifficulty
 import net.minecraft.world.ServerWorldAccess
 import net.minecraft.world.World
@@ -120,15 +126,20 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
     }
 
     fun takeItem(item: Item): ItemStack {
+        return takeItem { it == item }
+    }
+
+    fun takeItem(prediacte: (Item) -> Boolean): ItemStack {
         for (i in 0 until inventory.size()) {
             val stack = inventory.getStack(i)
-            if (stack.item == item) {
+            if (prediacte(stack.item)) {
                 inventory.removeStack(i)
                 return stack
             }
         }
         return ItemStack.EMPTY
     }
+
 
     override fun writeCustomDataToTag(tag: CompoundTag) {
         super.writeCustomDataToTag(tag)
@@ -197,7 +208,18 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
         projectile: ProjectileEntity?,
         multiShotSpray: Float
     ) {
-        shoot(this, target, projectile, multiShotSpray, 1.6f)
+        shoot(this,
+            target,
+            if (world.getLocalDifficulty(blockPos).isHarderThan(Difficulty.EASY.id+random.nextFloat()*2)) {
+                ProjectileUtil.createArrowProjectile(
+                    this,
+                    PotionUtil.setPotion(Items.TIPPED_ARROW.defaultStack, Potions.WEAKNESS),
+                    1f
+                )
+            } else {
+                projectile
+            },
+            multiShotSpray, 1.6f)
     }
 
     override fun isTeammate(other: Entity?): Boolean {
@@ -268,7 +290,7 @@ class VampireHunterCrossbowAttackGoal(private val actor: VampireHunterEntity, sp
 
     private fun hasValidTarget(): Boolean = actor.target != null && actor.target!!.isAlive && actor.squaredDistanceTo(
         actor.target!!
-    ) > 16 && actor.target!!.health > 4
+    ) > 25 && actor.target!!.health > 4
 
     private fun actorHasCrossbow(): Boolean =
         actor.isHolding(Items.CROSSBOW) || actor.inventory.containsAny(setOf(Items.CROSSBOW))
@@ -306,13 +328,13 @@ class VampireHunterMeleeAttackGoal(private val actor: VampireHunterEntity, speed
     private fun hasValidTarget(): Boolean = actor.target != null && actor.target!!.isAlive
 
     private fun actorHasSword(): Boolean =
-        actor.isHolding(Items.WOODEN_SWORD) || actor.inventory.containsAny(setOf(Items.WOODEN_SWORD))
+        actor.isHolding(::isSword) || actor.inventory.contains(::isSword)
 
     override fun start() {
         super.start()
-        if (!actor.isHolding(Items.WOODEN_SWORD)) {
+        if (!actor.isHolding(::isSword)) {
             val equipped = actor.getStackInHand(Hand.MAIN_HAND)
-            actor.equipStack(EquipmentSlot.MAINHAND, actor.takeItem(Items.WOODEN_SWORD))
+            actor.equipStack(EquipmentSlot.MAINHAND, actor.takeItem(::isSword))
             actor.inventory.addStack(equipped)
         }
     }
@@ -324,7 +346,7 @@ class VampireHunterMeleeAttackGoal(private val actor: VampireHunterEntity, speed
 
     override fun stop() {
         super.stop()
-        if (actor.isHolding(Items.WOODEN_SWORD)) {
+        if (!actor.isHolding(::isSword)) {
             val equipped = actor.getStackInHand(Hand.MAIN_HAND)
             if (actor.inventory.canInsert(equipped)) {
                 actor.equipStack(EquipmentSlot.MAINHAND, ItemStack.EMPTY)
@@ -340,6 +362,8 @@ class VampireHunterMeleeAttackGoal(private val actor: VampireHunterEntity, speed
         }
         return value
     }
+
+    private fun isSword(item: Item) = FabricToolTags.SWORDS.contains(item)
 }
 
 fun registerVampireHunter() {
