@@ -1,99 +1,164 @@
+
 {
   "type": "minecraft:chest",
   "pools": [
     {
       "rolls": {
-        "min": 3.0,
-        "max": 8.0,
-        "type": "minecraft:uniform"
+        "min": 4,
+        "max": 10
       },
+      "bonus_rolls": 0,
       "entries": [
         {
           "type": "minecraft:item",
-          "weight": 2,
+          "weight": 8,
+          "name": "minecraft:paper",
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
-                "min": 1.0,
-                "max": 4.0,
-                "type": "minecraft:uniform"
+                "min": 1,
+                "max": 12
               }
             }
-          ],
-          "name": "minecraft:redstone"
+          ]
         },
         {
           "type": "minecraft:item",
           "weight": 7,
+          "name": "minecraft:apple",
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
-                "min": 1.0,
-                "max": 4.0,
-                "type": "minecraft:uniform"
+                "min": 2,
+                "max": 6
               }
             }
-          ],
-          "name": "minecraft:bread"
+          ]
         },
         {
           "type": "minecraft:item",
           "weight": 7,
+          "name": "minecraft:cooked_beef",
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
-                "min": 1.0,
-                "max": 4.0,
-                "type": "minecraft:uniform"
+                "min": 1,
+                "max": 4
               }
             }
-          ],
-          "name": "minecraft:rotten_flesh"
+          ]
         },
         {
           "type": "minecraft:item",
+          "weight": 7,
+          "name": "minecraft:arrow",
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
-                "min": 1.0,
-                "max": 4.0,
-                "type": "minecraft:uniform"
+                "min": 2,
+                "max": 32
               }
             }
-          ],
-          "name": "minecraft:lapis_lazuli"
+          ]
         },
         {
           "type": "minecraft:item",
+          "weight": 7,
+          "name": "minecraft:oak_log",
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
-                "min": 1.0,
-                "max": 4.0,
-                "type": "minecraft:uniform"
+                "min": 4,
+                "max": 8
               }
             }
-          ],
-          "name": "minecraft:gold_ingot"
+          ]
         },
         {
           "type": "minecraft:item",
+          "weight": 3,
+          "name": "minecraft:crossbow",
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly",
+              "enchantments": [
+                "minecraft:quick_charge"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 6,
+          "name": "minecraft:coal",
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
-                "min": 1.0,
-                "max": 4.0,
-                "type": "minecraft:uniform"
+                "min": 2,
+                "max": 16
               }
             }
-          ],
-          "name": "minecraft:emerald"
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 3,
+          "name": "minecraft:gunpowder",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 1,
+                "max": 5
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 3,
+          "name": "minecraft:leather_helmet",
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 3,
+          "name": "minecraft:leather_chestplate",
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 3,
+          "name": "minecraft:leather_leggings",
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 3,
+          "name": "minecraft:leather_boots",
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly"
+            }
+          ]
         }
       ]
     }
