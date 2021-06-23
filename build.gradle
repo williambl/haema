@@ -95,6 +95,20 @@ repositories {
         }
     }
     maven {
+        name = "cafeteria.dev"
+        url = 'https://maven.cafeteria.dev'
+        content {
+            includeGroup 'net.adriantodt.fabricmc'
+        }
+    }
+    maven {
+        name = "Flemmli97"
+        url "https://gitlab.com/api/v4/projects/21830712/packages/maven"
+        content {
+            includeGroup 'io.github.flemmli97'
+        }
+    }
+    maven {
         name = "CurseMaven"
         url "https://www.cursemaven.com"
         content {
@@ -171,20 +185,20 @@ dependencies {
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 
     // Origins
-    modCompileOnly("com.github.apace100:origins-fabric:${project.origins_version}") {
+    modImplementation("com.github.apace100:origins-fabric:${project.origins_version}") {
         exclude module: "modmenu"
         exclude group: "io.github.OnyxStudios.Cardinal-Components-API"
     }
 
     // Rat's Mischief
-    modCompileOnly "com.github.Ladysnake:Rats-Mischief:${project.rats_version}"
+    modCompileOnly "curse.maven:rats-mischief-431787:${project.rats_version}"
     modCompileOnly "software.bernie.geckolib:geckolib-fabric-1.16.5:${project.geckolib_version}:dev"
 
     // Bewitchment
     modCompileOnly "curse.maven:bewitchment-394915:${project.bewitchment_version}"
 
     // Flan
-    modCompileOnly "com.github.Flemmli97:Flan:${project.flan_version}"
+    modCompileOnly "io.github.flemmli97:flan:${project.flan_version}"
 
     // ModMenu
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
