@@ -1,6 +1,0 @@
-{
-  "when": [
-    {"libcd:item_tag_exists": "bewitchment:average_pentacles"},
-    {"libcd:item_tag_exists": "bewitchment:barks"}
-  ]
-}
