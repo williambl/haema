@@ -1,6 +1,5 @@
 package com.williambl.haema.client
 
-import com.google.common.collect.ImmutableList
 import com.williambl.haema.hunter.VampireHunterEntity
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
@@ -33,7 +32,7 @@ class VampireHunterEntityRenderer(context: EntityRendererFactory.Context) : MobE
 }
 
 @Environment(EnvType.CLIENT)
-class VampireHunterModel(root: ModelPart) : CompositeEntityModel<VampireHunterEntity>(), ModelWithArms, ModelWithHead {
+class VampireHunterModel(val root: ModelPart) : SinglePartEntityModel<VampireHunterEntity>(), ModelWithArms, ModelWithHead {
     private val head: ModelPart = root.getChild(EntityModelPartNames.HEAD)
     private val hat: ModelPart = head.getChild(EntityModelPartNames.HAT)
     private val arms: ModelPart = root.getChild(EntityModelPartNames.ARMS)
@@ -45,8 +44,8 @@ class VampireHunterModel(root: ModelPart) : CompositeEntityModel<VampireHunterEn
         hat.visible = false
     }
 
-    override fun getParts(): Iterable<ModelPart> {
-        return ImmutableList.of(head, hat, rightLeg, leftLeg, arms, rightAttackingArm, leftAttackingArm)
+    override fun getPart(): ModelPart {
+        return root
     }
 
     override fun setAngles(entity: VampireHunterEntity, f: Float, g: Float, h: Float, i: Float, j: Float) {
