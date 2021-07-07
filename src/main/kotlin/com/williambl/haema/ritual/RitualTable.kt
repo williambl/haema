@@ -5,6 +5,7 @@ import com.williambl.haema.api.RitualTableUseEvent
 import com.williambl.haema.criteria.UseRitualCriterion
 import com.williambl.haema.ritual.craft.RitualInventory
 import com.williambl.haema.ritual.craft.RitualRecipe
+import com.williambl.haema.util.MultiTagMatcher
 import net.fabricmc.fabric.api.tag.TagRegistry
 import net.minecraft.block.*
 import net.minecraft.entity.Entity
@@ -38,6 +39,9 @@ import net.minecraft.util.registry.Registry
 import net.minecraft.util.shape.VoxelShape
 import net.minecraft.world.BlockView
 import net.minecraft.world.World
+import vazkii.patchouli.common.multiblock.DenseMultiblock
+import vazkii.patchouli.common.multiblock.MultiblockRegistry
+import vazkii.patchouli.common.multiblock.StateMatcher
 import java.util.*
 import kotlin.math.min
 
@@ -385,7 +389,7 @@ fun registerRitualTable() {
     //To make them load and register
     RitualRecipe.recipeSerializer
     RitualRecipe.recipeType
-/*
+
     MultiblockRegistry.registerMultiblock(
         Identifier("haema:basic_altar"), DenseMultiblock(
             arrayOf(
@@ -464,5 +468,5 @@ fun registerRitualTable() {
                 ' ' to StateMatcher.ANY
             )
         )
-    )*/
+    )
 }
