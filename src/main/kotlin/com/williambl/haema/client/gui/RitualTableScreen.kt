@@ -55,7 +55,7 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
         fill(matrices, 234, 113, 0, 0, -16777216)
         RenderSystem.depthFunc(515)
         val identifier = Identifier("minecraft:textures/gui/advancements/backgrounds/stone.png")
-        client!!.textureManager.bindTexture(identifier)
+        RenderSystem.setShaderTexture(0, identifier)
 
         val k = panX.toInt() % 16
         val l = panY.toInt() % 16
@@ -95,7 +95,7 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
         matrices.push()
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
         RenderSystem.enableBlend()
-        client!!.textureManager.bindTexture(WINDOW_TEXTURE)
+        RenderSystem.setShaderTexture(0, WINDOW_TEXTURE)
         drawTexture(matrices, xBase, yBase, 0, 0, 252, 140)
 
         val pointsRemaining = handler.getProperty(0)
@@ -196,7 +196,7 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
             client: MinecraftClient,
             levelAchieved: Int
         ) {
-            client.textureManager.bindTexture(WIDGETS_TEXTURE)
+            RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE)
             drawTexture(
                 matrices,
                 x,
