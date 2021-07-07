@@ -32,6 +32,13 @@ class VampirePower(type: PowerType<*>?, entity: LivingEntity) : ModifyPlayerSpaw
         (entity as Vampirable).removeBloodManager()
     }
 
+    override fun getSpawn(isSpawnObstructed: Boolean): Pair<ServerWorld, BlockPos>? {
+        if (entity is PlayerEntity && entity.world != null) {
+            return getSpawn(entity as PlayerEntity)
+        }
+        return null
+    }
+
     override fun teleportToModifiedSpawn() {
         if (entity is ServerPlayerEntity) {
             val serverPlayer = entity as ServerPlayerEntity
