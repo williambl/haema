@@ -58,7 +58,7 @@ interface Vampirable {
                 entity.checkBloodManager()
                 entity.health = 1f
                 if (entity.world is ServerWorld) {
-                    (entity.world as ServerWorld).spawnParticles(DustParticleEffect.RED, entity.x, entity.y+1, entity.z, 25, 0.5, 1.0, 0.5, 1.0)
+                    (entity.world as ServerWorld).spawnParticles(DustParticleEffect.DEFAULT, entity.x, entity.y+1, entity.z, 25, 0.5, 1.0, 0.5, 1.0)
                     (entity.world as ServerWorld).spawnParticles(DustParticleEffect(0f, 0f, 0f, 1f), entity.x, entity.y+1, entity.z, 25, 0.5, 1.0, 0.5, 1.0)
                 }
                 VampireConversionEvents.CONVERT.invoker().onConvert(entity)

@@ -10,7 +10,7 @@ import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.SemanticVersion
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.Identifier
@@ -50,7 +50,7 @@ class VampirePower(type: PowerType<*>?, player: PlayerEntity?) : Power(type, pla
             VampireConversionCriterion.trigger(player as ServerPlayerEntity)
         }
         val bookStack = ItemStack(Registry.ITEM[Identifier("patchouli:guide_book")])
-        val tag = CompoundTag()
+        val tag = NbtCompound()
         tag.putString("patchouli:book", "haema:book_of_blood")
         bookStack.tag = tag
         player.inventory.offerOrDrop(player.world, bookStack)

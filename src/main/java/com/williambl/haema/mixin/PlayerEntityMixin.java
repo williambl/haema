@@ -14,7 +14,7 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
@@ -38,14 +38,14 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
     @Shadow public abstract float getAbsorptionAmount();
 
     protected VampireBloodManager bloodManager = null; // to avoid a load of casts
-    protected CompoundTag nbt;
+    protected NbtCompound nbt;
 
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
     }
 
-    @Inject(method = "readCustomDataFromTag", at = @At("RETURN"))
-    void addVampireHungerManager(CompoundTag tag, CallbackInfo ci) {
+    @Inject(method = "readCustomDataFromNbt", at = @At("RETURN"))
+    void addVampireHungerManager(NbtCompound tag, CallbackInfo ci) {
         if (tag.contains("foodLevel")) {
             nbt = tag;
         }
@@ -111,7 +111,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
             hungerManager = new VampireBloodManager();
             bloodManager = (VampireBloodManager) hungerManager;
             if (nbt != null) {
-                hungerManager.fromTag(nbt);
+                hungerManager.readNbt(nbt);
                 nbt = null;
             }
             bloodManager.setOwner((PlayerEntity) (Object) this);
