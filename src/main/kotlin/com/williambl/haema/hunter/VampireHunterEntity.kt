@@ -77,7 +77,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
 
         if (isPatrolLeader) {
             val banner = ItemStack(Items.WHITE_BANNER)
-            val compoundNbt: NbtCompound = banner.getOrCreateSubTag("BlockEntityNbt")
+            val compoundNbt: NbtCompound = banner.getOrCreateSubTag("BlockEntityTag")
             val listNbt = BannerPattern.Patterns()
                 .add(BannerPattern.RHOMBUS_MIDDLE, DyeColor.RED)
                 .add(BannerPattern.HALF_HORIZONTAL_MIRROR, DyeColor.LIGHT_BLUE)
@@ -85,7 +85,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
                 .toNbt()
             compoundNbt.put("Patterns", listNbt)
             @Suppress("UsePropertyAccessSyntax")
-            banner.getOrCreateTag().putInt("HideFlags", 32)
+            banner.addHideFlag(ItemStack.TooltipSection.ADDITIONAL)
             banner.setCustomName(TranslatableText("block.haema.righteous_banner").formatted(Formatting.GOLD))
             equipStack(EquipmentSlot.HEAD, banner)
         }
