@@ -12,8 +12,8 @@ import com.williambl.haema.ritual.RitualTableScreenHandler
 import ladysnake.satin.api.event.ShaderEffectRenderCallback
 import ladysnake.satin.api.managed.ManagedShaderEffect
 import ladysnake.satin.api.managed.ShaderEffectManager
-import me.sargunvohra.mcmods.autoconfig1u.AutoConfig
-import me.sargunvohra.mcmods.autoconfig1u.serializer.Toml4jConfigSerializer
+import me.shedaniel.autoconfig.AutoConfig
+import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityModelLayerRegistry

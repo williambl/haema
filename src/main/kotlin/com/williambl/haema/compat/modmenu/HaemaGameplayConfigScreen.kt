@@ -73,14 +73,14 @@ class HaemaGameplayConfigScreen(private val parent: Screen?) : Screen(LiteralTex
 
     override fun init() {
         super.init()
-        addSelectableChild(object : ButtonWidget(width/2-210, 180, 200, 20, TranslatableText("gui.haema.moreinfo"), PressAction {
+        addDrawableChild(object : ButtonWidget(width/2-210, 180, 200, 20, TranslatableText("gui.haema.moreinfo"), PressAction {
             isShowingMore = !isShowingMore
         }) {
             override fun getMessage(): Text {
                 return TranslatableText(if (isShowingMore) "gui.haema.lessinfo" else "gui.haema.moreinfo")
             }
         })
-        addSelectableChild(ButtonWidget(width/2+10, 180, 200, 20, TranslatableText("gui.done")) {
+        addDrawableChild(ButtonWidget(width/2+10, 180, 200, 20, TranslatableText("gui.done")) {
             onClose()
         })
     }

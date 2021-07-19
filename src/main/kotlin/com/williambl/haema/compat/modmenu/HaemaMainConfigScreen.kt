@@ -2,7 +2,7 @@ package com.williambl.haema.compat.modmenu
 
 import com.mojang.blaze3d.systems.RenderSystem
 import com.williambl.haema.client.config.HaemaConfig
-import me.sargunvohra.mcmods.autoconfig1u.AutoConfig
+import me.shedaniel.autoconfig.AutoConfig
 import net.minecraft.client.gui.DrawableHelper
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.widget.ButtonWidget
@@ -18,13 +18,13 @@ class HaemaMainConfigScreen(private val parent: Screen?) : Screen(LiteralText("H
 
     override fun init() {
         super.init()
-        addSelectableChild(ButtonWidget(width / 4 - 75, 120, 150, 20, TranslatableText("gui.haema.config.client")) {
+        addDrawableChild(ButtonWidget(width / 4 - 75, 120, 150, 20, TranslatableText("gui.haema.config.client")) {
             client?.openScreen(AutoConfig.getConfigScreen(HaemaConfig::class.java, this).get())
         })
-        addSelectableChild(ButtonWidget(3 * width / 4 - 75, 120, 150, 20, TranslatableText("gui.haema.config.gameplay")) {
+        addDrawableChild(ButtonWidget(3 * width / 4 - 75, 120, 150, 20, TranslatableText("gui.haema.config.gameplay")) {
             client?.openScreen(HaemaGameplayConfigScreen(this))
         })
-        addSelectableChild(ButtonWidget(width / 2 - 100, 180, 200, 20, TranslatableText("gui.done")) {
+        addDrawableChild(ButtonWidget(width / 2 - 100, 180, 200, 20, TranslatableText("gui.done")) {
             onClose()
         })
     }
