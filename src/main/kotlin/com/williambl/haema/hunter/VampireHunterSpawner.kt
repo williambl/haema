@@ -7,7 +7,7 @@ import net.minecraft.entity.SpawnReason
 import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.mob.PatrolEntity
 import net.minecraft.entity.passive.PassiveEntity
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
@@ -119,7 +119,7 @@ class VampireHunterSpawner(private val entityType: EntityType<out VampireHunterE
                 world.getLocalDifficulty(blockPos),
                 SpawnReason.PATROL,
                 null as EntityData?,
-                null as CompoundTag?
+                null as NbtCompound?
             )
             world.spawnEntity(entity)
             return true
@@ -164,7 +164,7 @@ class VampireHunterSpawner(private val entityType: EntityType<out VampireHunterE
             world.getLocalDifficulty(blockPos),
             SpawnReason.PATROL,
             null as EntityData?,
-            null as CompoundTag?
+            null as NbtCompound?
         )
         hunter.startRiding(horse)
         world.spawnEntityAndPassengers(horse)

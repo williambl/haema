@@ -8,10 +8,8 @@ import ladysnake.ratsmischief.common.entity.RatEntity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.ai.goal.MeleeAttackGoal
 import net.minecraft.entity.effect.StatusEffectInstance
-import net.minecraft.item.Items
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.server.world.ServerWorld
-import net.minecraft.util.math.Vec3d
 
 class VampiRatAttackGoal(private val actor: RatEntity, speed: Double, pauseWhenMobIdle: Boolean) : MeleeAttackGoal(actor, speed, pauseWhenMobIdle) {
     override fun canStart(): Boolean = super.canStart() && hasValidTarget() && actor.isVampire()
@@ -41,7 +39,7 @@ class VampiRatAttackGoal(private val actor: RatEntity, speed: Double, pauseWhenM
         target.damage(BloodLossDamageSource.instance, 0.4f)
 
         (actor.world as ServerWorld).spawnParticles(
-            DustParticleEffect.RED,
+            DustParticleEffect.DEFAULT,
             target.x,
             target.y,
             target.z,

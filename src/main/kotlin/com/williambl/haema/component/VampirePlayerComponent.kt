@@ -6,7 +6,7 @@ import dev.onyxstudios.cca.api.v3.component.CopyableComponent
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent
 import nerdhub.cardinal.components.api.ComponentType
 import net.minecraft.entity.Entity
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.util.Identifier
 import kotlin.properties.Delegates
 import kotlin.reflect.KProperty
@@ -33,18 +33,18 @@ class VampirePlayerComponent(player: Entity) : VampireComponent, AutoSyncedCompo
 
     override var ritualsUsed: MutableSet<Identifier> = mutableSetOf()
 
-    override fun writeToNbt(tag: CompoundTag) {
+    override fun writeToNbt(tag: NbtCompound) {
         tag.putBoolean("isVampire", isVampire)
         tag.putBoolean("isPermanentVampire", isPermanentVampire)
         tag.putBoolean("isKilled", isKilled)
-        tag.put("abilities", CompoundTag().also { abilitiesTag -> abilities.forEach { (ability, value) -> abilitiesTag.putInt(abilityRegistry.getId(ability).toString(), value) } })
-        tag.put("ritualsUsed", CompoundTag().also {
+        tag.put("abilities", NbtCompound().also { abilitiesTag -> abilities.forEach { (ability, value) -> abilitiesTag.putInt(abilityRegistry.getId(ability).toString(), value) } })
+        tag.put("ritualsUsed", NbtCompound().also {
             it.putInt("Length", ritualsUsed.size)
             ritualsUsed.forEachIndexed { idx, id -> it.putString(idx.toString(), id.toString()) }
         })
     }
 
-    override fun readFromNbt(tag: CompoundTag) {
+    override fun readFromNbt(tag: NbtCompound) {
         isVampire = tag.getBoolean("isVampire")
         isPermanentVampire = tag.getBoolean("isPermanentVampire")
         isKilled = tag.getBoolean("isKilled")
@@ -66,7 +66,7 @@ class VampirePlayerComponent(player: Entity) : VampireComponent, AutoSyncedCompo
         throw UnsupportedOperationException()
     }
 
-    private fun CompoundTag.fixAbilityData() {
+    private fun NbtCompound.fixAbilityData() {
         fun fixAbility(oldName: String, ability: VampireAbility) {
             val newName = abilityRegistry.getId(ability).toString()
             if (this.contains(oldName) && !this.contains(newName)) {

@@ -3,7 +3,7 @@ package com.williambl.haema.craft
 import net.minecraft.inventory.CraftingInventory
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.potion.PotionUtil
 import net.minecraft.potion.Potions
 import net.minecraft.recipe.RecipeSerializer
@@ -18,7 +18,7 @@ class BookOfBloodRecipe(id: Identifier?) : SpecialCraftingRecipe(id) {
     private val resultStack = ItemStack(Registry.ITEM[Identifier("patchouli:guide_book")])
 
     init {
-        val tag = CompoundTag()
+        val tag = NbtCompound()
         tag.putString("patchouli:book", "haema:book_of_blood")
         resultStack.tag = tag
     }

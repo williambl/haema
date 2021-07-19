@@ -27,11 +27,14 @@ import net.minecraft.item.*
 import net.minecraft.loot.context.LootContext
 import net.minecraft.loot.context.LootContextParameters
 import net.minecraft.loot.context.LootContextTypes
-import net.minecraft.nbt.CompoundTag
-import net.minecraft.nbt.ListTag
 import net.minecraft.potion.PotionUtil
 import net.minecraft.potion.Potions
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.item.Item
+import net.minecraft.item.ItemStack
+import net.minecraft.item.Items
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.nbt.NbtList
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.*
 import net.minecraft.util.registry.Registry
@@ -53,7 +56,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
         difficulty: LocalDifficulty,
         spawnReason: SpawnReason?,
         entityData: EntityData?,
-        entityTag: CompoundTag?
+        entityTag: NbtCompound?
     ): EntityData? {
         val result =  super.initialize(world, difficulty, spawnReason, entityData, entityTag)
         if (spawnReason == SpawnReason.SPAWN_EGG && random.nextDouble() < 0.3) {
@@ -97,7 +100,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
 
         if (isPatrolLeader) {
             val banner = ItemStack(Items.WHITE_BANNER)
-            val compoundTag: CompoundTag = banner.getOrCreateSubTag("BlockEntityTag")
+            val compoundTag: NbtCompound = banner.getOrCreateSubTag("BlockEntityTag")
             val listTag = BannerPattern.Patterns()
                 .add(BannerPattern.RHOMBUS_MIDDLE, DyeColor.RED)
                 .add(BannerPattern.HALF_HORIZONTAL_MIRROR, DyeColor.LIGHT_BLUE)
@@ -140,25 +143,24 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
         return ItemStack.EMPTY
     }
 
-
-    override fun writeCustomDataToTag(tag: CompoundTag) {
-        super.writeCustomDataToTag(tag)
-        val listTag = ListTag()
+    override fun writeCustomDataToNbt(tag: NbtCompound) {
+        super.writeCustomDataToNbt(tag)
+        val listTag = NbtList()
         for (i in 0 until inventory.size()) {
             val itemStack = inventory.getStack(i)
             if (!itemStack.isEmpty) {
-                listTag.add(itemStack.toTag(CompoundTag()))
+                listTag.add(itemStack.writeNbt(NbtCompound()))
             }
         }
         tag.put("Inventory", listTag)
         tag.putBoolean("HasGivenContract", hasGivenContract)
     }
 
-    override fun readCustomDataFromTag(tag: CompoundTag) {
-        super.readCustomDataFromTag(tag)
+    override fun readCustomDataFromNbt(tag: NbtCompound) {
+        super.readCustomDataFromNbt(tag)
         val listTag = tag.getList("Inventory", 10)
         for (i in listTag.indices) {
-            val itemStack = ItemStack.fromTag(listTag.getCompound(i))
+            val itemStack = ItemStack.fromNbt(listTag.getCompound(i))
             if (!itemStack.isEmpty) {
                 inventory.addStack(itemStack)
             }
