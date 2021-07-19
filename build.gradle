@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.5-SNAPSHOT'
+    id 'fabric-loom' version '0.7-SNAPSHOT'
     id 'maven-publish'
     id "org.jetbrains.kotlin.jvm"
 }
@@ -15,6 +15,7 @@ minecraft {
 }
 
 repositories {
+    mavenLocal()
     maven {
         name = "FabricMC"
         url = "http://maven.fabricmc.net/"
@@ -53,7 +54,7 @@ repositories {
     }
     maven {
         name = "GeckoLib"
-        url = "https://repo.repsy.io/mvn/gandiber/geckolib"
+        url = "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/"
         content {
             includeGroup "software.bernie.geckolib"
         }
@@ -70,6 +71,7 @@ repositories {
         url = "https://maven.shedaniel.me"
         content {
             includeGroupByRegex "me\\.shedaniel.*"
+            includeGroupByRegex "me\\.sargunvohra.*"
         }
     }
     maven {
@@ -94,7 +96,6 @@ repositories {
             includeGroup "io.github.flemmli97"
         }
     }
-    mavenLocal()
     maven {
         name = "JitPack"
         url 'https://jitpack.io'
@@ -173,7 +174,7 @@ dependencies {
     }
 
     // Rat's Mischief
-    modCompileOnly "io.github.ladysnake:ratsmischief:${project.rats_version}"
+    modCompileOnly "io.github.ladysnake:rats-mischief:${project.rats_version}"
     modCompileOnly "software.bernie.geckolib:geckolib-fabric-1.16.5:${project.geckolib_version}:dev"
 
     // Bewitchment
