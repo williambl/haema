@@ -6,21 +6,18 @@ import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents
 import net.minecraft.client.item.TooltipContext
-import net.minecraft.command.argument.GameProfileArgumentType
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtHelper
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
-import net.minecraft.text.LiteralText
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
 import net.minecraft.world.World
-import java.util.*
 
 class VampireHunterContract(settings: Settings): Item(settings) {
     init {
@@ -61,10 +58,10 @@ class VampireHunterContract(settings: Settings): Item(settings) {
 }
 
 @Suppress("UsePropertyAccessSyntax")
-fun ItemStack.setContractTarget(target: PlayerEntity) = this.getOrCreateTag().put("ContractTarget", NbtHelper.fromGameProfile(CompoundTag(), target.gameProfile))
+fun ItemStack.setContractTarget(target: PlayerEntity) = this.getOrCreateTag().put("ContractTarget", NbtHelper.writeGameProfile(NbtCompound(), target.gameProfile))
 
 @Suppress("UsePropertyAccessSyntax")
-fun ItemStack.getContractTarget(): GameProfile? = this.getOrCreateTag().get("ContractTarget")?.let { NbtHelper.toGameProfile(it as CompoundTag) }
+fun ItemStack.getContractTarget(): GameProfile? = this.getOrCreateTag().get("ContractTarget")?.let { NbtHelper.toGameProfile(it as NbtCompound) }
 
 @Suppress("UsePropertyAccessSyntax")
 fun ItemStack.isContractFulfilled() = this.getOrCreateTag().getBoolean("ContractFulfilled")
