@@ -1,3 +1,5 @@
+#version 150
+
 uniform sampler2D DiffuseSampler;
 
 varying vec2 texCoord;
