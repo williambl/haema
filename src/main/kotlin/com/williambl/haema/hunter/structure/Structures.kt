@@ -15,11 +15,14 @@ import net.minecraft.world.gen.feature.FeatureConfig
 val vampireHunterOutpostFeature = VampireHunterOutpostFeature(DefaultFeatureConfig.CODEC)
 val configuredVampireHunterOutpostFeature = vampireHunterOutpostFeature.configure(FeatureConfig.DEFAULT)
 
+val mountainVampireHunterOutpostFeature = MountainVampireHunterOutpostFeature(DefaultFeatureConfig.CODEC)
+val configuredMountainVampireHunterOutpostFeature = mountainVampireHunterOutpostFeature.configure(FeatureConfig.DEFAULT)
+
 fun registerStructures() {
     FabricStructureBuilder.create(Identifier("haema:vampire_hunter_outpost"), vampireHunterOutpostFeature)
         .step(GenerationStep.Feature.SURFACE_STRUCTURES)
         .defaultConfig(60, 30, 74426467)
-        .superflatFeature(vampireHunterOutpostFeature.configure(FeatureConfig.DEFAULT))
+        .superflatFeature(configuredVampireHunterOutpostFeature)
         .adjustsSurface()
         .register()
 
@@ -28,7 +31,21 @@ fun registerStructures() {
     BiomeModifications.create(Identifier("haema:vampire_hunter_outpost_addition"))
         .add(
             ModificationPhase.ADDITIONS,
-            BiomeSelectors.categories(Biome.Category.DESERT, Biome.Category.EXTREME_HILLS, Biome.Category.FOREST, Biome.Category.MESA, Biome.Category.PLAINS, Biome.Category.SAVANNA),
-            { context -> context.generationSettings.addBuiltInStructure(configuredVampireHunterOutpostFeature)}
-        )
+            BiomeSelectors.categories(Biome.Category.DESERT, Biome.Category.EXTREME_HILLS, Biome.Category.FOREST, Biome.Category.MESA, Biome.Category.PLAINS, Biome.Category.SAVANNA)
+        ) { context -> context.generationSettings.addBuiltInStructure(configuredVampireHunterOutpostFeature) }
+
+    FabricStructureBuilder.create(Identifier("haema:mountain_vampire_hunter_outpost"), mountainVampireHunterOutpostFeature)
+        .step(GenerationStep.Feature.SURFACE_STRUCTURES)
+        .defaultConfig(20, 19, 74426500)
+        .superflatFeature(configuredMountainVampireHunterOutpostFeature)
+        .adjustsSurface()
+        .register()
+
+    Registry.register(BuiltinRegistries.CONFIGURED_STRUCTURE_FEATURE, Identifier("haema:configured_mountain_vampire_hunter_outpost"), configuredMountainVampireHunterOutpostFeature)
+
+    BiomeModifications.create(Identifier("haema:mountain_vampire_hunter_outpost_addition"))
+        .add(
+            ModificationPhase.ADDITIONS,
+            BiomeSelectors.categories(Biome.Category.EXTREME_HILLS, Biome.Category.TAIGA, Biome.Category.SAVANNA)
+        ) { context -> context.generationSettings.addBuiltInStructure(configuredMountainVampireHunterOutpostFeature) }
 }
