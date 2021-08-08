@@ -96,7 +96,7 @@ class VampireHunterSpawner(private val entityType: EntityType<out VampireHunterE
         return amountToSpawn
     }
 
-    private fun spawnOneEntity(world: ServerWorld, blockPos: BlockPos, random: Random, isLeader: Boolean): Boolean {
+    fun spawnOneEntity(world: ServerWorld, blockPos: BlockPos, random: Random, isLeader: Boolean): Boolean {
         val blockState = world.getBlockState(blockPos)
         if (!SpawnHelper.isClearForSpawn(world, blockPos, blockState, blockState.fluidState, entityType))
             return false
@@ -127,7 +127,7 @@ class VampireHunterSpawner(private val entityType: EntityType<out VampireHunterE
         return false
     }
 
-    private fun spawnOneEntityOnHorse(world: ServerWorld, blockPos: BlockPos, random: Random, isLeader: Boolean): Boolean {
+    fun spawnOneEntityOnHorse(world: ServerWorld, blockPos: BlockPos, random: Random, isLeader: Boolean): Boolean {
         val blockState = world.getBlockState(blockPos)
         if (!SpawnHelper.isClearForSpawn(world, blockPos, blockState, blockState.fluidState, entityType))
             return false
