@@ -74,10 +74,10 @@ fun registerBewitchmentEventListeners() {
     // Sync vampirism status Bewitchment -> Haema
     OnTransformationSet.EVENT.register(OnTransformationSet { player, transformation ->
         val transformationComponent = TransformationComponent.get(player)
-        if (transformationComponent.transformation == BWTransformations.VAMPIRE) {
+        if (transformation == BWTransformations.VAMPIRE) {
             (player as Vampirable).isVampire = true
             player.isPermanentVampire = true
-        } else if (transformationComponent.transformation != BWTransformations.VAMPIRE && transformationComponent.transformation == BWTransformations.VAMPIRE) {
+        } else if (transformation != BWTransformations.VAMPIRE && transformationComponent.transformation == BWTransformations.VAMPIRE) {
             (player as Vampirable).isVampire = false
             player.isPermanentVampire = false
         }
