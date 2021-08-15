@@ -13,7 +13,8 @@
   ],
   "contact": {
     "homepage": "https://curseforge.com/minecraft/mc-mods/haema",
-    "sources": "https://github.com/williambl/haema"
+    "sources": "https://github.com/williambl/haema",
+    "issues": "https://github.com/williambl/haema/issues"
   },
 
   "license": "MIT",
