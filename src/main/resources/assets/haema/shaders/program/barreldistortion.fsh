@@ -2,14 +2,16 @@
 
 uniform sampler2D DiffuseSampler;
 
-varying vec2 texCoord;
-varying vec2 oneTexel;
+in vec2 texCoord;
+in vec2 oneTexel;
 
 uniform vec2 InSize;
 uniform vec2 OutSize;
 
 // positive values give barrel distortion, negative give pincushion
 uniform float DistortAmount;
+
+out vec4 fragColor;
 
 void main() {
     //Transform so 0,0 is center and edges are 1 away
@@ -22,5 +24,5 @@ void main() {
     //Transform so 0,0 is bottom left again
     coord = (1.0 + (coord))/2.0;
 
-    gl_FragColor = texture2D(DiffuseSampler, coord);
+    fragColor = texture(DiffuseSampler, coord);
 }
