@@ -19,7 +19,7 @@ object VampireDeconversionCriterion: AbstractCriterion<VampireDeconversionCriter
     ): Conditions = Conditions(playerPredicate)
 
     fun trigger(player: ServerPlayerEntity) {
-        this.test(player) { true }
+        this.trigger(player) { true }
     }
 
     class Conditions(playerPredicate: EntityPredicate.Extended):

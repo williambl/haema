@@ -73,7 +73,7 @@ class VampirePower(type: PowerType<*>?, entity: LivingEntity) : ModifyPlayerSpaw
             val bookStack = ItemStack(Registry.ITEM[Identifier("patchouli:guide_book")])
             val tag = NbtCompound()
             tag.putString("patchouli:book", "haema:book_of_blood")
-            bookStack.tag = tag
+            bookStack.nbt = tag
             (entity as PlayerEntity).inventory.offerOrDrop(bookStack)
         }
     }

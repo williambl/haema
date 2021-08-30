@@ -19,10 +19,10 @@ class HaemaMainConfigScreen(private val parent: Screen?) : Screen(LiteralText("H
     override fun init() {
         super.init()
         addDrawableChild(ButtonWidget(width / 4 - 75, 120, 150, 20, TranslatableText("gui.haema.config.client")) {
-            client?.openScreen(AutoConfig.getConfigScreen(HaemaConfig::class.java, this).get())
+            client?.setScreen(AutoConfig.getConfigScreen(HaemaConfig::class.java, this).get())
         })
         addDrawableChild(ButtonWidget(3 * width / 4 - 75, 120, 150, 20, TranslatableText("gui.haema.config.gameplay")) {
-            client?.openScreen(HaemaGameplayConfigScreen(this))
+            client?.setScreen(HaemaGameplayConfigScreen(this))
         })
         addDrawableChild(ButtonWidget(width / 2 - 100, 180, 200, 20, TranslatableText("gui.done")) {
             onClose()
@@ -48,6 +48,6 @@ class HaemaMainConfigScreen(private val parent: Screen?) : Screen(LiteralText("H
     }
 
     override fun onClose() {
-        client?.openScreen(parent)
+        client?.setScreen(parent)
     }
 }

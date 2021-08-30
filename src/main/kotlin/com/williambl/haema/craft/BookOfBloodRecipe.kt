@@ -19,7 +19,7 @@ class BookOfBloodRecipe(id: Identifier?) : SpecialCraftingRecipe(id) {
     init {
         val tag = NbtCompound()
         tag.putString("patchouli:book", "haema:book_of_blood")
-        resultStack.tag = tag
+        resultStack.nbt = tag
     }
 
     override fun craft(inv: CraftingInventory): ItemStack {

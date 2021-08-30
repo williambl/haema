@@ -72,7 +72,7 @@ class VampireBloodInjectorItem(settings: Settings?) : Item(settings) {
 
     companion object DispenserBehavior : FallibleItemDispenserBehavior() {
         override fun dispenseSilently(pointer: BlockPointer, stack: ItemStack): ItemStack {
-            val blockPos = pointer.blockPos.offset(pointer.blockState.get(DispenserBlock.FACING))
+            val blockPos = pointer.pos.offset(pointer.blockState.get(DispenserBlock.FACING))
             val user = pointer.world.getEntitiesByClass(PlayerEntity::class.java, Box(blockPos), null)
                 .firstOrNull() ?: return stack
             return if ((stack.item as VampireBloodInjectorItem).tryUse(user))

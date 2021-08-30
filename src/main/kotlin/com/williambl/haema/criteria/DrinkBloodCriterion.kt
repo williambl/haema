@@ -21,7 +21,7 @@ object DrinkBloodCriterion: AbstractCriterion<DrinkBloodCriterion.Conditions>() 
     ): Conditions = Conditions(playerPredicate, EntityPredicate.Extended.getInJson(obj, "entity", predicateDeserializer))
 
     fun trigger(player: ServerPlayerEntity, target: Entity) {
-        this.test(player) { it.matches(EntityPredicate.createAdvancementEntityLootContext(player, target)) }
+        this.trigger(player) { it.matches(EntityPredicate.createAdvancementEntityLootContext(player, target)) }
     }
 
     class Conditions(playerPredicate: EntityPredicate.Extended, private val targetPredicate: EntityPredicate.Extended):

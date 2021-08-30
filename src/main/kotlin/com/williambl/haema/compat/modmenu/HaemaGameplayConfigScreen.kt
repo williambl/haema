@@ -115,7 +115,7 @@ class HaemaGameplayConfigScreen(private val parent: Screen?) : Screen(LiteralTex
     }
 
     override fun onClose() {
-        client?.openScreen(parent)
+        client?.setScreen(parent)
     }
 
     override fun tick() {

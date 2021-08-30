@@ -77,7 +77,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
 
         if (isPatrolLeader) {
             val banner = ItemStack(Items.WHITE_BANNER)
-            val compoundNbt: NbtCompound = banner.getOrCreateSubTag("BlockEntityTag")
+            val compoundNbt: NbtCompound = banner.getOrCreateSubNbt("BlockEntityTag")
             val listNbt = BannerPattern.Patterns()
                 .add(BannerPattern.RHOMBUS_MIDDLE, DyeColor.RED)
                 .add(BannerPattern.HALF_HORIZONTAL_MIRROR, DyeColor.LIGHT_BLUE)
