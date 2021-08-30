@@ -24,6 +24,7 @@ import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
 import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy
 import me.lucko.fabric.api.permissions.v0.Permissions
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
+import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
 import net.fabricmc.fabric.api.tag.TagRegistry
@@ -51,7 +52,6 @@ import net.minecraft.village.VillageGossipType
 import net.minecraft.world.World
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import top.theillusivec4.somnus.api.PlayerSleepEvents
 import top.theillusivec4.somnus.api.WorldSleepEvents
 
 val logger: Logger = LogManager.getLogger("Haema")
@@ -81,14 +81,14 @@ fun init() {
         } else ActionResult.PASS
     })
 
-    PlayerSleepEvents.CAN_SLEEP_NOW.register(PlayerSleepEvents.CanSleepNow { player, pos ->
+    EntitySleepEvents.ALLOW_SLEEP_TIME.register(EntitySleepEvents.AllowSleepTime { player, pos, vanillaResult ->
         if (player is Vampirable) {
             if (player.isVampire && player.world.isDay) {
-                return@CanSleepNow TriState.TRUE
+                return@AllowSleepTime ActionResult.SUCCESS
             }
         }
 
-        TriState.DEFAULT
+        ActionResult.PASS
     })
 
     WorldSleepEvents.WORLD_WAKE_TIME.register(WorldSleepEvents.WorldWakeTime {world, newTime, curTime ->
