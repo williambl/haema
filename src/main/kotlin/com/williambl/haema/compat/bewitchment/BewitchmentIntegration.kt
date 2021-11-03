@@ -7,14 +7,13 @@ import com.williambl.haema.api.BloodDrinkingEvents
 import com.williambl.haema.api.DamageSourceEfficacyEvent
 import com.williambl.haema.api.client.VampireHudAddTextEvent
 import moriyashiine.bewitchment.api.BewitchmentAPI
-import moriyashiine.bewitchment.api.event.*
 import moriyashiine.bewitchment.api.component.BloodComponent
 import moriyashiine.bewitchment.api.component.TransformationComponent
+import moriyashiine.bewitchment.api.event.*
 import moriyashiine.bewitchment.client.BewitchmentClient
 import moriyashiine.bewitchment.common.registry.BWDamageSources
 import moriyashiine.bewitchment.common.registry.BWPledges
 import moriyashiine.bewitchment.common.registry.BWTransformations
-import net.fabricmc.fabric.api.util.TriState
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
@@ -90,9 +89,9 @@ fun registerBewitchmentEventListeners() {
     // Make Bewitchment's damage sources effective against vampires
     DamageSourceEfficacyEvent.EVENT.register(DamageSourceEfficacyEvent { source, world ->
         if (source == BWDamageSources.DEATH || source == BWDamageSources.MAGIC_COPY || source == BWDamageSources.SUN || source == BWDamageSources.WEDNESDAY) {
-            TriState.TRUE
+            1.25f
         } else {
-            TriState.DEFAULT
+            1f
         }
     })
 }

@@ -13,6 +13,7 @@ import com.williambl.haema.component.VampirePlayerComponent
 import com.williambl.haema.craft.BookOfBloodRecipe
 import com.williambl.haema.criteria.VampireHunterTriggerCriterion
 import com.williambl.haema.criteria.registerCriteria
+import com.williambl.haema.damagesource.registerDamageSources
 import com.williambl.haema.effect.registerEffects
 import com.williambl.haema.hunter.VampireHunterSpawner
 import com.williambl.haema.hunter.registerVampireHunter
@@ -162,6 +163,8 @@ fun init() {
     registerGameRules()
 
     registerCriteria()
+
+    registerDamageSources()
 
     Registry.register(
         Registry.RECIPE_SERIALIZER,

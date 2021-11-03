@@ -5,7 +5,7 @@ import com.williambl.haema.VampireBloodManager;
 import com.williambl.haema.abilities.VampireAbility;
 import com.williambl.haema.criteria.VampireHunterTriggerCriterion;
 import com.williambl.haema.damagesource.BloodLossDamageSource;
-import com.williambl.haema.damagesource.DamageSourceExtensionsKt;
+import com.williambl.haema.damagesource.DamageSourcesKt;
 import com.williambl.haema.hunter.VampireHunterSpawner;
 import com.williambl.haema.util.HaemaGameRulesKt;
 import net.minecraft.entity.Entity;
@@ -47,7 +47,7 @@ public abstract class LivingEntityMixin extends Entity {
         //noinspection ConstantConditions
         if (((Object) this) instanceof PlayerEntity && ((Vampirable) this).isVampire()
                 && source != null && ((Vampirable) this).getAbilityLevel(VampireAbility.Companion.getIMMORTALITY()) > 0) {
-            if (this.getHealth() <= 0 && DamageSourceExtensionsKt.isEffectiveAgainstVampires(source, this.world)) {
+            if (this.getHealth() <= 0 && DamageSourcesKt.isEffectiveAgainstVampires(source, this.world)) {
                 ((VampireBloodManager) ((PlayerEntity) (Object) this).getHungerManager()).setAbsoluteBloodLevel(0.0);
                 ((Vampirable) this).setKilled(true);
             }
@@ -59,7 +59,7 @@ public abstract class LivingEntityMixin extends Entity {
         //noinspection ConstantConditions
         if (((Object) this) instanceof PlayerEntity && ((Vampirable)this).isVampire()
                 && source != null && ((Vampirable)this).getAbilityLevel(VampireAbility.Companion.getIMMORTALITY()) > 0) {
-            if (!(this.getHealth() <= 0 && DamageSourceExtensionsKt.isEffectiveAgainstVampires(source, this.world))) {
+            if (!(this.getHealth() <= 0 && DamageSourcesKt.isEffectiveAgainstVampires(source, this.world))) {
                 cir.setReturnValue(true);
             }
         }

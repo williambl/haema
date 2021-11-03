@@ -1,6 +1,6 @@
 package com.williambl.haema.mixin;
 
-import com.williambl.haema.damagesource.DamageSourceExtensionsKt;
+import com.williambl.haema.damagesource.DamageSourcesKt;
 import net.fabricmc.fabric.api.tag.TagRegistry;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -23,17 +24,20 @@ public class DamageSourceMixin {
 
     @Inject(method = "player", at = @At("RETURN"))
     private static void addVampireEffectiveSources(PlayerEntity attacker, CallbackInfoReturnable<DamageSource> cir) {
-        DamageSource source = cir.getReturnValue();
-        ItemStack stack = attacker.getMainHandStack();
-        if (vampireEffectiveWeaponsTag.contains(stack.getItem()) || EnchantmentHelper.getLevel(Enchantments.SMITE, stack) >= 1)
-            DamageSourceExtensionsKt.setEffectiveAgainstVampires(source);
+        setEffective(attacker, cir);
     }
 
     @Inject(method = "mob", at = @At("TAIL"))
     private static void addVampireEffectiveSourcesMob(LivingEntity attacker, CallbackInfoReturnable<DamageSource> cir) {
+        setEffective(attacker, cir);
+    }
+
+    @Unique
+    private static void setEffective(LivingEntity attacker, CallbackInfoReturnable<DamageSource> cir) {
         DamageSource source = cir.getReturnValue();
         ItemStack stack = attacker.getMainHandStack();
-        if (vampireEffectiveWeaponsTag.contains(stack.getItem()) || EnchantmentHelper.getLevel(Enchantments.SMITE, stack) >= 1)
-            DamageSourceExtensionsKt.setEffectiveAgainstVampires(source);
+        int smiteLevel = EnchantmentHelper.getLevel(Enchantments.SMITE, stack);
+        if (vampireEffectiveWeaponsTag.contains(stack.getItem()) || smiteLevel >= 1)
+            DamageSourcesKt.setEffectiveAgainstVampires(source, Math.max(1.25f, smiteLevel * 1.25f));
     }
 }
