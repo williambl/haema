@@ -11,7 +11,7 @@ import net.minecraft.item.ItemGroup
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.loot.LootManager
-import net.minecraft.loot.entry.ItemEntry
+import net.minecraft.loot.entry.LootTableEntry
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider
 import net.minecraft.resource.ResourceManager
 import net.minecraft.text.Text
@@ -48,13 +48,8 @@ fun registerBlood() {
             val poolBuilder: FabricLootPoolBuilder = FabricLootPoolBuilder.builder()
                 .rolls(ConstantLootNumberProvider.create(1f))
                 .withEntry(
-                    ItemEntry.builder(Registry.ITEM.get(Identifier("haema:vampire_blood")))
-                        .weight(if (id == dungeonLootTable) 10 else 5)
-                        .build()
-                )
-                .withEntry(
-                    ItemEntry.builder(Items.AIR)
-                        .weight(10)
+                    LootTableEntry.builder(Identifier("haema:injected/chests/${if (id == dungeonLootTable) "dungeon" else "temple"}_blood"))
+                        .weight(12)
                         .build()
                 )
             supplier.withPool(poolBuilder.build())
