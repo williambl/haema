@@ -21,7 +21,7 @@
             "conditions": {
                 "items": [
                     {
-                        "item": "haema:vampire_blood"
+                        "items": [ "haema:vampire_blood" ]
                     }
                 ]
             }
