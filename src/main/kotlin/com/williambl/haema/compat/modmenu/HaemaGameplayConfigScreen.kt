@@ -1,5 +1,6 @@
 package com.williambl.haema.compat.modmenu
 
+import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawableHelper
 import net.minecraft.client.gui.screen.Screen
@@ -72,14 +73,14 @@ class HaemaGameplayConfigScreen(private val parent: Screen?) : Screen(LiteralTex
 
     override fun init() {
         super.init()
-        addButton(object : ButtonWidget(width/2-210, 180, 200, 20, TranslatableText("gui.haema.moreinfo"), PressAction {
+        addDrawableChild(object : ButtonWidget(width/2-210, 180, 200, 20, TranslatableText("gui.haema.moreinfo"), PressAction {
             isShowingMore = !isShowingMore
         }) {
             override fun getMessage(): Text {
                 return TranslatableText(if (isShowingMore) "gui.haema.lessinfo" else "gui.haema.moreinfo")
             }
         })
-        addButton(ButtonWidget(width/2+10, 180, 200, 20, TranslatableText("gui.done")) {
+        addDrawableChild(ButtonWidget(width/2+10, 180, 200, 20, TranslatableText("gui.done")) {
             onClose()
         })
     }
@@ -87,7 +88,7 @@ class HaemaGameplayConfigScreen(private val parent: Screen?) : Screen(LiteralTex
     override fun render(matrices: MatrixStack?, mouseX: Int, mouseY: Int, delta: Float) {
         renderBackground(matrices)
         super.render(matrices, mouseX, mouseY, delta)
-        client!!.textureManager.bindTexture(icon)
+        RenderSystem.setShaderTexture(0, icon)
         DrawableHelper.drawTexture(
             matrices,
             width/2-20,
@@ -114,7 +115,7 @@ class HaemaGameplayConfigScreen(private val parent: Screen?) : Screen(LiteralTex
     }
 
     override fun onClose() {
-        client?.openScreen(parent)
+        client?.setScreen(parent)
     }
 
     override fun tick() {

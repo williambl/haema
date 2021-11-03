@@ -1,18 +1,14 @@
 package com.williambl.haema.client
 
-import com.google.common.collect.ImmutableList
 import com.williambl.haema.hunter.VampireHunterEntity
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
-import net.minecraft.client.model.ModelPart
-import net.minecraft.client.render.entity.EntityRenderDispatcher
+import net.minecraft.client.model.*
+import net.minecraft.client.render.entity.EntityRendererFactory
 import net.minecraft.client.render.entity.MobEntityRenderer
 import net.minecraft.client.render.entity.feature.HeadFeatureRenderer
 import net.minecraft.client.render.entity.feature.HeldItemFeatureRenderer
-import net.minecraft.client.render.entity.model.CompositeEntityModel
-import net.minecraft.client.render.entity.model.CrossbowPosing
-import net.minecraft.client.render.entity.model.ModelWithArms
-import net.minecraft.client.render.entity.model.ModelWithHead
+import net.minecraft.client.render.entity.model.*
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.item.Items
 import net.minecraft.util.Arm
@@ -20,11 +16,11 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.math.MathHelper
 
 @Environment(EnvType.CLIENT)
-class VampireHunterEntityRenderer(entityRenderDispatcher: EntityRenderDispatcher) : MobEntityRenderer<VampireHunterEntity, VampireHunterModel>(entityRenderDispatcher, VampireHunterModel(0f, 0f, 64, 64), 0.5f) {
+class VampireHunterEntityRenderer(context: EntityRendererFactory.Context) : MobEntityRenderer<VampireHunterEntity, VampireHunterModel>(context, VampireHunterModel(context.getPart(VampireHunterModel.layer)), 0.5f) {
     private val texture = Identifier("textures/entity/illager/pillager.png")
 
     init {
-        addFeature(HeadFeatureRenderer(this))
+        addFeature(HeadFeatureRenderer(this, context.modelLoader))
         addFeature(HeldItemFeatureRenderer(this))
     }
 
@@ -36,18 +32,20 @@ class VampireHunterEntityRenderer(entityRenderDispatcher: EntityRenderDispatcher
 }
 
 @Environment(EnvType.CLIENT)
-class VampireHunterModel(scale: Float, pivotY: Float, textureWidth: Int, textureHeight: Int) : CompositeEntityModel<VampireHunterEntity>(), ModelWithArms, ModelWithHead {
-    private val head: ModelPart = ModelPart(this).setTextureSize(textureWidth, textureHeight)
-    private val hat: ModelPart
-    private val torso: ModelPart
-    private val arms: ModelPart
-    private val rightLeg: ModelPart
-    private val leftLeg: ModelPart
-    private val rightAttackingArm: ModelPart
-    private val leftAttackingArm: ModelPart
+class VampireHunterModel(val root: ModelPart) : SinglePartEntityModel<VampireHunterEntity>(), ModelWithArms, ModelWithHead {
+    private val head: ModelPart = root.getChild(EntityModelPartNames.HEAD)
+    private val hat: ModelPart = head.getChild(EntityModelPartNames.HAT)
+    private val arms: ModelPart = root.getChild(EntityModelPartNames.ARMS)
+    private val leftLeg: ModelPart = root.getChild(EntityModelPartNames.LEFT_LEG)
+    private val rightLeg: ModelPart = root.getChild(EntityModelPartNames.RIGHT_LEG)
+    private val rightAttackingArm: ModelPart = root.getChild(EntityModelPartNames.RIGHT_ARM)
+    private val leftAttackingArm: ModelPart = root.getChild(EntityModelPartNames.LEFT_ARM)
+    init {
+        hat.visible = false
+    }
 
-    override fun getParts(): Iterable<ModelPart> {
-        return ImmutableList.of(head, torso, rightLeg, leftLeg, arms, rightAttackingArm, leftAttackingArm)
+    override fun getPart(): ModelPart {
+        return root
     }
 
     override fun setAngles(entity: VampireHunterEntity, f: Float, g: Float, h: Float, i: Float, j: Float) {
@@ -92,7 +90,7 @@ class VampireHunterModel(scale: Float, pivotY: Float, textureWidth: Int, texture
             }
         } else if (entity.isAttacking) {
             // hold arm up in the air
-            CrossbowPosing.method_29351(rightAttackingArm, leftAttackingArm, entity, handSwingProgress, h)
+            CrossbowPosing.meleeAttack(rightAttackingArm, leftAttackingArm, entity, handSwingProgress, h)
         }
     }
 
@@ -108,43 +106,65 @@ class VampireHunterModel(scale: Float, pivotY: Float, textureWidth: Int, texture
         getArm(arm).rotate(matrices)
     }
 
-    init {
-        head.setPivot(0.0f, 0.0f + pivotY, 0.0f)
-        head.setTextureOffset(0, 0).addCuboid(-4.0f, -10.0f, -4.0f, 8.0f, 10.0f, 8.0f, scale)
-        hat = ModelPart(this, 32, 0).setTextureSize(textureWidth, textureHeight)
-        hat.addCuboid(-4.0f, -10.0f, -4.0f, 8.0f, 12.0f, 8.0f, scale + 0.45f)
-        head.addChild(hat)
-        hat.visible = false
-        val modelPart = ModelPart(this).setTextureSize(textureWidth, textureHeight)
-        modelPart.setPivot(0.0f, pivotY - 2.0f, 0.0f)
-        modelPart.setTextureOffset(24, 0).addCuboid(-1.0f, -1.0f, -6.0f, 2.0f, 4.0f, 2.0f, scale)
-        head.addChild(modelPart)
-        torso = ModelPart(this).setTextureSize(textureWidth, textureHeight)
-        torso.setPivot(0.0f, 0.0f + pivotY, 0.0f)
-        torso.setTextureOffset(16, 20).addCuboid(-4.0f, 0.0f, -3.0f, 8.0f, 12.0f, 6.0f, scale)
-        torso.setTextureOffset(0, 38).addCuboid(-4.0f, 0.0f, -3.0f, 8.0f, 18.0f, 6.0f, scale + 0.5f)
-        arms = ModelPart(this).setTextureSize(textureWidth, textureHeight)
-        arms.setPivot(0.0f, 0.0f + pivotY + 2.0f, 0.0f)
-        arms.setTextureOffset(44, 22).addCuboid(-8.0f, -2.0f, -2.0f, 4.0f, 8.0f, 4.0f, scale)
-        val modelPart2 = ModelPart(this, 44, 22).setTextureSize(textureWidth, textureHeight)
-        modelPart2.mirror = true
-        modelPart2.addCuboid(4.0f, -2.0f, -2.0f, 4.0f, 8.0f, 4.0f, scale)
-        arms.addChild(modelPart2)
-        arms.setTextureOffset(40, 38).addCuboid(-4.0f, 2.0f, -2.0f, 8.0f, 4.0f, 4.0f, scale)
-        rightLeg = ModelPart(this, 0, 22).setTextureSize(textureWidth, textureHeight)
-        rightLeg.setPivot(-2.0f, 12.0f + pivotY, 0.0f)
-        rightLeg.addCuboid(-2.0f, 0.0f, -2.0f, 4.0f, 12.0f, 4.0f, scale)
-        leftLeg = ModelPart(this, 0, 22).setTextureSize(textureWidth, textureHeight)
-        leftLeg.mirror = true
-        leftLeg.setPivot(2.0f, 12.0f + pivotY, 0.0f)
-        leftLeg.addCuboid(-2.0f, 0.0f, -2.0f, 4.0f, 12.0f, 4.0f, scale)
-        rightAttackingArm = ModelPart(this, 40, 46).setTextureSize(textureWidth, textureHeight)
-        rightAttackingArm.addCuboid(-3.0f, -2.0f, -2.0f, 4.0f, 12.0f, 4.0f, scale)
-        rightAttackingArm.setPivot(-5.0f, 2.0f + pivotY, 0.0f)
-        leftAttackingArm = ModelPart(this, 40, 46).setTextureSize(textureWidth, textureHeight)
-        leftAttackingArm.mirror = true
-        leftAttackingArm.addCuboid(-1.0f, -2.0f, -2.0f, 4.0f, 12.0f, 4.0f, scale)
-        leftAttackingArm.setPivot(5.0f, 2.0f + pivotY, 0.0f)
-    }
+    companion object {
+        val layer = EntityModelLayer(Identifier("haema:vampire_hunter"), "main")
 
+        fun getTexturedModelData(): TexturedModelData {
+            val modelData = ModelData()
+            val modelPartData = modelData.root
+            val modelPartData2 = modelPartData.addChild(
+                EntityModelPartNames.HEAD,
+                ModelPartBuilder.create().uv(0, 0).cuboid(-4.0f, -10.0f, -4.0f, 8.0f, 10.0f, 8.0f),
+                ModelTransform.pivot(0.0f, 0.0f, 0.0f)
+            )
+            modelPartData2.addChild(
+                EntityModelPartNames.HAT,
+                ModelPartBuilder.create().uv(32, 0).cuboid(-4.0f, -10.0f, -4.0f, 8.0f, 12.0f, 8.0f, Dilation(0.45f)),
+                ModelTransform.NONE
+            )
+            modelPartData2.addChild(
+                EntityModelPartNames.NOSE,
+                ModelPartBuilder.create().uv(24, 0).cuboid(-1.0f, -1.0f, -6.0f, 2.0f, 4.0f, 2.0f),
+                ModelTransform.pivot(0.0f, -2.0f, 0.0f)
+            )
+            modelPartData.addChild(
+                EntityModelPartNames.BODY,
+                ModelPartBuilder.create().uv(16, 20).cuboid(-4.0f, 0.0f, -3.0f, 8.0f, 12.0f, 6.0f).uv(0, 38)
+                    .cuboid(-4.0f, 0.0f, -3.0f, 8.0f, 18.0f, 6.0f, Dilation(0.5f)),
+                ModelTransform.pivot(0.0f, 0.0f, 0.0f)
+            )
+            val modelPartData3 = modelPartData.addChild(
+                EntityModelPartNames.ARMS,
+                ModelPartBuilder.create().uv(44, 22).cuboid(-8.0f, -2.0f, -2.0f, 4.0f, 8.0f, 4.0f).uv(40, 38)
+                    .cuboid(-4.0f, 2.0f, -2.0f, 8.0f, 4.0f, 4.0f),
+                ModelTransform.of(0.0f, 3.0f, -1.0f, -0.75f, 0.0f, 0.0f)
+            )
+            modelPartData3.addChild(
+                "left_shoulder",
+                ModelPartBuilder.create().uv(44, 22).mirrored().cuboid(4.0f, -2.0f, -2.0f, 4.0f, 8.0f, 4.0f),
+                ModelTransform.NONE
+            )
+            modelPartData.addChild(
+                EntityModelPartNames.RIGHT_LEG,
+                ModelPartBuilder.create().uv(0, 22).cuboid(-2.0f, 0.0f, -2.0f, 4.0f, 12.0f, 4.0f),
+                ModelTransform.pivot(-2.0f, 12.0f, 0.0f)
+            )
+            modelPartData.addChild(
+                EntityModelPartNames.LEFT_LEG,
+                ModelPartBuilder.create().uv(0, 22).mirrored().cuboid(-2.0f, 0.0f, -2.0f, 4.0f, 12.0f, 4.0f),
+                ModelTransform.pivot(2.0f, 12.0f, 0.0f)
+            )
+            modelPartData.addChild(
+                EntityModelPartNames.RIGHT_ARM,
+                ModelPartBuilder.create().uv(40, 46).cuboid(-3.0f, -2.0f, -2.0f, 4.0f, 12.0f, 4.0f),
+                ModelTransform.pivot(-5.0f, 2.0f, 0.0f)
+            )
+            modelPartData.addChild(
+                EntityModelPartNames.LEFT_ARM,
+                ModelPartBuilder.create().uv(40, 46).mirrored().cuboid(-1.0f, -2.0f, -2.0f, 4.0f, 12.0f, 4.0f),
+                ModelTransform.pivot(5.0f, 2.0f, 0.0f)
+            )
+            return TexturedModelData.of(modelData, 64, 64)
+        }
+    }
 }

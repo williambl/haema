@@ -1,5 +1,6 @@
 package com.williambl.haema.mixin;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.williambl.haema.Vampirable;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
@@ -45,7 +46,7 @@ public class InGameHudMixin extends DrawableHelper {
         PlayerEntity player = client.player;
         if (player instanceof Vampirable && ((Vampirable)player).isVampire()) {
             drawTexture(matrices, x, y, 0, 0, width, height, 9, 9);
-            this.client.getTextureManager().bindTexture(GUI_ICONS_TEXTURE);
+            RenderSystem.setShaderTexture(0, GUI_ICONS_TEXTURE);
         } else {
             inGameHud.drawTexture(matrices, x, y, u, v, width, height);
         }
@@ -72,7 +73,7 @@ public class InGameHudMixin extends DrawableHelper {
     void switchToEmptyBloodIcon(MatrixStack matrixStack, CallbackInfo ci) {
         PlayerEntity player = client.player;
         if (player instanceof Vampirable && ((Vampirable)player).isVampire()) {
-            this.client.getTextureManager().bindTexture(EMPTY_BLOOD_ICON);
+            RenderSystem.setShaderTexture(0, EMPTY_BLOOD_ICON);
         }
     }
     @Inject(
@@ -96,7 +97,7 @@ public class InGameHudMixin extends DrawableHelper {
     void switchToHalfBloodIcon(MatrixStack matrixStack, CallbackInfo ci) {
         PlayerEntity player = client.player;
         if (player instanceof Vampirable && ((Vampirable)player).isVampire()) {
-            this.client.getTextureManager().bindTexture(HALF_BLOOD_ICON);
+            RenderSystem.setShaderTexture(0, HALF_BLOOD_ICON);
         }
     }
 
@@ -121,7 +122,7 @@ public class InGameHudMixin extends DrawableHelper {
     void switchToFullBloodIcon(MatrixStack matrixStack, CallbackInfo ci) {
         PlayerEntity player = client.player;
         if (player instanceof Vampirable && ((Vampirable)player).isVampire()) {
-            this.client.getTextureManager().bindTexture(FULL_BLOOD_ICON);
+            RenderSystem.setShaderTexture(0, FULL_BLOOD_ICON);
         }
     }
 }

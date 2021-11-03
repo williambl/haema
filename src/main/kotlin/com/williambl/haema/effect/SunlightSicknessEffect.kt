@@ -6,14 +6,14 @@ import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.attribute.EntityAttributeModifier
 import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.effect.StatusEffect
-import net.minecraft.entity.effect.StatusEffectType
+import net.minecraft.entity.effect.StatusEffectCategory
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.particle.ParticleTypes
 
-class SunlightSicknessEffect(type: StatusEffectType?, color: Int) : StatusEffect(type, color) {
+class SunlightSicknessEffect(type: StatusEffectCategory?, color: Int) : StatusEffect(type, color) {
 
     companion object {
-        val instance: StatusEffect = SunlightSicknessEffect(StatusEffectType.HARMFUL, 245 shl 24 or 167 shl 16 or 66 shl 8)
+        val instance: StatusEffect = SunlightSicknessEffect(StatusEffectCategory.HARMFUL, 245 shl 24 or 167 shl 16 or 66 shl 8)
                 .addAttributeModifier(
                         EntityAttributes.GENERIC_ATTACK_DAMAGE,
                         "c85d1cfe-2c10-4d25-b650-49c045979842",
@@ -28,7 +28,9 @@ class SunlightSicknessEffect(type: StatusEffectType?, color: Int) : StatusEffect
 
         if (entity.age % 10 == 0) {
             entity.damage(SunlightDamageSource.instance, 0.5f)
-            (entity.hungerManager as VampireBloodManager).removeBlood(0.25)
+            if (entity.hungerManager is VampireBloodManager) {
+                (entity.hungerManager as VampireBloodManager).removeBlood(0.25)
+            }
             val pos = entity.pos
             val rand = entity.random
             for (i in 0..10) {

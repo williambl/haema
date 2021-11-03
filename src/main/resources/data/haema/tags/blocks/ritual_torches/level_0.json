@@ -1,6 +1,7 @@
 {
   "values": [
     "minecraft:torch",
+    "#minecraft:candles",
     "minecraft:campfire",
     {
       "id": "arstheurgia:velinha",

@@ -92,39 +92,25 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
             crossbowEnchants[Enchantments.PIERCING] = 1
         }
         EnchantmentHelper.set(crossbowEnchants, crossbow)
-        equip(300, crossbow)
+        inventory.addStack(crossbow)
 
         val sword = ItemStack(if (random.nextDouble() + 1.0 > difficulty.localDifficulty) Items.IRON_SWORD else Items.WOODEN_SWORD)
         sword.addEnchantment(Enchantments.SMITE, 2)
-        equip(301, sword)
+        inventory.addStack(sword)
 
         if (isPatrolLeader) {
             val banner = ItemStack(Items.WHITE_BANNER)
-            val compoundTag: NbtCompound = banner.getOrCreateSubTag("BlockEntityTag")
-            val listTag = BannerPattern.Patterns()
+            val compoundNbt: NbtCompound = banner.getOrCreateSubNbt("BlockEntityTag")
+            val listNbt = BannerPattern.Patterns()
                 .add(BannerPattern.RHOMBUS_MIDDLE, DyeColor.RED)
                 .add(BannerPattern.HALF_HORIZONTAL_MIRROR, DyeColor.LIGHT_BLUE)
                 .add(BannerPattern.CIRCLE_MIDDLE, DyeColor.RED)
-                .toTag()
-            compoundTag.put("Patterns", listTag)
+                .toNbt()
+            compoundNbt.put("Patterns", listNbt)
             @Suppress("UsePropertyAccessSyntax")
-            banner.getOrCreateTag().putInt("HideFlags", 32)
+            banner.addHideFlag(ItemStack.TooltipSection.ADDITIONAL)
             banner.setCustomName(TranslatableText("block.haema.righteous_banner").formatted(Formatting.GOLD))
             equipStack(EquipmentSlot.HEAD, banner)
-        }
-    }
-
-    override fun equip(slot: Int, item: ItemStack): Boolean {
-        return if (super.equip(slot, item)) {
-            true
-        } else {
-            val i = slot - 300
-            if (i >= 0 && i < inventory.size()) {
-                inventory.setStack(i, item)
-                true
-            } else {
-                false
-            }
         }
     }
 
@@ -145,22 +131,21 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
 
     override fun writeCustomDataToNbt(tag: NbtCompound) {
         super.writeCustomDataToNbt(tag)
-        val listTag = NbtList()
+        val listNbt = NbtList()
         for (i in 0 until inventory.size()) {
             val itemStack = inventory.getStack(i)
             if (!itemStack.isEmpty) {
-                listTag.add(itemStack.writeNbt(NbtCompound()))
+                listNbt.add(itemStack.writeNbt(NbtCompound()))
             }
         }
-        tag.put("Inventory", listTag)
-        tag.putBoolean("HasGivenContract", hasGivenContract)
+        tag.put("Inventory", listNbt)
     }
 
     override fun readCustomDataFromNbt(tag: NbtCompound) {
         super.readCustomDataFromNbt(tag)
-        val listTag = tag.getList("Inventory", 10)
-        for (i in listTag.indices) {
-            val itemStack = ItemStack.fromNbt(listTag.getCompound(i))
+        val listNbt = tag.getList("Inventory", 10)
+        for (i in listNbt.indices) {
+            val itemStack = ItemStack.fromNbt(listNbt.getCompound(i))
             if (!itemStack.isEmpty) {
                 inventory.addStack(itemStack)
             }

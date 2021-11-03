@@ -8,6 +8,7 @@ import ladysnake.ratsmischief.common.entity.RatEntity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.ai.goal.MeleeAttackGoal
 import net.minecraft.entity.effect.StatusEffectInstance
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.server.world.ServerWorld
 
@@ -35,7 +36,7 @@ class VampiRatAttackGoal(private val actor: RatEntity, speed: Double, pauseWhenM
         if (getSquaredMaxAttackDistance(target) < squaredDistance) return
         if (target == null) return
 
-        method_28346()
+        resetCooldown()
         target.damage(BloodLossDamageSource.instance, 0.4f)
 
         (actor.world as ServerWorld).spawnParticles(
@@ -51,7 +52,13 @@ class VampiRatAttackGoal(private val actor: RatEntity, speed: Double, pauseWhenM
         )
 
         if (target is Vampirable && !(target as Vampirable).isVampire) {
-            (target as Vampirable).isVampire = true
+            if (target is PlayerEntity) {
+                if (actor.world.gameRules.getBoolean(ratsCanConvertPlayers)) {
+                    Vampirable.convert(target)
+                }
+            } else {
+                target.isVampire = true
+            }
         } else if (target !is Vampirable) {
            actor.addStatusEffect(StatusEffectInstance(VampiricStrengthEffect.instance, 200, 2))
         }

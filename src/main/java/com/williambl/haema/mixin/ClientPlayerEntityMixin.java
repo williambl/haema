@@ -16,6 +16,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -47,7 +48,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             } else if (HaemaClientKt.getDASH_KEY().isPressed() && canDash()) {
                 Vec3d target = RaytraceUtilKt.raytraceForDash(this);
                 if (target != null) for (int i = 0; i < 10; i++) {
-                    world.addParticle(new DustParticleEffect(0, 0, 0, 1), target.x - 0.5 + random.nextDouble(), target.y + random.nextDouble() * 2, target.z - 0.5 + random.nextDouble(), 0.0, 0.5, 0.0);
+                    world.addParticle(new DustParticleEffect(new Vec3f(0, 0, 0), 1), target.x - 0.5 + random.nextDouble(), target.y + random.nextDouble() * 2, target.z - 0.5 + random.nextDouble(), 0.0, 0.5, 0.0);
                 }
             }
             pressedTicks = HaemaClientKt.getDASH_KEY().isPressed() ? pressedTicks + 1 : 0;
@@ -76,11 +77,11 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     @Override
     public boolean canDash() {
         int abilityLevel = ((Vampirable)this).getAbilityLevel(VampireAbility.Companion.getDASH());
-        return world.getTime() > lastDashed+(HaemaClientKt.getDashCooldownValue()*(1+VampireAbility.Companion.getDASH().getMaxLevel()-abilityLevel))
+        return world.getTime() > lastDashed+((long) HaemaClientKt.getDashCooldownValue() *(1+VampireAbility.Companion.getDASH().getMaxLevel()-abilityLevel))
                 && hungerManager instanceof VampireBloodManager
                 && (
                         ((VampireBloodManager)hungerManager).getBloodLevel() >= 18
-                                || abilities.creativeMode
+                                || getAbilities().creativeMode
         )
                 && abilityLevel > 0;
     }

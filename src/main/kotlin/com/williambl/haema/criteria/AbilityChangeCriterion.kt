@@ -21,7 +21,7 @@ object AbilityChangeCriterion: AbstractCriterion<AbilityChangeCriterion.Conditio
     ): Conditions = Conditions(playerPredicate, (obj["ability"] as String?)?.let { Identifier(it) }, (obj["level"] as Int?))
 
     fun trigger(player: ServerPlayerEntity, ability: VampireAbility, level: Int) {
-        this.test(player) { it.matches(ability, level) }
+        this.trigger(player) { it.matches(ability, level) }
     }
 
     class Conditions(playerPredicate: EntityPredicate.Extended, private val abilityId: Identifier?, private val level: Int?):

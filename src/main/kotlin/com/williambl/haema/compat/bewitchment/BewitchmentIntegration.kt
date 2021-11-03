@@ -7,14 +7,13 @@ import com.williambl.haema.api.BloodDrinkingEvents
 import com.williambl.haema.api.DamageSourceEfficacyEvent
 import com.williambl.haema.api.client.VampireHudAddTextEvent
 import moriyashiine.bewitchment.api.BewitchmentAPI
+import moriyashiine.bewitchment.api.component.BloodComponent
+import moriyashiine.bewitchment.api.component.TransformationComponent
 import moriyashiine.bewitchment.api.event.*
-import moriyashiine.bewitchment.api.interfaces.entity.BloodAccessor
-import moriyashiine.bewitchment.api.interfaces.entity.TransformationAccessor
 import moriyashiine.bewitchment.client.BewitchmentClient
 import moriyashiine.bewitchment.common.registry.BWDamageSources
 import moriyashiine.bewitchment.common.registry.BWPledges
 import moriyashiine.bewitchment.common.registry.BWTransformations
-import net.fabricmc.fabric.api.util.TriState
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
@@ -35,13 +34,13 @@ fun registerBewitchmentEventListeners() {
     // Sync blood changes Haema -> Bewitchment
     BloodChangeEvents.ON_BLOOD_ADD.register(BloodChangeEvents.AddBloodEvent { player, amount ->
         if (BewitchmentAPI.isVampire(player, true)) {
-            (player as BloodAccessor).fillBlood(ceil(amount * 5).toInt(), false)
+            BloodComponent.get(player).fillBlood(ceil(amount * 5).toInt(), false)
         }
     })
     // Sync blood changes Haema -> Bewitchment
     BloodChangeEvents.ON_BLOOD_REMOVE.register(BloodChangeEvents.RemoveBloodEvent { player, amount ->
         if (BewitchmentAPI.isVampire(player, true)) {
-            (player as BloodAccessor).drainBlood(ceil(amount * 5).toInt(), false)
+            BloodComponent.get(player).drainBlood(ceil(amount * 5).toInt(), false)
         }
     })
 
@@ -73,10 +72,11 @@ fun registerBewitchmentEventListeners() {
 
     // Sync vampirism status Bewitchment -> Haema
     OnTransformationSet.EVENT.register(OnTransformationSet { player, transformation ->
+        val transformationComponent = TransformationComponent.get(player)
         if (transformation == BWTransformations.VAMPIRE) {
             (player as Vampirable).isVampire = true
             player.isPermanentVampire = true
-        } else if (transformation != BWTransformations.VAMPIRE && (player as TransformationAccessor).transformation == BWTransformations.VAMPIRE) {
+        } else if (transformation != BWTransformations.VAMPIRE && transformationComponent.transformation == BWTransformations.VAMPIRE) {
             (player as Vampirable).isVampire = false
             player.isPermanentVampire = false
         }
@@ -89,9 +89,9 @@ fun registerBewitchmentEventListeners() {
     // Make Bewitchment's damage sources effective against vampires
     DamageSourceEfficacyEvent.EVENT.register(DamageSourceEfficacyEvent { source, world ->
         if (source == BWDamageSources.DEATH || source == BWDamageSources.MAGIC_COPY || source == BWDamageSources.SUN || source == BWDamageSources.WEDNESDAY) {
-            TriState.TRUE
+            1.25f
         } else {
-            TriState.DEFAULT
+            1f
         }
     })
 }
@@ -100,7 +100,8 @@ fun registerBewitchmentClientEventListeners() {
     VampireHudAddTextEvent.EVENT.register(VampireHudAddTextEvent { player, createText ->
         val texts = mutableListOf<Text>()
         if (BewitchmentAPI.isVampire(player, true)) {
-            if (!(player as TransformationAccessor).alternateForm) {
+            val transformationComponent = TransformationComponent.get(player)
+            if (!(transformationComponent.isAlternateForm)) {
                 texts.add(
                     createText(
                         BewitchmentClient.TRANSFORMATION_ABILITY.boundKeyLocalizedText.copy(),
@@ -112,7 +113,7 @@ fun registerBewitchmentClientEventListeners() {
                 texts.add(
                     createText(
                         BewitchmentClient.TRANSFORMATION_ABILITY.boundKeyLocalizedText.copy(),
-                        BewitchmentAPI.isPledged(player, BWPledges.LILITH) && (player as BloodAccessor).blood > 0,
+                        BewitchmentAPI.isPledged(player, BWPledges.LILITH) && BloodComponent.get(player).blood > 0,
                         TranslatableText("compat.bewitchment.gui.haema.hud.untransform")
                     )
                 )

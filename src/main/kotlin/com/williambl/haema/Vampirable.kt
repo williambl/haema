@@ -8,6 +8,7 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.Identifier
+import net.minecraft.util.math.Vec3f
 
 interface Vampirable {
 
@@ -59,7 +60,7 @@ interface Vampirable {
                 entity.health = 1f
                 if (entity.world is ServerWorld) {
                     (entity.world as ServerWorld).spawnParticles(DustParticleEffect.DEFAULT, entity.x, entity.y+1, entity.z, 25, 0.5, 1.0, 0.5, 1.0)
-                    (entity.world as ServerWorld).spawnParticles(DustParticleEffect(0f, 0f, 0f, 1f), entity.x, entity.y+1, entity.z, 25, 0.5, 1.0, 0.5, 1.0)
+                    (entity.world as ServerWorld).spawnParticles(DustParticleEffect(Vec3f(0f, 0f, 0f), 1f), entity.x, entity.y+1, entity.z, 25, 0.5, 1.0, 0.5, 1.0)
                 }
                 VampireConversionEvents.CONVERT.invoker().onConvert(entity)
             }

@@ -160,10 +160,10 @@ class VampireBloodManager() : HungerManager() {
         lastFed = tag?.getLong("LastFed") ?: -6000
     }
 
-    override fun writeNbt(tag: NbtCompound?) {
+    override fun writeNbt(tag: NbtCompound) {
         super.writeNbt(tag)
-        tag?.putDouble("BloodLevel", absoluteBloodLevel)
-        tag?.putLong("LastFed", lastFed)
+        tag.putDouble("BloodLevel", absoluteBloodLevel)
+        tag.putLong("LastFed", lastFed)
     }
 
     fun getIntBloodLevel(): Int {

@@ -5,7 +5,7 @@ import com.williambl.haema.VampireBloodManager;
 import com.williambl.haema.abilities.VampireAbility;
 import com.williambl.haema.criteria.VampireHunterTriggerCriterion;
 import com.williambl.haema.damagesource.BloodLossDamageSource;
-import com.williambl.haema.damagesource.DamageSourceExtensionsKt;
+import com.williambl.haema.damagesource.DamageSourcesKt;
 import com.williambl.haema.hunter.VampireHunterSpawner;
 import com.williambl.haema.util.HaemaGameRulesKt;
 import net.minecraft.entity.Entity;
@@ -47,7 +47,7 @@ public abstract class LivingEntityMixin extends Entity {
         //noinspection ConstantConditions
         if (((Object) this) instanceof PlayerEntity && ((Vampirable) this).isVampire()
                 && source != null && ((Vampirable) this).getAbilityLevel(VampireAbility.Companion.getIMMORTALITY()) > 0) {
-            if (this.getHealth() <= 0 && DamageSourceExtensionsKt.isEffectiveAgainstVampires(source, this.world)) {
+            if (this.getHealth() <= 0 && DamageSourcesKt.isEffectiveAgainstVampires(source, this.world)) {
                 ((VampireBloodManager) ((PlayerEntity) (Object) this).getHungerManager()).setAbsoluteBloodLevel(0.0);
                 ((Vampirable) this).setKilled(true);
             }
@@ -59,7 +59,7 @@ public abstract class LivingEntityMixin extends Entity {
         //noinspection ConstantConditions
         if (((Object) this) instanceof PlayerEntity && ((Vampirable)this).isVampire()
                 && source != null && ((Vampirable)this).getAbilityLevel(VampireAbility.Companion.getIMMORTALITY()) > 0) {
-            if (!(this.getHealth() <= 0 && DamageSourceExtensionsKt.isEffectiveAgainstVampires(source, this.world))) {
+            if (!(this.getHealth() <= 0 && DamageSourcesKt.isEffectiveAgainstVampires(source, this.world))) {
                 cir.setReturnValue(true);
             }
         }
@@ -73,7 +73,7 @@ public abstract class LivingEntityMixin extends Entity {
     @Inject(method = "onDeath", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setPose(Lnet/minecraft/entity/EntityPose;)V"))
     void alertVampireHuntersToDeath(DamageSource source, CallbackInfo ci) {
         if (source == BloodLossDamageSource.Companion.getInstance() && world instanceof ServerWorld) {
-            ((ServerWorld) world).spawnParticles(new DustParticleEffect(1.0f,0.0f, 0.0f, 3.0f), getX(), getY()+1, getZ(), 30, 1.0, 1.0, 1.0, 0.1);
+            ((ServerWorld) world).spawnParticles(new DustParticleEffect(DustParticleEffect.RED, 3.0f), getX(), getY()+1, getZ(), 30, 1.0, 1.0, 1.0, 0.1);
 
             if (random.nextDouble() < world.getGameRules().get(HaemaGameRulesKt.getVampireHunterNoticeChance()).get()) {
                 //noinspection ConstantConditions

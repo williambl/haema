@@ -5,12 +5,12 @@ import net.minecraft.entity.attribute.AttributeContainer
 import net.minecraft.entity.attribute.EntityAttributeModifier
 import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.effect.StatusEffect
-import net.minecraft.entity.effect.StatusEffectType
+import net.minecraft.entity.effect.StatusEffectCategory
 
-class VampiricWeaknessEffect(type: StatusEffectType?, color: Int) : StatusEffect(type, color) {
+class VampiricWeaknessEffect(type: StatusEffectCategory?, color: Int) : StatusEffect(type, color) {
 
     companion object {
-        val instance: StatusEffect = VampiricWeaknessEffect(StatusEffectType.HARMFUL, 171 shl 24 or 12 shl 16 or 12 shl 8)
+        val instance: StatusEffect = VampiricWeaknessEffect(StatusEffectCategory.HARMFUL, 171 shl 24 or 12 shl 16 or 12 shl 8)
             .addAttributeModifier(
                 EntityAttributes.GENERIC_ATTACK_DAMAGE,
                 "beb69dfa-5de3-4f82-82a5-29f5ba715a18",

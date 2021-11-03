@@ -4,7 +4,6 @@ import com.williambl.haema.abilities.VampireAbility
 import com.williambl.haema.abilities.abilityRegistry
 import dev.onyxstudios.cca.api.v3.component.CopyableComponent
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent
-import nerdhub.cardinal.components.api.ComponentType
 import net.minecraft.entity.Entity
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.util.Identifier
@@ -62,10 +61,6 @@ class VampirePlayerComponent(player: Entity) : VampireComponent, AutoSyncedCompo
         ritualsUsed = other.ritualsUsed
     }
 
-    override fun getComponentType(): ComponentType<*> {
-        throw UnsupportedOperationException()
-    }
-
     private fun NbtCompound.fixAbilityData() {
         fun fixAbility(oldName: String, ability: VampireAbility) {
             val newName = abilityRegistry.getId(ability).toString()
@@ -82,5 +77,4 @@ class VampirePlayerComponent(player: Entity) : VampireComponent, AutoSyncedCompo
         fixAbility("IMMORTALITY", VampireAbility.STRENGTH)
         fixAbility("VISION", VampireAbility.STRENGTH)
     }
-
 }

@@ -1,45 +1,32 @@
 package com.williambl.haema.compat.rei
 
 import com.williambl.haema.craft.BookOfBloodRecipe
-import me.shedaniel.rei.api.EntryStack
-import me.shedaniel.rei.plugin.crafting.DefaultCraftingDisplay
+import me.shedaniel.rei.api.common.entry.EntryIngredient
+import me.shedaniel.rei.api.common.util.EntryIngredients
+import me.shedaniel.rei.plugin.common.displays.crafting.DefaultCraftingDisplay
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
-import net.minecraft.nbt.NbtCompound
 import net.minecraft.potion.PotionUtil
 import net.minecraft.potion.Potions
-import net.minecraft.recipe.Recipe
-import net.minecraft.util.Identifier
-import net.minecraft.util.registry.Registry
 import java.util.*
 
-class BookOfBloodRecipeDisplay(private val recipe: BookOfBloodRecipe) : DefaultCraftingDisplay {
+class BookOfBloodRecipeDisplay(recipe: BookOfBloodRecipe) : DefaultCraftingDisplay<BookOfBloodRecipe>(
+    makeInputs(recipe), makeOutputs(recipe), Optional.of(recipe)) {
+    companion object {
+        fun makeInputs(recipe: BookOfBloodRecipe): List<EntryIngredient> {
+            val potionStack = ItemStack(Items.POTION)
+            PotionUtil.setPotion(potionStack, Potions.AWKWARD)
 
-    private val resultStack = ItemStack(Registry.ITEM[Identifier("patchouli:guide_book")])
+            return listOf(
+                EntryIngredients.ofItemStacks(listOf(ItemStack(Items.BOOK))),
+                EntryIngredients.ofItemStacks(listOf(potionStack))
+            )
+        }
 
-    init {
-        val tag = NbtCompound()
-        tag.putString("patchouli:book", "haema:book_of_blood")
-        resultStack.tag = tag
+        fun makeOutputs(recipe: BookOfBloodRecipe): List<EntryIngredient> {
+            return listOf(EntryIngredients.of(recipe.resultStack))
+        }
     }
-
-    override fun getOptionalRecipe(): Optional<Recipe<*>> = Optional.of(recipe)
-
-    override fun getInputEntries(): MutableList<MutableList<EntryStack>> {
-        val potionStack = ItemStack(Items.POTION)
-        PotionUtil.setPotion(potionStack, Potions.AWKWARD)
-
-        return mutableListOf(
-            EntryStack.ofItemStacks(mutableListOf(ItemStack(Items.BOOK))),
-            EntryStack.ofItemStacks(mutableListOf(potionStack))
-        )
-    }
-
-    override fun getResultingEntries(): MutableList<MutableList<EntryStack>> = mutableListOf(EntryStack.ofItemStacks(listOf(resultStack.copy())))
-
-    override fun getRecipeLocation(): Optional<Identifier> = optionalRecipe.map { it.id }
-
-    override fun getRequiredEntries(): MutableList<MutableList<EntryStack>> = inputEntries
 
     override fun getWidth(): Int = 2
 
