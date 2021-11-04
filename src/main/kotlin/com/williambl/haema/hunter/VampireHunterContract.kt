@@ -58,16 +58,16 @@ class VampireHunterContract(settings: Settings): Item(settings) {
 }
 
 @Suppress("UsePropertyAccessSyntax")
-fun ItemStack.setContractTarget(target: PlayerEntity) = this.getOrCreateTag().put("ContractTarget", NbtHelper.writeGameProfile(NbtCompound(), target.gameProfile))
+fun ItemStack.setContractTarget(target: PlayerEntity) = this.getOrCreateNbt().put("ContractTarget", NbtHelper.writeGameProfile(NbtCompound(), target.gameProfile))
 
 @Suppress("UsePropertyAccessSyntax")
-fun ItemStack.getContractTarget(): GameProfile? = this.getOrCreateTag().get("ContractTarget")?.let { NbtHelper.toGameProfile(it as NbtCompound) }
+fun ItemStack.getContractTarget(): GameProfile? = this.getOrCreateNbt().get("ContractTarget")?.let { NbtHelper.toGameProfile(it as NbtCompound) }
 
 @Suppress("UsePropertyAccessSyntax")
-fun ItemStack.isContractFulfilled() = this.getOrCreateTag().getBoolean("ContractFulfilled")
+fun ItemStack.isContractFulfilled() = this.getOrCreateNbt().getBoolean("ContractFulfilled")
 
 @Suppress("UsePropertyAccessSyntax")
 fun ItemStack.fulfilContract(holder: Entity) {
-    this.getOrCreateTag().putBoolean("ContractFulfilled", true)
+    this.getOrCreateNbt().putBoolean("ContractFulfilled", true)
     holder.world.playSound(holder.x, holder.y, holder.z, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundCategory.NEUTRAL, 1.0f, 1.0f, false)
 }

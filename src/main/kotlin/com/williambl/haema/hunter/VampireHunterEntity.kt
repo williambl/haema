@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttribute
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
 import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags
 import net.minecraft.block.entity.BannerPattern
+import net.minecraft.command.argument.EntityAnchorArgumentType
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.enchantment.Enchantments
 import net.minecraft.entity.*
@@ -27,14 +28,11 @@ import net.minecraft.item.*
 import net.minecraft.loot.context.LootContext
 import net.minecraft.loot.context.LootContextParameters
 import net.minecraft.loot.context.LootContextTypes
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.nbt.NbtList
 import net.minecraft.potion.PotionUtil
 import net.minecraft.potion.Potions
 import net.minecraft.server.world.ServerWorld
-import net.minecraft.item.Item
-import net.minecraft.item.ItemStack
-import net.minecraft.item.Items
-import net.minecraft.nbt.NbtCompound
-import net.minecraft.nbt.NbtList
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.*
 import net.minecraft.util.registry.Registry
@@ -243,6 +241,10 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
         if (vehicle is PathAwareEntity) {
             bodyYaw = (vehicle as PathAwareEntity).bodyYaw
         }
+    }
+
+    fun isHolding(predicate: (Item) -> Boolean): Boolean {
+        return predicate.invoke(mainHandStack.item) || predicate.invoke(offHandStack.item)
     }
 
     private fun createContract(): ItemStack {
