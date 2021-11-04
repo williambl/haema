@@ -67,6 +67,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
     override fun initGoals() {
         super.initGoals()
         goalSelector.add(0, SwimGoal(this))
+        goalSelector.add(1, VampireHunterOnHorseAttackGoal(this, 1.3, 10.0f))
         goalSelector.add(2, VampireHunterCrossbowAttackGoal(this, 1.0, 8.0f))
         goalSelector.add(3, VampireHunterMeleeAttackGoal(this, 1.0, true))
         goalSelector.add(8, WanderAroundGoal(this, 0.6))
@@ -267,7 +268,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
     }
 }
 
-class VampireHunterCrossbowAttackGoal(private val actor: VampireHunterEntity, speed: Double, range: Float) : CrossbowAttackGoal<VampireHunterEntity>(
+open class VampireHunterCrossbowAttackGoal(private val actor: VampireHunterEntity, speed: Double, range: Float) : CrossbowAttackGoal<VampireHunterEntity>(
     actor,
     speed,
     range
@@ -277,7 +278,7 @@ class VampireHunterCrossbowAttackGoal(private val actor: VampireHunterEntity, sp
     override fun shouldContinue(): Boolean =
         hasValidTarget() && (canStart() || !this.actor.navigation.isIdle) && actorHasCrossbow()
 
-    private fun hasValidTarget(): Boolean = actor.target != null && actor.target!!.isAlive && actor.squaredDistanceTo(
+    protected open fun hasValidTarget(): Boolean = actor.target != null && actor.target!!.isAlive && actor.squaredDistanceTo(
         actor.target!!
     ) > 25 && actor.target!!.health > 4
 
@@ -353,6 +354,28 @@ class VampireHunterMeleeAttackGoal(private val actor: VampireHunterEntity, speed
     }
 
     private fun isSword(item: Item) = FabricToolTags.SWORDS.contains(item)
+}
+
+class VampireHunterOnHorseAttackGoal(private val actor: VampireHunterEntity, speed: Double, range: Float) : VampireHunterCrossbowAttackGoal(
+    actor,
+    speed,
+    range
+) {
+    override fun canStart(): Boolean = actor.hasVehicle() && super.canStart()
+
+    override fun shouldContinue(): Boolean =
+        actor.hasVehicle() && super.canStart()
+
+    override fun hasValidTarget(): Boolean = actor.target != null && actor.target!!.isAlive
+
+    override fun tick() {
+        super.tick()
+        val vehicle = actor.vehicle
+        if (vehicle is LivingEntity) {
+            vehicle.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, vehicle.eyePos.add(vehicle.velocity).multiply(2.0))
+            actor.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, actor.target?.pos ?: actor.pos)
+        }
+    }
 }
 
 fun registerVampireHunter() {
