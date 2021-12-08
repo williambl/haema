@@ -14,6 +14,7 @@ import moriyashiine.bewitchment.client.BewitchmentClient
 import moriyashiine.bewitchment.common.registry.BWDamageSources
 import moriyashiine.bewitchment.common.registry.BWPledges
 import moriyashiine.bewitchment.common.registry.BWTransformations
+import moriyashiine.bewitchment.common.registry.BWComponents
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
@@ -34,13 +35,13 @@ fun registerBewitchmentEventListeners() {
     // Sync blood changes Haema -> Bewitchment
     BloodChangeEvents.ON_BLOOD_ADD.register(BloodChangeEvents.AddBloodEvent { player, amount ->
         if (BewitchmentAPI.isVampire(player, true)) {
-            BloodComponent.get(player).fillBlood(ceil(amount * 5).toInt(), false)
+            BWComponents.BLOOD_COMPONENT.get(player).fillBlood(ceil(amount * 5).toInt(), false)
         }
     })
     // Sync blood changes Haema -> Bewitchment
     BloodChangeEvents.ON_BLOOD_REMOVE.register(BloodChangeEvents.RemoveBloodEvent { player, amount ->
         if (BewitchmentAPI.isVampire(player, true)) {
-            BloodComponent.get(player).drainBlood(ceil(amount * 5).toInt(), false)
+            BWComponents.BLOOD_COMPONENT.get(player).drainBlood(ceil(amount * 5).toInt(), false)
         }
     })
 
@@ -72,7 +73,7 @@ fun registerBewitchmentEventListeners() {
 
     // Sync vampirism status Bewitchment -> Haema
     OnTransformationSet.EVENT.register(OnTransformationSet { player, transformation ->
-        val transformationComponent = TransformationComponent.get(player)
+        val transformationComponent = BWComponents.TRANSFORMATION_COMPONENT.get(player)
         if (transformation == BWTransformations.VAMPIRE) {
             (player as Vampirable).isVampire = true
             player.isPermanentVampire = true
@@ -100,7 +101,7 @@ fun registerBewitchmentClientEventListeners() {
     VampireHudAddTextEvent.EVENT.register(VampireHudAddTextEvent { player, createText ->
         val texts = mutableListOf<Text>()
         if (BewitchmentAPI.isVampire(player, true)) {
-            val transformationComponent = TransformationComponent.get(player)
+            val transformationComponent = BWComponents.TRANSFORMATION_COMPONENT.get(player)
             if (!(transformationComponent.isAlternateForm)) {
                 texts.add(
                     createText(
@@ -113,7 +114,7 @@ fun registerBewitchmentClientEventListeners() {
                 texts.add(
                     createText(
                         BewitchmentClient.TRANSFORMATION_ABILITY.boundKeyLocalizedText.copy(),
-                        BewitchmentAPI.isPledged(player, BWPledges.LILITH) && BloodComponent.get(player).blood > 0,
+                        BewitchmentAPI.isPledged(player, BWPledges.LILITH) && BWComponents.BLOOD_COMPONENT.get(player).blood > 0,
                         TranslatableText("compat.bewitchment.gui.haema.hud.untransform")
                     )
                 )
