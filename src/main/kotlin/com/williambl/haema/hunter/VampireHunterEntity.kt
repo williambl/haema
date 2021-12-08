@@ -35,6 +35,7 @@ import net.minecraft.potion.Potions
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.*
+import net.minecraft.util.math.Vec3d
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.Difficulty
 import net.minecraft.world.LocalDifficulty
@@ -268,7 +269,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
     }
 }
 
-open class VampireHunterCrossbowAttackGoal(private val actor: VampireHunterEntity, speed: Double, range: Float) : CrossbowAttackGoal<VampireHunterEntity>(
+open class VampireHunterCrossbowAttackGoal(private val actor: VampireHunterEntity, private val speed: Double, range: Float) : CrossbowAttackGoal<VampireHunterEntity>(
     actor,
     speed,
     range
@@ -291,6 +292,24 @@ open class VampireHunterCrossbowAttackGoal(private val actor: VampireHunterEntit
             val equipped = actor.getStackInHand(Hand.MAIN_HAND)
             actor.equipStack(EquipmentSlot.MAINHAND, actor.takeItem(Items.CROSSBOW))
             actor.inventory.addStack(equipped)
+        }
+    }
+
+    override fun tick() {
+        super.tick()
+        val target = actor.target
+        if (actor.age % 2 == 0 && target != null && actor.visibilityCache.canSee(target)) {
+            val actorToTarget = target.pos.subtract(actor.pos).normalize()
+            if (
+                (1..5)
+                    .map { i -> actor.boundingBox.offset(actorToTarget.multiply(i.toDouble())) }
+                    .flatMap { box -> actor.world.getEntitiesByType(actor.type, box) { it != actor && it.isAlive} }
+                    .isNotEmpty()
+            ) {
+                val outOfWay = actor.pos.add(actorToTarget.multiply(1.0, 0.0, 1.0).crossProduct(Vec3d(0.0, if (actor.random.nextBoolean()) -1.0 else 1.0, 0.0))).normalize().multiply(2.0).add(actorToTarget)
+                actor.navigation.startMovingTo(outOfWay.x, outOfWay.y, outOfWay.z, speed)
+                println("we move")
+            }
         }
     }
 
