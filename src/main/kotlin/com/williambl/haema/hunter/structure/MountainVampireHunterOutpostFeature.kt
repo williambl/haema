@@ -22,10 +22,6 @@ import net.minecraft.world.gen.feature.StructureFeature
 import net.minecraft.world.gen.feature.StructureFeature.StructureStartFactory
 import net.minecraft.world.gen.feature.StructurePoolFeatureConfig
 
-
-//TODO: entities
-//TODO: one layer down
-//TODO: structure voids
 class MountainVampireHunterOutpostFeature(codec: Codec<DefaultFeatureConfig>) : StructureFeature<DefaultFeatureConfig>(codec) {
     override fun getStructureStartFactory(): StructureStartFactory<DefaultFeatureConfig>
             = StructureStartFactory(::Start)
