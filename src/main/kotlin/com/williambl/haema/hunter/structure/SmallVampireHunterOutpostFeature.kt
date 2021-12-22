@@ -22,7 +22,7 @@ import net.minecraft.world.gen.feature.StructureFeature
 import net.minecraft.world.gen.feature.StructureFeature.StructureStartFactory
 import net.minecraft.world.gen.feature.StructurePoolFeatureConfig
 
-class MountainVampireHunterOutpostFeature(codec: Codec<DefaultFeatureConfig>) : StructureFeature<DefaultFeatureConfig>(codec) {
+class SmallVampireHunterOutpostFeature(codec: Codec<DefaultFeatureConfig>) : StructureFeature<DefaultFeatureConfig>(codec) {
     override fun getStructureStartFactory(): StructureStartFactory<DefaultFeatureConfig>
             = StructureStartFactory(::Start)
 
@@ -72,7 +72,7 @@ class MountainVampireHunterOutpostFeature(codec: Codec<DefaultFeatureConfig>) : 
                 registryManager,
                 StructurePoolFeatureConfig({
                     registryManager.get(Registry.STRUCTURE_POOL_KEY).get(
-                    Identifier("haema:mountain_vampire_hunter_outpost/start_pool"))}, 10
+                    Identifier("haema:small_vampire_hunter_outpost/start_pool"))}, 10
                 ),
                 { structureManager, poolElement, pos, i, rot, bounds -> PoolStructurePiece(structureManager, poolElement, pos, i, rot, bounds) },
                 chunkGenerator,

@@ -106,7 +106,6 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
                 .add(BannerPattern.CIRCLE_MIDDLE, DyeColor.RED)
                 .toNbt()
             compoundNbt.put("Patterns", listNbt)
-            @Suppress("UsePropertyAccessSyntax")
             banner.addHideFlag(ItemStack.TooltipSection.ADDITIONAL)
             banner.setCustomName(TranslatableText("block.haema.righteous_banner").formatted(Formatting.GOLD))
             equipStack(EquipmentSlot.HEAD, banner)

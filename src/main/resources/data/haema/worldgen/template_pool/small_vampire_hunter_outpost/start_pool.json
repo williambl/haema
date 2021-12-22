@@ -1,12 +1,12 @@
 {
-  "name": "haema:mountain_vampire_hunter_outpost/start_pool",
+  "name": "haema:small_vampire_hunter_outpost/start_pool",
   "fallback": "minecraft:empty",
 
   "elements": [
     {
       "weight": 1,
       "element": {
-        "location": "haema:mountain_vampire_hunter_outpost/main",
+        "location": "haema:small_vampire_hunter_outpost/main",
         "processors": "minecraft:empty",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"

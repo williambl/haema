@@ -29,7 +29,7 @@ public class NoLakesInStructuresMixin {
     )
     private void repurposedstructures_noLakesInStructures(FeatureContext<SingleStateFeatureConfig> context, CallbackInfoReturnable<Boolean> cir) {
         ChunkSectionPos chunkPos = ChunkSectionPos.from(context.getOrigin());
-        for (StructureFeature<?> structure : List.of(StructuresKt.getMountainVampireHunterOutpostFeature(), StructuresKt.getVampireHunterOutpostFeature())) {
+        for (StructureFeature<?> structure : List.of(StructuresKt.getSmallVampireHunterOutpostFeature(), StructuresKt.getVampireHunterOutpostFeature())) {
             if (context.getWorld().getStructures(chunkPos, structure).findAny().isPresent()) {
                 cir.setReturnValue(false);
             }
