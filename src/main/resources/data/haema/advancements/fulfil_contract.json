@@ -1,0 +1,31 @@
+{
+    "display": {
+        "title": {
+            "text": "Vampire Money"
+        },
+        "description": {
+            "text": "Fulfil a Vampire Hunter Contract"
+        },
+        "icon": {
+            "item": "haema:vampire_hunter_contract"
+        },
+        "frame": "task",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false
+    },
+    "criteria": {
+        "hasblood": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": [ "haema:vampire_hunter_contract" ],
+                        "nbt": "{ContractFulfilled: 1b}"
+                    }
+                ]
+            }
+        }
+    },
+    "parent": "haema:get_contract"
+}
