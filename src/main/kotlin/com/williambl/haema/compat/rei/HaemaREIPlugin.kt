@@ -28,7 +28,7 @@ class HaemaREIPlugin : REIClientPlugin {
 
     init {
         RitualTableUseEvent.EVENT.register(RitualTableUseEvent { _, _, _, player, hand, _ ->
-            if (player.getStackInHand(hand).item == PatchouliItems.book) {
+            if (player.getStackInHand(hand).item == PatchouliItems.BOOK) {
                 ViewSearchBuilder.builder().addCategory(ritualId).open()
             }
         })
