@@ -17,6 +17,7 @@ import com.williambl.haema.damagesource.registerDamageSources
 import com.williambl.haema.effect.registerEffects
 import com.williambl.haema.hunter.VampireHunterSpawner
 import com.williambl.haema.hunter.registerVampireHunter
+import com.williambl.haema.hunter.structure.registerStructures
 import com.williambl.haema.ritual.registerRitualTable
 import com.williambl.haema.util.registerGameRules
 import com.williambl.haema.util.sunlightDamagesArmour
@@ -163,6 +164,8 @@ fun init() {
     registerGameRules()
 
     registerCriteria()
+
+    registerStructures()
 
     registerDamageSources()
 

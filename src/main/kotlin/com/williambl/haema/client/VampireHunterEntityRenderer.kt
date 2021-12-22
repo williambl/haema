@@ -17,7 +17,7 @@ import net.minecraft.util.math.MathHelper
 
 @Environment(EnvType.CLIENT)
 class VampireHunterEntityRenderer(context: EntityRendererFactory.Context) : MobEntityRenderer<VampireHunterEntity, VampireHunterModel>(context, VampireHunterModel(context.getPart(VampireHunterModel.layer)), 0.5f) {
-    private val texture = Identifier("textures/entity/illager/pillager.png")
+    private val texture = Identifier("haema:textures/entity/vampire_hunter.png")
 
     init {
         addFeature(HeadFeatureRenderer(this, context.modelLoader))
@@ -41,7 +41,7 @@ class VampireHunterModel(val root: ModelPart) : SinglePartEntityModel<VampireHun
     private val rightAttackingArm: ModelPart = root.getChild(EntityModelPartNames.RIGHT_ARM)
     private val leftAttackingArm: ModelPart = root.getChild(EntityModelPartNames.LEFT_ARM)
     init {
-        hat.visible = false
+        //hat.visible = false
     }
 
     override fun getPart(): ModelPart {
@@ -119,7 +119,7 @@ class VampireHunterModel(val root: ModelPart) : SinglePartEntityModel<VampireHun
             )
             modelPartData2.addChild(
                 EntityModelPartNames.HAT,
-                ModelPartBuilder.create().uv(32, 0).cuboid(-4.0f, -10.0f, -4.0f, 8.0f, 12.0f, 8.0f, Dilation(0.45f)),
+                ModelPartBuilder.create().uv(32, 0).cuboid(-4.0f, -10.0f, -4.0f, 8.0f, 10.0f, 8.0f, Dilation(0.45f)),
                 ModelTransform.NONE
             )
             modelPartData2.addChild(

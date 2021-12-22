@@ -7,6 +7,7 @@
     "HurtBySensorMixin",
     "LivingEntityMixin",
     "MinecraftServerMixin",
+    "NoLakesInStructuresMixin",
     "PlayerEntityMixin",
     "RegistryAccessor"
   ],

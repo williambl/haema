@@ -4,7 +4,9 @@ import com.williambl.haema.Vampirable
 import net.minecraft.entity.EntityData
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.SpawnReason
+import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.mob.PatrolEntity
+import net.minecraft.entity.passive.PassiveEntity
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.Identifier
@@ -53,12 +55,11 @@ class VampireHunterSpawner(private val entityType: EntityType<out VampireHunterE
         if (serverWorld.isNearOccupiedPointOfInterest(player.blockPos, 2))
             return 0
 
-        val amountSpawned = trySpawnNear(serverWorld, random, player.blockPos)
-        println("spawned $amountSpawned")
-        return amountSpawned
+        return trySpawnNear(serverWorld, random, player.blockPos)
     }
 
     fun trySpawnNear(serverWorld: ServerWorld, random: Random, pos: BlockPos): Int {
+        amountSpawnedSinceLast = 0
         if (amountSpawnedSinceLast > 10)
             return 0
 
@@ -77,15 +78,17 @@ class VampireHunterSpawner(private val entityType: EntityType<out VampireHunterE
         var amountToSpawn = 0
         val localDifficulty = ceil(serverWorld.getLocalDifficulty(mutable).localDifficulty.toDouble()).toInt() + 1
 
+        val spawnFunction = if (random.nextDouble() < 0.1) ::spawnOneEntityOnHorse else ::spawnOneEntity
+
         for (i in 0 until localDifficulty) {
             ++amountToSpawn
             mutable.y = serverWorld.getTopPosition(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, mutable).y
             if (i == 0) {
-                if (!spawnOneEntity(serverWorld, mutable, random, true)) {
+                if (!spawnFunction.call(serverWorld, mutable, random, true)) {
                     break
                 }
             } else {
-                spawnOneEntity(serverWorld, mutable, random, false)
+                spawnFunction.call(serverWorld, mutable, random, false)
             }
             mutable.x = mutable.x + random.nextInt(5) - random.nextInt(5)
             mutable.z = mutable.z + random.nextInt(5) - random.nextInt(5)
@@ -93,7 +96,7 @@ class VampireHunterSpawner(private val entityType: EntityType<out VampireHunterE
         return amountToSpawn
     }
 
-    private fun spawnOneEntity(world: ServerWorld, blockPos: BlockPos, random: Random, isLeader: Boolean): Boolean {
+    fun spawnOneEntity(world: ServerWorld, blockPos: BlockPos, random: Random, isLeader: Boolean): Boolean {
         val blockState = world.getBlockState(blockPos)
         if (!SpawnHelper.isClearForSpawn(world, blockPos, blockState, blockState.fluidState, entityType))
             return false
@@ -122,6 +125,50 @@ class VampireHunterSpawner(private val entityType: EntityType<out VampireHunterE
             return true
         }
         return false
+    }
+
+    fun spawnOneEntityOnHorse(world: ServerWorld, blockPos: BlockPos, random: Random, isLeader: Boolean): Boolean {
+        val blockState = world.getBlockState(blockPos)
+        if (!SpawnHelper.isClearForSpawn(world, blockPos, blockState, blockState.fluidState, entityType))
+            return false
+        if (!PatrolEntity.canSpawn(entityType, world, SpawnReason.PATROL, blockPos, random))
+            return false
+        val hunter = entityType.create(world) ?: return false
+        val horse = EntityType.HORSE.create(world) ?: return false
+        amountSpawnedSinceLast++
+
+        horse.initialize(world, world.getLocalDifficulty(blockPos), SpawnReason.PATROL, PassiveEntity.PassiveData(false), null)
+        horse.isTame = true
+        //horse.saddle(null)
+        horse.timeUntilRegen = 60
+        horse.updatePosition(
+            blockPos.x.toDouble(),
+            blockPos.y.toDouble(),
+            blockPos.z.toDouble()
+        )
+        horse.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)?.let {
+            it.baseValue += 0.2
+        }
+
+        if (isLeader) {
+            hunter.isPatrolLeader = true
+            hunter.setRandomPatrolTarget()
+        }
+        hunter.updatePosition(
+            blockPos.x.toDouble(),
+            blockPos.y.toDouble(),
+            blockPos.z.toDouble()
+        )
+        hunter.initialize(
+            world,
+            world.getLocalDifficulty(blockPos),
+            SpawnReason.PATROL,
+            null as EntityData?,
+            null as NbtCompound?
+        )
+        hunter.startRiding(horse)
+        world.spawnEntityAndPassengers(horse)
+        return true
     }
 
     companion object {
