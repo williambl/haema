@@ -12,6 +12,7 @@ import net.minecraft.enchantment.Enchantments
 import net.minecraft.entity.*
 import net.minecraft.entity.ai.goal.*
 import net.minecraft.entity.attribute.EntityAttributes
+import net.minecraft.entity.damage.DamageSource
 import net.minecraft.entity.data.DataTracker
 import net.minecraft.entity.data.TrackedData
 import net.minecraft.entity.data.TrackedDataHandlerRegistry
@@ -168,6 +169,18 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
                 inventory.addStack(mainHandStack)
                 equipStack(EquipmentSlot.MAINHAND, ItemStack.EMPTY)
             }
+        }
+    }
+
+    override fun dropLoot(source: DamageSource?, causedByPlayer: Boolean) {
+        super.dropLoot(source, causedByPlayer)
+        for (i in 0..inventory.size()) {
+            if (random.nextFloat() < 0.1) {
+                dropStack(inventory.getStack(i))
+            }
+        }
+        if (random.nextFloat() < 0.1) {
+            dropStack(mainHandStack)
         }
     }
 
