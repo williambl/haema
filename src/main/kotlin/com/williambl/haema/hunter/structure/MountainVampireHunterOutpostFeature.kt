@@ -50,7 +50,7 @@ class MountainVampireHunterOutpostFeature(codec: Codec<DefaultFeatureConfig>) : 
         val landHeight = chunkGenerator.getHeightInGround(centerPos.x, centerPos.z, Heightmap.Type.WORLD_SURFACE_WG, world)
 
         return chunkGenerator.getColumnSample(centerPos.x, centerPos.z, world).getState(centerPos.up(landHeight)).fluidState.isEmpty
-                && random.nextDouble() < 0.3 * ((landHeight - averageHeightAround) + 10) * (landHeight/80.0)
+                && random.nextDouble() < 0.3 * ((landHeight - averageHeightAround) + 4) * (landHeight/120.0)
     }
 
     class Start(
