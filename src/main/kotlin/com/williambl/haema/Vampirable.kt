@@ -1,6 +1,6 @@
 package com.williambl.haema
 
-import com.williambl.haema.abilities.VampireAbility
+import com.williambl.haema.ability.VampireAbility
 import com.williambl.haema.api.AbilityChangeEvent
 import com.williambl.haema.api.VampireConversionEvents
 import com.williambl.haema.component.VampireComponent

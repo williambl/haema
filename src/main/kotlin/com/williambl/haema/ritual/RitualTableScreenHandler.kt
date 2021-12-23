@@ -1,7 +1,7 @@
 package com.williambl.haema.ritual
 
 import com.williambl.haema.Vampirable
-import com.williambl.haema.abilities.abilityRegistry
+import com.williambl.haema.ability.AbilityModule
 import com.williambl.haema.ritual.craft.RitualInventory
 import io.netty.buffer.Unpooled
 import net.fabricmc.api.EnvType
@@ -38,7 +38,7 @@ class RitualTableScreenHandler(syncId: Int, val inv: RitualInventory, private va
     )
 
     private val propertyDelegate = object : PropertyDelegate {
-        val abilities = abilityRegistry.entries.map { abilityRegistry.getRawId(it.value) to it.value }.toMap()
+        val abilities = AbilityModule.ABILITY_REGISTRY.entries.map { AbilityModule.ABILITY_REGISTRY.getRawId(it.value) to it.value }.toMap()
         val player = (inv.player as Vampirable)
 
         override fun size(): Int = abilities.size

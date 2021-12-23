@@ -1,7 +1,7 @@
 package com.williambl.haema.compat.mixin.bewitchment;
 
 import com.williambl.haema.Vampirable;
-import com.williambl.haema.abilities.VampireAbility;
+import com.williambl.haema.ability.VampireAbility;
 import com.williambl.haema.hunter.VampireHunterEntity;
 import moriyashiine.bewitchment.common.entity.living.VampireEntity;
 import moriyashiine.bewitchment.common.entity.living.util.BWHostileEntity;

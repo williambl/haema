@@ -2,10 +2,10 @@ package com.williambl.haema.mixin;
 
 import com.williambl.haema.Vampirable;
 import com.williambl.haema.VampireBloodManager;
-import com.williambl.haema.abilities.VampireAbility;
+import com.williambl.haema.ability.AbilityModule;
 import com.williambl.haema.criteria.VampireHunterTriggerCriterion;
 import com.williambl.haema.damagesource.BloodLossDamageSource;
-import com.williambl.haema.damagesource.DamageSourcesKt;
+import com.williambl.haema.damagesource.DamageSourceModule;
 import com.williambl.haema.hunter.VampireHunterSpawner;
 import com.williambl.haema.util.HaemaGameRulesKt;
 import net.minecraft.entity.Entity;
@@ -46,8 +46,8 @@ public abstract class LivingEntityMixin extends Entity {
     void haema$setDeadVampireAsKilled(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         //noinspection ConstantConditions
         if (((Object) this) instanceof PlayerEntity && ((Vampirable) this).isVampire()
-                && source != null && ((Vampirable) this).getAbilityLevel(VampireAbility.Companion.getIMMORTALITY()) > 0) {
-            if (this.getHealth() <= 0 && DamageSourcesKt.isEffectiveAgainstVampires(source, this.world)) {
+                && source != null && ((Vampirable) this).getAbilityLevel(AbilityModule.INSTANCE.getIMMORTALITY()) > 0) {
+            if (this.getHealth() <= 0 && DamageSourceModule.INSTANCE.isEffectiveAgainstVampires(source, this.world)) {
                 ((VampireBloodManager) ((PlayerEntity) (Object) this).getHungerManager()).setAbsoluteBloodLevel(0.0);
                 ((Vampirable) this).setKilled(true);
             }
@@ -58,8 +58,8 @@ public abstract class LivingEntityMixin extends Entity {
     void haema$keepVampireAlive(DamageSource source, CallbackInfoReturnable<Boolean> cir) {
         //noinspection ConstantConditions
         if (((Object) this) instanceof PlayerEntity && ((Vampirable)this).isVampire()
-                && source != null && ((Vampirable)this).getAbilityLevel(VampireAbility.Companion.getIMMORTALITY()) > 0) {
-            if (!(this.getHealth() <= 0 && DamageSourcesKt.isEffectiveAgainstVampires(source, this.world))) {
+                && source != null && ((Vampirable)this).getAbilityLevel(AbilityModule.INSTANCE.getIMMORTALITY()) > 0) {
+            if (!(this.getHealth() <= 0 && DamageSourceModule.INSTANCE.isEffectiveAgainstVampires(source, this.world))) {
                 cir.setReturnValue(true);
             }
         }

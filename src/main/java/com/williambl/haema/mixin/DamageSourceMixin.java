@@ -1,6 +1,6 @@
 package com.williambl.haema.mixin;
 
-import com.williambl.haema.damagesource.DamageSourcesKt;
+import com.williambl.haema.damagesource.DamageSourceModule;
 import net.fabricmc.fabric.api.tag.TagRegistry;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
@@ -38,6 +38,6 @@ public class DamageSourceMixin {
         ItemStack stack = attacker.getMainHandStack();
         int smiteLevel = EnchantmentHelper.getLevel(Enchantments.SMITE, stack);
         if (vampireEffectiveWeaponsTag.contains(stack.getItem()) || smiteLevel >= 1)
-            DamageSourcesKt.setEffectiveAgainstVampires(source, Math.max(1.25f, smiteLevel * 1.25f));
+            DamageSourceModule.INSTANCE.setEffectiveAgainstVampires(source, Math.max(1.25f, smiteLevel * 1.25f));
     }
 }

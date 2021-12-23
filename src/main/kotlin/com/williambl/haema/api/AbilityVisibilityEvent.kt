@@ -1,6 +1,6 @@
 package com.williambl.haema.api
 
-import com.williambl.haema.abilities.VampireAbility
+import com.williambl.haema.ability.VampireAbility
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory.createArrayBacked
 import net.fabricmc.fabric.api.util.TriState

@@ -1,7 +1,7 @@
 package com.williambl.haema
 
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes
-import com.williambl.haema.abilities.VampireAbility
+import com.williambl.haema.ability.AbilityModule
 import com.williambl.haema.api.BloodChangeEvents
 import com.williambl.haema.api.BloodDrinkingEvents
 import com.williambl.haema.criteria.UseInvisibilityCriterion
@@ -101,15 +101,15 @@ class VampireBloodManager() : HungerManager() {
         }
 
 
-        if (getBloodLevel() >= 10 && (player as Vampirable).getAbilityLevel(VampireAbility.STRENGTH) > 0) {
+        if (getBloodLevel() >= 10 && (player as Vampirable).getAbilityLevel(AbilityModule.STRENGTH) > 0) {
             player.addStatusEffect(StatusEffectInstance(VampiricStrengthEffect.instance, 40, when {
                 getBloodLevel() >= 19 -> 2
                 getBloodLevel() >= 14 -> 1
                 else -> 0
-            }.coerceAtMost((player as Vampirable).getAbilityLevel(VampireAbility.STRENGTH)-1), false, false, true))
+            }.coerceAtMost((player as Vampirable).getAbilityLevel(AbilityModule.STRENGTH)-1), false, false, true))
         }
 
-        val invisLevel = (player as Vampirable).getAbilityLevel(VampireAbility.INVISIBILITY)
+        val invisLevel = (player as Vampirable).getAbilityLevel(AbilityModule.INVISIBILITY)
         if (getBloodLevel() >= 16 && invisLevel > 0 && player.isSneaking && player.world.time-invisTicks >= 120 + invisLevel*60) {
             UseInvisibilityCriterion.trigger(player as ServerPlayerEntity)
             invisTicks = player.world.time

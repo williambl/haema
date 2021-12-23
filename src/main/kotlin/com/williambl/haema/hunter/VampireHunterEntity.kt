@@ -2,8 +2,6 @@ package com.williambl.haema.hunter
 
 import com.williambl.haema.Vampirable
 import com.williambl.haema.util.contains
-import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
-import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
 import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags
 import net.minecraft.block.entity.BannerPattern
 import net.minecraft.command.argument.EntityAnchorArgumentType
@@ -11,12 +9,10 @@ import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.enchantment.Enchantments
 import net.minecraft.entity.*
 import net.minecraft.entity.ai.goal.*
-import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.damage.DamageSource
 import net.minecraft.entity.data.DataTracker
 import net.minecraft.entity.data.TrackedData
 import net.minecraft.entity.data.TrackedDataHandlerRegistry
-import net.minecraft.entity.mob.HostileEntity
 import net.minecraft.entity.mob.MobEntity
 import net.minecraft.entity.mob.PathAwareEntity
 import net.minecraft.entity.mob.PatrolEntity
@@ -388,29 +384,4 @@ class VampireHunterOnHorseAttackGoal(private val actor: VampireHunterEntity, spe
             actor.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, actor.target?.pos ?: actor.pos)
         }
     }
-}
-
-fun registerVampireHunter() {
-    Registry.register(
-        Registry.ENTITY_TYPE,
-        Identifier("haema:vampire_hunter"),
-        FabricEntityTypeBuilder.create<VampireHunterEntity>(SpawnGroup.CREATURE) { type, world -> VampireHunterEntity(type, world) }
-            .dimensions(EntityDimensions.fixed(0.6f, 1.95f))
-            .trackRangeBlocks(128).trackedUpdateRate(3).spawnableFarFromPlayer().build()
-    )
-
-    Registry.register(
-        Registry.ITEM,
-        Identifier("haema:vampire_hunter_contract"),
-        VampireHunterContract(Item.Settings().group(ItemGroup.MISC))
-    )
-
-    @Suppress("UNCHECKED_CAST")
-    FabricDefaultAttributeRegistry.register(
-        Registry.ENTITY_TYPE.get(Identifier("haema:vampire_hunter")) as EntityType<out LivingEntity>?,
-        HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.35)
-            .add(EntityAttributes.GENERIC_MAX_HEALTH, 20.0)
-            .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 5.0)
-            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 64.0)
-    )
 }

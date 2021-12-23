@@ -1,4 +1,4 @@
-package com.williambl.haema.blood.injector
+package com.williambl.haema.blood
 
 import com.williambl.haema.Vampirable
 import com.williambl.haema.VampireBloodManager

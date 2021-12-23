@@ -2,7 +2,7 @@ package com.williambl.haema.client
 
 import com.williambl.haema.Vampirable
 import com.williambl.haema.VampireBloodManager
-import com.williambl.haema.abilities.VampireAbility
+import com.williambl.haema.ability.AbilityModule
 import com.williambl.haema.api.client.VampireHudAddTextEvent
 import com.williambl.haema.client.config.HaemaConfig
 import com.williambl.haema.client.gui.RitualTableScreen
@@ -83,7 +83,7 @@ fun init() {
 
     ShaderEffectRenderCallback.EVENT.register(ShaderEffectRenderCallback {
         if (config.vampireShaderEnabled && (MinecraftClient.getInstance().player as Vampirable).isVampire && (MinecraftClient.getInstance().player as Vampirable).getAbilityLevel(
-                VampireAbility.VISION) > 0) {
+                AbilityModule.VISION) > 0) {
             VAMPIRE_SHADER.render(it)
         }
     })
@@ -102,7 +102,7 @@ fun init() {
     }
 
     VampireHudAddTextEvent.EVENT.register(VampireHudAddTextEvent { player, createText ->
-        val dashLevel = (player as Vampirable).getAbilityLevel(VampireAbility.DASH)
+        val dashLevel = (player as Vampirable).getAbilityLevel(AbilityModule.DASH)
         if (dashLevel > 0 && (player.hungerManager as VampireBloodManager).getBloodLevel() > 18f) {
             return@VampireHudAddTextEvent listOf(createText(
                 DASH_KEY.boundKeyLocalizedText.copy(),
@@ -114,7 +114,7 @@ fun init() {
     })
 
     VampireHudAddTextEvent.EVENT.register(VampireHudAddTextEvent { player, createText ->
-        val invisLevel = (player as Vampirable).getAbilityLevel(VampireAbility.INVISIBILITY)
+        val invisLevel = (player as Vampirable).getAbilityLevel(AbilityModule.INVISIBILITY)
         if (invisLevel > 0 && (player.hungerManager as VampireBloodManager).getBloodLevel() >= 18f) {
             return@VampireHudAddTextEvent listOf(
                 createText(

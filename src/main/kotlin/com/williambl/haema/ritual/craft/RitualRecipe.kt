@@ -2,7 +2,8 @@ package com.williambl.haema.ritual.craft
 
 import com.google.gson.JsonObject
 import com.williambl.haema.Vampirable
-import com.williambl.haema.abilities.VampireAbility
+import com.williambl.haema.ability.AbilityModule
+import com.williambl.haema.ritual.RitualModule
 import com.williambl.haema.ritual.RitualTableScreenHandler
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -127,9 +128,9 @@ class RitualRecipe(
 
     override fun getId(): Identifier = id
 
-    override fun getSerializer(): RecipeSerializer<*> = recipeSerializer
+    override fun getSerializer(): RecipeSerializer<*> = RitualModule.RITUAL_RECIPE_SERIALIZER
 
-    override fun getType(): RecipeType<*> = recipeType
+    override fun getType(): RecipeType<*> = RitualModule.RITUAL_RECIPE_TYPE
 
     private fun World.clearFluidState(pos: BlockPos) {
         val blockState = getBlockState(pos)
@@ -141,14 +142,12 @@ class RitualRecipe(
     }
 
     companion object {
-        val recipeType: RecipeType<RitualRecipe> = RecipeType.register("haema:ritual")
-        val recipeSerializer: Serializer = RecipeSerializer.register("haema:ritual", Serializer)
 
         val ritualActions = mapOf<String, (RitualInventory, Int) -> Unit>(
             "add_level" to { inv, arg ->
                 (inv.player as Vampirable).setAbilityLevel(
-                    VampireAbility.NONE, (inv.player as Vampirable).getAbilityLevel(
-                        VampireAbility.NONE)+arg)
+                    AbilityModule.NONE, (inv.player as Vampirable).getAbilityLevel(
+                        AbilityModule.NONE)+arg)
                 inv.player.openHandledScreen(RitualTableScreenHandler.Factory(inv))
             },
             "change_abilities" to { inv, _ -> inv.player.openHandledScreen(RitualTableScreenHandler.Factory(inv)) }

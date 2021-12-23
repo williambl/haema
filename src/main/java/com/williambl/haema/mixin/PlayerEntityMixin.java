@@ -2,9 +2,9 @@ package com.williambl.haema.mixin;
 
 import com.williambl.haema.Vampirable;
 import com.williambl.haema.VampireBloodManager;
-import com.williambl.haema.abilities.VampireAbility;
+import com.williambl.haema.ability.AbilityModule;
 import com.williambl.haema.api.VampireBurningEvents;
-import com.williambl.haema.damagesource.DamageSourcesKt;
+import com.williambl.haema.damagesource.DamageSourceModule;
 import com.williambl.haema.effect.SunlightSicknessEffect;
 import com.williambl.haema.util.HaemaGameRulesKt;
 import net.minecraft.entity.EntityType;
@@ -76,7 +76,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
             index = 2
     )
     float tweakDamageIfVampire(float amount, DamageSource source) {
-        float result = this.isVampire() && DamageSourcesKt.isEffectiveAgainstVampires(source, world) ?
+        float result = this.isVampire() && DamageSourceModule.INSTANCE.isEffectiveAgainstVampires(source, world) ?
                 amount * 1.25f
                 : amount;
 
@@ -85,7 +85,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
 
     @Redirect(method = "isInvulnerableTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$Key;)Z", ordinal = 1))
     boolean makeVampiresImmuneToFalling(GameRules gameRules, GameRules.Key<GameRules.BooleanRule> rule) {
-        return gameRules.getBoolean(rule) && !(isVampire() && getAbilityLevel(VampireAbility.Companion.getDASH()) >= 3);
+        return gameRules.getBoolean(rule) && !(isVampire() && getAbilityLevel(AbilityModule.INSTANCE.getDASH()) >= 3);
     }
 
     @Redirect(method = "isInvulnerableTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$Key;)Z", ordinal = 0))
@@ -95,7 +95,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
 
     @Override
     public boolean isDead() {
-        if (isVampire() && getAbilityLevel(VampireAbility.Companion.getIMMORTALITY()) > 0)
+        if (isVampire() && getAbilityLevel(AbilityModule.INSTANCE.getIMMORTALITY()) > 0)
             return super.isDead() && isKilled();
         return super.isDead();
     }

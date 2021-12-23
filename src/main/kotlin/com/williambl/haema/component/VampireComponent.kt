@@ -1,6 +1,6 @@
 package com.williambl.haema.component
 
-import com.williambl.haema.abilities.VampireAbility
+import com.williambl.haema.ability.VampireAbility
 import dev.onyxstudios.cca.api.v3.component.ComponentKey
 import dev.onyxstudios.cca.api.v3.component.ComponentRegistryV3
 import dev.onyxstudios.cca.api.v3.component.ComponentV3
