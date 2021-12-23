@@ -210,7 +210,10 @@ dependencies {
 
     // Rat's Mischief
     modCompileOnly "curse.maven:rats-mischief-431787:${project.rats_version}"
-    modCompileOnly "software.bernie.geckolib:geckolib-fabric-1.17:${project.geckolib_version}"
+    modCompileOnly("software.bernie.geckolib:geckolib-fabric-1.18:${project.geckolib_version}") {
+        exclude group: "com.eliotlash.mclib"
+        exclude group: "com.eliotlash.molang"
+    }
 
     // Bewitchment
     modCompileOnly "curse.maven:bewitchment-394915:${project.bewitchment_version}"
