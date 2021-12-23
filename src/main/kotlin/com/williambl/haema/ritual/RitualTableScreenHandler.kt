@@ -38,7 +38,8 @@ class RitualTableScreenHandler(syncId: Int, val inv: RitualInventory, private va
     )
 
     private val propertyDelegate = object : PropertyDelegate {
-        val abilities = AbilityModule.ABILITY_REGISTRY.entries.map { AbilityModule.ABILITY_REGISTRY.getRawId(it.value) to it.value }.toMap()
+        val abilities =
+            AbilityModule.ABILITY_REGISTRY.entries.associate { AbilityModule.ABILITY_REGISTRY.getRawId(it.value) to it.value }
         val player = (inv.player as Vampirable)
 
         override fun size(): Int = abilities.size

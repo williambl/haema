@@ -29,13 +29,13 @@ object AbilityModule: ModInitializer {
     val ABILITY_REGISTRY_KEY: RegistryKey<Registry<VampireAbility>> = RegistryAccessor.createRegistryKey("haema:ability")
     val ABILITY_REGISTRY: DefaultedRegistry<VampireAbility> = RegistryAccessor.create(ABILITY_REGISTRY_KEY, "haema:none") { NONE } // TODO: a) does this work b) does NONE need to be registered c) does fabric have an api for this? think so
 
-    val NONE = Registry.register(ABILITY_REGISTRY, Identifier("haema:none"), VampireAbility())
-    val STRENGTH = Registry.register(ABILITY_REGISTRY, Identifier("haema:strength"), VampireAbility(3, PotionUtil.setPotion(ItemStack(Items.POTION), Potions.STRENGTH)))
-    val DASH = Registry.register(ABILITY_REGISTRY, Identifier("haema:dash"), VampireAbility(3, ItemStack(Items.FEATHER)))
-    val INVISIBILITY = Registry.register(ABILITY_REGISTRY, Identifier("haema:invisibility"), VampireAbility(2, PotionUtil.setPotion(ItemStack(Items.POTION), Potions.INVISIBILITY)))
-    val IMMORTALITY = Registry.register(ABILITY_REGISTRY, Identifier("haema:immortality"), VampireAbility(1, ItemStack(Items.TOTEM_OF_UNDYING)))
-    val VISION = Registry.register(ABILITY_REGISTRY, Identifier("haema:vision"), VampireAbility(1, ItemStack(Items.ENDER_EYE)))
-    val MIST_FORM = Registry.register(ABILITY_REGISTRY, Identifier("haema:mist_form"), VampireAbility(1, ItemStack(Items.COBWEB)))
+    val NONE: VampireAbility = Registry.register(ABILITY_REGISTRY, Identifier("haema:none"), VampireAbility())
+    val STRENGTH: VampireAbility = Registry.register(ABILITY_REGISTRY, Identifier("haema:strength"), VampireAbility(3, PotionUtil.setPotion(ItemStack(Items.POTION), Potions.STRENGTH)))
+    val DASH: VampireAbility = Registry.register(ABILITY_REGISTRY, Identifier("haema:dash"), VampireAbility(3, ItemStack(Items.FEATHER)))
+    val INVISIBILITY: VampireAbility = Registry.register(ABILITY_REGISTRY, Identifier("haema:invisibility"), VampireAbility(2, PotionUtil.setPotion(ItemStack(Items.POTION), Potions.INVISIBILITY)))
+    val IMMORTALITY: VampireAbility = Registry.register(ABILITY_REGISTRY, Identifier("haema:immortality"), VampireAbility(1, ItemStack(Items.TOTEM_OF_UNDYING)))
+    val VISION: VampireAbility = Registry.register(ABILITY_REGISTRY, Identifier("haema:vision"), VampireAbility(1, ItemStack(Items.ENDER_EYE)))
+    val MIST_FORM: VampireAbility = Registry.register(ABILITY_REGISTRY, Identifier("haema:mist_form"), VampireAbility(1, ItemStack(Items.COBWEB)))
 
     override fun onInitialize() {
         ArgumentTypes.register(

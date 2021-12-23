@@ -7,14 +7,12 @@ import com.williambl.haema.api.BloodDrinkingEvents
 import com.williambl.haema.api.DamageSourceEfficacyEvent
 import com.williambl.haema.api.client.VampireHudAddTextEvent
 import moriyashiine.bewitchment.api.BewitchmentAPI
-import moriyashiine.bewitchment.api.component.BloodComponent
-import moriyashiine.bewitchment.api.component.TransformationComponent
 import moriyashiine.bewitchment.api.event.*
 import moriyashiine.bewitchment.client.BewitchmentClient
+import moriyashiine.bewitchment.common.registry.BWComponents
 import moriyashiine.bewitchment.common.registry.BWDamageSources
 import moriyashiine.bewitchment.common.registry.BWPledges
 import moriyashiine.bewitchment.common.registry.BWTransformations
-import moriyashiine.bewitchment.common.registry.BWComponents
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText

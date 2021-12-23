@@ -16,8 +16,8 @@ import me.shedaniel.autoconfig.AutoConfig
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
-import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityModelLayerRegistry
-import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry
+import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry
 import net.minecraft.client.MinecraftClient
@@ -90,10 +90,9 @@ fun init() {
 
     KeyBindingHelper.registerKeyBinding(DASH_KEY)
 
-    @Suppress("UnstableApiUsage", "DEPRECATION")
     EntityModelLayerRegistry.registerModelLayer(VampireHunterModel.layer, VampireHunterModel.Companion::getTexturedModelData)
     @Suppress("UNCHECKED_CAST")
-    EntityRendererRegistry.INSTANCE.register(Registry.ENTITY_TYPE.get(Identifier("haema:vampire_hunter")) as EntityType<VampireHunterEntity>) { context -> VampireHunterEntityRenderer(context) }
+    EntityRendererRegistry.register(Registry.ENTITY_TYPE.get(Identifier("haema:vampire_hunter")) as EntityType<VampireHunterEntity>) { context -> VampireHunterEntityRenderer(context) }
 
     AutoConfig.register(HaemaConfig::class.java) { config, clazz -> Toml4jConfigSerializer(config, clazz) }
 

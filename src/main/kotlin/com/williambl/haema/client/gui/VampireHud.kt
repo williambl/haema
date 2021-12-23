@@ -4,7 +4,6 @@ import com.williambl.haema.Vampirable
 import com.williambl.haema.api.client.VampireHudAddTextEvent
 import com.williambl.haema.client.config
 import com.williambl.haema.client.config.HudPlacement
-import com.williambl.haema.client.invisLengthValue
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawableHelper
 import net.minecraft.client.util.math.MatrixStack

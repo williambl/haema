@@ -24,7 +24,6 @@ class SmallVampireHunterOutpostFeature(codec: Codec<StructurePoolFeatureConfig>)
 ) {
 
     companion object {
-
         fun canGenerate(ctx: StructureGeneratorFactory.Context<StructurePoolFeatureConfig>): Boolean {
             val centerPos = ctx.chunkPos.getCenterAtY(0)
             val averageHeightAround = (-1..1).asSequence()

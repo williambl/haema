@@ -17,7 +17,7 @@ import java.util.function.BiFunction
 
 fun registerPowerTypes() {
     val id = Identifier("haema:vampire")
-    val powerFactory: PowerFactory<Power?>? = PowerFactory(id, SerializableData()) {
+    val powerFactory: PowerFactory<Power?> = PowerFactory(id, SerializableData()) {
         BiFunction<PowerType<Power?>, LivingEntity?, Power?> { powerType, player -> VampirePower(powerType, player) }
     }
     Registry.register<PowerFactory<*>, PowerFactory<Power?>>(

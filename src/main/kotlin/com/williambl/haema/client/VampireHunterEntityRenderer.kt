@@ -40,9 +40,6 @@ class VampireHunterModel(val root: ModelPart) : SinglePartEntityModel<VampireHun
     private val rightLeg: ModelPart = root.getChild(EntityModelPartNames.RIGHT_LEG)
     private val rightAttackingArm: ModelPart = root.getChild(EntityModelPartNames.RIGHT_ARM)
     private val leftAttackingArm: ModelPart = root.getChild(EntityModelPartNames.LEFT_ARM)
-    init {
-        //hat.visible = false
-    }
 
     override fun getPart(): ModelPart {
         return root

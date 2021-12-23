@@ -18,6 +18,7 @@
 package com.williambl.haema.api
 
 import com.williambl.haema.api.WorldSleepEvents.WorldWakeTime
+import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
 import net.minecraft.server.world.ServerWorld
 
@@ -31,7 +32,7 @@ object WorldSleepEvents {
      *
      * Called once in [ServerWorld.tick]
      */
-    val WORLD_WAKE_TIME = EventFactory.createArrayBacked(WorldWakeTime::class.java) { listeners ->
+    val WORLD_WAKE_TIME: Event<WorldWakeTime> = EventFactory.createArrayBacked(WorldWakeTime::class.java) { listeners ->
         WorldWakeTime { serverWorld: ServerWorld, newTime: Long, curTime: Long ->
             var time = newTime
             for (listener in listeners) {

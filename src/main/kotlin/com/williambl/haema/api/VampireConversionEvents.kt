@@ -7,13 +7,13 @@ import net.fabricmc.fabric.api.event.EventFactory.createArrayBacked
 import net.minecraft.entity.player.PlayerEntity
 
 object VampireConversionEvents {
-    public val CONVERT: Event<ConversionEvent> = createArrayBacked(ConversionEvent::class.java) { listeners -> ConversionEvent { player ->
+    val CONVERT: Event<ConversionEvent> = createArrayBacked(ConversionEvent::class.java) { listeners -> ConversionEvent { player ->
         for (listener in listeners) {
             listener.onConvert(player)
         }
     }}
 
-    public val DECONVERT: Event<DeconversionEvent> = createArrayBacked(DeconversionEvent::class.java) { listeners -> DeconversionEvent { player ->
+    val DECONVERT: Event<DeconversionEvent> = createArrayBacked(DeconversionEvent::class.java) { listeners -> DeconversionEvent { player ->
         for (listener in listeners) {
             listener.onDeconvert(player)
         }

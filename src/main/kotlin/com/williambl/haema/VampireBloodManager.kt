@@ -14,7 +14,7 @@ import com.williambl.haema.util.feedCooldown
 import com.williambl.haema.util.invisLength
 import io.netty.buffer.Unpooled
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
-import net.fabricmc.fabric.api.tag.TagRegistry
+import net.fabricmc.fabric.api.tag.TagFactory
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.attribute.EntityAttributeModifier
@@ -53,9 +53,9 @@ class VampireBloodManager() : HungerManager() {
         private val VAMPIRE_ATTACK_RANGE = EntityAttributeModifier(VAMPIRE_ATTACK_RANGE_UUID, "Vampire attack range extension", 2.0, EntityAttributeModifier.Operation.ADDITION)
         private val VAMPIRE_HEALTH_BOOST = EntityAttributeModifier(VAMPIRE_HEALTH_BOOST_UUID, "Vampire health boost", 1.0, EntityAttributeModifier.Operation.MULTIPLY_BASE)
 
-        val goodBloodTag: Tag<EntityType<*>> = TagRegistry.entityType(Identifier("haema:good_blood_sources"))
-        val mediumBloodTag: Tag<EntityType<*>> = TagRegistry.entityType(Identifier("haema:medium_blood_sources"))
-        val poorBloodTag: Tag<EntityType<*>> = TagRegistry.entityType(Identifier("haema:poor_blood_sources"))
+        val goodBloodTag: Tag<EntityType<*>> = TagFactory.ENTITY_TYPE.create(Identifier("haema:good_blood_sources"))
+        val mediumBloodTag: Tag<EntityType<*>> = TagFactory.ENTITY_TYPE.create(Identifier("haema:medium_blood_sources"))
+        val poorBloodTag: Tag<EntityType<*>> = TagFactory.ENTITY_TYPE.create(Identifier("haema:poor_blood_sources"))
 
         val bloodLevelPacket = Identifier("haema:bloodlevelsync")
 

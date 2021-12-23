@@ -24,7 +24,7 @@ import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
-import net.fabricmc.fabric.api.tag.TagRegistry
+import net.fabricmc.fabric.api.tag.TagFactory
 import net.fabricmc.fabric.api.util.TriState
 import net.minecraft.block.BedBlock
 import net.minecraft.block.enums.BedPart
@@ -105,7 +105,7 @@ object Haema: ModInitializer, EntityComponentInitializer {
         VampireBurningEvents.VETO.register(VampireBurningEvents.Veto { player, _ ->
             if (player.abilities.creativeMode) TriState.FALSE else TriState.DEFAULT
         })
-        val vampireProtectiveClothingTag = TagRegistry.item(Identifier("haema:vampire_protective_clothing"))
+        val vampireProtectiveClothingTag = TagFactory.ITEM.create(Identifier("haema:vampire_protective_clothing"))
         VampireBurningEvents.VETO.register(object : VampireBurningEvents.Veto {
             override fun getPriority(): Int = 10
 

@@ -1,7 +1,7 @@
 package com.williambl.haema.mixin;
 
 import com.williambl.haema.damagesource.DamageSourceModule;
-import net.fabricmc.fabric.api.tag.TagRegistry;
+import net.fabricmc.fabric.api.tag.TagFactory;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.LivingEntity;
@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(DamageSource.class)
 public class DamageSourceMixin {
 
-    private static final Tag<Item> vampireEffectiveWeaponsTag = TagRegistry.item(new Identifier("haema:vampire_weapons"));
+    private static final Tag<Item> vampireEffectiveWeaponsTag = TagFactory.ITEM.create(new Identifier("haema:vampire_weapons"));
 
     @Inject(method = "player", at = @At("RETURN"))
     private static void addVampireEffectiveSources(PlayerEntity attacker, CallbackInfoReturnable<DamageSource> cir) {

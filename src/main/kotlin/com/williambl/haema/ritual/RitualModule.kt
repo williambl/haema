@@ -3,7 +3,7 @@ package com.williambl.haema.ritual
 import com.williambl.haema.ritual.craft.RitualRecipe
 import com.williambl.haema.util.MultiTagMatcher
 import net.fabricmc.api.ModInitializer
-import net.fabricmc.fabric.api.tag.TagRegistry
+import net.fabricmc.fabric.api.tag.TagFactory
 import net.minecraft.block.Block
 import net.minecraft.item.BlockItem
 import net.minecraft.item.Item
@@ -24,23 +24,22 @@ object RitualModule: ModInitializer {
         RitualRecipe.Companion.Serializer
     )
 
-    val RITUAL_TABLE_BLOCK = Registry.register(
+    val RITUAL_TABLE_BLOCK: RitualTable = Registry.register(
             Registry.BLOCK,
             Identifier("haema:ritual_table"),
             RitualTable.instance
         )
-    val RITUAL_TABLE_ITEM = Registry.register(
+    val RITUAL_TABLE_ITEM: BlockItem = Registry.register(
             Registry.ITEM,
             Identifier("haema:ritual_table"),
             BlockItem(RitualTable.instance, Item.Settings().group(ItemGroup.DECORATIONS))
         )
 
-    val LEVEL_0_RITUAL_MATERIALS: Tag<Block> = TagRegistry.block(Identifier("haema:ritual_materials/level_0"))
-    val LEVEL_1_RITUAL_MATERIALS: Tag<Block> = TagRegistry.block(Identifier("haema:ritual_materials/level_1"))
+    val LEVEL_0_RITUAL_MATERIALS: Tag<Block> = TagFactory.BLOCK.create(Identifier("haema:ritual_materials/level_0"))
+    val LEVEL_1_RITUAL_MATERIALS: Tag<Block> = TagFactory.BLOCK.create(Identifier("haema:ritual_materials/level_1"))
 
-    val LEVEL_0_RITUAL_TORCHES: Tag<Block> = TagRegistry.block(Identifier("haema:ritual_torches/level_0"))
-    val LEVEL_1_RITUAL_TORCHES: Tag<Block> = TagRegistry.block(Identifier("haema:ritual_torches/level_1"))
-
+    val LEVEL_0_RITUAL_TORCHES: Tag<Block> = TagFactory.BLOCK.create(Identifier("haema:ritual_torches/level_0"))
+    val LEVEL_1_RITUAL_TORCHES: Tag<Block> = TagFactory.BLOCK.create(Identifier("haema:ritual_torches/level_1"))
 
     override fun onInitialize() {
         MultiblockRegistry.registerMultiblock(

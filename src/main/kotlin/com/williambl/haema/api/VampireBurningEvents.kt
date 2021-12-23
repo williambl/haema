@@ -1,5 +1,7 @@
 package com.williambl.haema.api
 
+import com.williambl.haema.api.VampireBurningEvents.Trigger
+import com.williambl.haema.api.VampireBurningEvents.Veto
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory.createArrayBacked
 import net.fabricmc.fabric.api.util.TriState
@@ -7,7 +9,7 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.world.World
 
 object VampireBurningEvents {
-    public val TRIGGER: Event<Trigger> = createArrayBacked(Trigger::class.java) { listeners -> Trigger { player, world ->
+    val TRIGGER: Event<Trigger> = createArrayBacked(Trigger::class.java) { listeners -> Trigger { player, world ->
         var isAnyTrue = false
         for (listener in listeners) {
             if (listener.willVampireBurn(player, world) == TriState.TRUE)
@@ -16,7 +18,7 @@ object VampireBurningEvents {
         TriState.of(isAnyTrue)
     }}
 
-    public val VETO: Event<Veto> = createArrayBacked(Veto::class.java) { listeners -> Veto { player, world ->
+    val VETO: Event<Veto> = createArrayBacked(Veto::class.java) { listeners -> Veto { player, world ->
         for (listener in listeners.sortedByDescending { it.getPriority() }) {
             if (listener.willVampireBurn(player, world) == TriState.FALSE)
                 return@Veto TriState.FALSE

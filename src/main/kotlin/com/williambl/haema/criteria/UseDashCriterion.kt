@@ -22,7 +22,5 @@ object UseDashCriterion: AbstractCriterion<UseDashCriterion.Conditions>() {
         this.trigger(player) { true }
     }
 
-    class Conditions(playerPredicate: EntityPredicate.Extended):
-        AbstractCriterionConditions(id, playerPredicate) {
-    }
+    class Conditions(playerPredicate: EntityPredicate.Extended): AbstractCriterionConditions(id, playerPredicate)
 }
