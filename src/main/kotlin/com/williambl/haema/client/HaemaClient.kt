@@ -7,7 +7,7 @@ import com.williambl.haema.api.client.VampireHudAddTextEvent
 import com.williambl.haema.client.config.HaemaConfig
 import com.williambl.haema.client.gui.RitualTableScreen
 import com.williambl.haema.client.gui.VampireHud
-import com.williambl.haema.hunter.VampireHunterEntity
+import com.williambl.haema.hunter.VampireHunterModule
 import com.williambl.haema.ritual.RitualTableScreenHandler
 import ladysnake.satin.api.event.ShaderEffectRenderCallback
 import ladysnake.satin.api.managed.ManagedShaderEffect
@@ -22,7 +22,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.option.KeyBinding
-import net.minecraft.entity.EntityType
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
@@ -30,7 +29,6 @@ import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
 import net.minecraft.util.hit.EntityHitResult
 import net.minecraft.util.hit.HitResult
-import net.minecraft.util.registry.Registry
 import org.lwjgl.glfw.GLFW
 
 val VAMPIRE_SHADER: ManagedShaderEffect = ShaderEffectManager.getInstance()
@@ -92,7 +90,7 @@ fun init() {
 
     EntityModelLayerRegistry.registerModelLayer(VampireHunterModel.layer, VampireHunterModel.Companion::getTexturedModelData)
     @Suppress("UNCHECKED_CAST")
-    EntityRendererRegistry.register(Registry.ENTITY_TYPE.get(Identifier("haema:vampire_hunter")) as EntityType<VampireHunterEntity>) { context -> VampireHunterEntityRenderer(context) }
+    EntityRendererRegistry.register(VampireHunterModule.VAMPIRE_HUNTER) { context -> VampireHunterEntityRenderer(context) }
 
     AutoConfig.register(HaemaConfig::class.java) { config, clazz -> Toml4jConfigSerializer(config, clazz) }
 

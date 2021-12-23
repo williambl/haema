@@ -16,17 +16,15 @@ import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
 import net.minecraft.util.Hand
-import net.minecraft.util.Identifier
 import net.minecraft.util.TypedActionResult
 import net.minecraft.util.math.BlockPointer
 import net.minecraft.util.math.Box
-import net.minecraft.util.registry.Registry
 import net.minecraft.world.World
 
 class EmptyVampireBloodInjectorItem(settings: Settings?) : Item(settings) {
     override fun use(world: World, user: PlayerEntity, hand: Hand): TypedActionResult<ItemStack> {
         return if (tryUse(user))
-            TypedActionResult.consume(ItemStack(Registry.ITEM.get(Identifier("haema:vampire_blood_injector"))))
+            TypedActionResult.consume(ItemStack(BloodModule.VAMPIRE_BLOOD_INJECTOR))
         else
             TypedActionResult.pass(user.getStackInHand(hand))
     }
@@ -69,7 +67,7 @@ class EmptyVampireBloodInjectorItem(settings: Settings?) : Item(settings) {
             val user = pointer.world.getEntitiesByClass(PlayerEntity::class.java, Box(blockPos), null)
                 .firstOrNull() ?: return stack
             return if ((stack.item as EmptyVampireBloodInjectorItem).tryUse(user))
-                ItemStack(Registry.ITEM.get(Identifier("haema:vampire_blood_injector")))
+                ItemStack(BloodModule.VAMPIRE_BLOOD_INJECTOR)
             else
                 stack
         }

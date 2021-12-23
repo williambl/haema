@@ -18,16 +18,14 @@ import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
 import net.minecraft.util.Hand
-import net.minecraft.util.Identifier
 import net.minecraft.util.TypedActionResult
 import net.minecraft.util.math.BlockPointer
 import net.minecraft.util.math.Box
-import net.minecraft.util.registry.Registry
 import net.minecraft.world.World
 
 class VampireBloodInjectorItem(settings: Settings?) : Item(settings) {
     override fun use(world: World, user: PlayerEntity, hand: Hand): TypedActionResult<ItemStack> {
-        val emptyStack = ItemStack(Registry.ITEM.get(Identifier("haema:empty_vampire_blood_injector")))
+        val emptyStack = ItemStack(BloodModule.EMPTY_VAMPIRE_BLOOD_INJECTOR)
         return if (tryUse(user, hand))
             TypedActionResult.consume(emptyStack)
         else
@@ -53,7 +51,7 @@ class VampireBloodInjectorItem(settings: Settings?) : Item(settings) {
             VampireConversionFailureCriterion.trigger(user as ServerPlayerEntity)
             //awful hack, but the player dies before the item can be changed
             if (hand != null)
-                user.setStackInHand(hand, ItemStack(Registry.ITEM.get(Identifier("haema:empty_vampire_blood_injector"))))
+                user.setStackInHand(hand, ItemStack(BloodModule.EMPTY_VAMPIRE_BLOOD_INJECTOR))
 
             user.addStatusEffect(StatusEffectInstance(StatusEffects.WITHER, 3000))
             user.addStatusEffect(StatusEffectInstance(StatusEffects.NAUSEA, 100))
@@ -76,7 +74,7 @@ class VampireBloodInjectorItem(settings: Settings?) : Item(settings) {
             val user = pointer.world.getEntitiesByClass(PlayerEntity::class.java, Box(blockPos), null)
                 .firstOrNull() ?: return stack
             return if ((stack.item as VampireBloodInjectorItem).tryUse(user))
-                ItemStack(Registry.ITEM.get(Identifier("haema:empty_vampire_blood_injector")))
+                ItemStack(BloodModule.EMPTY_VAMPIRE_BLOOD_INJECTOR)
             else
                 stack
         }

@@ -32,7 +32,6 @@ import net.minecraft.potion.Potions
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.*
-import net.minecraft.util.registry.Registry
 import net.minecraft.world.Difficulty
 import net.minecraft.world.LocalDifficulty
 import net.minecraft.world.ServerWorldAccess
@@ -260,10 +259,10 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
         if (random.nextDouble() < 0.3) {
             val target = world.players.filter { (it as Vampirable).isVampire }.randomOrNull()
             if (target != null) {
-                return contractItem.defaultStack.also { it.setContractTarget(target) }
+                return VampireHunterModule.VAMPIRE_HUNTER_CONTRACT.defaultStack.also { it.setContractTarget(target) }
             }
         }
-        return contractItem.defaultStack
+        return VampireHunterModule.VAMPIRE_HUNTER_CONTRACT.defaultStack
     }
 
     companion object {
@@ -272,7 +271,6 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
             TrackedDataHandlerRegistry.BOOLEAN
         )
         val paymentLootTable = Identifier("haema:gameplay/contract_payment")
-        val contractItem: Item by lazy { Registry.ITEM.get(Identifier("haema:vampire_hunter_contract")) }
     }
 }
 
