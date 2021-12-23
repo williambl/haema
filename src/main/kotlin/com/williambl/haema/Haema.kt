@@ -7,6 +7,7 @@ import com.williambl.haema.abilities.abilityRegistry
 import com.williambl.haema.abilities.registerAbilities
 import com.williambl.haema.api.BloodDrinkingEvents
 import com.williambl.haema.api.VampireBurningEvents
+import com.williambl.haema.api.WorldSleepEvents
 import com.williambl.haema.blood.registerBlood
 import com.williambl.haema.component.VampireComponent
 import com.williambl.haema.component.VampirePlayerComponent
@@ -54,7 +55,6 @@ import net.minecraft.village.VillageGossipType
 import net.minecraft.world.World
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import top.theillusivec4.somnus.api.WorldSleepEvents
 
 val logger: Logger = LogManager.getLogger("Haema")
 
@@ -93,7 +93,7 @@ fun init() {
         ActionResult.PASS
     })
 
-    WorldSleepEvents.WORLD_WAKE_TIME.register(WorldSleepEvents.WorldWakeTime {world, newTime, curTime ->
+    WorldSleepEvents.WORLD_WAKE_TIME.register(WorldSleepEvents.WorldWakeTime { world, newTime, curTime ->
         if (!world.isDay) {
             newTime
         } else {

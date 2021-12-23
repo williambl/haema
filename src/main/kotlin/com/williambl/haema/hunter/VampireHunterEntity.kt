@@ -76,7 +76,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
         goalSelector.add(10, LookAtEntityGoal(this, MobEntity::class.java, 15.0f))
 
         targetSelector.add(1, RevengeGoal(this, MerchantEntity::class.java).setGroupRevenge())
-        targetSelector.add(2, FollowTargetGoal(this, LivingEntity::class.java, 10, true, false) { it is Vampirable && it.isVampire })
+        targetSelector.add(2, ActiveTargetGoal(this, LivingEntity::class.java, 10, true, false) { it is Vampirable && it.isVampire })
     }
 
     override fun initDataTracker() {

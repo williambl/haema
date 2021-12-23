@@ -50,13 +50,6 @@ repositories {
         }
     }
     maven {
-        name = "TheIllusiveC4"
-        url = "https://maven.theillusivec4.top"
-        content {
-            includeGroup "top.theillusivec4.somnus"
-        }
-    }
-    maven {
         name = "GeckoLib"
         url = "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven"
         content {
@@ -182,10 +175,6 @@ dependencies {
     include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cc_version}"
     modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cc_version}"
     include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cc_version}"
-
-    // Somnus (currently on mavenlocal)
-    modImplementation "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
-    include "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
 
     // LibCD
     //include "io.github.cottonmc:LibCD:${project.libcd_version}"

@@ -9,7 +9,7 @@ import com.williambl.haema.util.HaemaGameRulesKt;
 import ladysnake.ratsmischief.common.entity.RatEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.FollowTargetGoal;
+import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.particle.ParticleTypes;
@@ -37,10 +37,10 @@ public abstract class RatEntityMixin extends TameableEntity implements Vampirabl
     void addVampireGoal(CallbackInfo ci) {
         goalSelector.add(3, new VampiRatAttackGoal((RatEntity) (Object) this, 1.0, true));
 
-        targetSelector.add(8, new FollowTargetGoal<>(this, LivingEntity.class, 10, true, false, (livingEntity) ->
+        targetSelector.add(8, new ActiveTargetGoal<>(this, LivingEntity.class, 10, true, false, (livingEntity) ->
                 this.isVampire() && !(livingEntity instanceof Vampirable) && !this.hasStatusEffect(VampiricStrengthEffect.Companion.getInstance())
         ));
-        targetSelector.add(9, new FollowTargetGoal<>(this, LivingEntity.class, 10, true, false, (livingEntity) ->
+        targetSelector.add(9, new ActiveTargetGoal<>(this, LivingEntity.class, 10, true, false, (livingEntity) ->
                 this.isVampire() && livingEntity instanceof Vampirable && !((Vampirable) livingEntity).isVampire()
         ));
     }

@@ -7,7 +7,7 @@ import moriyashiine.bewitchment.common.entity.living.VampireEntity;
 import moriyashiine.bewitchment.common.entity.living.util.BWHostileEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.FollowTargetGoal;
+import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
@@ -25,7 +25,7 @@ public abstract class VampireEntityMixin extends BWHostileEntity implements Vamp
 
     @Inject(method = "initGoals", at = @At("TAIL"))
     void haema$initGoals(CallbackInfo ci) {
-        targetSelector.add(1, new FollowTargetGoal<>(this, LivingEntity.class, 10, true, false,
+        targetSelector.add(1, new ActiveTargetGoal<>(this, LivingEntity.class, 10, true, false,
                 (entity) -> entity instanceof VampireHunterEntity));
     }
 
