@@ -3,6 +3,7 @@ package com.williambl.haema.criteria
 import com.google.gson.JsonObject
 import com.williambl.haema.ability.AbilityModule
 import com.williambl.haema.ability.VampireAbility
+import com.williambl.haema.id
 import net.minecraft.advancement.criterion.AbstractCriterion
 import net.minecraft.advancement.criterion.AbstractCriterionConditions
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer
@@ -11,7 +12,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 
 object AbilityChangeCriterion: AbstractCriterion<AbilityChangeCriterion.Conditions>() {
-    private val id = Identifier("haema:ability_level_up")
+    private val id = id("ability_level_up")
     override fun getId(): Identifier = id
 
     override fun conditionsFromJson(

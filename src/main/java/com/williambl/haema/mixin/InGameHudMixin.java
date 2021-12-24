@@ -17,13 +17,15 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static com.williambl.haema.HaemaKt.id;
+
 @Mixin(InGameHud.class)
 public class InGameHudMixin extends DrawableHelper {
     @Shadow @Final private MinecraftClient client;
 
-    private static final Identifier EMPTY_BLOOD_ICON = new Identifier("haema:textures/gui/blood_empty.png");
-    private static final Identifier FULL_BLOOD_ICON = new Identifier("haema:textures/gui/blood_full.png");
-    private static final Identifier HALF_BLOOD_ICON = new Identifier("haema:textures/gui/blood_half.png");
+    private static final Identifier EMPTY_BLOOD_ICON = id("textures/gui/blood_empty.png");
+    private static final Identifier FULL_BLOOD_ICON = id("textures/gui/blood_full.png");
+    private static final Identifier HALF_BLOOD_ICON = id("textures/gui/blood_half.png");
 
     @Redirect(
             method = "renderStatusBars",

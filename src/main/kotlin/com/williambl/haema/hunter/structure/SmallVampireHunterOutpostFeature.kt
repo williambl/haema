@@ -1,11 +1,11 @@
 package com.williambl.haema.hunter.structure
 
 import com.mojang.serialization.Codec
+import com.williambl.haema.id
 import net.minecraft.structure.PoolStructurePiece
 import net.minecraft.structure.StructureGeneratorFactory
 import net.minecraft.structure.StructurePiecesGenerator
 import net.minecraft.structure.pool.StructurePoolBasedGenerator
-import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.Heightmap
 import net.minecraft.world.gen.feature.StructureFeature
@@ -41,7 +41,7 @@ class SmallVampireHunterOutpostFeature(codec: Codec<StructurePoolFeatureConfig>)
             val centre = ctx.chunkPos.getCenterAtY(0)
 
             val config = StructurePoolFeatureConfig({
-                ctx.registryManager.get(Registry.STRUCTURE_POOL_KEY).get(Identifier("haema:small_vampire_hunter_outpost/start_pool"))},
+                ctx.registryManager.get(Registry.STRUCTURE_POOL_KEY).get(id("small_vampire_hunter_outpost/start_pool"))},
                 10
             )
 

@@ -1,5 +1,6 @@
 package com.williambl.haema.util
 
+import com.williambl.haema.id
 import io.netty.buffer.Unpooled
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents
 import net.fabricmc.fabric.api.gamerule.v1.CustomGameRuleCategory
@@ -12,7 +13,6 @@ import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
-import net.minecraft.util.Identifier
 import net.minecraft.world.GameRules
 
 object HaemaGameRules {
@@ -42,7 +42,7 @@ object HaemaGameRules {
             buf.writeInt(rule.get())
             server.playerManager.sendToAll(
                 ServerPlayNetworking.createS2CPacket(
-                    Identifier("haema:updatedashcooldown"),
+                    id("updatedashcooldown"),
                     buf
                 )
             )
@@ -56,7 +56,7 @@ object HaemaGameRules {
         buf.writeInt(rule.get())
         server.playerManager.sendToAll(
             ServerPlayNetworking.createS2CPacket(
-                Identifier("haema:updateinvislength"),
+                id("updateinvislength"),
                 buf
             )
         )
@@ -81,7 +81,7 @@ object HaemaGameRules {
     )
 
     val haemaCategory = CustomGameRuleCategory(
-        Identifier("haema:haema"), TranslatableText("gamerule.category.haema").formatted(
+        id("haema"), TranslatableText("gamerule.category.haema").formatted(
             Formatting.BOLD
         ).formatted(Formatting.YELLOW)
     )
@@ -91,7 +91,7 @@ object HaemaGameRules {
             if (entity is PlayerEntity) {
                 val buf = PacketByteBuf(Unpooled.buffer())
                 buf.writeInt(serverWorld.gameRules.get(dashCooldown).get())
-                ServerPlayNetworking.send(entity as ServerPlayerEntity, Identifier("haema:updatedashcooldown"), buf)
+                ServerPlayNetworking.send(entity as ServerPlayerEntity, id("updatedashcooldown"), buf)
             }
         })
 
@@ -99,7 +99,7 @@ object HaemaGameRules {
             if (entity is ServerPlayerEntity) {
                 val buf = PacketByteBuf(Unpooled.buffer())
                 buf.writeInt(serverWorld.gameRules.get(invisLength).get())
-                ServerPlayNetworking.send(entity, Identifier("haema:updateinvislength"), buf)
+                ServerPlayNetworking.send(entity, id("updateinvislength"), buf)
             }
         })
     }

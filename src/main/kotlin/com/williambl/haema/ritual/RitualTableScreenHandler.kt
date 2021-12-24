@@ -2,6 +2,7 @@ package com.williambl.haema.ritual
 
 import com.williambl.haema.Vampirable
 import com.williambl.haema.ability.AbilityModule
+import com.williambl.haema.id
 import com.williambl.haema.ritual.craft.RitualInventory
 import io.netty.buffer.Unpooled
 import net.fabricmc.api.EnvType
@@ -19,7 +20,6 @@ import net.minecraft.screen.ScreenHandlerType
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.LiteralText
 import net.minecraft.text.Text
-import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 
 class RitualTableScreenHandler(syncId: Int, val inv: RitualInventory, private val context: ScreenHandlerContext)
@@ -61,7 +61,7 @@ class RitualTableScreenHandler(syncId: Int, val inv: RitualInventory, private va
 
     @Environment(EnvType.CLIENT)
     fun transferLevels(amount: Int, from: Int, to: Int) {
-        ClientPlayNetworking.send(Identifier("haema:transferlevels"), PacketByteBuf(Unpooled.buffer()).writeVarInt(syncId).writeVarInt(amount).writeVarInt(from).writeVarInt(to))
+        ClientPlayNetworking.send(id("transferlevels"), PacketByteBuf(Unpooled.buffer()).writeVarInt(syncId).writeVarInt(amount).writeVarInt(from).writeVarInt(to))
     }
 
     override fun canUse(player: PlayerEntity): Boolean = canUse(context, player, RitualTable.instance)
@@ -84,7 +84,7 @@ class RitualTableScreenHandler(syncId: Int, val inv: RitualInventory, private va
 
     companion object {
         val ritualTableScreenHandlerType: ScreenHandlerType<RitualTableScreenHandler>
-                = ScreenHandlerRegistry.registerExtended(Identifier("haema:ritual_table")) {
+                = ScreenHandlerRegistry.registerExtended(id("ritual_table")) {
                 i: Int, inv: PlayerInventory, buf: PacketByteBuf -> RitualTableScreenHandler(i, inv, buf)
         }
     }

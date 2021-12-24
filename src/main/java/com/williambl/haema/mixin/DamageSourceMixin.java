@@ -10,17 +10,18 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tag.Tag;
-import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import static com.williambl.haema.HaemaKt.id;
+
 @Mixin(DamageSource.class)
 public class DamageSourceMixin {
 
-    private static final Tag<Item> vampireEffectiveWeaponsTag = TagFactory.ITEM.create(new Identifier("haema:vampire_weapons"));
+    private static final Tag<Item> vampireEffectiveWeaponsTag = TagFactory.ITEM.create(id("vampire_weapons"));
 
     @Inject(method = "player", at = @At("RETURN"))
     private static void addVampireEffectiveSources(PlayerEntity attacker, CallbackInfoReturnable<DamageSource> cir) {

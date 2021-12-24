@@ -1,6 +1,7 @@
 package com.williambl.haema.criteria
 
 import com.google.gson.JsonObject
+import com.williambl.haema.id
 import net.minecraft.advancement.criterion.AbstractCriterion
 import net.minecraft.advancement.criterion.AbstractCriterionConditions
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer
@@ -9,7 +10,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 
 object StoreBloodCriterion: AbstractCriterion<StoreBloodCriterion.Conditions>() {
-    private val id = Identifier("haema:store_blood")
+    private val id = id("store_blood")
     override fun getId(): Identifier = id
 
     override fun conditionsFromJson(

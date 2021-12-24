@@ -1,6 +1,7 @@
 package com.williambl.haema.criteria
 
 import com.google.gson.JsonObject
+import com.williambl.haema.id
 import net.minecraft.advancement.criterion.AbstractCriterion
 import net.minecraft.advancement.criterion.AbstractCriterionConditions
 import net.minecraft.entity.Entity
@@ -11,7 +12,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 
 object DrinkBloodCriterion: AbstractCriterion<DrinkBloodCriterion.Conditions>() {
-    private val id = Identifier("haema:drink_blood")
+    private val id = id("drink_blood")
     override fun getId(): Identifier = id
 
     override fun conditionsFromJson(

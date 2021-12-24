@@ -31,7 +31,6 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.sound.SoundEvents
 import net.minecraft.tag.Tag
 import net.minecraft.util.ActionResult
-import net.minecraft.util.Identifier
 import net.minecraft.world.GameRules
 import net.minecraft.world.World
 import java.util.*
@@ -52,11 +51,11 @@ class VampireBloodManager() : HungerManager() {
         private val VAMPIRE_ATTACK_RANGE = EntityAttributeModifier(VAMPIRE_ATTACK_RANGE_UUID, "Vampire attack range extension", 2.0, EntityAttributeModifier.Operation.ADDITION)
         private val VAMPIRE_HEALTH_BOOST = EntityAttributeModifier(VAMPIRE_HEALTH_BOOST_UUID, "Vampire health boost", 1.0, EntityAttributeModifier.Operation.MULTIPLY_BASE)
 
-        val goodBloodTag: Tag<EntityType<*>> = TagFactory.ENTITY_TYPE.create(Identifier("haema:good_blood_sources"))
-        val mediumBloodTag: Tag<EntityType<*>> = TagFactory.ENTITY_TYPE.create(Identifier("haema:medium_blood_sources"))
-        val poorBloodTag: Tag<EntityType<*>> = TagFactory.ENTITY_TYPE.create(Identifier("haema:poor_blood_sources"))
+        val goodBloodTag: Tag<EntityType<*>> = TagFactory.ENTITY_TYPE.create(id("good_blood_sources"))
+        val mediumBloodTag: Tag<EntityType<*>> = TagFactory.ENTITY_TYPE.create(id("medium_blood_sources"))
+        val poorBloodTag: Tag<EntityType<*>> = TagFactory.ENTITY_TYPE.create(id("poor_blood_sources"))
 
-        val bloodLevelPacket = Identifier("haema:bloodlevelsync")
+        val bloodLevelPacket = id("bloodlevelsync")
 
         fun getFeedCooldown(world: World): Int = world.gameRules[HaemaGameRules.feedCooldown].get()
     }
@@ -113,7 +112,7 @@ class VampireBloodManager() : HungerManager() {
             UseInvisibilityCriterion.trigger(player as ServerPlayerEntity)
             invisTicks = player.world.time
             player.addStatusEffect(StatusEffectInstance(StatusEffects.INVISIBILITY, invisLevel*player.world.gameRules[HaemaGameRules.invisLength].get(), 0))
-            ServerPlayNetworking.send(player as ServerPlayerEntity, Identifier("haema:updateinvisticks"), PacketByteBuf(Unpooled.buffer()))
+            ServerPlayNetworking.send(player as ServerPlayerEntity, id("updateinvisticks"), PacketByteBuf(Unpooled.buffer()))
         }
 
         //Healing at the bottom, so that the health boosts aren't wiped

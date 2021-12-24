@@ -1,5 +1,6 @@
 package com.williambl.haema.blood
 
+import com.williambl.haema.id
 import com.williambl.haema.util.addTradesToProfession
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.loot.v1.FabricLootPoolBuilder
@@ -23,18 +24,18 @@ import net.minecraft.village.VillagerProfession
 object BloodModule: ModInitializer {
     val VAMPIRE_BLOOD: VampireBloodItem = Registry.register(
         Registry.ITEM,
-        Identifier("haema:vampire_blood"),
+        id("vampire_blood"),
         VampireBloodItem()
     )
 
     val VAMPIRE_BLOOD_INJECTOR: VampireBloodInjectorItem = Registry.register(Registry.ITEM,
-        Identifier("haema:vampire_blood_injector"),
+        id("vampire_blood_injector"),
         VampireBloodInjectorItem(Item.Settings().group(ItemGroup.TOOLS).maxCount(1))
     )
 
     val EMPTY_VAMPIRE_BLOOD_INJECTOR: EmptyVampireBloodInjectorItem = Registry.register(
         Registry.ITEM,
-        Identifier("haema:empty_vampire_blood_injector"),
+        id("empty_vampire_blood_injector"),
         EmptyVampireBloodInjectorItem(Item.Settings().group(ItemGroup.TOOLS).maxCount(1))
     )
 
@@ -54,7 +55,7 @@ object BloodModule: ModInitializer {
                 val poolBuilder: FabricLootPoolBuilder = FabricLootPoolBuilder.builder()
                     .rolls(ConstantLootNumberProvider.create(1f))
                     .withEntry(
-                        LootTableEntry.builder(Identifier("haema:injected/chests/${if (id == dungeonLootTable) "dungeon" else "temple"}_blood"))
+                        LootTableEntry.builder(id("injected/chests/${if (id == dungeonLootTable) "dungeon" else "temple"}_blood"))
                             .weight(12)
                             .build()
                     )

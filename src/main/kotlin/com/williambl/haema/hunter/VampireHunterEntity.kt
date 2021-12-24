@@ -1,6 +1,7 @@
 package com.williambl.haema.hunter
 
 import com.williambl.haema.Vampirable
+import com.williambl.haema.id
 import com.williambl.haema.util.contains
 import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags
 import net.minecraft.block.entity.BannerPattern
@@ -31,12 +32,14 @@ import net.minecraft.potion.PotionUtil
 import net.minecraft.potion.Potions
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.TranslatableText
-import net.minecraft.util.*
+import net.minecraft.util.ActionResult
+import net.minecraft.util.DyeColor
+import net.minecraft.util.Formatting
+import net.minecraft.util.Hand
 import net.minecraft.world.Difficulty
 import net.minecraft.world.LocalDifficulty
 import net.minecraft.world.ServerWorldAccess
 import net.minecraft.world.World
-import kotlin.Pair
 
 class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, world: World?) : PatrolEntity(
     entityType,
@@ -270,7 +273,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
             VampireHunterEntity::class.java,
             TrackedDataHandlerRegistry.BOOLEAN
         )
-        val paymentLootTable = Identifier("haema:gameplay/contract_payment")
+        val paymentLootTable = id("gameplay/contract_payment")
     }
 }
 

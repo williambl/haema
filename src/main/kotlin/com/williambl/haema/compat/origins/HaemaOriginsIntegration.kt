@@ -2,6 +2,7 @@ package com.williambl.haema.compat.origins
 
 import com.williambl.haema.VampireBloodManager
 import com.williambl.haema.api.VampireBurningEvents
+import com.williambl.haema.id
 import io.github.apace100.apoli.component.PowerHolderComponent
 import io.github.apace100.apoli.power.PhasingPower
 import io.github.apace100.apoli.power.Power
@@ -11,12 +12,11 @@ import io.github.apace100.apoli.registry.ApoliRegistries
 import io.github.apace100.calio.data.SerializableData
 import net.fabricmc.fabric.api.util.TriState
 import net.minecraft.entity.LivingEntity
-import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 import java.util.function.BiFunction
 
 fun registerPowerTypes() {
-    val id = Identifier("haema:vampire")
+    val id = id("vampire")
     val powerFactory: PowerFactory<Power?> = PowerFactory(id, SerializableData()) {
         BiFunction<PowerType<Power?>, LivingEntity?, Power?> { powerType, player -> VampirePower(powerType, player) }
     }

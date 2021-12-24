@@ -8,6 +8,7 @@ import com.williambl.haema.client.config.HaemaConfig
 import com.williambl.haema.client.gui.RitualTableScreen
 import com.williambl.haema.client.gui.VampireHud
 import com.williambl.haema.hunter.VampireHunterModule
+import com.williambl.haema.id
 import com.williambl.haema.ritual.RitualTableScreenHandler
 import ladysnake.satin.api.event.ShaderEffectRenderCallback
 import ladysnake.satin.api.managed.ManagedShaderEffect
@@ -26,13 +27,12 @@ import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
-import net.minecraft.util.Identifier
 import net.minecraft.util.hit.EntityHitResult
 import net.minecraft.util.hit.HitResult
 import org.lwjgl.glfw.GLFW
 
 val VAMPIRE_SHADER: ManagedShaderEffect = ShaderEffectManager.getInstance()
-    .manage(Identifier("haema", "shaders/post/vampirevision.json"))
+    .manage(id("shaders/post/vampirevision.json"))
 
 val DASH_KEY = KeyBinding("key.haema.dash", GLFW.GLFW_KEY_Z, "key.categories.movement")
 
@@ -61,19 +61,19 @@ fun setSaturation(value: Float) {
 }
 
 fun init() {
-    ClientPlayNetworking.registerGlobalReceiver(Identifier("haema:bloodlevelsync")) { client, handler, buf, sender ->
+    ClientPlayNetworking.registerGlobalReceiver(id("bloodlevelsync")) { client, handler, buf, sender ->
         if (client.player is Vampirable) {
             (client.player as Vampirable).checkBloodManager()
             (client.player?.hungerManager as VampireBloodManager).absoluteBloodLevel = buf.readDouble()
         }
     }
-    ClientPlayNetworking.registerGlobalReceiver(Identifier("haema:updatedashcooldown")) { client, handler, buf, sender ->
+    ClientPlayNetworking.registerGlobalReceiver(id("updatedashcooldown")) { client, handler, buf, sender ->
         dashCooldownValue = buf.readInt()
     }
-    ClientPlayNetworking.registerGlobalReceiver(Identifier("haema:updateinvislength")) { client, handler, buf, sender ->
+    ClientPlayNetworking.registerGlobalReceiver(id("updateinvislength")) { client, handler, buf, sender ->
         invisLengthValue = buf.readInt()
     }
-    ClientPlayNetworking.registerGlobalReceiver(Identifier("haema:updateinvisticks")) { client, handler, buf, sender ->
+    ClientPlayNetworking.registerGlobalReceiver(id("updateinvisticks")) { client, handler, buf, sender ->
         (client.player!!.hungerManager as VampireBloodManager).invisTicks = client.world!!.time
     }
 

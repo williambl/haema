@@ -1,6 +1,7 @@
 package com.williambl.haema.ability
 
 import com.williambl.haema.criteria.UseDashCriterion
+import com.williambl.haema.id
 import com.williambl.haema.mixin.RegistryAccessor
 import com.williambl.haema.ritual.RitualTableScreenHandler
 import com.williambl.haema.util.raytraceForDash
@@ -20,7 +21,6 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
-import net.minecraft.util.Identifier
 import net.minecraft.util.registry.DefaultedRegistry
 import net.minecraft.util.registry.Registry
 import net.minecraft.util.registry.RegistryKey
@@ -29,13 +29,13 @@ object AbilityModule: ModInitializer {
     val ABILITY_REGISTRY_KEY: RegistryKey<Registry<VampireAbility>> = RegistryAccessor.createRegistryKey("haema:ability")
     val ABILITY_REGISTRY: DefaultedRegistry<VampireAbility> = RegistryAccessor.create(ABILITY_REGISTRY_KEY, "haema:none") { NONE } // TODO: a) does this work b) does NONE need to be registered c) does fabric have an api for this? think so
 
-    val NONE: VampireAbility = Registry.register(ABILITY_REGISTRY, Identifier("haema:none"), VampireAbility())
-    val STRENGTH: VampireAbility = Registry.register(ABILITY_REGISTRY, Identifier("haema:strength"), VampireAbility(3, PotionUtil.setPotion(ItemStack(Items.POTION), Potions.STRENGTH)))
-    val DASH: VampireAbility = Registry.register(ABILITY_REGISTRY, Identifier("haema:dash"), VampireAbility(3, ItemStack(Items.FEATHER)))
-    val INVISIBILITY: VampireAbility = Registry.register(ABILITY_REGISTRY, Identifier("haema:invisibility"), VampireAbility(2, PotionUtil.setPotion(ItemStack(Items.POTION), Potions.INVISIBILITY)))
-    val IMMORTALITY: VampireAbility = Registry.register(ABILITY_REGISTRY, Identifier("haema:immortality"), VampireAbility(1, ItemStack(Items.TOTEM_OF_UNDYING)))
-    val VISION: VampireAbility = Registry.register(ABILITY_REGISTRY, Identifier("haema:vision"), VampireAbility(1, ItemStack(Items.ENDER_EYE)))
-    val MIST_FORM: VampireAbility = Registry.register(ABILITY_REGISTRY, Identifier("haema:mist_form"), VampireAbility(1, ItemStack(Items.COBWEB)))
+    val NONE: VampireAbility = Registry.register(ABILITY_REGISTRY, id("none"), VampireAbility())
+    val STRENGTH: VampireAbility = Registry.register(ABILITY_REGISTRY, id("strength"), VampireAbility(3, PotionUtil.setPotion(ItemStack(Items.POTION), Potions.STRENGTH)))
+    val DASH: VampireAbility = Registry.register(ABILITY_REGISTRY, id("dash"), VampireAbility(3, ItemStack(Items.FEATHER)))
+    val INVISIBILITY: VampireAbility = Registry.register(ABILITY_REGISTRY, id("invisibility"), VampireAbility(2, PotionUtil.setPotion(ItemStack(Items.POTION), Potions.INVISIBILITY)))
+    val IMMORTALITY: VampireAbility = Registry.register(ABILITY_REGISTRY, id("immortality"), VampireAbility(1, ItemStack(Items.TOTEM_OF_UNDYING)))
+    val VISION: VampireAbility = Registry.register(ABILITY_REGISTRY, id("vision"), VampireAbility(1, ItemStack(Items.ENDER_EYE)))
+    val MIST_FORM: VampireAbility = Registry.register(ABILITY_REGISTRY, id("mist_form"), VampireAbility(1, ItemStack(Items.COBWEB)))
 
     override fun onInitialize() {
         ArgumentTypes.register(
@@ -44,7 +44,7 @@ object AbilityModule: ModInitializer {
             VampireAbilityArgumentType.Serialiser
         )
 
-        ServerPlayNetworking.registerGlobalReceiver(Identifier("haema:transferlevels")) { server: MinecraftServer, player: ServerPlayerEntity, networkHandler: ServerPlayNetworkHandler, buf: PacketByteBuf, sender: PacketSender ->
+        ServerPlayNetworking.registerGlobalReceiver(id("transferlevels")) { server: MinecraftServer, player: ServerPlayerEntity, networkHandler: ServerPlayNetworkHandler, buf: PacketByteBuf, sender: PacketSender ->
             if (player.currentScreenHandler.syncId == buf.readVarInt() && player.currentScreenHandler is RitualTableScreenHandler) {
                 val amount = buf.readVarInt()
                 val from = buf.readVarInt()
@@ -59,7 +59,7 @@ object AbilityModule: ModInitializer {
             }
         }
 
-        ServerPlayNetworking.registerGlobalReceiver(Identifier("haema:dash")) { server: MinecraftServer, player: ServerPlayerEntity, networkHandler: ServerPlayNetworkHandler, buf: PacketByteBuf, sender: PacketSender ->
+        ServerPlayNetworking.registerGlobalReceiver(id("dash")) { server: MinecraftServer, player: ServerPlayerEntity, networkHandler: ServerPlayNetworkHandler, buf: PacketByteBuf, sender: PacketSender ->
             val world = player.world
             val target = raytraceForDash(player)
 

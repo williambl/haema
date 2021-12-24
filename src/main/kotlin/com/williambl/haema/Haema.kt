@@ -48,6 +48,8 @@ import net.minecraft.world.World
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
+fun id(path: String): Identifier = Identifier("haema", path)
+
 object Haema: ModInitializer, EntityComponentInitializer {
     val LOGGER: Logger = LogManager.getLogger("Haema")
 
@@ -103,7 +105,7 @@ object Haema: ModInitializer, EntityComponentInitializer {
         VampireBurningEvents.VETO.register(VampireBurningEvents.Veto { player, _ ->
             if (player.abilities.creativeMode) TriState.FALSE else TriState.DEFAULT
         })
-        val vampireProtectiveClothingTag = TagFactory.ITEM.create(Identifier("haema:vampire_protective_clothing"))
+        val vampireProtectiveClothingTag = TagFactory.ITEM.create(id("vampire_protective_clothing"))
         VampireBurningEvents.VETO.register(object : VampireBurningEvents.Veto {
             override fun getPriority(): Int = 10
 
@@ -148,7 +150,7 @@ object Haema: ModInitializer, EntityComponentInitializer {
 
         Registry.register(
             Registry.RECIPE_SERIALIZER,
-            Identifier("haema:book_of_blood"),
+            id("book_of_blood"),
             BookOfBloodRecipe.Serializer
         )
 

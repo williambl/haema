@@ -1,5 +1,6 @@
 package com.williambl.haema.ritual
 
+import com.williambl.haema.id
 import com.williambl.haema.ritual.craft.RitualRecipe
 import com.williambl.haema.util.MultiTagMatcher
 import net.fabricmc.api.ModInitializer
@@ -12,7 +13,6 @@ import net.minecraft.recipe.RecipeSerializer
 import net.minecraft.recipe.RecipeType
 import net.minecraft.state.property.Properties
 import net.minecraft.tag.Tag
-import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 import vazkii.patchouli.common.multiblock.DenseMultiblock
 import vazkii.patchouli.common.multiblock.MultiblockRegistry
@@ -26,24 +26,24 @@ object RitualModule: ModInitializer {
 
     val RITUAL_TABLE_BLOCK: RitualTable = Registry.register(
             Registry.BLOCK,
-            Identifier("haema:ritual_table"),
+            id("ritual_table"),
             RitualTable.instance
         )
     val RITUAL_TABLE_ITEM: BlockItem = Registry.register(
             Registry.ITEM,
-            Identifier("haema:ritual_table"),
+            id("ritual_table"),
             BlockItem(RitualTable.instance, Item.Settings().group(ItemGroup.DECORATIONS))
         )
 
-    val LEVEL_0_RITUAL_MATERIALS: Tag<Block> = TagFactory.BLOCK.create(Identifier("haema:ritual_materials/level_0"))
-    val LEVEL_1_RITUAL_MATERIALS: Tag<Block> = TagFactory.BLOCK.create(Identifier("haema:ritual_materials/level_1"))
+    val LEVEL_0_RITUAL_MATERIALS: Tag<Block> = TagFactory.BLOCK.create(id("ritual_materials/level_0"))
+    val LEVEL_1_RITUAL_MATERIALS: Tag<Block> = TagFactory.BLOCK.create(id("ritual_materials/level_1"))
 
-    val LEVEL_0_RITUAL_TORCHES: Tag<Block> = TagFactory.BLOCK.create(Identifier("haema:ritual_torches/level_0"))
-    val LEVEL_1_RITUAL_TORCHES: Tag<Block> = TagFactory.BLOCK.create(Identifier("haema:ritual_torches/level_1"))
+    val LEVEL_0_RITUAL_TORCHES: Tag<Block> = TagFactory.BLOCK.create(id("ritual_torches/level_0"))
+    val LEVEL_1_RITUAL_TORCHES: Tag<Block> = TagFactory.BLOCK.create(id("ritual_torches/level_1"))
 
     override fun onInitialize() {
         MultiblockRegistry.registerMultiblock(
-            Identifier("haema:basic_altar"), DenseMultiblock(
+            id("basic_altar"), DenseMultiblock(
                 arrayOf(
                     arrayOf(
                         "T T T",
@@ -83,7 +83,7 @@ object RitualModule: ModInitializer {
         )
 
         MultiblockRegistry.registerMultiblock(
-            Identifier("haema:blackstone_altar"), DenseMultiblock(
+            id("blackstone_altar"), DenseMultiblock(
                 arrayOf(
                     arrayOf(
                         "T T T",

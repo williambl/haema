@@ -14,13 +14,14 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import static com.williambl.haema.HaemaKt.id;
 
 @Mixin(ClientPlayerEntity.class)
 public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity implements ClientVampire {
@@ -43,7 +44,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
             if (pressedTicks > 0 && !(HaemaClientKt.getDASH_KEY().isPressed()) && canDash()) {
                 PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-                ClientPlayNetworking.send(new Identifier("haema:dash"), buf);
+                ClientPlayNetworking.send(id("dash"), buf);
                 lastDashed = world.getTime();
             } else if (HaemaClientKt.getDASH_KEY().isPressed() && canDash()) {
                 Vec3d target = RaytraceUtilKt.raytraceForDash(this);
