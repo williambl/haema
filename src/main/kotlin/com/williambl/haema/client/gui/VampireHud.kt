@@ -2,7 +2,7 @@ package com.williambl.haema.client.gui
 
 import com.williambl.haema.Vampirable
 import com.williambl.haema.api.client.VampireHudAddTextEvent
-import com.williambl.haema.client.config
+import com.williambl.haema.client.HaemaClient
 import com.williambl.haema.client.config.HudPlacement
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawableHelper
@@ -14,7 +14,7 @@ import net.minecraft.util.Formatting
 
 object VampireHud : DrawableHelper() {
     fun render(matrixStack: MatrixStack, @Suppress("UNUSED_PARAMETER") tickDelta: Float) {
-        if (config.vampireHudPlacement == HudPlacement.NONE) return
+        if (HaemaClient.config.vampireHudPlacement == HudPlacement.NONE) return
 
         matrixStack.push()
 
@@ -36,8 +36,8 @@ object VampireHud : DrawableHelper() {
                     matrixStack,
                     MinecraftClient.getInstance().textRenderer,
                     text,
-                    config.vampireHudPlacement.x(width, textRenderer.getWidth(text)),
-                    config.vampireHudPlacement.y(height,index),
+                    HaemaClient.config.vampireHudPlacement.x(width, textRenderer.getWidth(text)),
+                    HaemaClient.config.vampireHudPlacement.y(height,index),
                     0xffffff
             )
         }

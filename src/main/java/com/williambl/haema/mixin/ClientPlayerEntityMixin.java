@@ -5,7 +5,7 @@ import com.williambl.haema.Vampirable;
 import com.williambl.haema.VampireBloodManager;
 import com.williambl.haema.ability.AbilityModule;
 import com.williambl.haema.client.ClientVampire;
-import com.williambl.haema.client.HaemaClientKt;
+import com.williambl.haema.client.HaemaClient;
 import com.williambl.haema.util.RaytraceUtilKt;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -37,39 +37,39 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     void useShaders(CallbackInfo ci) {
         if (((Vampirable) this).isVampire() && this.hungerManager instanceof VampireBloodManager) {
             float bloodLevel = ((float) ((VampireBloodManager)this.hungerManager).getBloodLevel()) / 20.0f;
-            HaemaClientKt.setSaturation(0.8f * bloodLevel);
-            HaemaClientKt.setBrightnessAdjust(bloodLevel/4f+0.05f);
+            HaemaClient.INSTANCE.setSaturation(0.8f * bloodLevel);
+            HaemaClient.INSTANCE.setBrightnessAdjust(bloodLevel/4f+0.05f);
 
-            HaemaClientKt.setRedAmount(Math.max(1.3f, 2.3f - (this.world.getTime() - ((VampireBloodManager) this.hungerManager).getLastFed()) / (float) VampireBloodManager.Companion.getFeedCooldown(world)));
+            HaemaClient.INSTANCE.setRedAmount(Math.max(1.3f, 2.3f - (this.world.getTime() - ((VampireBloodManager) this.hungerManager).getLastFed()) / (float) VampireBloodManager.Companion.getFeedCooldown(world)));
 
-            if (pressedTicks > 0 && !(HaemaClientKt.getDASH_KEY().isPressed()) && canDash()) {
+            if (pressedTicks > 0 && !(HaemaClient.INSTANCE.getDASH_KEY().isPressed()) && canDash()) {
                 PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
                 ClientPlayNetworking.send(id("dash"), buf);
                 lastDashed = world.getTime();
-            } else if (HaemaClientKt.getDASH_KEY().isPressed() && canDash()) {
+            } else if (HaemaClient.INSTANCE.getDASH_KEY().isPressed() && canDash()) {
                 Vec3d target = RaytraceUtilKt.raytraceForDash(this);
                 if (target != null) for (int i = 0; i < 10; i++) {
                     world.addParticle(new DustParticleEffect(new Vec3f(0, 0, 0), 1), target.x - 0.5 + random.nextDouble(), target.y + random.nextDouble() * 2, target.z - 0.5 + random.nextDouble(), 0.0, 0.5, 0.0);
                 }
             }
-            pressedTicks = HaemaClientKt.getDASH_KEY().isPressed() ? pressedTicks + 1 : 0;
+            pressedTicks = HaemaClient.INSTANCE.getDASH_KEY().isPressed() ? pressedTicks + 1 : 0;
 
 
             long timeSinceDash = world.getTime() - lastDashed;
 
-            float distortAmount = HaemaClientKt.getDistortAmount();
+            float distortAmount = HaemaClient.INSTANCE.getDistortAmount();
             if (pressedTicks > 0 && canDash()) {
-                HaemaClientKt.setDistortAmount(Math.max(HaemaClientKt.getDistortAmount() - 0.05f, -0.2f));
+                HaemaClient.INSTANCE.setDistortAmount(Math.max(HaemaClient.INSTANCE.getDistortAmount() - 0.05f, -0.2f));
             } else if (timeSinceDash <= 8) {
                 if (timeSinceDash == 0)
-                    HaemaClientKt.setDistortAmount(-1.4f);
+                    HaemaClient.INSTANCE.setDistortAmount(-1.4f);
                 else
-                    HaemaClientKt.setDistortAmount(-0.25f + 0.25f*(float) Math.log(timeSinceDash/3f));
+                    HaemaClient.INSTANCE.setDistortAmount(-0.25f + 0.25f*(float) Math.log(timeSinceDash/3f));
             } else if (distortAmount != 0) {
                 if (Math.abs(distortAmount) < 0.1) {
-                    HaemaClientKt.setDistortAmount(0f);
+                    HaemaClient.INSTANCE.setDistortAmount(0f);
                 } else {
-                    HaemaClientKt.setDistortAmount(distortAmount - Math.copySign(0.1f, distortAmount));
+                    HaemaClient.INSTANCE.setDistortAmount(distortAmount - Math.copySign(0.1f, distortAmount));
                 }
             }
         }
@@ -78,7 +78,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     @Override
     public boolean canDash() {
         int abilityLevel = ((Vampirable)this).getAbilityLevel(AbilityModule.INSTANCE.getDASH());
-        return world.getTime() > lastDashed+((long) HaemaClientKt.getDashCooldownValue() *(1+AbilityModule.INSTANCE.getDASH().getMaxLevel()-abilityLevel))
+        return world.getTime() > lastDashed+((long) HaemaClient.INSTANCE.getDashCooldownValue() *(1+AbilityModule.INSTANCE.getDASH().getMaxLevel()-abilityLevel))
                 && hungerManager instanceof VampireBloodManager
                 && (
                         ((VampireBloodManager)hungerManager).getBloodLevel() >= 18

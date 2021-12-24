@@ -37,7 +37,7 @@
       {"adapter": "kotlin", "value": "com.williambl.haema.compat.flan.FlanEntrypointKt::init"}
     ],
     "client": [
-      {"adapter": "kotlin", "value": "com.williambl.haema.client.HaemaClientKt::init"},
+      {"adapter": "kotlin", "value": "com.williambl.haema.client.HaemaClient"},
       {"adapter": "kotlin", "value": "com.williambl.haema.compat.bewitchment.BewitchmentEntrypointKt::clientInit"}
     ],
     "rei_plugins": [
