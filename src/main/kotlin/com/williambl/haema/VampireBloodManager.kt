@@ -9,9 +9,8 @@ import com.williambl.haema.damagesource.BloodLossDamageSource
 import com.williambl.haema.effect.SunlightSicknessEffect
 import com.williambl.haema.effect.VampiricStrengthEffect
 import com.williambl.haema.effect.VampiricWeaknessEffect
+import com.williambl.haema.util.HaemaGameRules
 import com.williambl.haema.util.computeValueWithout
-import com.williambl.haema.util.feedCooldown
-import com.williambl.haema.util.invisLength
 import io.netty.buffer.Unpooled
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.fabricmc.fabric.api.tag.TagFactory
@@ -59,7 +58,7 @@ class VampireBloodManager() : HungerManager() {
 
         val bloodLevelPacket = Identifier("haema:bloodlevelsync")
 
-        fun getFeedCooldown(world: World): Int = world.gameRules[feedCooldown].get()
+        fun getFeedCooldown(world: World): Int = world.gameRules[HaemaGameRules.feedCooldown].get()
     }
 
     var owner: PlayerEntity? = null
@@ -113,7 +112,7 @@ class VampireBloodManager() : HungerManager() {
         if (getBloodLevel() >= 16 && invisLevel > 0 && player.isSneaking && player.world.time-invisTicks >= 120 + invisLevel*60) {
             UseInvisibilityCriterion.trigger(player as ServerPlayerEntity)
             invisTicks = player.world.time
-            player.addStatusEffect(StatusEffectInstance(StatusEffects.INVISIBILITY, invisLevel*player.world.gameRules[invisLength].get(), 0))
+            player.addStatusEffect(StatusEffectInstance(StatusEffects.INVISIBILITY, invisLevel*player.world.gameRules[HaemaGameRules.invisLength].get(), 0))
             ServerPlayNetworking.send(player as ServerPlayerEntity, Identifier("haema:updateinvisticks"), PacketByteBuf(Unpooled.buffer()))
         }
 

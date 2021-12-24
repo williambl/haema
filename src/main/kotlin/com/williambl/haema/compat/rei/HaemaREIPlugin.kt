@@ -1,8 +1,8 @@
 package com.williambl.haema.compat.rei
 
+import com.williambl.haema.Haema
 import com.williambl.haema.api.RitualTableUseEvent
 import com.williambl.haema.craft.BookOfBloodRecipe
-import com.williambl.haema.logger
 import com.williambl.haema.ritual.craft.RitualRecipe
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry
@@ -17,7 +17,7 @@ class HaemaREIPlugin : REIClientPlugin {
     }
 
     override fun registerDisplays(registry: DisplayRegistry) {
-        logger.info("REI detected. Adding the Book of Blood & Ritual recipe displays.")
+        Haema.LOGGER.info("REI detected. Adding the Book of Blood & Ritual recipe displays.")
         registry.registerFiller(BookOfBloodRecipe::class.java, ::BookOfBloodRecipeDisplay)
         registry.registerFiller(RitualRecipe::class.java, ::RitualDisplay)
     }

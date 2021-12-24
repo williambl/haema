@@ -1,12 +1,12 @@
 package com.williambl.haema.compat.rats
 
-import com.williambl.haema.logger
+import com.williambl.haema.Haema
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
 import net.fabricmc.loader.api.FabricLoader
 
 fun init() {
     if (FabricLoader.getInstance().isModLoaded("ratsmischief")) {
-        logger.info("Rat's Mischief is installed, it's VampiRat time!")
+        Haema.LOGGER.info("Rat's Mischief is installed, it's VampiRat time!")
         initRatsMischiefIntegration()
     }
 }

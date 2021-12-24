@@ -1,8 +1,8 @@
 package com.williambl.haema.compat.origins
 
+import com.williambl.haema.Haema
 import com.williambl.haema.Vampirable
 import com.williambl.haema.criteria.VampireConversionCriterion
-import com.williambl.haema.logger
 import com.williambl.haema.util.getSpawn
 import io.github.apace100.apoli.power.ModifyPlayerSpawnPower
 import io.github.apace100.apoli.power.PowerType
@@ -57,7 +57,7 @@ class VampirePower(type: PowerType<*>?, entity: LivingEntity) : ModifyPlayerSpaw
                 serverPlayer.setSpawnPoint(spawn.left.registryKey, spawn.right, 0.0f, true, false)
 
             } else {
-                logger.warn("Could not spawn Vampire entity away from sunlight.")
+                Haema.LOGGER.warn("Could not spawn Vampire entity away from sunlight.")
             }
             if (serverPlayer.server.currentPlayerCount == 1) {
                 serverPlayer.getWorld().timeOfDay = 13000

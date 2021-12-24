@@ -1,6 +1,6 @@
 package com.williambl.haema.util
 
-import com.williambl.haema.logger
+import com.williambl.haema.Haema
 import net.minecraft.entity.Dismounting
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.player.PlayerEntity
@@ -35,10 +35,10 @@ fun getSpawn(player: PlayerEntity): Pair<ServerWorld, BlockPos>? {
         val avgY = candidates.map { it.y }.average()
         candidates = candidates.sortedBy { it.distanceTo(Vec3d.ofCenter(regularSpawn)) }.filter { it.y >= avgY }.toMutableList()
         return if (candidates.isNotEmpty()) {
-            logger.info("Found a vampire-safe spawn, ${candidates.first().distanceTo(Vec3d.ofCenter(regularSpawn))} blocks from regular spawn.")
+            Haema.LOGGER.info("Found a vampire-safe spawn, ${candidates.first().distanceTo(Vec3d.ofCenter(regularSpawn))} blocks from regular spawn.")
             Pair(world, BlockPos(candidates.first()))
         } else {
-            logger.warn("Could not find a vampire-safe spawn in range $range of $regularSpawn.")
+            Haema.LOGGER.warn("Could not find a vampire-safe spawn in range $range of $regularSpawn.")
             null
         }
     }

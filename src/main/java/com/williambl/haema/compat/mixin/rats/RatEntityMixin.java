@@ -5,7 +5,7 @@ import com.williambl.haema.compat.rats.VampiRatAttackGoal;
 import com.williambl.haema.component.VampireComponent;
 import com.williambl.haema.damagesource.SunlightDamageSource;
 import com.williambl.haema.effect.VampiricStrengthEffect;
-import com.williambl.haema.util.HaemaGameRulesKt;
+import com.williambl.haema.util.HaemaGameRules;
 import ladysnake.ratsmischief.common.entity.RatEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -48,7 +48,7 @@ public abstract class RatEntityMixin extends TameableEntity implements Vampirabl
     @Inject(method = "mobTick", at = @At("HEAD"))
     void vampireTick(CallbackInfo ci) {
         if (isVampire()) {
-            if (world.isDay() && !world.isRaining() && world.isSkyVisible(getBlockPos()) && world.getGameRules().getBoolean(HaemaGameRulesKt.getVampiresBurn())) {
+            if (world.isDay() && !world.isRaining() && world.isSkyVisible(getBlockPos()) && world.getGameRules().getBoolean(HaemaGameRules.INSTANCE.getVampiresBurn())) {
                 if (age % 10 == 0) {
                     damage(SunlightDamageSource.Companion.getInstance(), 0.2f);
                     ((ServerWorld) world).spawnParticles(ParticleTypes.FLAME, getX() - 0.5, getY(), getZ() - 0.5, 20, 0.2, 0.2, 0.2, 0.1);

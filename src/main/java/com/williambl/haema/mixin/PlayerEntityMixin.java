@@ -6,7 +6,7 @@ import com.williambl.haema.ability.AbilityModule;
 import com.williambl.haema.api.VampireBurningEvents;
 import com.williambl.haema.damagesource.DamageSourceModule;
 import com.williambl.haema.effect.SunlightSicknessEffect;
-import com.williambl.haema.util.HaemaGameRulesKt;
+import com.williambl.haema.util.HaemaGameRules;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -86,7 +86,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
 
     @Redirect(method = "isInvulnerableTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$Key;)Z", ordinal = 0))
     boolean makeVampiresImmuneToDrowning(GameRules gameRules, GameRules.Key<GameRules.BooleanRule> rule) {
-        return gameRules.getBoolean(rule) && (!isVampire() || gameRules.getBoolean(HaemaGameRulesKt.getVampiresDrown()));
+        return gameRules.getBoolean(rule) && (!isVampire() || gameRules.getBoolean(HaemaGameRules.INSTANCE.getVampiresDrown()));
     }
 
     @Override

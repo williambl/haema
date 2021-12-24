@@ -12,9 +12,7 @@ import com.williambl.haema.component.VampirePlayerComponent
 import com.williambl.haema.craft.BookOfBloodRecipe
 import com.williambl.haema.criteria.VampireHunterTriggerCriterion
 import com.williambl.haema.hunter.VampireHunterSpawner
-import com.williambl.haema.util.registerGameRules
-import com.williambl.haema.util.sunlightDamagesArmour
-import com.williambl.haema.util.vampiresBurn
+import com.williambl.haema.util.HaemaGameRules
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer
 import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy
@@ -50,9 +48,9 @@ import net.minecraft.world.World
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
-val logger: Logger = LogManager.getLogger("Haema")
-
 object Haema: ModInitializer, EntityComponentInitializer {
+    val LOGGER: Logger = LogManager.getLogger("Haema")
+
     override fun onInitialize() {
         UseEntityCallback.EVENT.register(UseEntityCallback { player, world, hand, entity, entityHitResult ->
             if ((player as Vampirable).isVampire && entity is LivingEntity && player.isSneaking && BloodDrinkingEvents.CANCEL.invoker().canDrink(player, world, hand, entity, entityHitResult))
@@ -100,7 +98,7 @@ object Haema: ModInitializer, EntityComponentInitializer {
             if (world.isDay && !world.isRaining && world.isSkyVisible(player.blockPos)) TriState.TRUE else TriState.DEFAULT
         })
         VampireBurningEvents.VETO.register(VampireBurningEvents.Veto { _, world ->
-            if (world.gameRules[vampiresBurn].get()) TriState.DEFAULT else TriState.FALSE
+            if (world.gameRules[HaemaGameRules.vampiresBurn].get()) TriState.DEFAULT else TriState.FALSE
         })
         VampireBurningEvents.VETO.register(VampireBurningEvents.Veto { player, _ ->
             if (player.abilities.creativeMode) TriState.FALSE else TriState.DEFAULT
@@ -112,7 +110,7 @@ object Haema: ModInitializer, EntityComponentInitializer {
             override fun willVampireBurn(player: PlayerEntity, world: World): TriState {
                 return if (player.armorItems.all { vampireProtectiveClothingTag.contains(it.item) }) {
                     player.armorItems.forEachIndexed { i, stack ->
-                        if (world.random.nextFloat() < 0.025 && world.gameRules[sunlightDamagesArmour].get()) {
+                        if (world.random.nextFloat() < 0.025 && world.gameRules[HaemaGameRules.sunlightDamagesArmour].get()) {
                             stack.damage((world.random.nextFloat() * (i + 2)).toInt(), player) {
                                 world.playSoundFromEntity(
                                     null,
@@ -146,7 +144,7 @@ object Haema: ModInitializer, EntityComponentInitializer {
             }
         })
 
-        registerGameRules()
+        HaemaGameRules.registerGameRules()
 
         Registry.register(
             Registry.RECIPE_SERIALIZER,
@@ -242,7 +240,7 @@ object Haema: ModInitializer, EntityComponentInitializer {
             )
         }
 
-        logger.info("Everything registered. It's vampire time!")
+        LOGGER.info("Everything registered. It's vampire time!")
     }
 
     override fun registerEntityComponentFactories(registry: EntityComponentFactoryRegistry) {

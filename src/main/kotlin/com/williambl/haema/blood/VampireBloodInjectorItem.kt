@@ -4,7 +4,7 @@ import com.williambl.haema.Vampirable
 import com.williambl.haema.VampireBloodManager
 import com.williambl.haema.criteria.VampireConversionFailureCriterion
 import com.williambl.haema.damagesource.IncompatibleBloodDamageSource
-import com.williambl.haema.util.playerVampireConversion
+import com.williambl.haema.util.HaemaGameRules
 import net.minecraft.block.DispenserBlock
 import net.minecraft.block.dispenser.FallibleItemDispenserBehavior
 import net.minecraft.client.item.TooltipContext
@@ -59,7 +59,7 @@ class VampireBloodInjectorItem(settings: Settings?) : Item(settings) {
             return true
         }
 
-        if (!user.world.gameRules[playerVampireConversion].get()) {
+        if (!user.world.gameRules[HaemaGameRules.playerVampireConversion].get()) {
             user.sendMessage(TranslatableText("gui.haema.message.conversion_blocked_by_gamerule"), true)
             return false
         }

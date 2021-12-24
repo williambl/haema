@@ -7,7 +7,7 @@ import com.williambl.haema.criteria.VampireHunterTriggerCriterion;
 import com.williambl.haema.damagesource.BloodLossDamageSource;
 import com.williambl.haema.damagesource.DamageSourceModule;
 import com.williambl.haema.hunter.VampireHunterSpawner;
-import com.williambl.haema.util.HaemaGameRulesKt;
+import com.williambl.haema.util.HaemaGameRules;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -75,7 +75,7 @@ public abstract class LivingEntityMixin extends Entity {
         if (source == BloodLossDamageSource.Companion.getInstance() && world instanceof ServerWorld) {
             ((ServerWorld) world).spawnParticles(new DustParticleEffect(DustParticleEffect.RED, 3.0f), getX(), getY()+1, getZ(), 30, 1.0, 1.0, 1.0, 0.1);
 
-            if (random.nextDouble() < world.getGameRules().get(HaemaGameRulesKt.getVampireHunterNoticeChance()).get()) {
+            if (random.nextDouble() < world.getGameRules().get(HaemaGameRules.INSTANCE.getVampireHunterNoticeChance()).get()) {
                 //noinspection ConstantConditions
                 if ((Object) this instanceof ServerPlayerEntity) {
                     VampireHunterTriggerCriterion.INSTANCE.trigger((ServerPlayerEntity) (Object) this);

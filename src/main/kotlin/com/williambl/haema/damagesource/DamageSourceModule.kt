@@ -1,7 +1,7 @@
 package com.williambl.haema.damagesource
 
 import com.williambl.haema.api.DamageSourceEfficacyEvent
-import com.williambl.haema.util.vampiresDrown
+import com.williambl.haema.util.HaemaGameRules
 import net.fabricmc.api.ModInitializer
 import net.minecraft.entity.damage.DamageSource
 import net.minecraft.world.World
@@ -38,7 +38,7 @@ object DamageSourceModule: ModInitializer {
         }
 
         DamageSourceEfficacyEvent.EVENT.register { source, world ->
-            if (source == DamageSource.DROWN && world.gameRules.getBoolean(vampiresDrown)) {
+            if (source == DamageSource.DROWN && world.gameRules.getBoolean(HaemaGameRules.vampiresDrown)) {
                 1.25f
             } else {
                 1f

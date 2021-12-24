@@ -3,7 +3,7 @@ package com.williambl.haema.blood
 import com.williambl.haema.Vampirable
 import com.williambl.haema.VampireBloodManager
 import com.williambl.haema.criteria.StoreBloodCriterion
-import com.williambl.haema.util.playerVampireConversion
+import com.williambl.haema.util.HaemaGameRules
 import net.minecraft.block.DispenserBlock
 import net.minecraft.block.dispenser.FallibleItemDispenserBehavior
 import net.minecraft.client.item.TooltipContext
@@ -37,7 +37,7 @@ class EmptyVampireBloodInjectorItem(settings: Settings?) : Item(settings) {
     fun tryUse(user: PlayerEntity): Boolean {
         if ((user as Vampirable).isVampire && !user.world.isClient) {
             if (user.hasStatusEffect(StatusEffects.WEAKNESS)) {
-                if (!user.world.gameRules[playerVampireConversion].get()) {
+                if (!user.world.gameRules[HaemaGameRules.playerVampireConversion].get()) {
                     user.sendMessage(TranslatableText("gui.haema.message.conversion_blocked_by_gamerule"), true)
                     return false
                 }
