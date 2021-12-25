@@ -1,8 +1,8 @@
 package com.williambl.haema.compat.origins
 
-import com.williambl.haema.VampireBloodManager
 import com.williambl.haema.api.VampireBurningEvents
 import com.williambl.haema.id
+import com.williambl.haema.vampireComponent
 import io.github.apace100.apoli.component.PowerHolderComponent
 import io.github.apace100.apoli.power.PhasingPower
 import io.github.apace100.apoli.power.Power
@@ -31,7 +31,7 @@ fun registerOriginsCompatEvents() {
     VampireBurningEvents.VETO.register(VampireBurningEvents.Veto { player, _ ->
         val phasingPowers = PowerHolderComponent.getPowers(player, PhasingPower::class.java)
         if (phasingPowers.isNotEmpty() && phasingPowers.any { it.isActive }) {
-            (player.hungerManager as VampireBloodManager).removeBlood(0.001)
+            (player.vampireComponent).removeBlood(0.001)
             TriState.FALSE
         } else TriState.DEFAULT
     })

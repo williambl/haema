@@ -4,7 +4,7 @@ import com.williambl.haema.api.BloodChangeEvents.AddBloodEvent
 import com.williambl.haema.api.BloodChangeEvents.RemoveBloodEvent
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory.createArrayBacked
-import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.entity.LivingEntity
 
 object BloodChangeEvents {
     val ON_BLOOD_ADD: Event<AddBloodEvent> = createArrayBacked(AddBloodEvent::class.java) { listeners ->
@@ -24,10 +24,10 @@ object BloodChangeEvents {
     }
 
     fun interface AddBloodEvent {
-        fun onAdd(player: PlayerEntity, amount: Double)
+        fun onAdd(player: LivingEntity, amount: Double)
     }
 
     fun interface RemoveBloodEvent {
-        fun onRemove(player: PlayerEntity, amount: Double)
+        fun onRemove(player: LivingEntity, amount: Double)
     }
 }

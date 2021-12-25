@@ -1,8 +1,10 @@
 package com.williambl.haema.compat.origins
 
 import com.williambl.haema.Haema
-import com.williambl.haema.Vampirable
 import com.williambl.haema.criteria.VampireConversionCriterion
+import com.williambl.haema.isPermanentVampire
+import com.williambl.haema.isVampirable
+import com.williambl.haema.isVampire
 import com.williambl.haema.util.getSpawn
 import io.github.apace100.apoli.power.ModifyPlayerSpawnPower
 import io.github.apace100.apoli.power.PowerType
@@ -20,16 +22,15 @@ import net.minecraft.util.registry.Registry
 
 class VampirePower(type: PowerType<*>?, entity: LivingEntity) : ModifyPlayerSpawnPower(type, entity, null, 1.0f, null, null, null, null) {
     override fun onAdded() {
-        if (entity is Vampirable) {
-            (entity as Vampirable).isVampire = true
-            (entity as Vampirable).isPermanentVampire = true
+        if (entity.isVampirable()) {
+            (entity).isVampire = true
+            (entity).isPermanentVampire = true
         }
     }
 
     override fun onLost() {
-        (entity as Vampirable).isVampire = false
-        (entity as Vampirable).isPermanentVampire = false
-        (entity as Vampirable).removeBloodManager()
+        (entity).isVampire = false
+        (entity).isPermanentVampire = false
     }
 
     override fun getSpawn(isSpawnObstructed: Boolean): Pair<ServerWorld, BlockPos>? {

@@ -1,9 +1,10 @@
 package com.williambl.haema.ritual
 
-import com.williambl.haema.Vampirable
 import com.williambl.haema.ability.AbilityModule
+import com.williambl.haema.getAbilityLevel
 import com.williambl.haema.id
 import com.williambl.haema.ritual.craft.RitualInventory
+import com.williambl.haema.setAbilityLevel
 import io.netty.buffer.Unpooled
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
@@ -40,16 +41,15 @@ class RitualTableScreenHandler(syncId: Int, val inv: RitualInventory, private va
     private val propertyDelegate = object : PropertyDelegate {
         val abilities =
             AbilityModule.ABILITY_REGISTRY.entries.associate { AbilityModule.ABILITY_REGISTRY.getRawId(it.value) to it.value }
-        val player = (inv.player as Vampirable)
 
         override fun size(): Int = abilities.size
 
         override fun get(index: Int): Int {
-            return player.getAbilityLevel(abilities[index] ?: return 0)
+            return inv.player.getAbilityLevel(abilities[index] ?: return 0)
         }
 
         override fun set(index: Int, value: Int) {
-            player.setAbilityLevel(abilities[index] ?: return, value)
+            inv.player.setAbilityLevel(abilities[index] ?: return, value)
         }
     }
 

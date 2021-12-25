@@ -1,12 +1,13 @@
 package com.williambl.haema.ritual
 
-import com.williambl.haema.Vampirable
 import com.williambl.haema.api.RitualTableUseEvent
 import com.williambl.haema.criteria.UseRitualCriterion
+import com.williambl.haema.isVampire
 import com.williambl.haema.ritual.craft.RitualInventory
 import net.minecraft.block.*
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
+import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.fluid.Fluid
 import net.minecraft.fluid.FluidState
@@ -70,7 +71,7 @@ class RitualTable(settings: Settings) : HorizontalFacingBlock(settings) {
     ): VoxelShape = shape
 
     override fun onSteppedOn(world: World, pos: BlockPos, state: BlockState, entity: Entity) {
-        if (world.isClient && entity is Vampirable && entity.isVampire && world.random.nextFloat() < 0.1) {
+        if (world.isClient && entity is LivingEntity && entity.isVampire && world.random.nextFloat() < 0.1) {
             val level = min(checkBaseBlockStates(world, pos), checkTorchBlockStates(world, pos))
 
             if (level >= 0) {

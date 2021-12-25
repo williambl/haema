@@ -55,8 +55,8 @@ object Haema: ModInitializer, EntityComponentInitializer {
 
     override fun onInitialize() {
         UseEntityCallback.EVENT.register(UseEntityCallback { player, world, hand, entity, entityHitResult ->
-            if ((player as Vampirable).isVampire && entity is LivingEntity && player.isSneaking && BloodDrinkingEvents.CANCEL.invoker().canDrink(player, world, hand, entity, entityHitResult))
-                (player.hungerManager as VampireBloodManager).feed(entity, player)
+            if ((player).isVampire && entity is LivingEntity && player.isSneaking && BloodDrinkingEvents.CANCEL.invoker().canDrink(player, world, hand, entity, entityHitResult))
+                (player.vampireComponent).feed(entity)
             else ActionResult.PASS
         })
 
@@ -73,13 +73,13 @@ object Haema: ModInitializer, EntityComponentInitializer {
                 blockHitResult.blockPos.offset(state.get(BedBlock.FACING))
             val entities = world.getOtherEntities(player, Box(pos)) { it is LivingEntity && it.isSleeping }
 
-            if (entities.isNotEmpty() && (player as Vampirable).isVampire && player.isSneaking) {
-                (player.hungerManager as VampireBloodManager).feed(entities[0] as LivingEntity, player)
+            if (entities.isNotEmpty() && (player).isVampire && player.isSneaking) {
+                (player.vampireComponent).feed(entities[0] as LivingEntity)
             } else ActionResult.PASS
         })
 
         EntitySleepEvents.ALLOW_SLEEP_TIME.register(EntitySleepEvents.AllowSleepTime { player, pos, vanillaResult ->
-            if (player is Vampirable) {
+            if (player.isVampirable()) {
                 if (player.isVampire && player.world.isDay) {
                     return@AllowSleepTime ActionResult.SUCCESS
                 }
@@ -160,7 +160,7 @@ object Haema: ModInitializer, EntityComponentInitializer {
                     .then(literal("convert")
                         .requires(Permissions.require("haema.command.convert", 2))
                         .then(argument("targets", EntityArgumentType.players()).executes { context ->
-                            EntityArgumentType.getPlayers(context, "targets").forEach(Vampirable.Companion::convert)
+                            EntityArgumentType.getPlayers(context, "targets").forEach(::convert)
                             return@executes 1
                         })
                     )
@@ -168,9 +168,8 @@ object Haema: ModInitializer, EntityComponentInitializer {
                         .requires(Permissions.require("haema.command.deconvert", 2))
                         .then(argument("targets", EntityArgumentType.players()).executes { context ->
                             EntityArgumentType.getPlayers(context, "targets").forEach {
-                                if (!(it as Vampirable).isPermanentVampire) {
+                                if (!(it).isPermanentVampire) {
                                     it.isVampire = false
-                                    it.removeBloodManager()
                                 }
                             }
                             return@executes 1
@@ -180,8 +179,8 @@ object Haema: ModInitializer, EntityComponentInitializer {
                         .requires(Permissions.require("haema.command.blood", 2))
                         .then(argument("targets", EntityArgumentType.players()).then(argument("amount", DoubleArgumentType.doubleArg(0.0, 20.0)).executes { context ->
                             EntityArgumentType.getPlayers(context, "targets").forEach {
-                                if ((it as Vampirable).isVampire && it.hungerManager is VampireBloodManager) {
-                                    (it.hungerManager as VampireBloodManager).absoluteBloodLevel = DoubleArgumentType.getDouble(context, "amount")
+                                if ((it).isVampire) {
+                                    (it.vampireComponent).absoluteBlood = DoubleArgumentType.getDouble(context, "amount")
                                 }
                             }
                             return@executes 1
@@ -190,7 +189,7 @@ object Haema: ModInitializer, EntityComponentInitializer {
                         .requires(Permissions.require("haema.command.abilities", 2))
                         .then(literal("get").then(argument("targets", EntityArgumentType.players()).executes {  context ->
                             EntityArgumentType.getPlayers(context, "targets").forEach {
-                                if ((it as Vampirable).isVampire) {
+                                if ((it).isVampire) {
                                     context.source.sendFeedback(it.name.copy().append(" has abilities:"), false)
                                     AbilityModule.ABILITY_REGISTRY.entries.forEach { (key, ability) ->
                                         context.source.sendFeedback(TranslatableText("ability.${key.value.namespace}.${key.value.path}").append(": ${it.getAbilityLevel(ability)}"), false)
@@ -202,7 +201,7 @@ object Haema: ModInitializer, EntityComponentInitializer {
                         .then(literal("set").then(argument("targets", EntityArgumentType.players()).then(argument("ability", VampireAbilityArgumentType.ability()).then(
                             argument("level", IntegerArgumentType.integer(0)).executes { context ->
                                 EntityArgumentType.getPlayers(context, "targets").forEach {
-                                    if ((it as Vampirable).isVampire) {
+                                    if ((it).isVampire) {
                                         it.setAbilityLevel(VampireAbilityArgumentType.getAbility(context, "ability"), IntegerArgumentType.getInteger(context, "level"))
                                     }
                                 }
@@ -213,7 +212,7 @@ object Haema: ModInitializer, EntityComponentInitializer {
                         .requires(Permissions.require("haema.command.rituals", 2))
                         .then(literal("get").then(argument("targets", EntityArgumentType.players()).executes { context ->
                             EntityArgumentType.getPlayers(context, "targets").forEach {
-                                if ((it as Vampirable).isVampire) {
+                                if ((it).isVampire) {
                                     context.source.sendFeedback(it.name.copy().append(" has used rituals:"), false)
                                     VampireComponent.entityKey.get(it).ritualsUsed.forEach { ritual ->
                                         context.source.sendFeedback(Text.of(ritual.toString()), false)
@@ -224,7 +223,7 @@ object Haema: ModInitializer, EntityComponentInitializer {
                         }))
                         .then(literal("add").then(argument("targets", EntityArgumentType.players()).then(argument("ritual", IdentifierArgumentType.identifier()).executes { context ->
                             EntityArgumentType.getPlayers(context, "targets").forEach {
-                                if ((it as Vampirable).isVampire) {
+                                if ((it).isVampire) {
                                     it.setHasUsedRitual(IdentifierArgumentType.getIdentifier(context, "ritual"), true)
                                 }
                             }
@@ -232,7 +231,7 @@ object Haema: ModInitializer, EntityComponentInitializer {
                         })))
                         .then(literal("remove").then(argument("targets", EntityArgumentType.players()).then(argument("ritual", IdentifierArgumentType.identifier()).executes { context ->
                             EntityArgumentType.getPlayers(context, "targets").forEach {
-                                if ((it as Vampirable).isVampire) {
+                                if ((it).isVampire) {
                                     it.setHasUsedRitual(IdentifierArgumentType.getIdentifier(context, "ritual"), false)
                                 }
                             }

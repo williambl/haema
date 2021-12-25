@@ -1,11 +1,11 @@
 package com.williambl.haema.mixin;
 
 import com.mojang.authlib.GameProfile;
-import com.williambl.haema.Vampirable;
-import com.williambl.haema.VampireBloodManager;
+import com.williambl.haema.VampirableKt;
 import com.williambl.haema.ability.AbilityModule;
 import com.williambl.haema.client.ClientVampire;
 import com.williambl.haema.client.HaemaClient;
+import com.williambl.haema.component.VampirePlayerComponent;
 import com.williambl.haema.util.RaytraceUtilKt;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -33,14 +33,15 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         super(world, profile);
     }
 
+    //TODO: move all this to a clienttick event if possible??
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;tick()V"))
     void useShaders(CallbackInfo ci) {
-        if (((Vampirable) this).isVampire() && this.hungerManager instanceof VampireBloodManager) {
-            float bloodLevel = ((float) ((VampireBloodManager)this.hungerManager).getBloodLevel()) / 20.0f;
+        if (VampirableKt.isVampire(this)) {
+            float bloodLevel = ((float) VampirableKt.getVampireComponent(this).getBlood()) / 20.0f;
             HaemaClient.INSTANCE.setSaturation(0.8f * bloodLevel);
             HaemaClient.INSTANCE.setBrightnessAdjust(bloodLevel/4f+0.05f);
 
-            HaemaClient.INSTANCE.setRedAmount(Math.max(1.3f, 2.3f - (this.world.getTime() - ((VampireBloodManager) this.hungerManager).getLastFed()) / (float) VampireBloodManager.Companion.getFeedCooldown(world)));
+            HaemaClient.INSTANCE.setRedAmount(Math.max(1.3f, 2.3f - (this.world.getTime() - (VampirableKt.getVampireComponent(this).getLastFed())) / (float) VampirePlayerComponent.Companion.getFeedCooldown(world)));
 
             if (pressedTicks > 0 && !(HaemaClient.INSTANCE.getDASH_KEY().isPressed()) && canDash()) {
                 PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
@@ -77,11 +78,10 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
     @Override
     public boolean canDash() {
-        int abilityLevel = ((Vampirable)this).getAbilityLevel(AbilityModule.INSTANCE.getDASH());
+        int abilityLevel = VampirableKt.getAbilityLevel(this, AbilityModule.INSTANCE.getDASH());
         return world.getTime() > lastDashed+((long) HaemaClient.INSTANCE.getDashCooldownValue() *(1+AbilityModule.INSTANCE.getDASH().getMaxLevel()-abilityLevel))
-                && hungerManager instanceof VampireBloodManager
                 && (
-                        ((VampireBloodManager)hungerManager).getBloodLevel() >= 18
+                        (VampirableKt.getVampireComponent(this)).getBlood() >= 18
                                 || getAbilities().creativeMode
         )
                 && abilityLevel > 0;

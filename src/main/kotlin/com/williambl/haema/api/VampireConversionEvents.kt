@@ -4,7 +4,7 @@ import com.williambl.haema.api.VampireConversionEvents.ConversionEvent
 import com.williambl.haema.api.VampireConversionEvents.DeconversionEvent
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory.createArrayBacked
-import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.entity.LivingEntity
 
 object VampireConversionEvents {
     val CONVERT: Event<ConversionEvent> = createArrayBacked(ConversionEvent::class.java) { listeners -> ConversionEvent { player ->
@@ -20,10 +20,10 @@ object VampireConversionEvents {
     }}
 
     fun interface ConversionEvent {
-        fun onConvert(player: PlayerEntity)
+        fun onConvert(player: LivingEntity)
     }
 
     fun interface DeconversionEvent {
-        fun onDeconvert(player: PlayerEntity)
+        fun onDeconvert(player: LivingEntity)
     }
 }

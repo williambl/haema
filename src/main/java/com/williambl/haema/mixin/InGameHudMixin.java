@@ -1,7 +1,7 @@
 package com.williambl.haema.mixin;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.williambl.haema.Vampirable;
+import com.williambl.haema.VampirableKt;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -46,7 +46,7 @@ public class InGameHudMixin extends DrawableHelper {
     )
     void showVampireBloodIcons(InGameHud inGameHud, MatrixStack matrices, int x, int y, int u, int v, int width, int height) {
         PlayerEntity player = client.player;
-        if (player instanceof Vampirable && ((Vampirable)player).isVampire()) {
+        if (VampirableKt.isVampire(player)) {
             drawTexture(matrices, x, y, 0, 0, width, height, 9, 9);
             RenderSystem.setShaderTexture(0, GUI_ICONS_TEXTURE);
         } else {
@@ -74,7 +74,7 @@ public class InGameHudMixin extends DrawableHelper {
     )
     void switchToEmptyBloodIcon(MatrixStack matrixStack, CallbackInfo ci) {
         PlayerEntity player = client.player;
-        if (player instanceof Vampirable && ((Vampirable)player).isVampire()) {
+        if (VampirableKt.isVampire(player)) {
             RenderSystem.setShaderTexture(0, EMPTY_BLOOD_ICON);
         }
     }
@@ -98,7 +98,7 @@ public class InGameHudMixin extends DrawableHelper {
     )
     void switchToHalfBloodIcon(MatrixStack matrixStack, CallbackInfo ci) {
         PlayerEntity player = client.player;
-        if (player instanceof Vampirable && ((Vampirable)player).isVampire()) {
+        if (VampirableKt.isVampire(player)) {
             RenderSystem.setShaderTexture(0, HALF_BLOOD_ICON);
         }
     }
@@ -123,7 +123,7 @@ public class InGameHudMixin extends DrawableHelper {
     )
     void switchToFullBloodIcon(MatrixStack matrixStack, CallbackInfo ci) {
         PlayerEntity player = client.player;
-        if (player instanceof Vampirable && ((Vampirable)player).isVampire()) {
+        if (VampirableKt.isVampire(player)) {
             RenderSystem.setShaderTexture(0, FULL_BLOOD_ICON);
         }
     }

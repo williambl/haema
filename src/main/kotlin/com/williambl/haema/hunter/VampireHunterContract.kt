@@ -1,7 +1,7 @@
 package com.williambl.haema.hunter
 
 import com.mojang.authlib.GameProfile
-import com.williambl.haema.Vampirable
+import com.williambl.haema.isVampire
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents
@@ -22,7 +22,7 @@ import net.minecraft.world.World
 class VampireHunterContract(settings: Settings): Item(settings) {
     init {
         ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register { world, entity, target ->
-            if (entity is PlayerEntity && target is Vampirable && target.isVampire) {
+            if (entity is PlayerEntity && target.isVampire) {
                 (0 until entity.inventory.size()).asSequence().map { entity.inventory.getStack(it) }
                     .find {
                             it.item == this &&

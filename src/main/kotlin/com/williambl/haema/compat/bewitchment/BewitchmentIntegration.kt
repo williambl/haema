@@ -1,19 +1,23 @@
 package com.williambl.haema.compat.bewitchment
 
-import com.williambl.haema.Vampirable
-import com.williambl.haema.VampireBloodManager
 import com.williambl.haema.api.BloodChangeEvents
 import com.williambl.haema.api.BloodDrinkingEvents
 import com.williambl.haema.api.DamageSourceEfficacyEvent
 import com.williambl.haema.api.client.VampireHudAddTextEvent
+import com.williambl.haema.component.VampireComponent
+import com.williambl.haema.component.VampirePlayerComponent
+import com.williambl.haema.isPermanentVampire
+import com.williambl.haema.isVampire
+import com.williambl.haema.vampireComponent
+import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
 import moriyashiine.bewitchment.api.BewitchmentAPI
 import moriyashiine.bewitchment.api.event.*
 import moriyashiine.bewitchment.client.BewitchmentClient
+import moriyashiine.bewitchment.common.entity.living.VampireEntity
 import moriyashiine.bewitchment.common.registry.BWComponents
 import moriyashiine.bewitchment.common.registry.BWDamageSources
 import moriyashiine.bewitchment.common.registry.BWPledges
 import moriyashiine.bewitchment.common.registry.BWTransformations
-import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import kotlin.math.ceil
@@ -25,9 +29,8 @@ fun registerBewitchmentEventListeners() {
 
     // Sync blood Bewitchment -> Haema
     BloodSetEvents.ON_BLOOD_SET.register(BloodSetEvents.OnSetBlood { entity, amount ->
-        if (entity is Vampirable && entity is PlayerEntity && entity.hungerManager is VampireBloodManager) {
-            @Suppress("DEPRECATION")
-            (entity.hungerManager as VampireBloodManager).absoluteBloodLevel = amount*0.2
+        if (entity.isVampire) {
+            entity.vampireComponent.absoluteBlood = amount*0.2
         }
     })
     // Sync blood changes Haema -> Bewitchment
@@ -54,9 +57,9 @@ fun registerBewitchmentEventListeners() {
     // Get blood from mobs based on Haema's tags
     BloodSuckEvents.BLOOD_AMOUNT.register(BloodSuckEvents.SetBloodAmount { player, target, currentBloodToGive ->
         when {
-            VampireBloodManager.goodBloodTag.contains(target.type) -> 5
-            VampireBloodManager.mediumBloodTag.contains(target.type) -> 2
-            VampireBloodManager.poorBloodTag.contains(target.type) -> 1
+            VampirePlayerComponent.goodBloodTag.contains(target.type) -> 5
+            VampirePlayerComponent.mediumBloodTag.contains(target.type) -> 2
+            VampirePlayerComponent.poorBloodTag.contains(target.type) -> 1
             else -> currentBloodToGive
         }
     })
@@ -73,10 +76,10 @@ fun registerBewitchmentEventListeners() {
     OnTransformationSet.EVENT.register(OnTransformationSet { player, transformation ->
         val transformationComponent = BWComponents.TRANSFORMATION_COMPONENT.get(player)
         if (transformation == BWTransformations.VAMPIRE) {
-            (player as Vampirable).isVampire = true
+            (player).isVampire = true
             player.isPermanentVampire = true
         } else if (transformation != BWTransformations.VAMPIRE && transformationComponent.transformation == BWTransformations.VAMPIRE) {
-            (player as Vampirable).isVampire = false
+            (player).isVampire = false
             player.isPermanentVampire = false
         }
     })
@@ -120,4 +123,8 @@ fun registerBewitchmentClientEventListeners() {
         }
         return@VampireHudAddTextEvent texts
     })
+}
+
+fun registerEntityComponentFactories(registry: EntityComponentFactoryRegistry) {
+    registry.registerFor(VampireEntity::class.java, VampireComponent.entityKey, ::VampirePlayerComponent)
 }

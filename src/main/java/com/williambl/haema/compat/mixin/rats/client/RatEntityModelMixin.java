@@ -1,6 +1,6 @@
 package com.williambl.haema.compat.mixin.rats.client;
 
-import com.williambl.haema.Vampirable;
+import com.williambl.haema.VampirableKt;
 import ladysnake.ratsmischief.client.model.RatEntityModel;
 import ladysnake.ratsmischief.common.entity.RatEntity;
 import net.minecraft.util.Identifier;
@@ -18,7 +18,7 @@ public abstract class RatEntityModelMixin extends GeoModelProvider<RatEntity> {
 
     @Inject(method = "getTextureLocation(Lladysnake/ratsmischief/common/entity/RatEntity;)Lnet/minecraft/util/Identifier;", at=@At("HEAD"), cancellable = true, remap = false)
     void useVampireTexture(RatEntity rat, CallbackInfoReturnable<Identifier> cir) {
-        if (((Vampirable)rat).isVampire()) {
+        if (VampirableKt.isVampire(rat)) {
             cir.setReturnValue(VAMPIRAT_TEXTURE);
         }
     }

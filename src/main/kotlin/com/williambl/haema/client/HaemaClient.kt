@@ -1,15 +1,18 @@
 package com.williambl.haema.client
 
-import com.williambl.haema.Vampirable
-import com.williambl.haema.VampireBloodManager
 import com.williambl.haema.ability.AbilityModule
+import com.williambl.haema.ability.component.InvisibilityAbilityComponent
 import com.williambl.haema.api.client.VampireHudAddTextEvent
 import com.williambl.haema.client.config.HaemaConfig
 import com.williambl.haema.client.gui.RitualTableScreen
 import com.williambl.haema.client.gui.VampireHud
+import com.williambl.haema.component.VampirePlayerComponent
+import com.williambl.haema.getAbilityLevel
 import com.williambl.haema.hunter.VampireHunterModule
 import com.williambl.haema.id
+import com.williambl.haema.isVampire
 import com.williambl.haema.ritual.RitualTableScreenHandler
+import com.williambl.haema.vampireComponent
 import ladysnake.satin.api.event.ShaderEffectRenderCallback
 import ladysnake.satin.api.managed.ManagedShaderEffect
 import ladysnake.satin.api.managed.ShaderEffectManager
@@ -63,26 +66,17 @@ object HaemaClient: ClientModInitializer {
     }
 
     override fun onInitializeClient() {
-        ClientPlayNetworking.registerGlobalReceiver(id("bloodlevelsync")) { client, handler, buf, sender ->
-            if (client.player is Vampirable) {
-                (client.player as Vampirable).checkBloodManager()
-                (client.player?.hungerManager as VampireBloodManager).absoluteBloodLevel = buf.readDouble()
-            }
-        }
         ClientPlayNetworking.registerGlobalReceiver(id("updatedashcooldown")) { client, handler, buf, sender ->
             dashCooldownValue = buf.readInt()
         }
         ClientPlayNetworking.registerGlobalReceiver(id("updateinvislength")) { client, handler, buf, sender ->
             invisLengthValue = buf.readInt()
         }
-        ClientPlayNetworking.registerGlobalReceiver(id("updateinvisticks")) { client, handler, buf, sender ->
-            (client.player!!.hungerManager as VampireBloodManager).invisTicks = client.world!!.time
-        }
 
         HudRenderCallback.EVENT.register(VampireHud::render)
 
         ShaderEffectRenderCallback.EVENT.register(ShaderEffectRenderCallback {
-            if (config.vampireShaderEnabled && (MinecraftClient.getInstance().player as Vampirable).isVampire && (MinecraftClient.getInstance().player as Vampirable).getAbilityLevel(
+            if (config.vampireShaderEnabled && (MinecraftClient.getInstance().player)!!.isVampire == true && (MinecraftClient.getInstance().player)!!.getAbilityLevel(
                     AbilityModule.VISION) > 0) {
                 VAMPIRE_SHADER.render(it)
             }
@@ -100,11 +94,11 @@ object HaemaClient: ClientModInitializer {
         }
 
         VampireHudAddTextEvent.EVENT.register(VampireHudAddTextEvent { player, createText ->
-            val dashLevel = (player as Vampirable).getAbilityLevel(AbilityModule.DASH)
-            if (dashLevel > 0 && (player.hungerManager as VampireBloodManager).getBloodLevel() > 18f) {
+            val dashLevel = (player).getAbilityLevel(AbilityModule.DASH)
+            if (dashLevel > 0 && (player.vampireComponent).blood > 18f) {
                 return@VampireHudAddTextEvent listOf(createText(
                     DASH_KEY.boundKeyLocalizedText.copy(),
-                    (player as Vampirable).isVampire && (player as ClientVampire).canDash(),
+                    (player).isVampire && (player as ClientVampire).canDash(),
                     TranslatableText("gui.haema.hud.vampiredash")
                 ))
             }
@@ -112,12 +106,12 @@ object HaemaClient: ClientModInitializer {
         })
 
         VampireHudAddTextEvent.EVENT.register(VampireHudAddTextEvent { player, createText ->
-            val invisLevel = (player as Vampirable).getAbilityLevel(AbilityModule.INVISIBILITY)
-            if (invisLevel > 0 && (player.hungerManager as VampireBloodManager).getBloodLevel() >= 18f) {
+            val invisLevel = (player).getAbilityLevel(AbilityModule.INVISIBILITY)
+            if (invisLevel > 0 && (player.vampireComponent).blood >= 18f) {
                 return@VampireHudAddTextEvent listOf(
                     createText(
                         MinecraftClient.getInstance().options.keySneak.boundKeyLocalizedText.copy(),
-                        (player as Vampirable).isVampire && player.world.time - (player.hungerManager as VampireBloodManager).invisTicks >= 120 + invisLevel * invisLengthValue,
+                        (player).isVampire && player.world.time - InvisibilityAbilityComponent.entityKey.get(player).invisTicks >= 120 + invisLevel * invisLengthValue,
                         TranslatableText("gui.haema.hud.invisibility")
                     )
                 )
@@ -130,15 +124,15 @@ object HaemaClient: ClientModInitializer {
             val mc = MinecraftClient.getInstance()
             if (mc.crosshairTarget != null && mc.crosshairTarget!!.type == HitResult.Type.ENTITY) {
                 val lookingAt = (mc.crosshairTarget as EntityHitResult).entity.type
-                if (VampireBloodManager.poorBloodTag.contains(lookingAt) || VampireBloodManager.mediumBloodTag.contains(lookingAt) || VampireBloodManager.goodBloodTag.contains(lookingAt)) {
+                if (VampirePlayerComponent.poorBloodTag.contains(lookingAt) || VampirePlayerComponent.mediumBloodTag.contains(lookingAt) || VampirePlayerComponent.goodBloodTag.contains(lookingAt)) {
                     if (player.isSneaking) {
                         texts.add(
                             TranslatableText("gui.haema.hud.bloodquality").append(
                                 when {
-                                    VampireBloodManager.goodBloodTag.contains(lookingAt) -> TranslatableText("gui.haema.hud.bloodquality.good").formatted(
+                                    VampirePlayerComponent.goodBloodTag.contains(lookingAt) -> TranslatableText("gui.haema.hud.bloodquality.good").formatted(
                                         Formatting.GREEN
                                     )
-                                    VampireBloodManager.mediumBloodTag.contains(lookingAt) -> TranslatableText("gui.haema.hud.bloodquality.medium").formatted(
+                                    VampirePlayerComponent.mediumBloodTag.contains(lookingAt) -> TranslatableText("gui.haema.hud.bloodquality.medium").formatted(
                                         Formatting.YELLOW
                                     )
                                     else -> TranslatableText("gui.haema.hud.bloodquality.poor").formatted(Formatting.RED)

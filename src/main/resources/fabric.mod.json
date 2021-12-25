@@ -45,7 +45,9 @@
     ],
     "cardinal-components-entity": [
       {"adapter": "kotlin", "value": "com.williambl.haema.Haema"},
-      {"adapter": "kotlin", "value": "com.williambl.haema.compat.rats.RatsMischiefCompatKt::registerEntityComponentFactories"}
+      {"adapter": "kotlin", "value": "com.williambl.haema.ability.AbilityModule"},
+      {"adapter": "kotlin", "value": "com.williambl.haema.compat.rats.RatsMischiefCompatKt::registerEntityComponentFactories"},
+      {"adapter": "kotlin", "value": "com.williambl.haema.compat.bewitchment.BewitchmentEntrypointKt::entityComponentInit"}
     ],
     "modmenu": [
       {"adapter": "kotlin", "value": "com.williambl.haema.compat.modmenu.HaemaModMenuPlugin"}
@@ -69,7 +71,8 @@
   },
   "custom": {
     "cardinal-components": [
-      "haema:vampire"
+      "haema:vampire",
+      "haema:invisibility"
     ],
     "vanguard": {
       "curse-project-id": "391257"

@@ -1,10 +1,15 @@
 package com.williambl.haema.ability
 
+import com.williambl.haema.ability.component.InvisibilityAbilityComponent
+import com.williambl.haema.ability.component.InvisibilityAbilityEntityComponent
 import com.williambl.haema.criteria.UseDashCriterion
 import com.williambl.haema.id
 import com.williambl.haema.mixin.RegistryAccessor
 import com.williambl.haema.ritual.RitualTableScreenHandler
 import com.williambl.haema.util.raytraceForDash
+import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
+import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer
+import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
@@ -25,7 +30,7 @@ import net.minecraft.util.registry.DefaultedRegistry
 import net.minecraft.util.registry.Registry
 import net.minecraft.util.registry.RegistryKey
 
-object AbilityModule: ModInitializer {
+object AbilityModule: ModInitializer, EntityComponentInitializer {
     val ABILITY_REGISTRY_KEY: RegistryKey<Registry<VampireAbility>> = RegistryAccessor.createRegistryKey("haema:ability")
     val ABILITY_REGISTRY: DefaultedRegistry<VampireAbility> = RegistryAccessor.create(ABILITY_REGISTRY_KEY, "haema:none") { NONE } // TODO: a) does this work b) does NONE need to be registered c) does fabric have an api for this? think so
 
@@ -93,5 +98,9 @@ object AbilityModule: ModInitializer {
                 UseDashCriterion.trigger(player)
             }
         }
+    }
+
+    override fun registerEntityComponentFactories(registry: EntityComponentFactoryRegistry) {
+        registry.registerForPlayers(InvisibilityAbilityComponent.entityKey, { player -> InvisibilityAbilityEntityComponent(player) }, RespawnCopyStrategy.NEVER_COPY)
     }
 }

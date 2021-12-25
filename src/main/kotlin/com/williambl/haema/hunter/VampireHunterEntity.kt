@@ -1,7 +1,7 @@
 package com.williambl.haema.hunter
 
-import com.williambl.haema.Vampirable
 import com.williambl.haema.id
+import com.williambl.haema.isVampire
 import com.williambl.haema.util.contains
 import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags
 import net.minecraft.block.entity.BannerPattern
@@ -74,7 +74,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
         goalSelector.add(10, LookAtEntityGoal(this, MobEntity::class.java, 15.0f))
 
         targetSelector.add(1, RevengeGoal(this, MerchantEntity::class.java).setGroupRevenge())
-        targetSelector.add(2, ActiveTargetGoal(this, LivingEntity::class.java, 10, true, false) { it is Vampirable && it.isVampire })
+        targetSelector.add(2, ActiveTargetGoal(this, LivingEntity::class.java, 10, true, false, LivingEntity::isVampire))
     }
 
     override fun initDataTracker() {
@@ -229,7 +229,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
     }
 
     override fun interactMob(player: PlayerEntity, hand: Hand): ActionResult {
-        if (!world.isClient && hand == Hand.MAIN_HAND && this.isPatrolLeader && !((player as Vampirable).isVampire)) {
+        if (!world.isClient && hand == Hand.MAIN_HAND && this.isPatrolLeader && !((player).isVampire)) {
             val stack = player.mainHandStack
             if (stack.item is VampireHunterContract && stack.isContractFulfilled()) {
                 player.inventory.removeOne(stack)
@@ -260,7 +260,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
 
     private fun createContract(): ItemStack {
         if (random.nextDouble() < 0.3) {
-            val target = world.players.filter { (it as Vampirable).isVampire }.randomOrNull()
+            val target = world.players.filter { (it).isVampire }.randomOrNull()
             if (target != null) {
                 return VampireHunterModule.VAMPIRE_HUNTER_CONTRACT.defaultStack.also { it.setContractTarget(target) }
             }

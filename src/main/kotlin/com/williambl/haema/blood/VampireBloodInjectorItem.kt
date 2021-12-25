@@ -1,10 +1,11 @@
 package com.williambl.haema.blood
 
-import com.williambl.haema.Vampirable
-import com.williambl.haema.VampireBloodManager
+import com.williambl.haema.convert
 import com.williambl.haema.criteria.VampireConversionFailureCriterion
 import com.williambl.haema.damagesource.IncompatibleBloodDamageSource
+import com.williambl.haema.isVampire
 import com.williambl.haema.util.HaemaGameRules
+import com.williambl.haema.vampireComponent
 import net.minecraft.block.DispenserBlock
 import net.minecraft.block.dispenser.FallibleItemDispenserBehavior
 import net.minecraft.client.item.TooltipContext
@@ -42,8 +43,8 @@ class VampireBloodInjectorItem(settings: Settings?) : Item(settings) {
             return false
         }
 
-        if ((user as Vampirable).isVampire) {
-            (user.hungerManager as VampireBloodManager).addBlood(6.0)
+        if ((user).isVampire) {
+            (user.vampireComponent).addBlood(6.0)
             return true
         }
 
@@ -64,7 +65,7 @@ class VampireBloodInjectorItem(settings: Settings?) : Item(settings) {
             return false
         }
 
-        Vampirable.convert(user)
+        convert(user)
         return true
     }
 

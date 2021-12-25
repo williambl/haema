@@ -1,9 +1,9 @@
 package com.williambl.haema.client.gui
 
-import com.williambl.haema.Vampirable
 import com.williambl.haema.api.client.VampireHudAddTextEvent
 import com.williambl.haema.client.HaemaClient
 import com.williambl.haema.client.config.HudPlacement
+import com.williambl.haema.isVampire
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawableHelper
 import net.minecraft.client.util.math.MatrixStack
@@ -22,12 +22,10 @@ object VampireHud : DrawableHelper() {
         val width = mc.window.scaledWidth
         val height = mc.window.scaledHeight
         val textRenderer = mc.textRenderer
-        val player = mc.player
+        val player = mc.player ?: return
 
-        if (!(player as Vampirable).isVampire)
+        if (!(player).isVampire)
             return
-
-        (player as Vampirable).checkBloodManager()
 
         val texts = VampireHudAddTextEvent.EVENT.invoker().addText(player, ::createText)
 

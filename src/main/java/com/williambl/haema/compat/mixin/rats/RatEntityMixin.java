@@ -1,8 +1,7 @@
 package com.williambl.haema.compat.mixin.rats;
 
-import com.williambl.haema.Vampirable;
+import com.williambl.haema.VampirableKt;
 import com.williambl.haema.compat.rats.VampiRatAttackGoal;
-import com.williambl.haema.component.VampireComponent;
 import com.williambl.haema.damagesource.SunlightDamageSource;
 import com.williambl.haema.effect.VampiricStrengthEffect;
 import com.williambl.haema.util.HaemaGameRules;
@@ -14,8 +13,6 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.LiteralText;
-import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -23,11 +20,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+//TODO: improve behaviour, make use of blood
 @Mixin(RatEntity.class)
-public abstract class RatEntityMixin extends TameableEntity implements Vampirable {
-
-    @Shadow
-    public abstract boolean damage(DamageSource source, float amount);
+public abstract class RatEntityMixin extends TameableEntity {
+    @Shadow public abstract boolean damage(DamageSource source, float amount);
 
     protected RatEntityMixin(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
@@ -38,16 +34,16 @@ public abstract class RatEntityMixin extends TameableEntity implements Vampirabl
         goalSelector.add(3, new VampiRatAttackGoal((RatEntity) (Object) this, 1.0, true));
 
         targetSelector.add(8, new ActiveTargetGoal<>(this, LivingEntity.class, 10, true, false, (livingEntity) ->
-                this.isVampire() && !(livingEntity instanceof Vampirable) && !this.hasStatusEffect(VampiricStrengthEffect.Companion.getInstance())
+                VampirableKt.isVampire(this) && !VampirableKt.isVampirable(livingEntity) && !this.hasStatusEffect(VampiricStrengthEffect.Companion.getInstance())
         ));
         targetSelector.add(9, new ActiveTargetGoal<>(this, LivingEntity.class, 10, true, false, (livingEntity) ->
-                this.isVampire() && livingEntity instanceof Vampirable && !((Vampirable) livingEntity).isVampire()
+                VampirableKt.isVampire(this) && VampirableKt.isVampirable(livingEntity) && !VampirableKt.isVampire(livingEntity)
         ));
     }
 
     @Inject(method = "mobTick", at = @At("HEAD"))
     void vampireTick(CallbackInfo ci) {
-        if (isVampire()) {
+        if (VampirableKt.isVampire(this)) {
             if (world.isDay() && !world.isRaining() && world.isSkyVisible(getBlockPos()) && world.getGameRules().getBoolean(HaemaGameRules.INSTANCE.getVampiresBurn())) {
                 if (age % 10 == 0) {
                     damage(SunlightDamageSource.Companion.getInstance(), 0.2f);
@@ -55,24 +51,9 @@ public abstract class RatEntityMixin extends TameableEntity implements Vampirabl
                 }
             }
 
-            if (getTarget() instanceof Vampirable && ((Vampirable) getTarget()).isVampire()) {
+            if (VampirableKt.isVampire(getTarget())) {
                 setTarget(null);
             }
         }
-    }
-
-    @Override
-    public void setVampire(boolean value) {
-        if (!hasCustomName())
-            setCustomName(new LiteralText(random.nextFloat() < 0.02 ? (random.nextBoolean() ? "Count D-Rat-Cula" : "Capri-Sun") : "VampiRat").formatted(Formatting.DARK_RED));
-        VampireComponent.Companion.getEntityKey().get(this).setVampire(value);
-    }
-
-    @Override
-    public void checkBloodManager() {
-    }
-
-    @Override
-    public void removeBloodManager() {
     }
 }

@@ -1,7 +1,6 @@
 package com.williambl.haema.mixin;
 
-import com.williambl.haema.Vampirable;
-import com.williambl.haema.VampireBloodManager;
+import com.williambl.haema.VampirableKt;
 import com.williambl.haema.ability.AbilityModule;
 import com.williambl.haema.api.VampireBurningEvents;
 import com.williambl.haema.damagesource.DamageSourceModule;
@@ -11,7 +10,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.GameRules;
@@ -25,15 +23,11 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin extends LivingEntity implements Vampirable {
-
-    @Shadow protected HungerManager hungerManager;
-
+public abstract class PlayerEntityMixin extends LivingEntity {
     @Shadow public abstract void setAbsorptionAmount(float amount);
 
     @Shadow public abstract float getAbsorptionAmount();
 
-    protected VampireBloodManager bloodManager = null; // to avoid a load of casts
     protected NbtCompound nbt;
 
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
@@ -53,9 +47,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
             setAbsorptionAmount(0.0f);
             setHealth(0.0f);
         }
-        if (isVampire() && !isDead()) {
-            checkBloodManager();
-
+        if (VampirableKt.isVampire(this) && !isDead()) {
             if (!this.world.isClient
                     && VampireBurningEvents.INSTANCE.getTRIGGER().invoker().willVampireBurn((PlayerEntity) (Object) this, world).get()
                     && VampireBurningEvents.INSTANCE.getVETO().invoker().willVampireBurn((PlayerEntity) (Object) this, world).get()
@@ -72,7 +64,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
             index = 2
     )
     float tweakDamageIfVampire(float amount, DamageSource source) {
-        float result = this.isVampire() && DamageSourceModule.INSTANCE.isEffectiveAgainstVampires(source, world) ?
+        float result = VampirableKt.isVampire(this) && DamageSourceModule.INSTANCE.isEffectiveAgainstVampires(source, world) ?
                 amount * 1.25f
                 : amount;
 
@@ -81,42 +73,23 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Vampirab
 
     @Redirect(method = "isInvulnerableTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$Key;)Z", ordinal = 1))
     boolean makeVampiresImmuneToFalling(GameRules gameRules, GameRules.Key<GameRules.BooleanRule> rule) {
-        return gameRules.getBoolean(rule) && !(isVampire() && getAbilityLevel(AbilityModule.INSTANCE.getDASH()) >= 3);
+        return gameRules.getBoolean(rule) && !(VampirableKt.isVampire(this) && VampirableKt.getAbilityLevel(this, AbilityModule.INSTANCE.getDASH()) >= 3);
     }
 
     @Redirect(method = "isInvulnerableTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$Key;)Z", ordinal = 0))
     boolean makeVampiresImmuneToDrowning(GameRules gameRules, GameRules.Key<GameRules.BooleanRule> rule) {
-        return gameRules.getBoolean(rule) && (!isVampire() || gameRules.getBoolean(HaemaGameRules.INSTANCE.getVampiresDrown()));
+        return gameRules.getBoolean(rule) && (!VampirableKt.isVampire(this) || gameRules.getBoolean(HaemaGameRules.INSTANCE.getVampiresDrown()));
     }
 
     @Override
     public boolean isDead() {
-        if (isVampire() && getAbilityLevel(AbilityModule.INSTANCE.getIMMORTALITY()) > 0)
-            return super.isDead() && isKilled();
+        if (VampirableKt.isVampire(this) && VampirableKt.getAbilityLevel(this, AbilityModule.INSTANCE.getIMMORTALITY()) > 0)
+            return super.isDead() && VampirableKt.isKilled(this);
         return super.isDead();
     }
 
     @Override
     public boolean isAlive() {
-        return isVampire() ? !isDead() : super.isAlive();
-    }
-
-    @Override
-    public void checkBloodManager() {
-        if (bloodManager == null) {
-            hungerManager = new VampireBloodManager();
-            bloodManager = (VampireBloodManager) hungerManager;
-            if (nbt != null) {
-                hungerManager.readNbt(nbt);
-                nbt = null;
-            }
-            bloodManager.setOwner((PlayerEntity) (Object) this);
-        }
-    }
-
-    @Override
-    public void removeBloodManager() {
-        hungerManager = new HungerManager();
-        bloodManager = null;
+        return VampirableKt.isVampire(this) ? !isDead() : super.isAlive();
     }
 }

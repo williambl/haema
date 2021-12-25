@@ -1,6 +1,6 @@
 package com.williambl.haema.hunter
 
-import com.williambl.haema.Vampirable
+import com.williambl.haema.isVampire
 import net.minecraft.entity.EntityData
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.SpawnReason
@@ -8,6 +8,7 @@ import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.mob.PatrolEntity
 import net.minecraft.entity.passive.PassiveEntity
 import net.minecraft.nbt.NbtCompound
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.GameRules
@@ -40,7 +41,7 @@ class VampireHunterSpawner: Spawner {
         if (random.nextInt(5) != 0)
             return 0
 
-        val vampires = serverWorld.players.filter { (it as Vampirable).isVampire }
+        val vampires = serverWorld.players.filter(ServerPlayerEntity::isVampire)
 
         val vampireCount = vampires.size
         if (vampireCount < 1)
