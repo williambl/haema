@@ -77,23 +77,25 @@ class VampireHunterSpawner: Spawner {
         var amountToSpawn = 0
         val localDifficulty = ceil(serverWorld.getLocalDifficulty(mutable).localDifficulty.toDouble()).toInt() + 1
 
-        val spawnFunction = if (random.nextDouble() < 0.1) ::spawnOneEntityOnHorse else ::spawnOneEntity
+        val onHorse = random.nextDouble() < 0.1
 
         for (i in 0 until localDifficulty) {
             ++amountToSpawn
             mutable.y = serverWorld.getTopPosition(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, mutable).y
             if (i == 0) {
-                if (!spawnFunction.call(serverWorld, mutable, random, true)) {
+                if (!spawnOneMaybeOnHorse(serverWorld, mutable, random, true, onHorse)) {
                     break
                 }
             } else {
-                spawnFunction.call(serverWorld, mutable, random, false)
+                spawnOneMaybeOnHorse(serverWorld, mutable, random, false, onHorse)
             }
             mutable.x = mutable.x + random.nextInt(5) - random.nextInt(5)
             mutable.z = mutable.z + random.nextInt(5) - random.nextInt(5)
         }
         return amountToSpawn
     }
+
+    private fun spawnOneMaybeOnHorse(world: ServerWorld, blockPos: BlockPos, random: Random, isLeader: Boolean, onHorse: Boolean): Boolean = if (onHorse) spawnOneEntityOnHorse(world, blockPos, random, isLeader) else spawnOneEntity(world, blockPos, random, isLeader)
 
     fun spawnOneEntity(world: ServerWorld, blockPos: BlockPos, random: Random, isLeader: Boolean): Boolean {
         val blockState = world.getBlockState(blockPos)
