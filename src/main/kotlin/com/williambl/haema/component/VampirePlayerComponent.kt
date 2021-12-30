@@ -13,9 +13,12 @@ import com.williambl.haema.getAbilityLevel
 import com.williambl.haema.id
 import com.williambl.haema.isVampire
 import com.williambl.haema.util.HaemaGameRules
+import com.williambl.haema.util.SyncedProperty
 import com.williambl.haema.util.computeValueWithout
+import com.williambl.haema.util.synced
 import dev.onyxstudios.cca.api.v3.component.CopyableComponent
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent
+import dev.onyxstudios.cca.api.v3.component.sync.ComponentPacketWriter
 import net.fabricmc.fabric.api.tag.TagFactory
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.LivingEntity
@@ -24,7 +27,9 @@ import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.nbt.NbtCompound
+import net.minecraft.network.PacketByteBuf
 import net.minecraft.particle.DustParticleEffect
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.sound.SoundEvents
 import net.minecraft.tag.Tag
 import net.minecraft.util.ActionResult
@@ -33,10 +38,11 @@ import net.minecraft.world.GameRules
 import net.minecraft.world.World
 import java.util.*
 import kotlin.math.*
-import kotlin.properties.Delegates
+import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.isAccessible
 
-//TODO: sync packet
 class VampirePlayerComponent(val player: LivingEntity) : VampireComponent, AutoSyncedComponent, CopyableComponent<VampirePlayerComponent> {
     private val syncCallback = { _: KProperty<*>, _: Any?, _: Any? ->
         if (!player.world.isClient) {
@@ -44,25 +50,44 @@ class VampirePlayerComponent(val player: LivingEntity) : VampireComponent, AutoS
         }
     }
 
-    override var isVampire: Boolean by Delegates.observable(false, syncCallback)
-    override var isPermanentVampire: Boolean by Delegates.observable(false, syncCallback)
-    override var isKilled: Boolean by Delegates.observable(false, syncCallback)
+    private val syncOne = { packetWriter: ComponentPacketWriter -> { _: KProperty<*>, _: Any?, _: Any? ->
+        if (!player.world.isClient) {
+            VampireComponent.entityKey.sync(player, packetWriter)
+        }
+    }}
 
-    override var absoluteBlood: Double by Delegates.observable(7.0, syncCallback)
+    override var isVampire: Boolean by synced(false, syncOne, PacketByteBuf::writeBoolean, PacketByteBuf::readBoolean)
+    override var isPermanentVampire: Boolean by synced(false, syncOne, PacketByteBuf::writeBoolean, PacketByteBuf::readBoolean)
+    override var isKilled: Boolean by synced(false, syncOne, PacketByteBuf::writeBoolean, PacketByteBuf::readBoolean)
+
+    override var absoluteBlood: Double by synced(7.0, syncOne, PacketByteBuf::writeDouble, PacketByteBuf::readDouble)
     override val blood: Double
         get() = if (player is PlayerEntity && player.isCreative) 20.0 else 20.0 * (sin((absoluteBlood * PI) / 40.0))
 
-    override var abilities: MutableMap<VampireAbility, Int> = mutableMapOf(
-        AbilityModule.STRENGTH to 1,
-        AbilityModule.DASH to 1,
-        AbilityModule.INVISIBILITY to 0,
-        AbilityModule.IMMORTALITY to 1,
-        AbilityModule.VISION to 1
+    override var lastFed: Long by synced(-24000, syncOne, PacketByteBuf::writeVarLong, PacketByteBuf::readVarLong)
+
+    override var abilities: MutableMap<VampireAbility, Int> by synced(
+        mutableMapOf(
+            AbilityModule.STRENGTH to 1,
+            AbilityModule.DASH to 1,
+            AbilityModule.INVISIBILITY to 0,
+            AbilityModule.IMMORTALITY to 1,
+            AbilityModule.VISION to 1
+        ),
+        syncOne,
+        { buf, map -> buf.writeMap(
+            map.mapKeys { (k, v) -> AbilityModule.ABILITY_REGISTRY.getId(k) },
+            PacketByteBuf::writeIdentifier, PacketByteBuf::writeVarInt
+        ) },
+        { buf -> buf.readMap(PacketByteBuf::readIdentifier, PacketByteBuf::readVarInt).mapKeys { (k, v) -> AbilityModule.ABILITY_REGISTRY.get(k) }.toMutableMap() }
     )
 
-    override var ritualsUsed: MutableSet<Identifier> = mutableSetOf()
-
-    override var lastFed: Long = -24000
+    override var ritualsUsed: MutableSet<Identifier> by synced(
+        mutableSetOf(),
+        syncOne,
+        { buf, set -> buf.writeCollection(set, PacketByteBuf::writeIdentifier)},
+        { buf -> buf.readCollection(::ArrayList, PacketByteBuf::readIdentifier).toMutableSet() }
+    )
 
     override fun writeToNbt(tag: NbtCompound) {
         tag.putBoolean("isVampire", isVampire)
@@ -86,6 +111,38 @@ class VampirePlayerComponent(val player: LivingEntity) : VampireComponent, AutoS
         AbilityModule.ABILITY_REGISTRY.entries.filter { abilitiesTag.contains(it.key.value.toString()) }.forEach { abilities[it.value] = abilitiesTag.getInt(it.key.value.toString()) }
         val ritualsUsedTag = tag.getCompound("ritualsUsed")
         ritualsUsed = List(ritualsUsedTag.getInt("Length")) { idx -> Identifier(ritualsUsedTag.getString(idx.toString())) }.toMutableSet()
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun writeSyncPacket(buf: PacketByteBuf, recipient: ServerPlayerEntity) {
+        val propsAndDels = VampirePlayerComponent::class.memberProperties
+            .map { it.isAccessible = true; it }
+            .map { it to it.getDelegate(this) }
+            .filter { (_, del) -> del is SyncedProperty<*> }
+            .map { (prop, del) -> prop to del as SyncedProperty<*> }
+
+        buf.writeVarInt(propsAndDels.size)
+
+        propsAndDels.forEach { (prop, del) ->
+            (del as SyncedProperty<Any?>).writeToBytes(prop, prop.get(this), buf)
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun applySyncPacket(buf: PacketByteBuf) {
+        val count = buf.readVarInt()
+        for (i in 0 until count) {
+            val name = buf.readString()
+            val prop: KMutableProperty1<VampirePlayerComponent, *>? = this::class.memberProperties
+                .filterIsInstance(KMutableProperty1::class.java)
+                .find { prop -> prop.name == name } as KMutableProperty1<VampirePlayerComponent, *>?
+
+            prop?.isAccessible = true
+            val delegate = prop?.getDelegate(this)
+            if (delegate is SyncedProperty<*>) {
+                delegate.setFromBytes(prop, this, buf)
+            }
+        }
     }
 
     override fun copyFrom(other: VampirePlayerComponent) {
@@ -144,8 +201,7 @@ class VampirePlayerComponent(val player: LivingEntity) : VampireComponent, AutoS
         //Healing at the bottom, so that the health boosts aren't wiped
         if (blood >= 8 || (blood > 0 && player.health <= 0 && player.isAlive)) {
             if (player.world.gameRules.get(GameRules.NATURAL_REGENERATION).get() && player.health > 0 && player.health < player.maxHealth) {
-                val defaultMaxHealth = player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.computeValueWithout(
-                    UUID.fromString("858a6a28-5092-49ea-a94e-eb74db018a92")) ?: 20.0
+                val defaultMaxHealth = player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.computeValueWithout(VAMPIRE_HEALTH_BOOST_UUID) ?: 20.0
                 if (player.health >= defaultMaxHealth) {
                     if (player.age % 20 == 0 && (player.health - defaultMaxHealth) < when {
                             blood >= 19 -> 20
