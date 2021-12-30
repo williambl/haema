@@ -1,6 +1,6 @@
 package com.williambl.haema.compat.rats
 
-import com.williambl.haema.component.VampirePlayerComponent
+import com.williambl.haema.component.EntityVampireComponent
 import com.williambl.haema.convert
 import com.williambl.haema.damagesource.BloodLossDamageSource
 import com.williambl.haema.effect.VampiricStrengthEffect
@@ -22,7 +22,7 @@ class VampiRatAttackGoal(private val actor: RatEntity, speed: Double, pauseWhenM
     private fun hasValidTarget(): Boolean = actor.target != null && actor.target!!.isAlive && (!actor.target!!.isVampire || ((!actor.target!!.isVampirable() && actor.target!!.isBloodSource()) && !actor.hasStatusEffect(VampiricStrengthEffect.instance)))
 
     private fun LivingEntity.isBloodSource(): Boolean {
-        return this.type.run { isIn(VampirePlayerComponent.goodBloodTag) || isIn(VampirePlayerComponent.mediumBloodTag) || isIn(VampirePlayerComponent.poorBloodTag) }
+        return this.type.run { isIn(EntityVampireComponent.goodBloodTag) || isIn(EntityVampireComponent.mediumBloodTag) || isIn(EntityVampireComponent.poorBloodTag) }
     }
 
     override fun tick() {

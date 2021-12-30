@@ -8,7 +8,7 @@ import com.williambl.haema.api.BloodDrinkingEvents
 import com.williambl.haema.api.VampireBurningEvents
 import com.williambl.haema.api.WorldSleepEvents
 import com.williambl.haema.component.VampireComponent
-import com.williambl.haema.component.VampirePlayerComponent
+import com.williambl.haema.component.EntityVampireComponent
 import com.williambl.haema.craft.BookOfBloodRecipe
 import com.williambl.haema.criteria.VampireHunterTriggerCriterion
 import com.williambl.haema.hunter.VampireHunterSpawner
@@ -245,6 +245,6 @@ object Haema: ModInitializer, EntityComponentInitializer {
     }
 
     override fun registerEntityComponentFactories(registry: EntityComponentFactoryRegistry) {
-        registry.registerForPlayers(VampireComponent.entityKey, { player ->  VampirePlayerComponent(player) }, RespawnCopyStrategy.ALWAYS_COPY)
+        registry.registerForPlayers(VampireComponent.entityKey, { player ->  EntityVampireComponent(player) }, RespawnCopyStrategy.ALWAYS_COPY)
     }
 }

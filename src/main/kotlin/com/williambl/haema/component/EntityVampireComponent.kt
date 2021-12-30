@@ -43,16 +43,16 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 
-class VampirePlayerComponent(val player: LivingEntity) : VampireComponent, AutoSyncedComponent, CopyableComponent<VampirePlayerComponent> {
+class EntityVampireComponent(val entity: LivingEntity) : VampireComponent, AutoSyncedComponent, CopyableComponent<EntityVampireComponent> {
     private val syncCallback = { _: KProperty<*>, _: Any?, _: Any? ->
-        if (!player.world.isClient) {
-            VampireComponent.entityKey.sync(player)
+        if (!entity.world.isClient) {
+            VampireComponent.entityKey.sync(entity)
         }
     }
 
     private val syncOne = { packetWriter: ComponentPacketWriter -> { _: KProperty<*>, _: Any?, _: Any? ->
-        if (!player.world.isClient) {
-            VampireComponent.entityKey.sync(player, packetWriter)
+        if (!entity.world.isClient) {
+            VampireComponent.entityKey.sync(entity, packetWriter)
         }
     }}
 
@@ -62,7 +62,7 @@ class VampirePlayerComponent(val player: LivingEntity) : VampireComponent, AutoS
 
     override var absoluteBlood: Double by synced(7.0, syncOne, PacketByteBuf::writeDouble, PacketByteBuf::readDouble)
     override val blood: Double
-        get() = if (player is PlayerEntity && player.isCreative) 20.0 else 20.0 * (sin((absoluteBlood * PI) / 40.0))
+        get() = if (entity is PlayerEntity && entity.isCreative) 20.0 else 20.0 * (sin((absoluteBlood * PI) / 40.0))
 
     override var lastFed: Long by synced(-24000, syncOne, PacketByteBuf::writeVarLong, PacketByteBuf::readVarLong)
 
@@ -76,10 +76,10 @@ class VampirePlayerComponent(val player: LivingEntity) : VampireComponent, AutoS
         ),
         syncOne,
         { buf, map -> buf.writeMap(
-            map.mapKeys { (k, v) -> AbilityModule.ABILITY_REGISTRY.getId(k) },
+            map.mapKeys { (k, _) -> AbilityModule.ABILITY_REGISTRY.getId(k) },
             PacketByteBuf::writeIdentifier, PacketByteBuf::writeVarInt
         ) },
-        { buf -> buf.readMap(PacketByteBuf::readIdentifier, PacketByteBuf::readVarInt).mapKeys { (k, v) -> AbilityModule.ABILITY_REGISTRY.get(k) }.toMutableMap() }
+        { buf -> buf.readMap(PacketByteBuf::readIdentifier, PacketByteBuf::readVarInt).mapKeys { (k, _) -> AbilityModule.ABILITY_REGISTRY.get(k) }.toMutableMap() }
     )
 
     override var ritualsUsed: MutableSet<Identifier> by synced(
@@ -115,7 +115,7 @@ class VampirePlayerComponent(val player: LivingEntity) : VampireComponent, AutoS
 
     @Suppress("UNCHECKED_CAST")
     override fun writeSyncPacket(buf: PacketByteBuf, recipient: ServerPlayerEntity) {
-        val propsAndDels = VampirePlayerComponent::class.memberProperties
+        val propsAndDels = EntityVampireComponent::class.memberProperties
             .map { it.isAccessible = true; it }
             .map { it to it.getDelegate(this) }
             .filter { (_, del) -> del is SyncedProperty<*> }
@@ -133,9 +133,9 @@ class VampirePlayerComponent(val player: LivingEntity) : VampireComponent, AutoS
         val count = buf.readVarInt()
         for (i in 0 until count) {
             val name = buf.readString()
-            val prop: KMutableProperty1<VampirePlayerComponent, *>? = this::class.memberProperties
+            val prop: KMutableProperty1<EntityVampireComponent, *>? = this::class.memberProperties
                 .filterIsInstance(KMutableProperty1::class.java)
-                .find { prop -> prop.name == name } as KMutableProperty1<VampirePlayerComponent, *>?
+                .find { prop -> prop.name == name } as KMutableProperty1<EntityVampireComponent, *>?
 
             prop?.isAccessible = true
             val delegate = prop?.getDelegate(this)
@@ -145,7 +145,7 @@ class VampirePlayerComponent(val player: LivingEntity) : VampireComponent, AutoS
         }
     }
 
-    override fun copyFrom(other: VampirePlayerComponent) {
+    override fun copyFrom(other: EntityVampireComponent) {
         isVampire = other.isVampire
         isPermanentVampire = other.isPermanentVampire
         abilities = other.abilities
@@ -154,23 +154,23 @@ class VampirePlayerComponent(val player: LivingEntity) : VampireComponent, AutoS
 
     //TODO: move health boost stuff to another component
     override fun serverTick() {
-        player.isSilent = (blood >= 10 && player.isSprinting) || blood >= 12
+        entity.isSilent = (blood >= 10 && entity.isSprinting) || blood >= 12
 
-        if (blood > 3 && player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.hasModifier(
+        if (blood > 3 && entity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.hasModifier(
                 VAMPIRE_HEALTH_BOOST
             ) == false) {
-            player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)!!.addPersistentModifier(VAMPIRE_HEALTH_BOOST)
+            entity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)!!.addPersistentModifier(VAMPIRE_HEALTH_BOOST)
         }
 
         if (blood <= 3) {
-            player.addStatusEffect(StatusEffectInstance(VampiricWeaknessEffect.instance, 5, 3 - blood.roundToInt(), false, false, true))
-            if (player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.hasModifier(VAMPIRE_HEALTH_BOOST) == true) {
-                player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)!!.removeModifier(VAMPIRE_HEALTH_BOOST)
+            entity.addStatusEffect(StatusEffectInstance(VampiricWeaknessEffect.instance, 5, 3 - blood.roundToInt(), false, false, true))
+            if (entity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.hasModifier(VAMPIRE_HEALTH_BOOST) == true) {
+                entity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)!!.removeModifier(VAMPIRE_HEALTH_BOOST)
             }
         }
 
-        val reachAttr = player.getAttributeInstance(ReachEntityAttributes.REACH)
-        val attackRangeAttr = player.getAttributeInstance(ReachEntityAttributes.ATTACK_RANGE)
+        val reachAttr = entity.getAttributeInstance(ReachEntityAttributes.REACH)
+        val attackRangeAttr = entity.getAttributeInstance(ReachEntityAttributes.ATTACK_RANGE)
 
         if (blood >= 6 && (reachAttr?.hasModifier(VAMPIRE_REACH) == false || attackRangeAttr?.hasModifier(
                 VAMPIRE_ATTACK_RANGE
@@ -186,53 +186,53 @@ class VampirePlayerComponent(val player: LivingEntity) : VampireComponent, AutoS
         }
 
 
-        if (blood >= 10 && player.getAbilityLevel(AbilityModule.STRENGTH) > 0) {
-            player.addStatusEffect(
+        if (blood >= 10 && entity.getAbilityLevel(AbilityModule.STRENGTH) > 0) {
+            entity.addStatusEffect(
                 StatusEffectInstance(
                     VampiricStrengthEffect.instance, 40, when {
                         blood >= 19 -> 2
                         blood >= 14 -> 1
                         else -> 0
-                    }.coerceAtMost((player).getAbilityLevel(AbilityModule.STRENGTH)-1), false, false, true)
+                    }.coerceAtMost((entity).getAbilityLevel(AbilityModule.STRENGTH)-1), false, false, true)
             )
         }
 
 
         //Healing at the bottom, so that the health boosts aren't wiped
-        if (blood >= 8 || (blood > 0 && player.health <= 0 && player.isAlive)) {
-            if (player.world.gameRules.get(GameRules.NATURAL_REGENERATION).get() && player.health > 0 && player.health < player.maxHealth) {
-                val defaultMaxHealth = player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.computeValueWithout(VAMPIRE_HEALTH_BOOST_UUID) ?: 20.0
-                if (player.health >= defaultMaxHealth) {
-                    if (player.age % 20 == 0 && (player.health - defaultMaxHealth) < when {
+        if (blood >= 8 || (blood > 0 && entity.health <= 0 && entity.isAlive)) {
+            if (entity.world.gameRules.get(GameRules.NATURAL_REGENERATION).get() && entity.health > 0 && entity.health < entity.maxHealth) {
+                val defaultMaxHealth = entity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.computeValueWithout(VAMPIRE_HEALTH_BOOST_UUID) ?: 20.0
+                if (entity.health >= defaultMaxHealth) {
+                    if (entity.age % 20 == 0 && (entity.health - defaultMaxHealth) < when {
                             blood >= 19 -> 20
                             blood >= 14 -> 10
                             blood >= 10 -> 6
                             else -> 0
                         }) {
-                        heal(player)
+                        heal(entity)
                     }
-                } else if (!player.hasStatusEffect(SunlightSicknessEffect.instance)) {
-                    heal(player)
+                } else if (!entity.hasStatusEffect(SunlightSicknessEffect.instance)) {
+                    heal(entity)
                 }
-            } else if (player.health <= 0) {
-                player.health = 1f
+            } else if (entity.health <= 0) {
+                entity.health = 1f
                 removeBlood(1.0)
             }
         }
     }
 
     override fun removeBlood(blood: Double) {
-        player.let { BloodChangeEvents.ON_BLOOD_REMOVE.invoker().onRemove(it, blood) }
+        entity.let { BloodChangeEvents.ON_BLOOD_REMOVE.invoker().onRemove(it, blood) }
         absoluteBlood = max(absoluteBlood - blood, 0.0)
     }
 
     override fun addBlood(blood: Double) {
-        player.let { BloodChangeEvents.ON_BLOOD_ADD.invoker().onAdd(it, blood) }
+        entity.let { BloodChangeEvents.ON_BLOOD_ADD.invoker().onAdd(it, blood) }
         absoluteBlood = min(absoluteBlood + blood, 20.0)
     }
 
     override fun feed(entity: LivingEntity): ActionResult {
-        if (blood > 8.5 && lastFed >= player.world.time - getFeedCooldown(player.world))
+        if (blood > 8.5 && lastFed >= this.entity.world.time - getFeedCooldown(this.entity.world))
             return if (entity.isSleeping) ActionResult.FAIL else ActionResult.PASS //Prevents accidentally waking up villagers
 
         if (goodBloodTag.contains(entity.type)) {
@@ -252,19 +252,19 @@ class VampirePlayerComponent(val player: LivingEntity) : VampireComponent, AutoS
 
     private fun feed(amount: Double, entity: LivingEntity) {
         addBlood(amount)
-        lastFed = player.world.time
+        lastFed = this.entity.world.time
         if (entity is PlayerEntity && entity.isVampire) {
             removeBlood(amount)
         } else {
             entity.damage(BloodLossDamageSource.instance, 1f)
         }
-        player.playSound(SoundEvents.ENTITY_GENERIC_DRINK, 1f, 1f)
-        val towards = player.pos.subtract(entity.pos).normalize().multiply(0.1)
+        this.entity.playSound(SoundEvents.ENTITY_GENERIC_DRINK, 1f, 1f)
+        val towards = this.entity.pos.subtract(entity.pos).normalize().multiply(0.1)
         for (i in 0..20) {
             val vel = towards.multiply(i.toDouble())
-            player.world.addParticle(DustParticleEffect.DEFAULT, entity.x+player.random.nextDouble()-0.5, entity.y+player.random.nextDouble(), entity.z+player.random.nextDouble()-0.5, vel.x, vel.y, vel.z)
+            this.entity.world.addParticle(DustParticleEffect.DEFAULT, entity.x+ this.entity.random.nextDouble()-0.5, entity.y+ this.entity.random.nextDouble(), entity.z+ this.entity.random.nextDouble()-0.5, vel.x, vel.y, vel.z)
         }
-        BloodDrinkingEvents.ON_BLOOD_DRINK.invoker().onDrink(player, entity, player.world)
+        BloodDrinkingEvents.ON_BLOOD_DRINK.invoker().onDrink(this.entity, entity, this.entity.world)
     }
 
     private fun heal(player: LivingEntity) {

@@ -5,7 +5,7 @@ import com.williambl.haema.VampirableKt;
 import com.williambl.haema.ability.AbilityModule;
 import com.williambl.haema.client.ClientVampire;
 import com.williambl.haema.client.HaemaClient;
-import com.williambl.haema.component.VampirePlayerComponent;
+import com.williambl.haema.component.EntityVampireComponent;
 import com.williambl.haema.util.RaytraceUtilKt;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -41,7 +41,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             HaemaClient.INSTANCE.setSaturation(0.8f * bloodLevel);
             HaemaClient.INSTANCE.setBrightnessAdjust(bloodLevel/4f+0.05f);
 
-            HaemaClient.INSTANCE.setRedAmount(Math.max(1.3f, 2.3f - (this.world.getTime() - (VampirableKt.getVampireComponent(this).getLastFed())) / (float) VampirePlayerComponent.Companion.getFeedCooldown(world)));
+            HaemaClient.INSTANCE.setRedAmount(Math.max(1.3f, 2.3f - (this.world.getTime() - (VampirableKt.getVampireComponent(this).getLastFed())) / (float) EntityVampireComponent.Companion.getFeedCooldown(world)));
 
             if (pressedTicks > 0 && !(HaemaClient.INSTANCE.getDASH_KEY().isPressed()) && canDash()) {
                 PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());

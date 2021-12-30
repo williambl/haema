@@ -5,7 +5,7 @@ import com.williambl.haema.api.BloodDrinkingEvents
 import com.williambl.haema.api.DamageSourceEfficacyEvent
 import com.williambl.haema.api.client.VampireHudAddTextEvent
 import com.williambl.haema.component.VampireComponent
-import com.williambl.haema.component.VampirePlayerComponent
+import com.williambl.haema.component.EntityVampireComponent
 import com.williambl.haema.isPermanentVampire
 import com.williambl.haema.isVampire
 import com.williambl.haema.vampireComponent
@@ -57,9 +57,9 @@ fun registerBewitchmentEventListeners() {
     // Get blood from mobs based on Haema's tags
     BloodSuckEvents.BLOOD_AMOUNT.register(BloodSuckEvents.SetBloodAmount { player, target, currentBloodToGive ->
         when {
-            VampirePlayerComponent.goodBloodTag.contains(target.type) -> 5
-            VampirePlayerComponent.mediumBloodTag.contains(target.type) -> 2
-            VampirePlayerComponent.poorBloodTag.contains(target.type) -> 1
+            EntityVampireComponent.goodBloodTag.contains(target.type) -> 5
+            EntityVampireComponent.mediumBloodTag.contains(target.type) -> 2
+            EntityVampireComponent.poorBloodTag.contains(target.type) -> 1
             else -> currentBloodToGive
         }
     })
@@ -126,5 +126,5 @@ fun registerBewitchmentClientEventListeners() {
 }
 
 fun registerEntityComponentFactories(registry: EntityComponentFactoryRegistry) {
-    registry.registerFor(VampireEntity::class.java, VampireComponent.entityKey, ::VampirePlayerComponent)
+    registry.registerFor(VampireEntity::class.java, VampireComponent.entityKey, ::EntityVampireComponent)
 }

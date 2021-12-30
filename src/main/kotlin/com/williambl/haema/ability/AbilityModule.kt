@@ -1,7 +1,7 @@
 package com.williambl.haema.ability
 
 import com.williambl.haema.ability.component.InvisibilityAbilityComponent
-import com.williambl.haema.ability.component.InvisibilityAbilityEntityComponent
+import com.williambl.haema.ability.component.EntityInvisibilityAbilityComponent
 import com.williambl.haema.criteria.UseDashCriterion
 import com.williambl.haema.id
 import com.williambl.haema.mixin.RegistryAccessor
@@ -101,6 +101,6 @@ object AbilityModule: ModInitializer, EntityComponentInitializer {
     }
 
     override fun registerEntityComponentFactories(registry: EntityComponentFactoryRegistry) {
-        registry.registerForPlayers(InvisibilityAbilityComponent.entityKey, { player -> InvisibilityAbilityEntityComponent(player) }, RespawnCopyStrategy.NEVER_COPY)
+        registry.registerForPlayers(InvisibilityAbilityComponent.entityKey, { player -> EntityInvisibilityAbilityComponent(player) }, RespawnCopyStrategy.NEVER_COPY)
     }
 }

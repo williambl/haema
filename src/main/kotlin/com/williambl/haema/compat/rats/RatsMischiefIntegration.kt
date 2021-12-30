@@ -3,7 +3,7 @@ package com.williambl.haema.compat.rats
 import com.williambl.haema.api.BloodDrinkingEvents
 import com.williambl.haema.api.VampireConversionEvents
 import com.williambl.haema.component.VampireComponent
-import com.williambl.haema.component.VampirePlayerComponent
+import com.williambl.haema.component.EntityVampireComponent
 import com.williambl.haema.isVampire
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
 import ladysnake.ratsmischief.common.entity.RatEntity
@@ -32,5 +32,5 @@ fun initRatsMischiefIntegration() {
 }
 
 fun registerRatVampireComponent(registry: EntityComponentFactoryRegistry) {
-    registry.registerFor(RatEntity::class.java, VampireComponent.entityKey) { entity -> VampirePlayerComponent(entity) }
+    registry.registerFor(RatEntity::class.java, VampireComponent.entityKey) { entity -> EntityVampireComponent(entity) }
 }

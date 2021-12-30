@@ -15,23 +15,23 @@ import net.minecraft.server.network.ServerPlayerEntity
 import kotlin.properties.Delegates
 import kotlin.reflect.KProperty
 
-class InvisibilityAbilityEntityComponent(val player: LivingEntity): InvisibilityAbilityComponent, AutoSyncedComponent {
+class EntityInvisibilityAbilityComponent(val entity: LivingEntity): InvisibilityAbilityComponent, AutoSyncedComponent {
     private val syncCallback = { _: KProperty<*>, _: Any?, _: Any? ->
-        if (!player.world.isClient) {
-            InvisibilityAbilityComponent.entityKey.sync(player)
+        if (!entity.world.isClient) {
+            InvisibilityAbilityComponent.entityKey.sync(entity)
         }
     }
 
     override var invisTicks: Long by Delegates.observable(0, syncCallback)
 
     override fun serverTick() {
-        val invisLevel = (player).getAbilityLevel(AbilityModule.INVISIBILITY)
-        if (player.vampireComponent.blood >= 16 && invisLevel > 0 && player.isSneaking && player.world.time-invisTicks >= 120 + invisLevel*60) {
-            if (player is ServerPlayerEntity) {
-                UseInvisibilityCriterion.trigger(player)
+        val invisLevel = (entity).getAbilityLevel(AbilityModule.INVISIBILITY)
+        if (entity.vampireComponent.blood >= 16 && invisLevel > 0 && entity.isSneaking && entity.world.time-invisTicks >= 120 + invisLevel*60) {
+            if (entity is ServerPlayerEntity) {
+                UseInvisibilityCriterion.trigger(entity)
             }
-            invisTicks = player.world.time
-            player.addStatusEffect(StatusEffectInstance(StatusEffects.INVISIBILITY, invisLevel*player.world.gameRules[HaemaGameRules.invisLength].get(), 0))
+            invisTicks = entity.world.time
+            entity.addStatusEffect(StatusEffectInstance(StatusEffects.INVISIBILITY, invisLevel*entity.world.gameRules[HaemaGameRules.invisLength].get(), 0))
         }
     }
 
