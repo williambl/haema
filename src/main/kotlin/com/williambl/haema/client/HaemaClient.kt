@@ -1,12 +1,12 @@
 package com.williambl.haema.client
 
 import com.williambl.haema.ability.AbilityModule
-import com.williambl.haema.ability.component.InvisibilityAbilityComponent
+import com.williambl.haema.ability.component.invisibility.InvisibilityAbilityComponent
 import com.williambl.haema.api.client.VampireHudAddTextEvent
 import com.williambl.haema.client.config.HaemaConfig
 import com.williambl.haema.client.gui.RitualTableScreen
 import com.williambl.haema.client.gui.VampireHud
-import com.williambl.haema.component.VampirePlayerComponent
+import com.williambl.haema.component.EntityVampireComponent
 import com.williambl.haema.getAbilityLevel
 import com.williambl.haema.hunter.VampireHunterModule
 import com.williambl.haema.id
@@ -124,15 +124,15 @@ object HaemaClient: ClientModInitializer {
             val mc = MinecraftClient.getInstance()
             if (mc.crosshairTarget != null && mc.crosshairTarget!!.type == HitResult.Type.ENTITY) {
                 val lookingAt = (mc.crosshairTarget as EntityHitResult).entity.type
-                if (VampirePlayerComponent.poorBloodTag.contains(lookingAt) || VampirePlayerComponent.mediumBloodTag.contains(lookingAt) || VampirePlayerComponent.goodBloodTag.contains(lookingAt)) {
+                if (EntityVampireComponent.poorBloodTag.contains(lookingAt) || EntityVampireComponent.mediumBloodTag.contains(lookingAt) || EntityVampireComponent.goodBloodTag.contains(lookingAt)) {
                     if (player.isSneaking) {
                         texts.add(
                             TranslatableText("gui.haema.hud.bloodquality").append(
                                 when {
-                                    VampirePlayerComponent.goodBloodTag.contains(lookingAt) -> TranslatableText("gui.haema.hud.bloodquality.good").formatted(
+                                    EntityVampireComponent.goodBloodTag.contains(lookingAt) -> TranslatableText("gui.haema.hud.bloodquality.good").formatted(
                                         Formatting.GREEN
                                     )
-                                    VampirePlayerComponent.mediumBloodTag.contains(lookingAt) -> TranslatableText("gui.haema.hud.bloodquality.medium").formatted(
+                                    EntityVampireComponent.mediumBloodTag.contains(lookingAt) -> TranslatableText("gui.haema.hud.bloodquality.medium").formatted(
                                         Formatting.YELLOW
                                     )
                                     else -> TranslatableText("gui.haema.hud.bloodquality.poor").formatted(Formatting.RED)

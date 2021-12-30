@@ -72,7 +72,8 @@
   "custom": {
     "cardinal-components": [
       "haema:vampire",
-      "haema:invisibility"
+      "haema:invisibility",
+      "haema:strength"
     ],
     "vanguard": {
       "curse-project-id": "391257"

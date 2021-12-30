@@ -1,4 +1,4 @@
-package com.williambl.haema.ability.component
+package com.williambl.haema.ability.component.invisibility
 
 import com.williambl.haema.ability.AbilityModule
 import com.williambl.haema.criteria.UseInvisibilityCriterion

@@ -152,7 +152,6 @@ class EntityVampireComponent(val entity: LivingEntity) : VampireComponent, AutoS
         ritualsUsed = other.ritualsUsed
     }
 
-    //TODO: move health boost stuff to another component
     override fun serverTick() {
         entity.isSilent = (blood >= 10 && entity.isSprinting) || blood >= 12
 
@@ -184,19 +183,6 @@ class EntityVampireComponent(val entity: LivingEntity) : VampireComponent, AutoS
             reachAttr?.removeModifier(VAMPIRE_REACH)
             attackRangeAttr?.removeModifier(VAMPIRE_ATTACK_RANGE)
         }
-
-
-        if (blood >= 10 && entity.getAbilityLevel(AbilityModule.STRENGTH) > 0) {
-            entity.addStatusEffect(
-                StatusEffectInstance(
-                    VampiricStrengthEffect.instance, 40, when {
-                        blood >= 19 -> 2
-                        blood >= 14 -> 1
-                        else -> 0
-                    }.coerceAtMost((entity).getAbilityLevel(AbilityModule.STRENGTH)-1), false, false, true)
-            )
-        }
-
 
         //Healing at the bottom, so that the health boosts aren't wiped
         if (blood >= 8 || (blood > 0 && entity.health <= 0 && entity.isAlive)) {

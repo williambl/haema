@@ -1,4 +1,4 @@
-package com.williambl.haema.ability.component
+package com.williambl.haema.ability.component.invisibility
 
 import com.williambl.haema.id
 import dev.onyxstudios.cca.api.v3.component.ComponentKey
