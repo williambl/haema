@@ -200,7 +200,7 @@ dependencies {
     ///
 
     // REI
-    modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+    modImplementation "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 
     // Origins
     modImplementation("com.github.apace100:origins-fabric:${project.origins_version}") {
