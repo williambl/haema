@@ -29,8 +29,8 @@ class HaemaREIPlugin : REIClientPlugin {
     }
 
     init {
-        RitualTableUseEvent.EVENT.register(RitualTableUseEvent { _, _, _, player, hand, _ ->
-            if (player.getStackInHand(hand).item == PatchouliItems.BOOK) {
+        RitualTableUseEvent.EVENT.register(RitualTableUseEvent { _, world, _, player, hand, _ ->
+            if (player.getStackInHand(hand).item == PatchouliItems.BOOK && world.isClient) {
                 ViewSearchBuilder.builder().addCategory(ritualId).open()
                 REIRuntimeImpl.getInstance().previousScreen = SelfClosingScreen()
             }
