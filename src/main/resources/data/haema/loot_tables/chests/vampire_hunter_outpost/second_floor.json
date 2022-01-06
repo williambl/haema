@@ -24,6 +24,20 @@
         },
         {
           "type": "minecraft:item",
+          "weight": 6,
+          "name": "minecraft:gold_nugget",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 2,
+                "max": 7
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
           "weight": 5,
           "name": "minecraft:emerald",
           "functions": [
