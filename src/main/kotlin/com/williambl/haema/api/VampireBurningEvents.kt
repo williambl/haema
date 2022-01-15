@@ -5,6 +5,7 @@ import com.williambl.haema.api.VampireBurningEvents.Veto
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory.createArrayBacked
 import net.fabricmc.fabric.api.util.TriState
+import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.world.World
 
@@ -30,10 +31,11 @@ object VampireBurningEvents {
         /**
          * If nothing returns `true`, no burning occurs.
          */
-        fun willVampireBurn(player: PlayerEntity, world: World): TriState
+        fun willVampireBurn(player: LivingEntity, world: World): TriState
     }
 
     fun interface Veto {
+        //TODO: replace with phase system
         /**
          * Higher priority listeners are run first.
          * If you want to return `false` make sure your priority is set right:
@@ -47,6 +49,6 @@ object VampireBurningEvents {
          */
         fun getPriority(): Int = Int.MAX_VALUE
 
-        fun willVampireBurn(player: PlayerEntity, world: World): TriState
+        fun willVampireBurn(player: LivingEntity, world: World): TriState
     }
 }

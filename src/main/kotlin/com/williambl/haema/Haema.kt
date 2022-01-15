@@ -103,13 +103,13 @@ object Haema: ModInitializer, EntityComponentInitializer {
             if (world.gameRules[HaemaGameRules.vampiresBurn].get()) TriState.DEFAULT else TriState.FALSE
         })
         VampireBurningEvents.VETO.register(VampireBurningEvents.Veto { player, _ ->
-            if (player.abilities.creativeMode) TriState.FALSE else TriState.DEFAULT
+            if (player.isSpectator || player is PlayerEntity && player.abilities.creativeMode) TriState.FALSE else TriState.DEFAULT
         })
         val vampireProtectiveClothingTag = TagFactory.ITEM.create(id("vampire_protective_clothing"))
         VampireBurningEvents.VETO.register(object : VampireBurningEvents.Veto {
             override fun getPriority(): Int = 10
 
-            override fun willVampireBurn(player: PlayerEntity, world: World): TriState {
+            override fun willVampireBurn(player: LivingEntity, world: World): TriState {
                 return if (player.armorItems.all { vampireProtectiveClothingTag.contains(it.item) }) {
                     player.armorItems.forEachIndexed { i, stack ->
                         if (world.random.nextFloat() < 0.025 && world.gameRules[HaemaGameRules.sunlightDamagesArmour].get()) {

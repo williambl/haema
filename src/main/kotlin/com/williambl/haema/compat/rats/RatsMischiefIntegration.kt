@@ -22,7 +22,7 @@ fun initRatsMischiefIntegration() {
         }
     })
     VampireConversionEvents.CONVERT.register(VampireConversionEvents.ConversionEvent {
-        if (!it.hasCustomName()) {
+        if (it is RatEntity && !it.hasCustomName()) {
             it.customName = LiteralText(if (it.random.nextFloat() < 0.02) if (it.random.nextBoolean()) "Count D-Rat-Cula" else "Capri-Sun" else "VampiRat")
                 .formatted(Formatting.DARK_RED)
         }
