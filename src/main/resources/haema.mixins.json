@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_16",
   "mixins": [
     "DamageSourceMixin",
+    "EntityMixin",
     "HungerManagerMixin",
     "HurtBySensorMixin",
     "LivingEntityMixin",

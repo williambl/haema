@@ -2,9 +2,12 @@ package com.williambl.haema.ability
 
 import com.williambl.haema.ability.component.invisibility.EntityInvisibilityAbilityComponent
 import com.williambl.haema.ability.component.invisibility.InvisibilityAbilityComponent
+import com.williambl.haema.ability.component.mist_form.EntityMistFormAbilityComponent
+import com.williambl.haema.ability.component.mist_form.MistFormAbilityComponent
 import com.williambl.haema.ability.component.strength.EntityStrengthAbilityComponent
 import com.williambl.haema.ability.component.strength.StrengthAbilityComponent
 import com.williambl.haema.criteria.UseDashCriterion
+import com.williambl.haema.getAbilityLevel
 import com.williambl.haema.id
 import com.williambl.haema.mixin.RegistryAccessor
 import com.williambl.haema.ritual.RitualTableScreenHandler
@@ -100,10 +103,19 @@ object AbilityModule: ModInitializer, EntityComponentInitializer {
                 UseDashCriterion.trigger(player)
             }
         }
+
+        ServerPlayNetworking.registerGlobalReceiver(id("mist_form")) { server, player, networkHandler, buf, sender ->
+            server.execute {
+                if (player.getAbilityLevel(MIST_FORM) > 0) {
+                    MistFormAbilityComponent.entityKey[player].toggleMistForm()
+                }
+            }
+        }
     }
 
     override fun registerEntityComponentFactories(registry: EntityComponentFactoryRegistry) {
         registry.registerForPlayers(InvisibilityAbilityComponent.entityKey, { player -> EntityInvisibilityAbilityComponent(player) }, RespawnCopyStrategy.NEVER_COPY)
         registry.registerForPlayers(StrengthAbilityComponent.entityKey, { player -> EntityStrengthAbilityComponent(player) }, RespawnCopyStrategy.NEVER_COPY)
+        registry.registerForPlayers(MistFormAbilityComponent.entityKey, { player -> EntityMistFormAbilityComponent(player) }, RespawnCopyStrategy.NEVER_COPY)
     }
 }

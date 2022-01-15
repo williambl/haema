@@ -17,6 +17,7 @@
   "entity.haema.vampire_hunter": "Vampire Hunter",
 
   "key.haema.dash": "Vampire Dash",
+  "key.haema.mist": "Mist Form",
 
   "effect.haema.sunlight_sickness": "Sunlight Sickness",
   "effect.haema.vampiric_weakness": "Vampiric Weakness",
@@ -140,6 +141,8 @@
 
   "gui.haema.hud.vampiredash": "Vampire Dash",
   "gui.haema.hud.invisibility": "Invisibility",
+  "gui.haema.hud.mist_form": "Mist Form",
+  "gui.haema.hud.normal_form": "Normal Form",
   "gui.haema.hud.feed": "Feed",
   "gui.haema.hud.bloodquality": "Blood Quality: ",
   "gui.haema.hud.bloodquality.good": "Good",

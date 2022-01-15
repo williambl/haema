@@ -2,6 +2,7 @@ package com.williambl.haema.client
 
 import com.williambl.haema.ability.AbilityModule
 import com.williambl.haema.ability.component.invisibility.InvisibilityAbilityComponent
+import com.williambl.haema.ability.component.mist_form.MistFormAbilityComponent
 import com.williambl.haema.api.client.VampireHudAddTextEvent
 import com.williambl.haema.client.config.HaemaConfig
 import com.williambl.haema.client.gui.RitualTableScreen
@@ -13,9 +14,7 @@ import com.williambl.haema.hunter.VampireHunterModule
 import com.williambl.haema.id
 import com.williambl.haema.isVampire
 import com.williambl.haema.ritual.RitualTableScreenHandler
-import com.williambl.haema.util.raytraceForDash
 import com.williambl.haema.vampireComponent
-import io.netty.buffer.Unpooled
 import ladysnake.satin.api.event.ShaderEffectRenderCallback
 import ladysnake.satin.api.managed.ManagedShaderEffect
 import ladysnake.satin.api.managed.ShaderEffectManager
@@ -33,14 +32,11 @@ import net.minecraft.client.MinecraftClient
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerInventory
-import net.minecraft.network.PacketByteBuf
-import net.minecraft.particle.DustParticleEffect
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
 import net.minecraft.util.hit.EntityHitResult
 import net.minecraft.util.hit.HitResult
-import net.minecraft.util.math.Vec3f
 import org.lwjgl.glfw.GLFW
 import kotlin.math.max
 
@@ -49,6 +45,7 @@ object HaemaClient: ClientModInitializer {
         .manage(id("shaders/post/vampirevision.json"))
 
     val DASH_KEY = KeyBinding("key.haema.dash", GLFW.GLFW_KEY_Z, "key.categories.movement")
+    val MIST_KEY = KeyBinding("key.haema.mist_form", GLFW.GLFW_KEY_X, "key.categories.movement")
 
     val config: HaemaConfig by lazy { AutoConfig.getConfigHolder(HaemaConfig::class.java).config }
 
@@ -92,6 +89,7 @@ object HaemaClient: ClientModInitializer {
         })
 
         KeyBindingHelper.registerKeyBinding(DASH_KEY)
+        KeyBindingHelper.registerKeyBinding(MIST_KEY)
 
         EntityModelLayerRegistry.registerModelLayer(VampireHunterModel.layer, VampireHunterModel.Companion::getTexturedModelData)
         EntityRendererRegistry.register(VampireHunterModule.VAMPIRE_HUNTER) { context -> VampireHunterEntityRenderer(context) }
@@ -122,6 +120,19 @@ object HaemaClient: ClientModInitializer {
                         MinecraftClient.getInstance().options.keySneak.boundKeyLocalizedText.copy(),
                         (player).isVampire && player.world.time - InvisibilityAbilityComponent.entityKey.get(player).invisTicks >= 120 + invisLevel * invisLengthValue,
                         TranslatableText("gui.haema.hud.invisibility")
+                    )
+                )
+            }
+            return@VampireHudAddTextEvent emptyList()
+        })
+
+        VampireHudAddTextEvent.EVENT.register(VampireHudAddTextEvent { player, createText ->
+            if (ClientMistHandler.canMist(player)) {
+                return@VampireHudAddTextEvent listOf(
+                    createText(
+                        MIST_KEY.boundKeyLocalizedText.copy(),
+                        (player).isVampire,
+                        TranslatableText(if (MistFormAbilityComponent.entityKey[player].isInMistForm) "gui.haema.hud.normal_form" else "gui.haema.hud.mist_form")
                     )
                 )
             }
@@ -182,5 +193,6 @@ object HaemaClient: ClientModInitializer {
         }
 
         ClientTickEvents.START_CLIENT_TICK.register(ClientDashHandler)
+        ClientTickEvents.START_CLIENT_TICK.register(ClientMistHandler)
     }
 }
