@@ -7,18 +7,22 @@ import com.williambl.haema.client.config.HaemaConfig
 import com.williambl.haema.client.gui.RitualTableScreen
 import com.williambl.haema.client.gui.VampireHud
 import com.williambl.haema.component.EntityVampireComponent
+import com.williambl.haema.component.EntityVampireComponent.Companion.getFeedCooldown
 import com.williambl.haema.getAbilityLevel
 import com.williambl.haema.hunter.VampireHunterModule
 import com.williambl.haema.id
 import com.williambl.haema.isVampire
 import com.williambl.haema.ritual.RitualTableScreenHandler
+import com.williambl.haema.util.raytraceForDash
 import com.williambl.haema.vampireComponent
+import io.netty.buffer.Unpooled
 import ladysnake.satin.api.event.ShaderEffectRenderCallback
 import ladysnake.satin.api.managed.ManagedShaderEffect
 import ladysnake.satin.api.managed.ShaderEffectManager
 import me.shedaniel.autoconfig.AutoConfig
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer
 import net.fabricmc.api.ClientModInitializer
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry
@@ -29,12 +33,16 @@ import net.minecraft.client.MinecraftClient
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerInventory
+import net.minecraft.network.PacketByteBuf
+import net.minecraft.particle.DustParticleEffect
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
 import net.minecraft.util.hit.EntityHitResult
 import net.minecraft.util.hit.HitResult
+import net.minecraft.util.math.Vec3f
 import org.lwjgl.glfw.GLFW
+import kotlin.math.max
 
 object HaemaClient: ClientModInitializer {
     val VAMPIRE_SHADER: ManagedShaderEffect = ShaderEffectManager.getInstance()
@@ -99,7 +107,7 @@ object HaemaClient: ClientModInitializer {
             if (dashLevel > 0 && (player.vampireComponent).blood > 18f) {
                 return@VampireHudAddTextEvent listOf(createText(
                     DASH_KEY.boundKeyLocalizedText.copy(),
-                    (player).isVampire && (player as ClientVampire).canDash(),
+                    (player).isVampire && ClientDashHandler.canDash(player),
                     TranslatableText("gui.haema.hud.vampiredash")
                 ))
             }
@@ -153,5 +161,26 @@ object HaemaClient: ClientModInitializer {
             }
             return@VampireHudAddTextEvent texts
         })
+
+        ClientTickEvents.START_CLIENT_TICK.register { client ->
+            val player = client.cameraEntity ?: return@register
+            if (player !is LivingEntity) {
+                return@register
+            }
+
+            val world = player.world
+
+            val bloodLevel: Float = player.vampireComponent.blood.toFloat() / 20.0f
+            setSaturation(0.8f * bloodLevel)
+            setBrightnessAdjust(bloodLevel / 4f + 0.05f)
+            setRedAmount(
+                max(
+                    1.3f,
+                    2.3f - (world.time - player.vampireComponent.lastFed) / getFeedCooldown(world).toFloat()
+                )
+            )
+        }
+
+        ClientTickEvents.START_CLIENT_TICK.register(ClientDashHandler)
     }
 }

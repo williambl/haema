@@ -14,7 +14,6 @@
   ],
   "client": [
     "AbstractClientPlayerEntityMixin",
-    "ClientPlayerEntityMixin",
     "InGameHudMixin"
   ],
   "server": [
