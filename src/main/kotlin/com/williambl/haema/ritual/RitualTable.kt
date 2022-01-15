@@ -47,6 +47,7 @@ class RitualTable(settings: Settings) : HorizontalFacingBlock(settings) {
         hand: Hand,
         hit: BlockHitResult
     ): ActionResult {
+        RitualTableUseEvent.EVENT.invoker().onUse(state, world, pos, player, hand, hit)
         if (!world.isClient) {
             if (pos != player.blockPos) return ActionResult.PASS
 
@@ -57,9 +58,9 @@ class RitualTable(settings: Settings) : HorizontalFacingBlock(settings) {
             (world as ServerWorld).server.recipeManager.listAllOfType(RitualModule.RITUAL_RECIPE_TYPE)
                 .firstOrNull { it.matches(inventory) }
                 ?.craft(inventory) ?: return ActionResult.PASS
+
             UseRitualCriterion.trigger(player as ServerPlayerEntity)
         }
-        RitualTableUseEvent.EVENT.invoker().onUse(state, world, pos, player, hand, hit)
         return ActionResult.SUCCESS
     }
 

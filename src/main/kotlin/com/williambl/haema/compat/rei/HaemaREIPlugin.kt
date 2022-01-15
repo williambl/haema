@@ -4,11 +4,13 @@ import com.williambl.haema.Haema
 import com.williambl.haema.api.RitualTableUseEvent
 import com.williambl.haema.craft.BookOfBloodRecipe
 import com.williambl.haema.ritual.craft.RitualRecipe
+import com.williambl.haema.util.SelfClosingScreen
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry
 import me.shedaniel.rei.api.client.view.ViewSearchBuilder
 import me.shedaniel.rei.api.common.category.CategoryIdentifier
+import me.shedaniel.rei.impl.client.REIRuntimeImpl
 import vazkii.patchouli.common.item.PatchouliItems
 
 class HaemaREIPlugin : REIClientPlugin {
@@ -27,9 +29,10 @@ class HaemaREIPlugin : REIClientPlugin {
     }
 
     init {
-        RitualTableUseEvent.EVENT.register(RitualTableUseEvent { _, _, _, player, hand, _ ->
-            if (player.getStackInHand(hand).item == PatchouliItems.BOOK) {
+        RitualTableUseEvent.EVENT.register(RitualTableUseEvent { _, world, _, player, hand, _ ->
+            if (player.getStackInHand(hand).item == PatchouliItems.BOOK && world.isClient) {
                 ViewSearchBuilder.builder().addCategory(ritualId).open()
+                REIRuntimeImpl.getInstance().previousScreen = SelfClosingScreen()
             }
         })
     }

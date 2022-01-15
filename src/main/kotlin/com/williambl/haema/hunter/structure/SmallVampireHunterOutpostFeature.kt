@@ -15,10 +15,10 @@ import java.util.*
 class SmallVampireHunterOutpostFeature(codec: Codec<StructurePoolFeatureConfig>) : StructureFeature<StructurePoolFeatureConfig>(
     codec,
     { ctx ->
-        if (!VampireHunterOutpostFeature.canGenerate(ctx)) {
+        if (!canGenerate(ctx)) {
             Optional.empty<StructurePiecesGenerator<StructurePoolFeatureConfig>>()
         } else {
-            VampireHunterOutpostFeature.createPiecesGenerator(ctx)
+            createPiecesGenerator(ctx)
         }
     }
 ) {

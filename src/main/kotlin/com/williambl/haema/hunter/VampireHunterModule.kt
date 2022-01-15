@@ -65,7 +65,7 @@ object VampireHunterModule: ModInitializer {
 
         FabricStructureBuilder.create(id("vampire_hunter_outpost"), VAMPIRE_HUNTER_OUTPOST_FEATURE)
             .step(GenerationStep.Feature.SURFACE_STRUCTURES)
-            .defaultConfig(60, 30, 74426467)
+            .defaultConfig(120, 70, 74426467)
             .enableSuperflat()
             .adjustsSurface()
             .register()
@@ -75,12 +75,12 @@ object VampireHunterModule: ModInitializer {
         BiomeModifications.create(id("vampire_hunter_outpost_addition"))
             .add(
                 ModificationPhase.ADDITIONS,
-                BiomeSelectors.categories(Biome.Category.DESERT, Biome.Category.EXTREME_HILLS, Biome.Category.FOREST, Biome.Category.MESA, Biome.Category.PLAINS, Biome.Category.SAVANNA)
+                BiomeSelectors.foundInOverworld()
             ) { context -> context.generationSettings.addBuiltInStructure(CONFIGURED_VAMPIRE_HUNTER_OUTPOST_FEATURE) }
 
         FabricStructureBuilder.create(id("small_vampire_hunter_outpost"), SMALL_VAMPIRE_HUNTER_OUTPOST_FEATURE)
             .step(GenerationStep.Feature.SURFACE_STRUCTURES)
-            .defaultConfig(20, 19, 74426500)
+            .defaultConfig(100, 60, 74426500)
             .enableSuperflat()
             .adjustsSurface()
             .register()
@@ -90,7 +90,7 @@ object VampireHunterModule: ModInitializer {
         BiomeModifications.create(id("small_vampire_hunter_outpost_addition"))
             .add(
                 ModificationPhase.ADDITIONS,
-                BiomeSelectors.categories(Biome.Category.EXTREME_HILLS, Biome.Category.TAIGA, Biome.Category.SAVANNA)
+                BiomeSelectors.foundInOverworld()
             ) { context -> context.generationSettings.addBuiltInStructure(CONFIGURED_SMALL_VAMPIRE_HUNTER_OUTPOST_FEATURE) }
     }
 }
