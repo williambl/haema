@@ -27,6 +27,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.option.KeyBinding
+import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
@@ -76,8 +77,8 @@ object HaemaClient: ClientModInitializer {
         HudRenderCallback.EVENT.register(VampireHud::render)
 
         ShaderEffectRenderCallback.EVENT.register(ShaderEffectRenderCallback {
-            if (config.vampireShaderEnabled && (MinecraftClient.getInstance().player)!!.isVampire == true && (MinecraftClient.getInstance().player)!!.getAbilityLevel(
-                    AbilityModule.VISION) > 0) {
+            val cam = MinecraftClient.getInstance().cameraEntity
+            if (config.vampireShaderEnabled && cam is LivingEntity && cam.isVampire && cam.getAbilityLevel(AbilityModule.VISION) > 0) {
                 VAMPIRE_SHADER.render(it)
             }
         })
