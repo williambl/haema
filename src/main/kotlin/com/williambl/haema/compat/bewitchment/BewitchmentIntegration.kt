@@ -1,5 +1,9 @@
 package com.williambl.haema.compat.bewitchment
 
+import com.williambl.haema.ability.component.invisibility.EntityInvisibilityAbilityComponent
+import com.williambl.haema.ability.component.invisibility.InvisibilityAbilityComponent
+import com.williambl.haema.ability.component.strength.EntityStrengthAbilityComponent
+import com.williambl.haema.ability.component.strength.StrengthAbilityComponent
 import com.williambl.haema.api.BloodChangeEvents
 import com.williambl.haema.api.BloodDrinkingEvents
 import com.williambl.haema.api.DamageSourceEfficacyEvent
@@ -127,4 +131,6 @@ fun registerBewitchmentClientEventListeners() {
 
 fun registerEntityComponentFactories(registry: EntityComponentFactoryRegistry) {
     registry.registerFor(VampireEntity::class.java, VampireComponent.entityKey, ::EntityVampireComponent)
+    registry.registerFor(VampireEntity::class.java, InvisibilityAbilityComponent.entityKey, ::EntityInvisibilityAbilityComponent)
+    registry.registerFor(VampireEntity::class.java, StrengthAbilityComponent.entityKey, ::EntityStrengthAbilityComponent)
 }

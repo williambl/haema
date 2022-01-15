@@ -5,6 +5,7 @@ import com.williambl.haema.ability.component.invisibility.InvisibilityAbilityCom
 import com.williambl.haema.criteria.UseInvisibilityCriterion
 import com.williambl.haema.effect.VampiricStrengthEffect
 import com.williambl.haema.getAbilityLevel
+import com.williambl.haema.isVampire
 import com.williambl.haema.util.HaemaGameRules
 import com.williambl.haema.vampireComponent
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent
@@ -19,6 +20,10 @@ import kotlin.reflect.KProperty
 
 class EntityStrengthAbilityComponent(val entity: LivingEntity): StrengthAbilityComponent {
     override fun serverTick() {
+        if (!entity.isVampire) {
+            return
+        }
+
         val blood = entity.vampireComponent.blood
         if (blood >= 10 && entity.getAbilityLevel(AbilityModule.STRENGTH) > 0) {
             entity.addStatusEffect(

@@ -1,11 +1,16 @@
 package com.williambl.haema.compat.rats
 
+import com.williambl.haema.ability.component.invisibility.EntityInvisibilityAbilityComponent
+import com.williambl.haema.ability.component.invisibility.InvisibilityAbilityComponent
+import com.williambl.haema.ability.component.strength.EntityStrengthAbilityComponent
+import com.williambl.haema.ability.component.strength.StrengthAbilityComponent
 import com.williambl.haema.api.BloodDrinkingEvents
 import com.williambl.haema.api.VampireConversionEvents
 import com.williambl.haema.component.VampireComponent
 import com.williambl.haema.component.EntityVampireComponent
 import com.williambl.haema.isVampire
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
+import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy
 import ladysnake.ratsmischief.common.entity.RatEntity
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry
@@ -32,5 +37,7 @@ fun initRatsMischiefIntegration() {
 }
 
 fun registerRatVampireComponent(registry: EntityComponentFactoryRegistry) {
-    registry.registerFor(RatEntity::class.java, VampireComponent.entityKey) { entity -> EntityVampireComponent(entity) }
+    registry.registerFor(RatEntity::class.java, VampireComponent.entityKey, ::EntityVampireComponent)
+    registry.registerFor(RatEntity::class.java, InvisibilityAbilityComponent.entityKey, ::EntityInvisibilityAbilityComponent)
+    registry.registerFor(RatEntity::class.java, StrengthAbilityComponent.entityKey, ::EntityStrengthAbilityComponent)
 }

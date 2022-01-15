@@ -3,6 +3,7 @@ package com.williambl.haema.ability.component.invisibility
 import com.williambl.haema.ability.AbilityModule
 import com.williambl.haema.criteria.UseInvisibilityCriterion
 import com.williambl.haema.getAbilityLevel
+import com.williambl.haema.isVampire
 import com.williambl.haema.util.HaemaGameRules
 import com.williambl.haema.vampireComponent
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent
@@ -25,6 +26,10 @@ class EntityInvisibilityAbilityComponent(val entity: LivingEntity): Invisibility
     override var invisTicks: Long by Delegates.observable(0, syncCallback)
 
     override fun serverTick() {
+        if (!entity.isVampire) {
+            return
+        }
+
         val invisLevel = (entity).getAbilityLevel(AbilityModule.INVISIBILITY)
         if (entity.vampireComponent.blood >= 16 && invisLevel > 0 && entity.isSneaking && entity.world.time-invisTicks >= 120 + invisLevel*60) {
             if (entity is ServerPlayerEntity) {
