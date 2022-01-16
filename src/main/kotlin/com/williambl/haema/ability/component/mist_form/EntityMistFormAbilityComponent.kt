@@ -1,21 +1,13 @@
 package com.williambl.haema.ability.component.mist_form
 
-import com.williambl.haema.ability.AbilityModule
-import com.williambl.haema.ability.component.invisibility.InvisibilityAbilityComponent
-import com.williambl.haema.criteria.UseInvisibilityCriterion
-import com.williambl.haema.effect.VampiricStrengthEffect
-import com.williambl.haema.getAbilityLevel
-import com.williambl.haema.isVampire
-import com.williambl.haema.util.HaemaGameRules
-import com.williambl.haema.vampireComponent
-import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent
+import com.williambl.haema.id
+import moriyashiine.bewitchment.common.registry.BWScaleTypes
 import net.minecraft.entity.LivingEntity
-import net.minecraft.entity.effect.StatusEffectInstance
-import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.particle.ParticleTypes
 import net.minecraft.server.network.ServerPlayerEntity
+import virtuoel.pehkui.api.*
 import kotlin.properties.Delegates
 import kotlin.reflect.KProperty
 
@@ -27,6 +19,11 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
     }
 
     override var isInMistForm: Boolean by Delegates.observable(false, syncCallback)
+
+    override fun toggleMistForm() {
+        super.toggleMistForm()
+        MODIFY_HEIGHT_TYPE.getScaleData(entity).scale = if (isInMistForm) 0.2f else 1.0f
+    }
 
     override fun serverTick() {
     }
@@ -63,5 +60,19 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
 
     override fun readFromNbt(tag: NbtCompound) {
         isInMistForm = tag.getBoolean("isInMistForm")
+    }
+
+    companion object {
+        val HEIGHT_MULTIPLIER: ScaleModifier? = ScaleRegistries.register(ScaleRegistries.SCALE_MODIFIERS, id("mist_form_height_multiplier"), TypedScaleModifier { MODIFY_HEIGHT_TYPE })
+        val MODIFY_HEIGHT_TYPE: ScaleType =
+            ScaleRegistries.register(
+                ScaleRegistries.SCALE_TYPES,
+                id("mist_form_modify_height"),
+                ScaleType.Builder.create().addDependentModifier(HEIGHT_MULTIPLIER)
+                    .affectsDimensions().build()
+            )
+        init {
+            ScaleTypes.HEIGHT.defaultBaseValueModifiers.add(HEIGHT_MULTIPLIER)
+        }
     }
 }

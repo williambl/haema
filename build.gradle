@@ -184,6 +184,10 @@ dependencies {
     modImplementation "me.lucko:fabric-permissions-api:${project.fpa_version}"
     include "me.lucko:fabric-permissions-api:${project.fpa_version}"
 
+    // Pehkui
+    modImplementation "com.github.Virtuoel:Pehkui:${project.pehkui_version}"
+    include "com.github.Virtuoel:Pehkui:${project.pehkui_version}"
+
     ///
     /// SOFT DEPS
     ///
