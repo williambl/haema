@@ -2,11 +2,9 @@ package com.williambl.haema.ability.component.mist_form
 
 import com.williambl.haema.ability.AbilityModule
 import com.williambl.haema.id
-import moriyashiine.bewitchment.common.registry.BWScaleTypes
 import net.minecraft.entity.LivingEntity
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.network.PacketByteBuf
-import net.minecraft.particle.ParticleTypes
 import net.minecraft.server.network.ServerPlayerEntity
 import virtuoel.pehkui.api.*
 import kotlin.properties.Delegates
@@ -39,9 +37,9 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
                     entity.x + rand.nextGaussian() * dims.width/2,
                     entity.randomBodyY,
                     entity.z + rand.nextGaussian() * dims.width/2,
-                    rand.nextGaussian() * 0.3,
-                    rand.nextGaussian() * 0.3,
-                    rand.nextGaussian() * 0.3
+                    rand.nextGaussian() * 0.12,
+                    rand.nextGaussian() * 0.12,
+                    rand.nextGaussian() * 0.12
                 )
             }
         }
