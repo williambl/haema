@@ -18,11 +18,14 @@ import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
+import net.minecraft.client.particle.CloudParticle
 import net.minecraft.command.argument.ArgumentTypes
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.network.PacketByteBuf
+import net.minecraft.particle.DefaultParticleType
 import net.minecraft.particle.DustParticleEffect
+import net.minecraft.particle.ParticleType
 import net.minecraft.potion.PotionUtil
 import net.minecraft.potion.Potions
 import net.minecraft.server.MinecraftServer
@@ -46,6 +49,8 @@ object AbilityModule: ModInitializer, EntityComponentInitializer {
     val IMMORTALITY: VampireAbility = Registry.register(ABILITY_REGISTRY, id("immortality"), VampireAbility(1, ItemStack(Items.TOTEM_OF_UNDYING)))
     val VISION: VampireAbility = Registry.register(ABILITY_REGISTRY, id("vision"), VampireAbility(1, ItemStack(Items.ENDER_EYE)))
     val MIST_FORM: VampireAbility = Registry.register(ABILITY_REGISTRY, id("mist_form"), VampireAbility(1, ItemStack(Items.COBWEB)))
+
+    val MIST_PARTICLE = Registry.register(Registry.PARTICLE_TYPE, id("mist_particle"), object : DefaultParticleType(false) {})
 
     override fun onInitialize() {
         ArgumentTypes.register(

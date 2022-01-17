@@ -1,5 +1,6 @@
 package com.williambl.haema.ability.component.mist_form
 
+import com.williambl.haema.ability.AbilityModule
 import com.williambl.haema.id
 import moriyashiine.bewitchment.common.registry.BWScaleTypes
 import net.minecraft.entity.LivingEntity
@@ -34,10 +35,10 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
             val dims = entity.getDimensions(entity.pose)
             for (i in 0..30) {
                 entity.world.addParticle(
-                    ParticleTypes.DRIPPING_WATER,
-                    entity.x - (dims.width/2.0) + rand.nextGaussian() * dims.width,
+                    AbilityModule.MIST_PARTICLE,
+                    entity.x + rand.nextGaussian() * dims.width/2,
                     entity.randomBodyY,
-                    entity.z - (dims.width/2.0) + rand.nextGaussian() * dims.width,
+                    entity.z + rand.nextGaussian() * dims.width/2,
                     rand.nextGaussian() * 0.3,
                     rand.nextGaussian() * 0.3,
                     rand.nextGaussian() * 0.3
