@@ -2,6 +2,8 @@ package com.williambl.haema.ability.component.mist_form
 
 import com.williambl.haema.ability.AbilityModule
 import com.williambl.haema.id
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.minecraft.entity.LivingEntity
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.network.PacketByteBuf
@@ -17,17 +19,42 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
         }
     }
 
+    private var mistFormTicks: Int = 0
+
     override var isInMistForm: Boolean by Delegates.observable(false, syncCallback)
 
     override fun toggleMistForm() {
         super.toggleMistForm()
-        MODIFY_HEIGHT_TYPE.getScaleData(entity).scale = if (isInMistForm) 0.2f else 1.0f
-    }
+        MODIFY_HEIGHT_TYPE.getScaleData(entity).run {
+            targetScale = if (isInMistForm) 0.2f else 1.0f
+            scaleTickDelay = 3
+        }
+            if (entity is ServerPlayerEntity && isInMistForm) {
+                ServerPlayNetworking.send(
+                    entity,
+                    id("start_mist_form"),
+                    PacketByteBufs.create().writeVarInt(entity.id)
+                )
+            }
+        }
+
+    override fun shouldRenderAsFullMistForm(): Boolean = isInMistForm && mistFormTicks > 3
 
     override fun serverTick() {
+        if (isInMistForm) {
+            mistFormTicks++
+        } else {
+            mistFormTicks = 0
+        }
     }
 
     override fun clientTick() {
+        if (isInMistForm) {
+            mistFormTicks++
+        } else {
+            mistFormTicks = 0
+        }
+
         if (isInMistForm) {
             val rand = entity.random
             val dims = entity.getDimensions(entity.pose)

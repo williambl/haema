@@ -31,6 +31,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.option.KeyBinding
+import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.text.Text
@@ -78,6 +79,13 @@ object HaemaClient: ClientModInitializer {
         }
         ClientPlayNetworking.registerGlobalReceiver(id("updateinvislength")) { client, handler, buf, sender ->
             invisLengthValue = buf.readInt()
+        }
+        ClientPlayNetworking.registerGlobalReceiver(id("start_mist_form")) { client, handler, buf, sender ->
+            val entityId = buf.readVarInt()
+            client.execute {
+                val entity = client.world?.getEntityById(entityId) ?: return@execute
+                client.entityRenderDispatcher.render(entity, entity.x, entity.y, entity.z, entity.yaw, 1f, MatrixStack(), ParticleVertexConsumer.Provider(), 1)
+            }
         }
 
         HudRenderCallback.EVENT.register(VampireHud::render)
