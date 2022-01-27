@@ -3,6 +3,7 @@
   "package": "com.williambl.haema.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "AbstractBlockStateMixin",
     "DamageSourceMixin",
     "EntityMixin",
     "HungerManagerMixin",
