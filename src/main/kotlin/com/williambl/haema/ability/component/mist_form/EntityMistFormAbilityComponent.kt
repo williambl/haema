@@ -3,6 +3,7 @@ package com.williambl.haema.ability.component.mist_form
 import com.williambl.haema.ability.AbilityModule
 import com.williambl.haema.id
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.minecraft.entity.LivingEntity
 import net.minecraft.nbt.NbtCompound
@@ -29,14 +30,16 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
             targetScale = if (isInMistForm) 0.2f else 1.0f
             scaleTickDelay = 3
         }
-            if (entity is ServerPlayerEntity && isInMistForm) {
+        if (isInMistForm) {
+            PlayerLookup.tracking(entity).forEach { p ->
                 ServerPlayNetworking.send(
-                    entity,
+                    p,
                     id("start_mist_form"),
                     PacketByteBufs.create().writeVarInt(entity.id)
                 )
             }
         }
+    }
 
     override fun shouldRenderAsFullMistForm(): Boolean = isInMistForm && mistFormTicks > 3
 
