@@ -2,16 +2,20 @@ package com.williambl.haema.mixin;
 
 import com.williambl.haema.VampirableKt;
 import com.williambl.haema.ability.AbilityModule;
+import com.williambl.haema.ability.component.mist_form.MistFormAbilityComponent;
 import com.williambl.haema.api.VampireBurningEvents;
 import com.williambl.haema.damagesource.DamageSourceModule;
 import com.williambl.haema.effect.SunlightSicknessEffect;
 import com.williambl.haema.util.HaemaGameRules;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.GameMode;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,6 +25,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity {
@@ -38,6 +43,13 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     void addVampireHungerManager(NbtCompound tag, CallbackInfo ci) {
         if (tag.contains("foodLevel")) {
             nbt = tag;
+        }
+    }
+
+    @Inject(method = "isBlockBreakingRestricted", at = @At("HEAD"), cancellable = true)
+    void mistFormCannotBreakBlocks(World world, BlockPos pos, GameMode gameMode, CallbackInfoReturnable<Boolean> cir) {
+        if (MistFormAbilityComponent.Companion.getEntityKey().get(this).isInMistForm()) {
+            cir.setReturnValue(true);
         }
     }
 

@@ -1,11 +1,15 @@
 package com.williambl.haema.ability.component.mist_form
 
 import com.williambl.haema.ability.AbilityModule
+import com.williambl.haema.effect.MistFormEffect
+import com.williambl.haema.effect.VampiricStrengthEffect
+import com.williambl.haema.getAbilityLevel
 import com.williambl.haema.id
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.minecraft.entity.LivingEntity
+import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
@@ -46,8 +50,10 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
     override fun serverTick() {
         if (isInMistForm) {
             mistFormTicks++
+            entity.addStatusEffect(StatusEffectInstance(MistFormEffect.instance, 80, 0, false, false, true))
         } else {
             mistFormTicks = 0
+            entity.removeStatusEffect(MistFormEffect.instance)
         }
     }
 

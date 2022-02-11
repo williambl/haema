@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_16",
   "mixins": [
     "AbstractBlockStateMixin",
+    "ClientPlayerInteractionManagerMixin",
     "DamageSourceMixin",
     "EntityMixin",
     "HungerManagerMixin",
@@ -12,7 +13,9 @@
     "MinecraftServerMixin",
     "MixinServerWorld",
     "PlayerEntityMixin",
-    "RegistryAccessor"
+    "RegistryAccessor",
+    "ServerPlayerInteractionManagerMixin",
+    "ServerPlayNetworkHandlerMixin"
   ],
   "client": [
     "AbstractClientPlayerEntityMixin",
