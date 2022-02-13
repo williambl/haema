@@ -7,6 +7,7 @@ import dev.onyxstudios.cca.api.v3.component.ComponentV3
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent
 import dev.onyxstudios.cca.api.v3.component.tick.ClientTickingComponent
 import dev.onyxstudios.cca.api.v3.component.tick.ServerTickingComponent
+import net.minecraft.util.math.Box
 
 interface MistFormAbilityComponent: ComponentV3, AutoSyncedComponent, ServerTickingComponent, ClientTickingComponent {
     var isInMistForm: Boolean
@@ -14,6 +15,9 @@ interface MistFormAbilityComponent: ComponentV3, AutoSyncedComponent, ServerTick
         this.isInMistForm = !this.isInMistForm
     }
     fun shouldRenderAsFullMistForm(): Boolean
+
+    fun activateBigMist()
+    fun getBigMistBoundingBox(): Box
 
     companion object {
         val entityKey: ComponentKey<MistFormAbilityComponent> = ComponentRegistryV3.INSTANCE.getOrCreate(id("mist_form"), MistFormAbilityComponent::class.java)

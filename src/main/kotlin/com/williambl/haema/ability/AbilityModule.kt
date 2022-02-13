@@ -114,6 +114,16 @@ object AbilityModule: ModInitializer, EntityComponentInitializer {
                 }
             }
         }
+
+        ServerPlayNetworking.registerGlobalReceiver(id("expand_mist_form")) { server, player, networkHandler, buf, sender ->
+            server.execute {
+                MistFormAbilityComponent.entityKey.get(player).run {
+                    if (isInMistForm) {
+                        activateBigMist()
+                    }
+                }
+            }
+        }
     }
 
     override fun registerEntityComponentFactories(registry: EntityComponentFactoryRegistry) {

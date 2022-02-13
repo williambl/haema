@@ -48,6 +48,7 @@ object HaemaClient: ClientModInitializer {
 
     val DASH_KEY = KeyBinding("key.haema.dash", GLFW.GLFW_KEY_Z, "key.categories.movement")
     val MIST_KEY = KeyBinding("key.haema.mist_form", GLFW.GLFW_KEY_X, "key.categories.movement")
+    val EXPAND_MIST_KEY = KeyBinding("key.haema.expand_mist_form", GLFW.GLFW_KEY_L, "key.categories.movement")
 
     val config: HaemaConfig by lazy { AutoConfig.getConfigHolder(HaemaConfig::class.java).config }
 
@@ -99,6 +100,7 @@ object HaemaClient: ClientModInitializer {
 
         KeyBindingHelper.registerKeyBinding(DASH_KEY)
         KeyBindingHelper.registerKeyBinding(MIST_KEY)
+        KeyBindingHelper.registerKeyBinding(EXPAND_MIST_KEY)
 
         EntityModelLayerRegistry.registerModelLayer(VampireHunterModel.layer, VampireHunterModel.Companion::getTexturedModelData)
         EntityRendererRegistry.register(VampireHunterModule.VAMPIRE_HUNTER) { context -> VampireHunterEntityRenderer(context) }
@@ -142,6 +144,19 @@ object HaemaClient: ClientModInitializer {
                         MIST_KEY.boundKeyLocalizedText.copy(),
                         (player).isVampire,
                         TranslatableText(if (MistFormAbilityComponent.entityKey[player].isInMistForm) "gui.haema.hud.normal_form" else "gui.haema.hud.mist_form")
+                    )
+                )
+            }
+            return@VampireHudAddTextEvent emptyList()
+        })
+
+        VampireHudAddTextEvent.EVENT.register(VampireHudAddTextEvent { player, createText ->
+            if (ClientMistHandler.canExpandMist(player)) {
+                return@VampireHudAddTextEvent listOf(
+                    createText(
+                        EXPAND_MIST_KEY.boundKeyLocalizedText.copy(),
+                        (player).isVampire,
+                        TranslatableText("gui.haema.hud.expand_mist_form")
                     )
                 )
             }
