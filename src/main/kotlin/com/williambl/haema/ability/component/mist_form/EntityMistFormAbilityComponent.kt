@@ -3,8 +3,6 @@ package com.williambl.haema.ability.component.mist_form
 import com.williambl.haema.Haema
 import com.williambl.haema.ability.AbilityModule
 import com.williambl.haema.effect.MistFormEffect
-import com.williambl.haema.effect.VampiricStrengthEffect
-import com.williambl.haema.getAbilityLevel
 import com.williambl.haema.id
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup
@@ -52,16 +50,15 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
 
     override fun shouldRenderAsFullMistForm(): Boolean = isInMistForm && mistFormTicks > 3
 
-    private var bigMistActivationAge: Int by Delegates.observable(-1, syncCallback)
+    private var bigMistActivationTime: Long by Delegates.observable(-1, syncCallback)
 
     override fun activateBigMist() {
-        this.bigMistActivationAge = this.entity.age
+        this.bigMistActivationTime = this.entity.world.time
     }
 
-    override fun getBigMistBoundingBox(): Box =
-        this.entity.boundingBox.expand(this.getBoundingBoxExpansionFactor())
+    override fun getBigMistBoundingBox(): Box = this.entity.boundingBox.expand(this.getBoundingBoxExpansionFactor())
 
-    private fun isDoingBigMist(): Boolean = this.bigMistActivationAge >= 0 && (this.entity.age-this.bigMistActivationAge) <= BIG_MIST_SUSTAIN_TIME + BIG_MIST_LERP_TIME * 2
+    private fun isDoingBigMist(): Boolean = this.bigMistActivationTime >= 0 && (this.entity.world.time-this.bigMistActivationTime) <= BIG_MIST_SUSTAIN_TIME + BIG_MIST_LERP_TIME * 2
 
     override fun serverTick() {
         if (isInMistForm) {
@@ -92,7 +89,7 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
             if (isDoingBigMist()) {
                 val boundingBox = getBigMistBoundingBox()
 
-                Haema.LOGGER.debug(this.entity.age-this.bigMistActivationAge)
+                Haema.LOGGER.debug(this.entity.world.time-this.bigMistActivationTime)
 
                 val particleCount = ((boundingBox.xLength/this.entity.boundingBox.xLength) * 60).toInt()
 
@@ -125,12 +122,12 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
 
     override fun writeSyncPacket(buf: PacketByteBuf, recipient: ServerPlayerEntity) {
         buf.writeBoolean(isInMistForm)
-        buf.writeVarInt(bigMistActivationAge)
+        buf.writeVarLong(bigMistActivationTime)
     }
 
     override fun applySyncPacket(buf: PacketByteBuf) {
         isInMistForm = buf.readBoolean()
-        bigMistActivationAge = buf.readVarInt()
+        bigMistActivationTime = buf.readVarLong()
     }
 
     override fun writeToNbt(tag: NbtCompound) {
@@ -150,7 +147,7 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
         }
     }
 
-    private fun getBoundingBoxExpansionFactor(): Double = (this.entity.age-this.bigMistActivationAge).let { t ->
+    private fun getBoundingBoxExpansionFactor(): Double = (this.entity.world.time-this.bigMistActivationTime).let { t ->
         if (t <= BIG_MIST_LERP_TIME) {
             (sin((t/BIG_MIST_LERP_TIME)*PI-(PI/2.0))+1.0)*(MAX_BOUNDING_BOX_RADIUS/2.0)
         } else if (t <= BIG_MIST_LERP_TIME+ BIG_MIST_SUSTAIN_TIME) {
