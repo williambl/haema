@@ -143,7 +143,7 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
             if (it !is LivingEntity) return@forEach
 
             it.addStatusEffect(StatusEffectInstance(StatusEffects.POISON, 20))
-            it.addStatusEffect(StatusEffectInstance(StatusEffects.BLINDNESS, 10))
+            it.addStatusEffect(StatusEffectInstance(StatusEffects.BLINDNESS, 10, 3))
         }
     }
 
