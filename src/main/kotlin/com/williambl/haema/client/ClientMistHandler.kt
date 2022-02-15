@@ -6,28 +6,39 @@ import com.williambl.haema.getAbilityLevel
 import com.williambl.haema.id
 import io.netty.buffer.Unpooled
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.option.KeyBinding
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.network.PacketByteBuf
+import org.lwjgl.glfw.GLFW
 
 object ClientMistHandler: ClientTickEvents.StartTick {
+    val MIST_KEY = KeyBinding("key.haema.mist_form", GLFW.GLFW_KEY_X, "key.categories.movement")
+    val EXPAND_MIST_KEY = KeyBinding("key.haema.expand_mist_form", GLFW.GLFW_KEY_L, "key.categories.movement")
+
     private var wasMistKeyPressedLast = false
     private var wasExpandKeyPressedLast = false
 
+    fun init() {
+        KeyBindingHelper.registerKeyBinding(MIST_KEY)
+        KeyBindingHelper.registerKeyBinding(EXPAND_MIST_KEY)
+    }
+
     override fun onStartTick(client: MinecraftClient) {
         val player = client.player ?: return
-        if (HaemaClient.MIST_KEY.isPressed && !wasMistKeyPressedLast && canMist(player)) {
+        if (MIST_KEY.isPressed && !wasMistKeyPressedLast && canMist(player)) {
             val buf = PacketByteBuf(Unpooled.buffer())
             ClientPlayNetworking.send(id("mist_form"), buf)
         }
-        this.wasMistKeyPressedLast = HaemaClient.MIST_KEY.isPressed
+        this.wasMistKeyPressedLast = MIST_KEY.isPressed
 
-        if (HaemaClient.EXPAND_MIST_KEY.isPressed && !wasExpandKeyPressedLast && canMist(player)) {
+        if (EXPAND_MIST_KEY.isPressed && !wasExpandKeyPressedLast && canMist(player)) {
             val buf = PacketByteBuf(Unpooled.buffer())
             ClientPlayNetworking.send(id("expand_mist_form"), buf)
         }
-        this.wasExpandKeyPressedLast = HaemaClient.EXPAND_MIST_KEY.isPressed
+        this.wasExpandKeyPressedLast = EXPAND_MIST_KEY.isPressed
 
     }
 
