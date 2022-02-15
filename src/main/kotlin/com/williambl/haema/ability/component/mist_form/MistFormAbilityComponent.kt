@@ -16,8 +16,8 @@ interface MistFormAbilityComponent: ComponentV3, AutoSyncedComponent, ServerTick
     }
     fun shouldRenderAsFullMistForm(): Boolean
 
-    fun activateBigMist()
-    fun getBigMistBoundingBox(): Box
+    fun expandMist()
+    fun isMistExpanded(): Boolean
 
     companion object {
         val entityKey: ComponentKey<MistFormAbilityComponent> = ComponentRegistryV3.INSTANCE.getOrCreate(id("mist_form"), MistFormAbilityComponent::class.java)

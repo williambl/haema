@@ -119,7 +119,7 @@ object AbilityModule: ModInitializer, EntityComponentInitializer {
             server.execute {
                 MistFormAbilityComponent.entityKey.get(player).run {
                     if (isInMistForm) {
-                        activateBigMist()
+                        expandMist()
                     }
                 }
             }

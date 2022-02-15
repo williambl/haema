@@ -50,15 +50,15 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
 
     override fun shouldRenderAsFullMistForm(): Boolean = isInMistForm && mistFormTicks > 3
 
-    private var bigMistActivationTime: Long by Delegates.observable(-1, syncCallback)
+    private var mistExpansionTime: Long by Delegates.observable(-1, syncCallback)
 
-    override fun activateBigMist() {
-        this.bigMistActivationTime = this.entity.world.time
+    override fun expandMist() {
+        this.mistExpansionTime = this.entity.world.time
     }
 
-    override fun getBigMistBoundingBox(): Box = this.entity.boundingBox.expand(this.getBoundingBoxExpansionFactor())
+    private fun getBigMistBoundingBox(): Box = this.entity.boundingBox.expand(this.getBoundingBoxExpansionFactor())
 
-    private fun isDoingBigMist(): Boolean = this.bigMistActivationTime >= 0 && (this.entity.world.time-this.bigMistActivationTime) <= BIG_MIST_SUSTAIN_TIME + BIG_MIST_LERP_TIME * 2
+    override fun isMistExpanded(): Boolean = this.mistExpansionTime >= 0 && (this.entity.world.time-this.mistExpansionTime) <= MIST_EXPANSION_SUSTAIN_TIME + MIST_EXPANSION_LERP_TIME * 2
 
     override fun serverTick() {
         if (isInMistForm) {
@@ -66,7 +66,7 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
             entity.addStatusEffect(StatusEffectInstance(MistFormEffect.instance, 80, 0, false, false, true))
             this.attackInBox(this.entity.boundingBox)
 
-            if (isDoingBigMist()) {
+            if (isMistExpanded()) {
                 this.attackInBox(getBigMistBoundingBox())
             }
         } else {
@@ -86,10 +86,8 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
             val rand = entity.random
             val dims = entity.getDimensions(entity.pose)
 
-            if (isDoingBigMist()) {
+            if (isMistExpanded()) {
                 val boundingBox = getBigMistBoundingBox()
-
-                Haema.LOGGER.debug(this.entity.world.time-this.bigMistActivationTime)
 
                 val particleCount = ((boundingBox.xLength/this.entity.boundingBox.xLength) * 60).toInt()
 
@@ -122,12 +120,12 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
 
     override fun writeSyncPacket(buf: PacketByteBuf, recipient: ServerPlayerEntity) {
         buf.writeBoolean(isInMistForm)
-        buf.writeVarLong(bigMistActivationTime)
+        buf.writeVarLong(mistExpansionTime)
     }
 
     override fun applySyncPacket(buf: PacketByteBuf) {
         isInMistForm = buf.readBoolean()
-        bigMistActivationTime = buf.readVarLong()
+        mistExpansionTime = buf.readVarLong()
     }
 
     override fun writeToNbt(tag: NbtCompound) {
@@ -147,13 +145,13 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
         }
     }
 
-    private fun getBoundingBoxExpansionFactor(): Double = (this.entity.world.time-this.bigMistActivationTime).let { t ->
-        if (t <= BIG_MIST_LERP_TIME) {
-            (sin((t/BIG_MIST_LERP_TIME)*PI-(PI/2.0))+1.0)*(MAX_BOUNDING_BOX_RADIUS/2.0)
-        } else if (t <= BIG_MIST_LERP_TIME+ BIG_MIST_SUSTAIN_TIME) {
-            MAX_BOUNDING_BOX_RADIUS
-        } else if (t <= BIG_MIST_LERP_TIME*2+ BIG_MIST_SUSTAIN_TIME) {
-            (sin((t/BIG_MIST_LERP_TIME)*PI+PI)+1.0)*(MAX_BOUNDING_BOX_RADIUS/2.0)
+    private fun getBoundingBoxExpansionFactor(): Double = (this.entity.world.time-this.mistExpansionTime).let { t ->
+        if (t <= MIST_EXPANSION_LERP_TIME) {
+            (sin((t/MIST_EXPANSION_LERP_TIME)*PI-(PI/2.0))+1.0)*(MIST_EXPANSION_FACTOR/2.0)
+        } else if (t <= MIST_EXPANSION_LERP_TIME+ MIST_EXPANSION_SUSTAIN_TIME) {
+            MIST_EXPANSION_FACTOR
+        } else if (t <= MIST_EXPANSION_LERP_TIME*2+ MIST_EXPANSION_SUSTAIN_TIME) {
+            (sin((t/MIST_EXPANSION_LERP_TIME)*PI+PI)+1.0)*(MIST_EXPANSION_FACTOR/2.0)
         } else {
             0.0
         }
@@ -169,9 +167,9 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
                     .affectsDimensions().build()
             )
 
-        const val BIG_MIST_LERP_TIME = 80.0
-        const val BIG_MIST_SUSTAIN_TIME = 20.0
-        const val MAX_BOUNDING_BOX_RADIUS = 10.0
+        const val MIST_EXPANSION_LERP_TIME = 80.0
+        const val MIST_EXPANSION_SUSTAIN_TIME = 20.0
+        const val MIST_EXPANSION_FACTOR = 10.0
 
         init {
             ScaleTypes.HEIGHT.defaultBaseValueModifiers.add(HEIGHT_MULTIPLIER)
