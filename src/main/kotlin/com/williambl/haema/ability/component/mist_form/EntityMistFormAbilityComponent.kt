@@ -2,6 +2,7 @@ package com.williambl.haema.ability.component.mist_form
 
 import com.williambl.haema.Haema
 import com.williambl.haema.ability.AbilityModule
+import com.williambl.haema.effect.EffectsModule
 import com.williambl.haema.effect.MistFormEffect
 import com.williambl.haema.id
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
@@ -140,8 +141,7 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
         this.entity.world.getOtherEntities(this.entity, box).forEach {
             if (it !is LivingEntity) return@forEach
 
-            it.addStatusEffect(StatusEffectInstance(StatusEffects.POISON, 20))
-            it.addStatusEffect(StatusEffectInstance(StatusEffects.BLINDNESS, 10, 3))
+            it.addStatusEffect(StatusEffectInstance(EffectsModule.MISTED, 20))
         }
     }
 

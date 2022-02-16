@@ -26,6 +26,11 @@ object EffectsModule: ModInitializer {
         id("mist_form"),
         MistFormEffect.instance
     )
+    val MISTED: StatusEffect = Registry.register(
+        Registry.STATUS_EFFECT,
+        id("misted"),
+        MistedEffect.instance
+    )
 
     override fun onInitialize() {
     }
