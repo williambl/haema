@@ -34,12 +34,11 @@ object ClientMistHandler: ClientTickEvents.StartTick {
         }
         this.wasMistKeyPressedLast = MIST_KEY.isPressed
 
-        if (EXPAND_MIST_KEY.isPressed && !wasExpandKeyPressedLast && canMist(player)) {
+        if (EXPAND_MIST_KEY.isPressed && !wasExpandKeyPressedLast && canExpandMist(player)) {
             val buf = PacketByteBuf(Unpooled.buffer())
             ClientPlayNetworking.send(id("expand_mist_form"), buf)
         }
         this.wasExpandKeyPressedLast = EXPAND_MIST_KEY.isPressed
-
     }
 
     fun canMist(player: PlayerEntity): Boolean {
@@ -48,6 +47,10 @@ object ClientMistHandler: ClientTickEvents.StartTick {
     }
 
     fun canExpandMist(player: PlayerEntity): Boolean {
+        return this.canMist(player) && MistFormAbilityComponent.entityKey.get(player).canExpandMist()
+    }
+
+    fun isInMistForm(player: PlayerEntity): Boolean {
         return MistFormAbilityComponent.entityKey.get(player).isInMistForm
     }
 }

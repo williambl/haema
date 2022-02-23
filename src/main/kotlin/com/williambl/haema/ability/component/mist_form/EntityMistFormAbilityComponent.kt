@@ -1,16 +1,15 @@
 package com.williambl.haema.ability.component.mist_form
 
-import com.williambl.haema.Haema
 import com.williambl.haema.ability.AbilityModule
 import com.williambl.haema.effect.EffectsModule
 import com.williambl.haema.effect.MistFormEffect
 import com.williambl.haema.id
+import com.williambl.haema.isVampire
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.effect.StatusEffectInstance
-import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
@@ -29,7 +28,6 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
     }
 
     private var mistFormTicks: Int = 0
-
     override var isInMistForm: Boolean by Delegates.observable(false, syncCallback)
 
     override fun toggleMistForm() {
@@ -52,14 +50,22 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
     override fun shouldRenderAsFullMistForm(): Boolean = isInMistForm && mistFormTicks > 3
 
     private var mistExpansionTime: Long by Delegates.observable(-1, syncCallback)
+    private var mistFormCooldownEnd: Long by Delegates.observable(0, syncCallback)
 
     override fun expandMist() {
+        if (!this.canExpandMist()) {
+            return
+        }
+
         this.mistExpansionTime = this.entity.world.time
+        this.mistFormCooldownEnd = (this.entity.world.time + MIST_EXPANSION_COOLDOWN + MIST_EXPANSION_SUSTAIN_TIME + MIST_EXPANSION_LERP_TIME * 2).toLong()
     }
 
     private fun getBigMistBoundingBox(): Box = this.entity.boundingBox.expand(this.getBoundingBoxExpansionFactor())
 
     override fun isMistExpanded(): Boolean = this.mistExpansionTime >= 0 && (this.entity.world.time-this.mistExpansionTime) <= MIST_EXPANSION_SUSTAIN_TIME + MIST_EXPANSION_LERP_TIME * 2
+
+    override fun canExpandMist(): Boolean = this.mistFormCooldownEnd < this.entity.world.time
 
     override fun serverTick() {
         if (isInMistForm) {
@@ -122,11 +128,13 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
     override fun writeSyncPacket(buf: PacketByteBuf, recipient: ServerPlayerEntity) {
         buf.writeBoolean(isInMistForm)
         buf.writeVarLong(mistExpansionTime)
+        buf.writeVarLong(mistFormCooldownEnd)
     }
 
     override fun applySyncPacket(buf: PacketByteBuf) {
         isInMistForm = buf.readBoolean()
         mistExpansionTime = buf.readVarLong()
+        mistFormCooldownEnd = buf.readVarLong()
     }
 
     override fun writeToNbt(tag: NbtCompound) {
@@ -170,6 +178,8 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
         const val MIST_EXPANSION_LERP_TIME = 80.0
         const val MIST_EXPANSION_SUSTAIN_TIME = 20.0
         const val MIST_EXPANSION_FACTOR = 10.0
+
+        const val MIST_EXPANSION_COOLDOWN = 600
 
         init {
             ScaleTypes.HEIGHT.defaultBaseValueModifiers.add(HEIGHT_MULTIPLIER)

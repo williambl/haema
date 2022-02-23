@@ -149,11 +149,11 @@ object HaemaClient: ClientModInitializer {
         })
 
         VampireHudAddTextEvent.EVENT.register(VampireHudAddTextEvent { player, createText ->
-            if (ClientMistHandler.canExpandMist(player)) {
+            if (ClientMistHandler.isInMistForm(player)) {
                 return@VampireHudAddTextEvent listOf(
                     createText(
                         ClientMistHandler.EXPAND_MIST_KEY.boundKeyLocalizedText.copy(),
-                        (player).isVampire,
+                        (player).isVampire && ClientMistHandler.canExpandMist(player),
                         TranslatableText("gui.haema.hud.expand_mist_form")
                     )
                 )
