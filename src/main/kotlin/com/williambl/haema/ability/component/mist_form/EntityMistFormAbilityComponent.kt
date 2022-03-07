@@ -68,6 +68,10 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
     override fun canExpandMist(): Boolean = this.mistFormCooldownEnd < this.entity.world.time
 
     override fun serverTick() {
+        if (!this.entity.isVampire) {
+            this.isInMistForm = false
+        }
+
         if (isInMistForm) {
             mistFormTicks++
             entity.addStatusEffect(StatusEffectInstance(MistFormEffect.instance, 80, 0, false, false, true))
