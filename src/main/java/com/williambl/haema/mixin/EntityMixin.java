@@ -10,8 +10,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Entity.class)
 public class EntityMixin {
-    @Inject(method = "isInvisible", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "shouldRender(DDD)Z", at = @At("RETURN"), cancellable = true)
     void haema$makeMistFormInvisible(CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(cir.getReturnValueZ() || ((Object) this instanceof LivingEntity && MistFormAbilityComponent.Companion.getEntityKey().isProvidedBy(this) && MistFormAbilityComponent.Companion.getEntityKey().get(this).shouldRenderAsFullMistForm()));
+        cir.setReturnValue(cir.getReturnValueZ() && !((Object) this instanceof LivingEntity && MistFormAbilityComponent.Companion.getEntityKey().isProvidedBy(this) && MistFormAbilityComponent.Companion.getEntityKey().get(this).shouldRenderAsFullMistForm()));
     }
 }
