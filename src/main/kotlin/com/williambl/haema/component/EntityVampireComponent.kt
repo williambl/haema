@@ -152,6 +152,10 @@ class EntityVampireComponent(val entity: LivingEntity) : VampireComponent, AutoS
     }
 
     override fun serverTick() {
+        if (!this.isVampire) {
+            return
+        }
+
         entity.isSilent = (blood >= 10 && entity.isSprinting) || blood >= 12
 
         if (blood > 3 && entity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.hasModifier(
