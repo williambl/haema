@@ -62,6 +62,12 @@
     "fabric": "*",
     "fabric-language-kotlin": "*",
     "fabric-permissions-api-v0": "*",
+    "satin": "*",
+    "reach-entity-attributes": "*",
+    "patchouli": "*",
+    "cloth-config": "*",
+    "cardinal-components-entity": "*",
+    "pehkui": "*",
     "minecraft": "1.18.x"
   },
   "suggests": {
