@@ -14,6 +14,7 @@ import com.williambl.haema.util.HaemaGameRules
 import com.williambl.haema.util.SyncedProperty
 import com.williambl.haema.util.computeValueWithout
 import com.williambl.haema.util.synced
+import com.williambl.haema.vampireComponent
 import dev.onyxstudios.cca.api.v3.component.CopyableComponent
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent
 import dev.onyxstudios.cca.api.v3.component.sync.ComponentPacketWriter
@@ -242,8 +243,8 @@ class EntityVampireComponent(val entity: LivingEntity) : VampireComponent, AutoS
     private fun feed(amount: Double, entity: LivingEntity) {
         addBlood(amount)
         lastFed = this.entity.world.time
-        if (entity is PlayerEntity && entity.isVampire) {
-            removeBlood(amount)
+        if (entity.isVampire) {
+            entity.vampireComponent.removeBlood(amount)
         } else {
             entity.damage(BloodLossDamageSource.instance, 1f)
         }
