@@ -17,10 +17,14 @@
   "entity.haema.vampire_hunter": "Vampire Hunter",
 
   "key.haema.dash": "Vampire Dash",
+  "key.haema.mist_form": "Mist Form",
+  "key.haema.expand_mist_form": "Expand Mist",
 
   "effect.haema.sunlight_sickness": "Sunlight Sickness",
   "effect.haema.vampiric_weakness": "Vampiric Weakness",
   "effect.haema.vampiric_strength": "Vampiric Strength",
+  "effect.haema.mist_form": "Mist Form",
+  "effect.haema.misted": "Misted",
 
   "death.attack.bloodLoss": "%1$s lost too much blood",
   "death.attack.bloodLoss.player": "%1$s lost too much blood whilst fighting %2$s",
@@ -140,6 +144,9 @@
 
   "gui.haema.hud.vampiredash": "Vampire Dash",
   "gui.haema.hud.invisibility": "Invisibility",
+  "gui.haema.hud.mist_form": "Mist Form",
+  "gui.haema.hud.normal_form": "Normal Form",
+  "gui.haema.hud.expand_mist_form": "Expand Mist Form",
   "gui.haema.hud.feed": "Feed",
   "gui.haema.hud.bloodquality": "Blood Quality: ",
   "gui.haema.hud.bloodquality.good": "Good",
@@ -185,6 +192,9 @@
   "ability.haema.immortality.description": "The power of immortality! Survive practically anything.",
   "ability.haema.vision": "VISION",
   "ability.haema.vision.description": "A vampire's vision is better in the dark - but worse in the light.",
+  "ability.haema.mist_form": "MIST FORM",
+  "ability.haema.mist_form.description": "Dissolve into a cloud of mist, poisoning and blinding your opponents.",
+
 
   "ritual.action.add_level": "+%d ability points",
   "ritual.action.change_abilities": "Customise abilities",

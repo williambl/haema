@@ -1,8 +1,8 @@
 package com.williambl.haema.client.gui
 
 import com.mojang.blaze3d.systems.RenderSystem
-import com.williambl.haema.abilities.VampireAbility
-import com.williambl.haema.abilities.abilityRegistry
+import com.williambl.haema.ability.AbilityModule
+import com.williambl.haema.ability.VampireAbility
 import com.williambl.haema.api.AbilityVisibilityEvent
 import com.williambl.haema.ritual.RitualTableScreenHandler
 import net.minecraft.advancement.AdvancementFrame
@@ -21,10 +21,10 @@ import net.minecraft.util.Identifier
 class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInventory, title: Text) :
     HandledScreen<RitualTableScreenHandler>(handler, inventory, title) {
 
-    private val widgets = abilityRegistry.entries.asSequence()
-        .filterNot { it.value == VampireAbility.NONE }
+    private val widgets = AbilityModule.ABILITY_REGISTRY.entries.asSequence()
+        .filterNot { it.value == AbilityModule.NONE }
         .filter { AbilityVisibilityEvent.EVENT.invoker().onVisibilityTest(inventory.player, it.value).orElse(it.value.isVisible(inventory.player)) }
-        .map { val ids = Pair(it.key.value, abilityRegistry.getRawId(it.value)); ids to List(it.value.maxLevel) { idx -> AbilityWidget(ids, it.value, idx + 1) } }
+        .map { val ids = Pair(it.key.value, AbilityModule.ABILITY_REGISTRY.getRawId(it.value)); ids to List(it.value.maxLevel) { idx -> AbilityWidget(ids, it.value, idx + 1) } }
         .toList()
 
     private var movingTab = false

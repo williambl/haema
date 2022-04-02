@@ -1,6 +1,7 @@
 package com.williambl.haema.compat.modmenu
 
 import com.mojang.blaze3d.systems.RenderSystem
+import com.williambl.haema.id
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawableHelper
 import net.minecraft.client.gui.screen.Screen
@@ -10,7 +11,6 @@ import net.minecraft.client.util.InputUtil
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.text.*
 import net.minecraft.util.Formatting
-import net.minecraft.util.Identifier
 import net.minecraft.util.Util
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
@@ -18,7 +18,7 @@ import java.net.URI
 import java.net.URISyntaxException
 
 class HaemaGameplayConfigScreen(private val parent: Screen?) : Screen(LiteralText("HAEMA").formatted(Formatting.UNDERLINE)) {
-    val icon = Identifier("haema:icon.png")
+    val icon = id("icon.png")
 
     var isShowingMore = false
 

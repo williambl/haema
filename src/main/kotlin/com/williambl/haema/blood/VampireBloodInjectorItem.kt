@@ -1,10 +1,11 @@
-package com.williambl.haema.blood.injector
+package com.williambl.haema.blood
 
-import com.williambl.haema.Vampirable
-import com.williambl.haema.VampireBloodManager
+import com.williambl.haema.convert
 import com.williambl.haema.criteria.VampireConversionFailureCriterion
 import com.williambl.haema.damagesource.IncompatibleBloodDamageSource
-import com.williambl.haema.util.playerVampireConversion
+import com.williambl.haema.isVampire
+import com.williambl.haema.util.HaemaGameRules
+import com.williambl.haema.vampireComponent
 import net.minecraft.block.DispenserBlock
 import net.minecraft.block.dispenser.FallibleItemDispenserBehavior
 import net.minecraft.client.item.TooltipContext
@@ -18,16 +19,14 @@ import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
 import net.minecraft.util.Hand
-import net.minecraft.util.Identifier
 import net.minecraft.util.TypedActionResult
 import net.minecraft.util.math.BlockPointer
 import net.minecraft.util.math.Box
-import net.minecraft.util.registry.Registry
 import net.minecraft.world.World
 
 class VampireBloodInjectorItem(settings: Settings?) : Item(settings) {
     override fun use(world: World, user: PlayerEntity, hand: Hand): TypedActionResult<ItemStack> {
-        val emptyStack = ItemStack(Registry.ITEM.get(Identifier("haema:empty_vampire_blood_injector")))
+        val emptyStack = ItemStack(BloodModule.EMPTY_VAMPIRE_BLOOD_INJECTOR)
         return if (tryUse(user, hand))
             TypedActionResult.consume(emptyStack)
         else
@@ -44,8 +43,8 @@ class VampireBloodInjectorItem(settings: Settings?) : Item(settings) {
             return false
         }
 
-        if ((user as Vampirable).isVampire) {
-            (user.hungerManager as VampireBloodManager).addBlood(6.0)
+        if ((user).isVampire) {
+            (user.vampireComponent).addBlood(6.0)
             return true
         }
 
@@ -53,7 +52,7 @@ class VampireBloodInjectorItem(settings: Settings?) : Item(settings) {
             VampireConversionFailureCriterion.trigger(user as ServerPlayerEntity)
             //awful hack, but the player dies before the item can be changed
             if (hand != null)
-                user.setStackInHand(hand, ItemStack(Registry.ITEM.get(Identifier("haema:empty_vampire_blood_injector"))))
+                user.setStackInHand(hand, ItemStack(BloodModule.EMPTY_VAMPIRE_BLOOD_INJECTOR))
 
             user.addStatusEffect(StatusEffectInstance(StatusEffects.WITHER, 3000))
             user.addStatusEffect(StatusEffectInstance(StatusEffects.NAUSEA, 100))
@@ -61,12 +60,12 @@ class VampireBloodInjectorItem(settings: Settings?) : Item(settings) {
             return true
         }
 
-        if (!user.world.gameRules[playerVampireConversion].get()) {
+        if (!user.world.gameRules[HaemaGameRules.playerVampireConversion].get()) {
             user.sendMessage(TranslatableText("gui.haema.message.conversion_blocked_by_gamerule"), true)
             return false
         }
 
-        Vampirable.convert(user)
+        convert(user)
         return true
     }
 
@@ -76,7 +75,7 @@ class VampireBloodInjectorItem(settings: Settings?) : Item(settings) {
             val user = pointer.world.getEntitiesByClass(PlayerEntity::class.java, Box(blockPos), null)
                 .firstOrNull() ?: return stack
             return if ((stack.item as VampireBloodInjectorItem).tryUse(user))
-                ItemStack(Registry.ITEM.get(Identifier("haema:empty_vampire_blood_injector")))
+                ItemStack(BloodModule.EMPTY_VAMPIRE_BLOOD_INJECTOR)
             else
                 stack
         }

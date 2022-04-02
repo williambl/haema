@@ -1,9 +1,8 @@
 package com.williambl.haema.hunter
 
-import com.williambl.haema.Vampirable
+import com.williambl.haema.id
+import com.williambl.haema.isVampire
 import com.williambl.haema.util.contains
-import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
-import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
 import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags
 import net.minecraft.block.entity.BannerPattern
 import net.minecraft.command.argument.EntityAnchorArgumentType
@@ -11,12 +10,10 @@ import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.enchantment.Enchantments
 import net.minecraft.entity.*
 import net.minecraft.entity.ai.goal.*
-import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.damage.DamageSource
 import net.minecraft.entity.data.DataTracker
 import net.minecraft.entity.data.TrackedData
 import net.minecraft.entity.data.TrackedDataHandlerRegistry
-import net.minecraft.entity.mob.HostileEntity
 import net.minecraft.entity.mob.MobEntity
 import net.minecraft.entity.mob.PathAwareEntity
 import net.minecraft.entity.mob.PatrolEntity
@@ -35,13 +32,14 @@ import net.minecraft.potion.PotionUtil
 import net.minecraft.potion.Potions
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.TranslatableText
-import net.minecraft.util.*
-import net.minecraft.util.registry.Registry
+import net.minecraft.util.ActionResult
+import net.minecraft.util.DyeColor
+import net.minecraft.util.Formatting
+import net.minecraft.util.Hand
 import net.minecraft.world.Difficulty
 import net.minecraft.world.LocalDifficulty
 import net.minecraft.world.ServerWorldAccess
 import net.minecraft.world.World
-import kotlin.Pair
 
 class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, world: World?) : PatrolEntity(
     entityType,
@@ -76,7 +74,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
         goalSelector.add(10, LookAtEntityGoal(this, MobEntity::class.java, 15.0f))
 
         targetSelector.add(1, RevengeGoal(this, MerchantEntity::class.java).setGroupRevenge())
-        targetSelector.add(2, ActiveTargetGoal(this, LivingEntity::class.java, 10, true, false) { it is Vampirable && it.isVampire })
+        targetSelector.add(2, ActiveTargetGoal(this, LivingEntity::class.java, 10, true, false, LivingEntity::isVampire))
     }
 
     override fun initDataTracker() {
@@ -231,7 +229,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
     }
 
     override fun interactMob(player: PlayerEntity, hand: Hand): ActionResult {
-        if (!world.isClient && hand == Hand.MAIN_HAND && this.isPatrolLeader && !((player as Vampirable).isVampire)) {
+        if (!world.isClient && hand == Hand.MAIN_HAND && this.isPatrolLeader && !((player).isVampire)) {
             val stack = player.mainHandStack
             if (stack.item is VampireHunterContract && stack.isContractFulfilled()) {
                 player.inventory.removeOne(stack)
@@ -262,12 +260,12 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
 
     private fun createContract(): ItemStack {
         if (random.nextDouble() < 0.3) {
-            val target = world.players.filter { (it as Vampirable).isVampire }.randomOrNull()
+            val target = world.players.filter { (it).isVampire }.randomOrNull()
             if (target != null) {
-                return contractItem.defaultStack.also { it.setContractTarget(target) }
+                return VampireHunterModule.VAMPIRE_HUNTER_CONTRACT.defaultStack.also { it.setContractTarget(target) }
             }
         }
-        return contractItem.defaultStack
+        return VampireHunterModule.VAMPIRE_HUNTER_CONTRACT.defaultStack
     }
 
     companion object {
@@ -275,8 +273,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
             VampireHunterEntity::class.java,
             TrackedDataHandlerRegistry.BOOLEAN
         )
-        val paymentLootTable = Identifier("haema:gameplay/contract_payment")
-        val contractItem: Item by lazy { Registry.ITEM.get(Identifier("haema:vampire_hunter_contract")) }
+        val paymentLootTable = id("gameplay/contract_payment")
     }
 }
 
@@ -388,29 +385,4 @@ class VampireHunterOnHorseAttackGoal(private val actor: VampireHunterEntity, spe
             actor.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, actor.target?.pos ?: actor.pos)
         }
     }
-}
-
-fun registerVampireHunter() {
-    Registry.register(
-        Registry.ENTITY_TYPE,
-        Identifier("haema:vampire_hunter"),
-        FabricEntityTypeBuilder.create<VampireHunterEntity>(SpawnGroup.CREATURE) { type, world -> VampireHunterEntity(type, world) }
-            .dimensions(EntityDimensions.fixed(0.6f, 1.95f))
-            .trackRangeBlocks(128).trackedUpdateRate(3).spawnableFarFromPlayer().build()
-    )
-
-    Registry.register(
-        Registry.ITEM,
-        Identifier("haema:vampire_hunter_contract"),
-        VampireHunterContract(Item.Settings().group(ItemGroup.MISC))
-    )
-
-    @Suppress("UNCHECKED_CAST")
-    FabricDefaultAttributeRegistry.register(
-        Registry.ENTITY_TYPE.get(Identifier("haema:vampire_hunter")) as EntityType<out LivingEntity>?,
-        HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.35)
-            .add(EntityAttributes.GENERIC_MAX_HEALTH, 20.0)
-            .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 5.0)
-            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 64.0)
-    )
 }

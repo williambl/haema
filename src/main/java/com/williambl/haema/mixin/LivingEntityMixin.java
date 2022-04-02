@@ -1,13 +1,12 @@
 package com.williambl.haema.mixin;
 
-import com.williambl.haema.Vampirable;
-import com.williambl.haema.VampireBloodManager;
-import com.williambl.haema.abilities.VampireAbility;
+import com.williambl.haema.VampirableKt;
+import com.williambl.haema.ability.AbilityModule;
 import com.williambl.haema.criteria.VampireHunterTriggerCriterion;
 import com.williambl.haema.damagesource.BloodLossDamageSource;
-import com.williambl.haema.damagesource.DamageSourcesKt;
+import com.williambl.haema.damagesource.DamageSourceModule;
 import com.williambl.haema.hunter.VampireHunterSpawner;
-import com.williambl.haema.util.HaemaGameRulesKt;
+import com.williambl.haema.util.HaemaGameRules;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -45,11 +44,11 @@ public abstract class LivingEntityMixin extends Entity {
     @Inject(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isDead()Z", ordinal = 1))
     void haema$setDeadVampireAsKilled(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         //noinspection ConstantConditions
-        if (((Object) this) instanceof PlayerEntity && ((Vampirable) this).isVampire()
-                && source != null && ((Vampirable) this).getAbilityLevel(VampireAbility.Companion.getIMMORTALITY()) > 0) {
-            if (this.getHealth() <= 0 && DamageSourcesKt.isEffectiveAgainstVampires(source, this.world)) {
-                ((VampireBloodManager) ((PlayerEntity) (Object) this).getHungerManager()).setAbsoluteBloodLevel(0.0);
-                ((Vampirable) this).setKilled(true);
+        if (((Object) this) instanceof PlayerEntity && VampirableKt.isVampire((LivingEntity) (Object) this)
+                && source != null && VampirableKt.getAbilityLevel((LivingEntity) (Object) this, AbilityModule.INSTANCE.getIMMORTALITY()) > 0) {
+            if (this.getHealth() <= 0 && DamageSourceModule.INSTANCE.isEffectiveAgainstVampires(source, this.world)) {
+                VampirableKt.getVampireComponent((LivingEntity) (Object) this).setAbsoluteBlood(0.0);
+                VampirableKt.setKilled((LivingEntity) (Object) this, true);
             }
         }
     }
@@ -57,9 +56,9 @@ public abstract class LivingEntityMixin extends Entity {
     @Inject(method = "tryUseTotem", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Hand;values()[Lnet/minecraft/util/Hand;"), cancellable = true)
     void haema$keepVampireAlive(DamageSource source, CallbackInfoReturnable<Boolean> cir) {
         //noinspection ConstantConditions
-        if (((Object) this) instanceof PlayerEntity && ((Vampirable)this).isVampire()
-                && source != null && ((Vampirable)this).getAbilityLevel(VampireAbility.Companion.getIMMORTALITY()) > 0) {
-            if (!(this.getHealth() <= 0 && DamageSourcesKt.isEffectiveAgainstVampires(source, this.world))) {
+        if (((Object) this) instanceof PlayerEntity && VampirableKt.isVampire((LivingEntity) (Object) this)
+                && source != null && (VampirableKt.getAbilityLevel((LivingEntity) (Object) this, AbilityModule.INSTANCE.getIMMORTALITY()) > 0)) {
+            if (!(this.getHealth() <= 0 && DamageSourceModule.INSTANCE.isEffectiveAgainstVampires(source, this.world))) {
                 cir.setReturnValue(true);
             }
         }
@@ -75,7 +74,7 @@ public abstract class LivingEntityMixin extends Entity {
         if (source == BloodLossDamageSource.Companion.getInstance() && world instanceof ServerWorld) {
             ((ServerWorld) world).spawnParticles(new DustParticleEffect(DustParticleEffect.RED, 3.0f), getX(), getY()+1, getZ(), 30, 1.0, 1.0, 1.0, 0.1);
 
-            if (random.nextDouble() < world.getGameRules().get(HaemaGameRulesKt.getVampireHunterNoticeChance()).get()) {
+            if (random.nextDouble() < world.getGameRules().get(HaemaGameRules.INSTANCE.getVampireHunterNoticeChance()).get()) {
                 //noinspection ConstantConditions
                 if ((Object) this instanceof ServerPlayerEntity) {
                     VampireHunterTriggerCriterion.INSTANCE.trigger((ServerPlayerEntity) (Object) this);

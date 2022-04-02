@@ -3,17 +3,22 @@
   "package": "com.williambl.haema.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "AbstractBlockStateMixin",
+    "ClientPlayerInteractionManagerMixin",
     "DamageSourceMixin",
+    "EntityMixin",
+    "HungerManagerMixin",
     "HurtBySensorMixin",
     "LivingEntityMixin",
     "MinecraftServerMixin",
     "MixinServerWorld",
     "PlayerEntityMixin",
-    "RegistryAccessor"
+    "RegistryAccessor",
+    "ServerPlayerInteractionManagerMixin",
+    "ServerPlayNetworkHandlerMixin"
   ],
   "client": [
     "AbstractClientPlayerEntityMixin",
-    "ClientPlayerEntityMixin",
     "InGameHudMixin"
   ],
   "server": [

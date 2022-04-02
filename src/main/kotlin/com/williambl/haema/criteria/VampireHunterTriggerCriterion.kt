@@ -1,6 +1,7 @@
 package com.williambl.haema.criteria
 
 import com.google.gson.JsonObject
+import com.williambl.haema.id
 import net.minecraft.advancement.criterion.AbstractCriterion
 import net.minecraft.advancement.criterion.AbstractCriterionConditions
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer
@@ -9,7 +10,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 
 object VampireHunterTriggerCriterion: AbstractCriterion<VampireHunterTriggerCriterion.Conditions>() {
-    private val id = Identifier("haema:trigger_vampire_hunters")
+    private val id = id("trigger_vampire_hunters")
     override fun getId(): Identifier = id
 
     override fun conditionsFromJson(
@@ -22,7 +23,5 @@ object VampireHunterTriggerCriterion: AbstractCriterion<VampireHunterTriggerCrit
         this.trigger(player) { true }
     }
 
-    class Conditions(playerPredicate: EntityPredicate.Extended):
-        AbstractCriterionConditions(id, playerPredicate) {
-    }
+    class Conditions(playerPredicate: EntityPredicate.Extended): AbstractCriterionConditions(id, playerPredicate)
 }

@@ -1,9 +1,11 @@
-package com.williambl.haema.blood.injector
+package com.williambl.haema.blood
 
-import com.williambl.haema.Vampirable
-import com.williambl.haema.VampireBloodManager
 import com.williambl.haema.criteria.StoreBloodCriterion
-import com.williambl.haema.util.playerVampireConversion
+import com.williambl.haema.deconvert
+import com.williambl.haema.isPermanentVampire
+import com.williambl.haema.isVampire
+import com.williambl.haema.util.HaemaGameRules
+import com.williambl.haema.vampireComponent
 import net.minecraft.block.DispenserBlock
 import net.minecraft.block.dispenser.FallibleItemDispenserBehavior
 import net.minecraft.client.item.TooltipContext
@@ -16,17 +18,15 @@ import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
 import net.minecraft.util.Hand
-import net.minecraft.util.Identifier
 import net.minecraft.util.TypedActionResult
 import net.minecraft.util.math.BlockPointer
 import net.minecraft.util.math.Box
-import net.minecraft.util.registry.Registry
 import net.minecraft.world.World
 
 class EmptyVampireBloodInjectorItem(settings: Settings?) : Item(settings) {
     override fun use(world: World, user: PlayerEntity, hand: Hand): TypedActionResult<ItemStack> {
         return if (tryUse(user))
-            TypedActionResult.consume(ItemStack(Registry.ITEM.get(Identifier("haema:vampire_blood_injector"))))
+            TypedActionResult.consume(ItemStack(BloodModule.VAMPIRE_BLOOD_INJECTOR))
         else
             TypedActionResult.pass(user.getStackInHand(hand))
     }
@@ -37,9 +37,9 @@ class EmptyVampireBloodInjectorItem(settings: Settings?) : Item(settings) {
     }
 
     fun tryUse(user: PlayerEntity): Boolean {
-        if ((user as Vampirable).isVampire && !user.world.isClient) {
+        if ((user).isVampire && !user.world.isClient) {
             if (user.hasStatusEffect(StatusEffects.WEAKNESS)) {
-                if (!user.world.gameRules[playerVampireConversion].get()) {
+                if (!user.world.gameRules[HaemaGameRules.playerVampireConversion].get()) {
                     user.sendMessage(TranslatableText("gui.haema.message.conversion_blocked_by_gamerule"), true)
                     return false
                 }
@@ -48,15 +48,15 @@ class EmptyVampireBloodInjectorItem(settings: Settings?) : Item(settings) {
                     return false
                 }
 
-                Vampirable.deconvert(user)
+                deconvert(user)
                 return true
             }
-            if ((user.hungerManager as VampireBloodManager).absoluteBloodLevel < 6.0) {
-                (user.hungerManager as VampireBloodManager).removeBlood(6.0)
+            if ((user.vampireComponent).absoluteBlood < 6.0) {
+                (user.vampireComponent).removeBlood(6.0)
                 return false
             }
             StoreBloodCriterion.trigger(user as ServerPlayerEntity)
-            (user.hungerManager as VampireBloodManager).removeBlood(6.0)
+            (user.vampireComponent).removeBlood(6.0)
             return true
         }
 
@@ -69,7 +69,7 @@ class EmptyVampireBloodInjectorItem(settings: Settings?) : Item(settings) {
             val user = pointer.world.getEntitiesByClass(PlayerEntity::class.java, Box(blockPos), null)
                 .firstOrNull() ?: return stack
             return if ((stack.item as EmptyVampireBloodInjectorItem).tryUse(user))
-                ItemStack(Registry.ITEM.get(Identifier("haema:vampire_blood_injector")))
+                ItemStack(BloodModule.VAMPIRE_BLOOD_INJECTOR)
             else
                 stack
         }

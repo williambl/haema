@@ -1,22 +1,17 @@
 package com.williambl.haema.ritual
 
-import com.williambl.haema.Vampirable
 import com.williambl.haema.api.RitualTableUseEvent
 import com.williambl.haema.criteria.UseRitualCriterion
+import com.williambl.haema.isVampire
 import com.williambl.haema.ritual.craft.RitualInventory
-import com.williambl.haema.ritual.craft.RitualRecipe
-import com.williambl.haema.util.MultiTagMatcher
-import net.fabricmc.fabric.api.tag.TagRegistry
 import net.minecraft.block.*
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
+import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.fluid.Fluid
 import net.minecraft.fluid.FluidState
 import net.minecraft.fluid.Fluids
-import net.minecraft.item.BlockItem
-import net.minecraft.item.Item
-import net.minecraft.item.ItemGroup
 import net.minecraft.item.ItemPlacementContext
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.particle.ParticleTypes
@@ -26,30 +21,19 @@ import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.state.StateManager
 import net.minecraft.state.property.Properties
-import net.minecraft.tag.Tag
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
-import net.minecraft.util.Identifier
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3f
-import net.minecraft.util.registry.Registry
 import net.minecraft.util.shape.VoxelShape
 import net.minecraft.world.BlockView
 import net.minecraft.world.World
-import vazkii.patchouli.common.multiblock.DenseMultiblock
-import vazkii.patchouli.common.multiblock.MultiblockRegistry
-import vazkii.patchouli.common.multiblock.StateMatcher
 import java.util.*
 import kotlin.math.min
 
-val level0RitualMaterialsTag: Tag<Block> = TagRegistry.block(Identifier("haema:ritual_materials/level_0"))
-val level1RitualMaterialsTag: Tag<Block> = TagRegistry.block(Identifier("haema:ritual_materials/level_1"))
-
-val level0RitualTorchesTag: Tag<Block> = TagRegistry.block(Identifier("haema:ritual_torches/level_0"))
-val level1RitualTorchesTag: Tag<Block> = TagRegistry.block(Identifier("haema:ritual_torches/level_1"))
 
 class RitualTable(settings: Settings) : HorizontalFacingBlock(settings) {
     init {
@@ -71,7 +55,7 @@ class RitualTable(settings: Settings) : HorizontalFacingBlock(settings) {
 
             val inventory = getInventory(world, pos, player, level)
 
-            (world as ServerWorld).server.recipeManager.listAllOfType(RitualRecipe.recipeType)
+            (world as ServerWorld).server.recipeManager.listAllOfType(RitualModule.RITUAL_RECIPE_TYPE)
                 .firstOrNull { it.matches(inventory) }
                 ?.craft(inventory) ?: return ActionResult.PASS
 
@@ -88,7 +72,7 @@ class RitualTable(settings: Settings) : HorizontalFacingBlock(settings) {
     ): VoxelShape = shape
 
     override fun onSteppedOn(world: World, pos: BlockPos, state: BlockState, entity: Entity) {
-        if (world.isClient && entity is Vampirable && entity.isVampire && world.random.nextFloat() < 0.1) {
+        if (world.isClient && entity is LivingEntity && entity.isVampire && world.random.nextFloat() < 0.1) {
             val level = min(checkBaseBlockStates(world, pos), checkTorchBlockStates(world, pos))
 
             if (level >= 0) {
@@ -252,10 +236,6 @@ class RitualTable(settings: Settings) : HorizontalFacingBlock(settings) {
 
         val shape: VoxelShape = createCuboidShape(0.0, 0.0, 0.0, 16.0, 12.0, 16.0)
 
-        init {
-
-        }
-
         fun checkBaseBlockStates(world: World, tablePos: BlockPos): Int {
             var result = 4
             val mutable = tablePos.mutableCopy()
@@ -358,8 +338,8 @@ class RitualTable(settings: Settings) : HorizontalFacingBlock(settings) {
 
         private fun getBlockLevel(block: Block): Int {
             return when {
-                level1RitualMaterialsTag.contains(block) -> 1
-                level0RitualMaterialsTag.contains(block) -> 0
+                RitualModule.LEVEL_1_RITUAL_MATERIALS.contains(block) -> 1
+                RitualModule.LEVEL_0_RITUAL_MATERIALS.contains(block) -> 0
                 else -> -1
             }
         }
@@ -367,107 +347,10 @@ class RitualTable(settings: Settings) : HorizontalFacingBlock(settings) {
         private fun getTorchLevel(blockState: BlockState): Int {
             return when {
                 blockState.contains(Properties.LIT) && !blockState[Properties.LIT] -> -1
-                blockState.isIn(level1RitualTorchesTag) -> 1
-                blockState.isIn(level0RitualTorchesTag) -> 0
+                blockState.isIn(RitualModule.LEVEL_1_RITUAL_TORCHES) -> 1
+                blockState.isIn(RitualModule.LEVEL_0_RITUAL_TORCHES) -> 0
                 else -> -1
             }
         }
     }
-}
-
-fun registerRitualTable() {
-    Registry.register(
-        Registry.BLOCK,
-        Identifier("haema:ritual_table"),
-        RitualTable.instance
-    )
-    Registry.register(
-        Registry.ITEM,
-        Identifier("haema:ritual_table"),
-        BlockItem(RitualTable.instance, Item.Settings().group(ItemGroup.DECORATIONS))
-    )
-
-    //To make them load and register
-    RitualRecipe.recipeSerializer
-    RitualRecipe.recipeType
-
-    MultiblockRegistry.registerMultiblock(
-        Identifier("haema:basic_altar"), DenseMultiblock(
-            arrayOf(
-                arrayOf(
-                    "T T T",
-                    "     ",
-                    "T   T",
-                    "     ",
-                    "T T T"
-                ), arrayOf(
-                    "B B B",
-                    "     ",
-                    "B 0 B",
-                    "     ",
-                    "B B B"
-                ), arrayOf(
-                    "BBBBB",
-                    "B   B",
-                    "B B B",
-                    "B   B",
-                    "BBBBB"
-                ), arrayOf(
-                    "BBBBB",
-                    "BBBBB",
-                    "BBBBB",
-                    "BBBBB",
-                    "BBBBB"
-                )
-            ), mapOf(
-                'T' to MultiTagMatcher(
-                    listOf(level0RitualTorchesTag as Tag.Identified<Block>),
-                    mapOf(Properties.LIT to true)
-                ),
-                'B' to MultiTagMatcher(listOf(level0RitualMaterialsTag as Tag.Identified<Block>), mapOf()),
-                '0' to StateMatcher.fromBlockLoose(RitualTable.instance),
-                ' ' to StateMatcher.ANY
-            )
-        )
-    )
-
-    MultiblockRegistry.registerMultiblock(
-        Identifier("haema:blackstone_altar"), DenseMultiblock(
-            arrayOf(
-                arrayOf(
-                    "T T T",
-                    "     ",
-                    "T   T",
-                    "     ",
-                    "T T T"
-                ), arrayOf(
-                    "B B B",
-                    "     ",
-                    "B 0 B",
-                    "     ",
-                    "B B B"
-                ), arrayOf(
-                    "BBBBB",
-                    "B   B",
-                    "B B B",
-                    "B   B",
-                    "BBBBB"
-                ), arrayOf(
-                    "BBBBB",
-                    "BBBBB",
-                    "BBBBB",
-                    "BBBBB",
-                    "BBBBB"
-                )
-            ), mapOf(
-                'T' to MultiTagMatcher(
-                    listOf(level1RitualTorchesTag as Tag.Identified<Block>),
-                    mapOf(Properties.LIT to true)
-                ),
-                'B' to MultiTagMatcher(listOf(level1RitualMaterialsTag as Tag.Identified<Block>), mapOf()),
-                '0' to StateMatcher.fromBlockLoose(RitualTable.instance),
-                ' ' to StateMatcher.ANY
-            )
-        )
-    )
 }

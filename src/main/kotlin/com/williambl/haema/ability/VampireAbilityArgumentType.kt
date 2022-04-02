@@ -1,4 +1,4 @@
-package com.williambl.haema.abilities
+package com.williambl.haema.ability
 
 import com.google.gson.JsonObject
 import com.mojang.brigadier.StringReader
@@ -20,7 +20,7 @@ class VampireAbilityArgumentType private constructor() : ArgumentType<VampireAbi
     @Throws(CommandSyntaxException::class)
     override fun parse(stringReader: StringReader): VampireAbility {
         val id = Identifier.fromCommandInput(stringReader)
-        return abilityRegistry.getOrEmpty(id).orElseThrow {
+        return AbilityModule.ABILITY_REGISTRY.getOrEmpty(id).orElseThrow {
             INVALID_ABILITY_EXCEPTION.create(id)
         }
     }
@@ -29,7 +29,7 @@ class VampireAbilityArgumentType private constructor() : ArgumentType<VampireAbi
         context: CommandContext<S>,
         builder: SuggestionsBuilder
     ): CompletableFuture<Suggestions> {
-        return CommandSource.suggestMatching(abilityRegistry.ids.map(Identifier::toString), builder)
+        return CommandSource.suggestMatching(AbilityModule.ABILITY_REGISTRY.ids.map(Identifier::toString), builder)
     }
 
     override fun getExamples(): Collection<String> {

@@ -1,6 +1,7 @@
 package com.williambl.haema.client
 
 import com.williambl.haema.hunter.VampireHunterEntity
+import com.williambl.haema.id
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.model.*
@@ -17,7 +18,7 @@ import net.minecraft.util.math.MathHelper
 
 @Environment(EnvType.CLIENT)
 class VampireHunterEntityRenderer(context: EntityRendererFactory.Context) : MobEntityRenderer<VampireHunterEntity, VampireHunterModel>(context, VampireHunterModel(context.getPart(VampireHunterModel.layer)), 0.5f) {
-    private val texture = Identifier("haema:textures/entity/vampire_hunter.png")
+    private val texture = id("textures/entity/vampire_hunter.png")
 
     init {
         addFeature(HeadFeatureRenderer(this, context.modelLoader))
@@ -40,9 +41,6 @@ class VampireHunterModel(val root: ModelPart) : SinglePartEntityModel<VampireHun
     private val rightLeg: ModelPart = root.getChild(EntityModelPartNames.RIGHT_LEG)
     private val rightAttackingArm: ModelPart = root.getChild(EntityModelPartNames.RIGHT_ARM)
     private val leftAttackingArm: ModelPart = root.getChild(EntityModelPartNames.LEFT_ARM)
-    init {
-        //hat.visible = false
-    }
 
     override fun getPart(): ModelPart {
         return root
@@ -107,7 +105,7 @@ class VampireHunterModel(val root: ModelPart) : SinglePartEntityModel<VampireHun
     }
 
     companion object {
-        val layer = EntityModelLayer(Identifier("haema:vampire_hunter"), "main")
+        val layer = EntityModelLayer(id("vampire_hunter"), "main")
 
         fun getTexturedModelData(): TexturedModelData {
             val modelData = ModelData()

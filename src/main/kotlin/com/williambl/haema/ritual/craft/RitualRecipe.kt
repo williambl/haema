@@ -1,9 +1,13 @@
 package com.williambl.haema.ritual.craft
 
 import com.google.gson.JsonObject
-import com.williambl.haema.Vampirable
-import com.williambl.haema.abilities.VampireAbility
+import com.williambl.haema.ability.AbilityModule
+import com.williambl.haema.getAbilityLevel
+import com.williambl.haema.hasUsedRitual
+import com.williambl.haema.ritual.RitualModule
 import com.williambl.haema.ritual.RitualTableScreenHandler
+import com.williambl.haema.setAbilityLevel
+import com.williambl.haema.setHasUsedRitual
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -39,7 +43,7 @@ class RitualRecipe(
     : Recipe<RitualInventory> {
 
     fun matches(inv: RitualInventory): Boolean {
-        if (!isRepeatable && (inv.player as Vampirable).hasUsedRitual(id) || inv.level < minLevel)
+        if (!isRepeatable && (inv.player).hasUsedRitual(id) || inv.level < minLevel)
             return false
 
         val invItemStacks = inv.getAllItemStacks().toMutableList()
@@ -114,7 +118,7 @@ class RitualRecipe(
             delay(200)
             (inv.player.world as ServerWorld).server.submit {
                 ritualActions[actionName]?.invoke(inv, actionArg)
-                (inv.player as Vampirable).setHasUsedRitual(id, true)
+                (inv.player).setHasUsedRitual(id, true)
             }
         }
 
@@ -127,9 +131,9 @@ class RitualRecipe(
 
     override fun getId(): Identifier = id
 
-    override fun getSerializer(): RecipeSerializer<*> = recipeSerializer
+    override fun getSerializer(): RecipeSerializer<*> = RitualModule.RITUAL_RECIPE_SERIALIZER
 
-    override fun getType(): RecipeType<*> = recipeType
+    override fun getType(): RecipeType<*> = RitualModule.RITUAL_RECIPE_TYPE
 
     private fun World.clearFluidState(pos: BlockPos) {
         val blockState = getBlockState(pos)
@@ -141,14 +145,12 @@ class RitualRecipe(
     }
 
     companion object {
-        val recipeType: RecipeType<RitualRecipe> = RecipeType.register("haema:ritual")
-        val recipeSerializer: Serializer = RecipeSerializer.register("haema:ritual", Serializer)
 
         val ritualActions = mapOf<String, (RitualInventory, Int) -> Unit>(
             "add_level" to { inv, arg ->
-                (inv.player as Vampirable).setAbilityLevel(
-                    VampireAbility.NONE, (inv.player as Vampirable).getAbilityLevel(
-                        VampireAbility.NONE)+arg)
+                (inv.player).setAbilityLevel(
+                    AbilityModule.NONE, (inv.player).getAbilityLevel(
+                        AbilityModule.NONE)+arg)
                 inv.player.openHandledScreen(RitualTableScreenHandler.Factory(inv))
             },
             "change_abilities" to { inv, _ -> inv.player.openHandledScreen(RitualTableScreenHandler.Factory(inv)) }

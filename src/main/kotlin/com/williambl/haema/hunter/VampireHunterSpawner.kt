@@ -1,6 +1,6 @@
 package com.williambl.haema.hunter
 
-import com.williambl.haema.Vampirable
+import com.williambl.haema.isVampire
 import net.minecraft.entity.EntityData
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.SpawnReason
@@ -8,10 +8,9 @@ import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.mob.PatrolEntity
 import net.minecraft.entity.passive.PassiveEntity
 import net.minecraft.nbt.NbtCompound
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
-import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
-import net.minecraft.util.registry.Registry
 import net.minecraft.world.GameRules
 import net.minecraft.world.Heightmap
 import net.minecraft.world.SpawnHelper
@@ -20,7 +19,7 @@ import net.minecraft.world.gen.Spawner
 import java.util.*
 import kotlin.math.ceil
 
-class VampireHunterSpawner(private val entityType: EntityType<out VampireHunterEntity>) : Spawner {
+class VampireHunterSpawner: Spawner {
     private var ticksUntilNextSpawn = 0
 
     private var amountSpawnedSinceLast = 0
@@ -42,7 +41,7 @@ class VampireHunterSpawner(private val entityType: EntityType<out VampireHunterE
         if (random.nextInt(5) != 0)
             return 0
 
-        val vampires = serverWorld.players.filter { (it as Vampirable).isVampire }
+        val vampires = serverWorld.players.filter(ServerPlayerEntity::isVampire)
 
         val vampireCount = vampires.size
         if (vampireCount < 1)
@@ -100,11 +99,11 @@ class VampireHunterSpawner(private val entityType: EntityType<out VampireHunterE
 
     fun spawnOneEntity(world: ServerWorld, blockPos: BlockPos, random: Random, isLeader: Boolean): Boolean {
         val blockState = world.getBlockState(blockPos)
-        if (!SpawnHelper.isClearForSpawn(world, blockPos, blockState, blockState.fluidState, entityType))
+        if (!SpawnHelper.isClearForSpawn(world, blockPos, blockState, blockState.fluidState, VampireHunterModule.VAMPIRE_HUNTER))
             return false
-        if (!PatrolEntity.canSpawn(entityType, world, SpawnReason.PATROL, blockPos, random))
+        if (!PatrolEntity.canSpawn(VampireHunterModule.VAMPIRE_HUNTER, world, SpawnReason.PATROL, blockPos, random))
             return false
-        val entity = entityType.create(world)
+        val entity = VampireHunterModule.VAMPIRE_HUNTER.create(world)
         if (entity != null) {
             amountSpawnedSinceLast++
             if (isLeader) {
@@ -131,11 +130,11 @@ class VampireHunterSpawner(private val entityType: EntityType<out VampireHunterE
 
     fun spawnOneEntityOnHorse(world: ServerWorld, blockPos: BlockPos, random: Random, isLeader: Boolean): Boolean {
         val blockState = world.getBlockState(blockPos)
-        if (!SpawnHelper.isClearForSpawn(world, blockPos, blockState, blockState.fluidState, entityType))
+        if (!SpawnHelper.isClearForSpawn(world, blockPos, blockState, blockState.fluidState, VampireHunterModule.VAMPIRE_HUNTER))
             return false
-        if (!PatrolEntity.canSpawn(entityType, world, SpawnReason.PATROL, blockPos, random))
+        if (!PatrolEntity.canSpawn(VampireHunterModule.VAMPIRE_HUNTER, world, SpawnReason.PATROL, blockPos, random))
             return false
-        val hunter = entityType.create(world) ?: return false
+        val hunter = VampireHunterModule.VAMPIRE_HUNTER.create(world) ?: return false
         val horse = EntityType.HORSE.create(world) ?: return false
         amountSpawnedSinceLast++
 
@@ -174,7 +173,6 @@ class VampireHunterSpawner(private val entityType: EntityType<out VampireHunterE
     }
 
     companion object {
-        @Suppress("UNCHECKED_CAST")
-        val instance: VampireHunterSpawner by lazy { VampireHunterSpawner(Registry.ENTITY_TYPE.get(Identifier("haema:vampire_hunter")) as EntityType<out VampireHunterEntity>) }
+        val instance = VampireHunterSpawner()
     }
 }
