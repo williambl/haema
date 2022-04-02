@@ -24,6 +24,7 @@ import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.attribute.EntityAttributeModifier
 import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.effect.StatusEffectInstance
+import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.network.PacketByteBuf
@@ -227,14 +228,17 @@ class EntityVampireComponent(val entity: LivingEntity) : VampireComponent, AutoS
 
         if (goodBloodTag.contains(entity.type)) {
             feed(0.8, entity)
+            applyGoodBloodEffects(this.entity)
             return ActionResult.SUCCESS // I'd like these to be CONSUME but then nothing's sent to the server
         }
         if (mediumBloodTag.contains(entity.type)) {
             feed(0.4, entity)
+            applyMediumBloodEffects(this.entity)
             return ActionResult.SUCCESS
         }
         if (poorBloodTag.contains(entity.type)) {
             feed(0.1, entity)
+            applyPoorBloodEffects(this.entity)
             return ActionResult.SUCCESS
         }
         return ActionResult.PASS
@@ -292,5 +296,20 @@ class EntityVampireComponent(val entity: LivingEntity) : VampireComponent, AutoS
         val poorBloodTag: Tag<EntityType<*>> = TagFactory.ENTITY_TYPE.create(id("poor_blood_sources"))
 
         fun getFeedCooldown(world: World): Int = world.gameRules[HaemaGameRules.feedCooldown].get()
+
+        fun applyPoorBloodEffects(entity: LivingEntity) {
+            entity.addStatusEffect(StatusEffectInstance(StatusEffects.POISON, 60))
+            entity.addStatusEffect(StatusEffectInstance(StatusEffects.NAUSEA, 60))
+        }
+
+        fun applyMediumBloodEffects(entity: LivingEntity) {
+        }
+
+        fun applyGoodBloodEffects(entity: LivingEntity) {
+        }
+
+        fun applySuperiorBloodEffects(entity: LivingEntity) {
+            // :eyes:
+        }
     }
 }
