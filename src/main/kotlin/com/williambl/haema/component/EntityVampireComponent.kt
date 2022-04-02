@@ -60,7 +60,7 @@ class EntityVampireComponent(val entity: LivingEntity) : VampireComponent, AutoS
 
     override var absoluteBlood: Double by synced(7.0, syncOne, PacketByteBuf::writeDouble, PacketByteBuf::readDouble)
     override val blood: Double
-        get() = if (entity is PlayerEntity && entity.isCreative) 20.0 else 20.0 * (sin((absoluteBlood * PI) / 40.0))
+        get() = if (entity.isSpectator || entity is PlayerEntity && entity.isCreative) 20.0 else 20.0 * (sin((absoluteBlood * PI) / 40.0))
 
     override var lastFed: Long by synced(-24000, syncOne, PacketByteBuf::writeVarLong, PacketByteBuf::readVarLong)
 

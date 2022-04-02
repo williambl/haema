@@ -24,8 +24,9 @@ class SunlightSicknessEffect(type: StatusEffectCategory?, color: Int) : StatusEf
     }
 
     override fun applyUpdateEffect(entity: LivingEntity?, amplifier: Int) {
-        if (entity == null || !entity.isVampire)
+        if (entity == null || !entity.isVampire || entity.isSpectator || (entity is PlayerEntity && entity.isCreative)) {
             return
+        }
 
         if (entity.age % 10 == 0) {
             entity.damage(SunlightDamageSource.instance, 0.5f)
