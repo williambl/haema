@@ -17,6 +17,9 @@
     "minecraft:wolf",
     "minecraft:trader_llama",
     "minecraft:hoglin",
+    "minecraft:donkey",
+    "minecraft:goat",
+    "minecraft:mule",
     {
       "id": "ratsmischief:rat",
       "required": false
