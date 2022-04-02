@@ -140,7 +140,7 @@ object HaemaClient: ClientModInitializer {
                 return@VampireHudAddTextEvent listOf(
                     createText(
                         ClientMistHandler.MIST_KEY.boundKeyLocalizedText.copy(),
-                        (player).isVampire,
+                        (player).isVampire && MistFormAbilityComponent.entityKey.get(player).canUseMistForm(),
                         TranslatableText(if (MistFormAbilityComponent.entityKey[player].isInMistForm) "gui.haema.hud.normal_form" else "gui.haema.hud.mist_form")
                     )
                 )

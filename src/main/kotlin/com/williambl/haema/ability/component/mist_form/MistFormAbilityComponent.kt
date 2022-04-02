@@ -14,6 +14,7 @@ interface MistFormAbilityComponent: ComponentV3, AutoSyncedComponent, ServerTick
         this.isInMistForm = !this.isInMistForm
     }
     fun shouldRenderAsFullMistForm(): Boolean
+    fun canUseMistForm(): Boolean
 
     fun expandMist()
     fun isMistExpanded(): Boolean
