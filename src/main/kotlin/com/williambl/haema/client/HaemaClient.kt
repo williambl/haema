@@ -136,7 +136,7 @@ object HaemaClient: ClientModInitializer {
         })
 
         VampireHudAddTextEvent.EVENT.register(VampireHudAddTextEvent { player, createText ->
-            if (ClientMistHandler.canMist(player)) {
+            if (ClientMistHandler.hasMistAbility(player)) {
                 return@VampireHudAddTextEvent listOf(
                     createText(
                         ClientMistHandler.MIST_KEY.boundKeyLocalizedText.copy(),

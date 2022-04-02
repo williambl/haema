@@ -41,9 +41,13 @@ object ClientMistHandler: ClientTickEvents.StartTick {
         this.wasExpandKeyPressedLast = EXPAND_MIST_KEY.isPressed
     }
 
-    fun canMist(player: PlayerEntity): Boolean {
+    fun hasMistAbility(player: PlayerEntity): Boolean {
         val abilityLevel: Int = player.getAbilityLevel(MIST_FORM)
         return abilityLevel > 0
+    }
+
+    fun canMist(player: PlayerEntity): Boolean {
+        return hasMistAbility(player) && MistFormAbilityComponent.entityKey.get(player).canUseMistForm()
     }
 
     fun canExpandMist(player: PlayerEntity): Boolean {

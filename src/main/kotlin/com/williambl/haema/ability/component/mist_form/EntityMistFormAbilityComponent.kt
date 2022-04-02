@@ -35,7 +35,7 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
     private var mistExpansionCooldownTime: Long by Delegates.observable(0, syncCallback)
 
     override fun toggleMistForm() {
-        if (!this.canExpandMist()) {
+        if (!this.canUseMistForm()) {
             return
         }
 
