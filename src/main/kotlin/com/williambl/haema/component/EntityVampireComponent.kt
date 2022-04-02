@@ -7,9 +7,7 @@ import com.williambl.haema.api.BloodChangeEvents
 import com.williambl.haema.api.BloodDrinkingEvents
 import com.williambl.haema.damagesource.BloodLossDamageSource
 import com.williambl.haema.effect.SunlightSicknessEffect
-import com.williambl.haema.effect.VampiricStrengthEffect
 import com.williambl.haema.effect.VampiricWeaknessEffect
-import com.williambl.haema.getAbilityLevel
 import com.williambl.haema.id
 import com.williambl.haema.isVampire
 import com.williambl.haema.util.HaemaGameRules
@@ -72,7 +70,8 @@ class EntityVampireComponent(val entity: LivingEntity) : VampireComponent, AutoS
             AbilityModule.DASH to 1,
             AbilityModule.INVISIBILITY to 0,
             AbilityModule.IMMORTALITY to 1,
-            AbilityModule.VISION to 1
+            AbilityModule.VISION to 1,
+            AbilityModule.MIST_FORM to 0
         ),
         syncOne,
         { buf, map -> buf.writeMap(
