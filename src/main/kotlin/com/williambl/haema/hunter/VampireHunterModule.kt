@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilde
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors
 import net.fabricmc.fabric.api.biome.v1.ModificationPhase
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.structure.v1.FabricStructureBuilder
 import net.minecraft.entity.EntityDimensions
 import net.minecraft.entity.EntityType
@@ -20,7 +21,7 @@ import net.minecraft.item.ItemGroup
 import net.minecraft.structure.PlainsVillageData
 import net.minecraft.util.registry.BuiltinRegistries
 import net.minecraft.util.registry.Registry
-import net.minecraft.world.biome.Biome
+import net.minecraft.world.Difficulty
 import net.minecraft.world.gen.GenerationStep
 import net.minecraft.world.gen.feature.ConfiguredStructureFeature
 import net.minecraft.world.gen.feature.StructureFeature
@@ -92,5 +93,16 @@ object VampireHunterModule: ModInitializer {
                 ModificationPhase.ADDITIONS,
                 BiomeSelectors.foundInOverworld()
             ) { context -> context.generationSettings.addBuiltInStructure(CONFIGURED_SMALL_VAMPIRE_HUNTER_OUTPOST_FEATURE) }
+
+        val spawner = VampireHunterSpawner()
+        ServerTickEvents.END_SERVER_TICK.register { server ->
+            server.worlds.forEach { world ->
+                spawner.spawn(
+                    world,
+                    server.saveProperties.difficulty != Difficulty.PEACEFUL,
+                    server.shouldSpawnAnimals()
+                )
+            }
+        }
     }
 }
