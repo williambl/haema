@@ -25,7 +25,7 @@ class HaemaMainConfigScreen(private val parent: Screen?) : Screen(LiteralText("H
             client?.setScreen(HaemaGameplayConfigScreen(this))
         })
         addDrawableChild(ButtonWidget(width / 2 - 100, 180, 200, 20, TranslatableText("gui.done")) {
-            onClose()
+            close()
         })
     }
 
@@ -47,7 +47,7 @@ class HaemaMainConfigScreen(private val parent: Screen?) : Screen(LiteralText("H
         DrawableHelper.drawCenteredText(matrices, textRenderer, TranslatableText("gui.haema.title").formatted(Formatting.UNDERLINE), width / 2, 75, 0xffffff)
     }
 
-    override fun onClose() {
+    override fun close() {
         client?.setScreen(parent)
     }
 }

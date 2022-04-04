@@ -338,8 +338,8 @@ class RitualTable(settings: Settings) : HorizontalFacingBlock(settings) {
 
         private fun getBlockLevel(block: Block): Int {
             return when {
-                RitualModule.LEVEL_1_RITUAL_MATERIALS.contains(block) -> 1
-                RitualModule.LEVEL_0_RITUAL_MATERIALS.contains(block) -> 0
+                block.registryEntry.isIn(RitualModule.LEVEL_1_RITUAL_MATERIALS) -> 1
+                block.registryEntry.isIn(RitualModule.LEVEL_0_RITUAL_MATERIALS) -> 0
                 else -> -1
             }
         }

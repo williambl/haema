@@ -4,7 +4,6 @@ import com.williambl.haema.id
 import com.williambl.haema.ritual.craft.RitualRecipe
 import com.williambl.haema.util.MultiTagMatcher
 import net.fabricmc.api.ModInitializer
-import net.fabricmc.fabric.api.tag.TagFactory
 import net.minecraft.block.Block
 import net.minecraft.item.BlockItem
 import net.minecraft.item.Item
@@ -12,7 +11,7 @@ import net.minecraft.item.ItemGroup
 import net.minecraft.recipe.RecipeSerializer
 import net.minecraft.recipe.RecipeType
 import net.minecraft.state.property.Properties
-import net.minecraft.tag.Tag
+import net.minecraft.tag.TagKey
 import net.minecraft.util.registry.Registry
 import vazkii.patchouli.common.multiblock.DenseMultiblock
 import vazkii.patchouli.common.multiblock.MultiblockRegistry
@@ -35,11 +34,11 @@ object RitualModule: ModInitializer {
             BlockItem(RitualTable.instance, Item.Settings().group(ItemGroup.DECORATIONS))
         )
 
-    val LEVEL_0_RITUAL_MATERIALS: Tag<Block> = TagFactory.BLOCK.create(id("ritual_materials/level_0"))
-    val LEVEL_1_RITUAL_MATERIALS: Tag<Block> = TagFactory.BLOCK.create(id("ritual_materials/level_1"))
+    val LEVEL_0_RITUAL_MATERIALS: TagKey<Block> = TagKey.of(Registry.BLOCK_KEY, id("ritual_materials/level_0"))
+    val LEVEL_1_RITUAL_MATERIALS: TagKey<Block> = TagKey.of(Registry.BLOCK_KEY, id("ritual_materials/level_1"))
 
-    val LEVEL_0_RITUAL_TORCHES: Tag<Block> = TagFactory.BLOCK.create(id("ritual_torches/level_0"))
-    val LEVEL_1_RITUAL_TORCHES: Tag<Block> = TagFactory.BLOCK.create(id("ritual_torches/level_1"))
+    val LEVEL_0_RITUAL_TORCHES: TagKey<Block> = TagKey.of(Registry.BLOCK_KEY, id("ritual_torches/level_0"))
+    val LEVEL_1_RITUAL_TORCHES: TagKey<Block> = TagKey.of(Registry.BLOCK_KEY, id("ritual_torches/level_1"))
 
     override fun onInitialize() {
         MultiblockRegistry.registerMultiblock(
@@ -72,10 +71,10 @@ object RitualModule: ModInitializer {
                     )
                 ), mapOf(
                     'T' to MultiTagMatcher(
-                        listOf(LEVEL_0_RITUAL_TORCHES as Tag.Identified<Block>),
+                        listOf(LEVEL_0_RITUAL_TORCHES),
                         mapOf(Properties.LIT to true)
                     ),
-                    'B' to MultiTagMatcher(listOf(LEVEL_0_RITUAL_MATERIALS as Tag.Identified<Block>), mapOf()),
+                    'B' to MultiTagMatcher(listOf(LEVEL_0_RITUAL_MATERIALS), mapOf()),
                     '0' to StateMatcher.fromBlockLoose(RitualTable.instance),
                     ' ' to StateMatcher.ANY
                 )
@@ -112,10 +111,10 @@ object RitualModule: ModInitializer {
                     )
                 ), mapOf(
                     'T' to MultiTagMatcher(
-                        listOf(LEVEL_1_RITUAL_TORCHES as Tag.Identified<Block>),
+                        listOf(LEVEL_1_RITUAL_TORCHES),
                         mapOf(Properties.LIT to true)
                     ),
-                    'B' to MultiTagMatcher(listOf(LEVEL_1_RITUAL_MATERIALS as Tag.Identified<Block>), mapOf()),
+                    'B' to MultiTagMatcher(listOf(LEVEL_1_RITUAL_MATERIALS), mapOf()),
                     '0' to StateMatcher.fromBlockLoose(RitualTable.instance),
                     ' ' to StateMatcher.ANY
                 )

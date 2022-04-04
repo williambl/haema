@@ -3,7 +3,7 @@ package com.williambl.haema.mixin;
 import com.google.common.collect.ImmutableList;
 import com.williambl.haema.hunter.VampireHunterSpawner;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.gen.Spawner;
+import net.minecraft.world.spawner.Spawner;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;

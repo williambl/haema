@@ -11,6 +11,6 @@ import net.minecraft.text.LiteralText
  */
 class SelfClosingScreen : Screen(LiteralText("closing...")) {
     override fun tick() {
-        this.onClose()
+        this.close()
     }
 }
