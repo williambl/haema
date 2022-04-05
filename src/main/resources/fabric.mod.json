@@ -80,7 +80,8 @@
       "haema:vampire",
       "haema:invisibility",
       "haema:strength",
-      "haema:mist_form"
+      "haema:mist_form",
+      "haema:dash"
     ],
     "vanguard": {
       "curse-project-id": "391257"
