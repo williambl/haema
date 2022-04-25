@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "haema:vampire_hunter_outpost",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 74426467,
+    "spacing": 120,
+    "separation": 70,
+    "type": "minecraft:random_spread"
+  }
+}

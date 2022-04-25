@@ -3,7 +3,6 @@ package com.williambl.haema.hunter
 import com.williambl.haema.id
 import com.williambl.haema.isVampire
 import com.williambl.haema.util.contains
-import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags
 import net.minecraft.block.entity.BannerPattern
 import net.minecraft.command.argument.EntityAnchorArgumentType
 import net.minecraft.enchantment.EnchantmentHelper
@@ -31,15 +30,15 @@ import net.minecraft.nbt.NbtList
 import net.minecraft.potion.PotionUtil
 import net.minecraft.potion.Potions
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.tag.TagKey
 import net.minecraft.text.TranslatableText
-import net.minecraft.util.ActionResult
-import net.minecraft.util.DyeColor
-import net.minecraft.util.Formatting
-import net.minecraft.util.Hand
+import net.minecraft.util.*
+import net.minecraft.util.registry.Registry
 import net.minecraft.world.Difficulty
 import net.minecraft.world.LocalDifficulty
 import net.minecraft.world.ServerWorldAccess
 import net.minecraft.world.World
+import kotlin.Pair
 
 class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, world: World?) : PatrolEntity(
     entityType,
@@ -362,7 +361,7 @@ class VampireHunterMeleeAttackGoal(private val actor: VampireHunterEntity, speed
         return value
     }
 
-    private fun isSword(item: Item) = FabricToolTags.SWORDS.contains(item)
+    private fun isSword(item: Item) = item.registryEntry.isIn(TagKey.of(Registry.ITEM_KEY, Identifier("fabric:swords")));
 }
 
 class VampireHunterOnHorseAttackGoal(private val actor: VampireHunterEntity, speed: Double, range: Float) : VampireHunterCrossbowAttackGoal(

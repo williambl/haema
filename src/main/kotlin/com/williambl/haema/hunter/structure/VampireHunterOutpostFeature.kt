@@ -8,6 +8,7 @@ import net.minecraft.structure.StructurePiecesGenerator
 import net.minecraft.structure.pool.StructurePoolBasedGenerator
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.registry.Registry
+import net.minecraft.util.registry.RegistryKey
 import net.minecraft.world.Heightmap
 import net.minecraft.world.gen.feature.StructureFeature
 import net.minecraft.world.gen.feature.StructurePoolFeatureConfig
@@ -39,8 +40,8 @@ class VampireHunterOutpostFeature(codec: Codec<StructurePoolFeatureConfig>) : St
             val centre = ctx.chunkPos.getCenterAtY(0)
 
 
-            val config = StructurePoolFeatureConfig({
-                ctx.registryManager.get(Registry.STRUCTURE_POOL_KEY).get(id("vampire_hunter_outpost/start_pool"))},
+            val config = StructurePoolFeatureConfig(
+                ctx.registryManager.get(Registry.STRUCTURE_POOL_KEY).entryOf(RegistryKey.of(Registry.STRUCTURE_POOL_KEY, id("vampire_hunter_outpost/start_pool"))),
                 10
             )
 

@@ -18,7 +18,6 @@ import com.williambl.haema.vampireComponent
 import dev.onyxstudios.cca.api.v3.component.CopyableComponent
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent
 import dev.onyxstudios.cca.api.v3.component.sync.ComponentPacketWriter
-import net.fabricmc.fabric.api.tag.TagFactory
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.attribute.EntityAttributeModifier
@@ -31,9 +30,10 @@ import net.minecraft.network.PacketByteBuf
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.sound.SoundEvents
-import net.minecraft.tag.Tag
+import net.minecraft.tag.TagKey
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
+import net.minecraft.util.registry.Registry
 import net.minecraft.world.GameRules
 import net.minecraft.world.World
 import java.util.*
@@ -109,7 +109,7 @@ class EntityVampireComponent(val entity: LivingEntity) : VampireComponent, AutoS
         absoluteBlood = tag.getDouble("AbsoluteBlood")
         val abilitiesTag = tag.getCompound("abilities")
         abilitiesTag.fixAbilityData()
-        AbilityModule.ABILITY_REGISTRY.entries.filter { abilitiesTag.contains(it.key.value.toString()) }.forEach { abilities[it.value] = abilitiesTag.getInt(it.key.value.toString()) }
+        AbilityModule.ABILITY_REGISTRY.entrySet.filter { abilitiesTag.contains(it.key.value.toString()) }.forEach { abilities[it.value] = abilitiesTag.getInt(it.key.value.toString()) }
         val ritualsUsedTag = tag.getCompound("ritualsUsed")
         ritualsUsed = List(ritualsUsedTag.getInt("Length")) { idx -> Identifier(ritualsUsedTag.getString(idx.toString())) }.toMutableSet()
     }
@@ -226,17 +226,17 @@ class EntityVampireComponent(val entity: LivingEntity) : VampireComponent, AutoS
         if (blood > 8.5 && lastFed >= this.entity.world.time - getFeedCooldown(this.entity.world))
             return if (entity.isSleeping) ActionResult.FAIL else ActionResult.PASS //Prevents accidentally waking up villagers
 
-        if (goodBloodTag.contains(entity.type)) {
+        if (entity.type.isIn(goodBloodTag)) {
             feed(0.8, entity)
             applyGoodBloodEffects(this.entity)
             return ActionResult.SUCCESS // I'd like these to be CONSUME but then nothing's sent to the server
         }
-        if (mediumBloodTag.contains(entity.type)) {
+        if (entity.type.isIn(mediumBloodTag)) {
             feed(0.4, entity)
             applyMediumBloodEffects(this.entity)
             return ActionResult.SUCCESS
         }
-        if (poorBloodTag.contains(entity.type)) {
+        if (entity.type.isIn(poorBloodTag)) {
             feed(0.1, entity)
             applyPoorBloodEffects(this.entity)
             return ActionResult.SUCCESS
@@ -291,9 +291,9 @@ class EntityVampireComponent(val entity: LivingEntity) : VampireComponent, AutoS
         private val VAMPIRE_ATTACK_RANGE = EntityAttributeModifier(VAMPIRE_ATTACK_RANGE_UUID, "Vampire attack range extension", 2.0, EntityAttributeModifier.Operation.ADDITION)
         private val VAMPIRE_HEALTH_BOOST = EntityAttributeModifier(VAMPIRE_HEALTH_BOOST_UUID, "Vampire health boost", 1.0, EntityAttributeModifier.Operation.MULTIPLY_BASE)
 
-        val goodBloodTag: Tag<EntityType<*>> = TagFactory.ENTITY_TYPE.create(id("good_blood_sources"))
-        val mediumBloodTag: Tag<EntityType<*>> = TagFactory.ENTITY_TYPE.create(id("medium_blood_sources"))
-        val poorBloodTag: Tag<EntityType<*>> = TagFactory.ENTITY_TYPE.create(id("poor_blood_sources"))
+        val goodBloodTag: TagKey<EntityType<*>> = TagKey.of(Registry.ENTITY_TYPE_KEY, id("good_blood_sources"))
+        val mediumBloodTag: TagKey<EntityType<*>> = TagKey.of(Registry.ENTITY_TYPE_KEY, id("medium_blood_sources"))
+        val poorBloodTag: TagKey<EntityType<*>> = TagKey.of(Registry.ENTITY_TYPE_KEY, id("poor_blood_sources"))
 
         fun getFeedCooldown(world: World): Int = world.gameRules[HaemaGameRules.feedCooldown].get()
 

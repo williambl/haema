@@ -31,9 +31,9 @@ class MistParticle internal constructor(
         this.velocityY += velocityY
         this.velocityZ += velocityZ
         val g = 0.8f - (Math.random() * 0.3).toFloat()
-        colorRed = g
-        colorGreen = g
-        colorBlue = g
+        red = g
+        green = g
+        blue = g
         scale *= 0.875f
         val i = (8.0 / (Math.random() * 0.8 + 0.3)).toInt()
         maxAge = max(i.toFloat() * 5.0f, 2.5f).toInt()

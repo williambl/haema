@@ -8,8 +8,8 @@ import com.williambl.haema.api.BloodChangeEvents
 import com.williambl.haema.api.BloodDrinkingEvents
 import com.williambl.haema.api.DamageSourceEfficacyEvent
 import com.williambl.haema.api.client.VampireHudAddTextEvent
-import com.williambl.haema.component.VampireComponent
 import com.williambl.haema.component.EntityVampireComponent
+import com.williambl.haema.component.VampireComponent
 import com.williambl.haema.isPermanentVampire
 import com.williambl.haema.isVampire
 import com.williambl.haema.vampireComponent
@@ -61,9 +61,9 @@ fun registerBewitchmentEventListeners() {
     // Get blood from mobs based on Haema's tags
     BloodSuckEvents.BLOOD_AMOUNT.register(BloodSuckEvents.SetBloodAmount { player, target, currentBloodToGive ->
         when {
-            EntityVampireComponent.goodBloodTag.contains(target.type) -> 5
-            EntityVampireComponent.mediumBloodTag.contains(target.type) -> 2
-            EntityVampireComponent.poorBloodTag.contains(target.type) -> 1
+            target.type.isIn(EntityVampireComponent.goodBloodTag) -> 5
+            target.type.isIn(EntityVampireComponent.mediumBloodTag) -> 2
+            target.type.isIn(EntityVampireComponent.poorBloodTag) -> 1
             else -> currentBloodToGive
         }
     })

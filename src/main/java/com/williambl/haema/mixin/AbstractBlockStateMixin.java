@@ -1,14 +1,12 @@
 package com.williambl.haema.mixin;
 
-import com.williambl.haema.Haema;
 import com.williambl.haema.ability.component.mist_form.MistFormAbilityComponent;
-import net.fabricmc.fabric.api.tag.TagFactory;
 import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.tag.BlockTags;
-import net.minecraft.tag.Tag;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
@@ -28,7 +26,9 @@ public abstract class AbstractBlockStateMixin {
     @Shadow public abstract Block getBlock();
     @Shadow protected abstract BlockState asBlockState();
 
-    @Unique private static final Tag<Block> PERMEABLE_BLOCKS = TagFactory.BLOCK.create(id("mist_permeable"));
+    @Shadow public abstract boolean isIn(TagKey<Block> tag);
+
+    @Unique private static final TagKey<Block> PERMEABLE_BLOCKS = TagKey.of(Registry.BLOCK_KEY, id("mist_permeable"));
 
     @Inject(at = @At("HEAD"), method = "getCollisionShape(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/ShapeContext;)Lnet/minecraft/util/shape/VoxelShape;", cancellable = true)
     private void phaseThroughBlocks(BlockView world, BlockPos pos, ShapeContext context, CallbackInfoReturnable<VoxelShape> cir) {
@@ -36,7 +36,7 @@ public abstract class AbstractBlockStateMixin {
         if(!blockShape.isEmpty() && context instanceof EntityShapeContext esc) {
             if(esc.getEntity() instanceof LivingEntity livingEntity) {
                 if (
-                        PERMEABLE_BLOCKS.contains(getBlock()) &&
+                        isIn(PERMEABLE_BLOCKS) &&
                         MistFormAbilityComponent.Companion.getEntityKey().isProvidedBy(livingEntity) &&
                                 MistFormAbilityComponent.Companion.getEntityKey().get(livingEntity).isInMistForm()
                 ) {

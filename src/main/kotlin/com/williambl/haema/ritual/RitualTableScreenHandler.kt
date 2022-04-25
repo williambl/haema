@@ -40,7 +40,7 @@ class RitualTableScreenHandler(syncId: Int, val inv: RitualInventory, private va
 
     private val propertyDelegate = object : PropertyDelegate {
         val abilities =
-            AbilityModule.ABILITY_REGISTRY.entries.associate { AbilityModule.ABILITY_REGISTRY.getRawId(it.value) to it.value }
+            AbilityModule.ABILITY_REGISTRY.entrySet.associate { AbilityModule.ABILITY_REGISTRY.getRawId(it.value) to it.value }
 
         override fun size(): Int = abilities.size
 

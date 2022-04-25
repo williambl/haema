@@ -7,8 +7,8 @@ import com.williambl.haema.ability.VampireAbilityArgumentType
 import com.williambl.haema.api.BloodDrinkingEvents
 import com.williambl.haema.api.VampireBurningEvents
 import com.williambl.haema.api.WorldSleepEvents
-import com.williambl.haema.component.VampireComponent
 import com.williambl.haema.component.EntityVampireComponent
+import com.williambl.haema.component.VampireComponent
 import com.williambl.haema.craft.BookOfBloodRecipe
 import com.williambl.haema.criteria.VampireHunterTriggerCriterion
 import com.williambl.haema.hunter.VampireHunterSpawner
@@ -22,7 +22,6 @@ import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
-import net.fabricmc.fabric.api.tag.TagFactory
 import net.fabricmc.fabric.api.util.TriState
 import net.minecraft.block.BedBlock
 import net.minecraft.block.enums.BedPart
@@ -37,6 +36,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
+import net.minecraft.tag.TagKey
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.ActionResult
@@ -105,12 +105,12 @@ object Haema: ModInitializer, EntityComponentInitializer {
         VampireBurningEvents.VETO.register(VampireBurningEvents.Veto { player, _ ->
             if (player.isSpectator || player is PlayerEntity && player.abilities.creativeMode) TriState.FALSE else TriState.DEFAULT
         })
-        val vampireProtectiveClothingTag = TagFactory.ITEM.create(id("vampire_protective_clothing"))
+        val vampireProtectiveClothingTag = TagKey.of(Registry.ITEM_KEY, id("vampire_protective_clothing"))
         VampireBurningEvents.VETO.register(object : VampireBurningEvents.Veto {
             override fun getPriority(): Int = 10
 
             override fun willVampireBurn(player: LivingEntity, world: World): TriState {
-                return if (player.armorItems.all { vampireProtectiveClothingTag.contains(it.item) }) {
+                return if (player.armorItems.all { it.isIn(vampireProtectiveClothingTag) }) {
                     player.armorItems.forEachIndexed { i, stack ->
                         if (world.random.nextFloat() < 0.025 && world.gameRules[HaemaGameRules.sunlightDamagesArmour].get()) {
                             stack.damage((world.random.nextFloat() * (i + 2)).toInt(), player) {
@@ -191,7 +191,7 @@ object Haema: ModInitializer, EntityComponentInitializer {
                             EntityArgumentType.getPlayers(context, "targets").forEach {
                                 if ((it).isVampire) {
                                     context.source.sendFeedback(it.name.copy().append(" has abilities:"), false)
-                                    AbilityModule.ABILITY_REGISTRY.entries.forEach { (key, ability) ->
+                                    AbilityModule.ABILITY_REGISTRY.entrySet.forEach { (key, ability) ->
                                         context.source.sendFeedback(TranslatableText("ability.${key.value.namespace}.${key.value.path}").append(": ${it.getAbilityLevel(ability)}"), false)
                                     }
                                 }

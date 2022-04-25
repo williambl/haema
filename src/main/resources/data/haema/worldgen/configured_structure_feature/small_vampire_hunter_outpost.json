@@ -1,0 +1,13 @@
+{
+  "type": "haema:small_vampire_hunter_outpost",
+
+  "config": {
+    "start_pool": "haema:small_vampire_hunter_outpost/start_pool",
+    "size": 1
+  },
+
+  "biomes": "#haema:has_structure/small_vampire_hunter_outpost",
+  "adapt_noise": true,
+  "spawn_overrides": {
+  }
+}

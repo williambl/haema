@@ -21,7 +21,7 @@ import net.minecraft.util.Identifier
 class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInventory, title: Text) :
     HandledScreen<RitualTableScreenHandler>(handler, inventory, title) {
 
-    private val widgets = AbilityModule.ABILITY_REGISTRY.entries.asSequence()
+    private val widgets = AbilityModule.ABILITY_REGISTRY.entrySet.asSequence()
         .filterNot { it.value == AbilityModule.NONE }
         .filter { AbilityVisibilityEvent.EVENT.invoker().onVisibilityTest(inventory.player, it.value).orElse(it.value.isVisible(inventory.player)) }
         .map { val ids = Pair(it.key.value, AbilityModule.ABILITY_REGISTRY.getRawId(it.value)); ids to List(it.value.maxLevel) { idx -> AbilityWidget(ids, it.value, idx + 1) } }
@@ -169,8 +169,8 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
         }
     }
 
-    override fun onClose() {
-        super.onClose()
+    override fun close() {
+        super.close()
         handler.close(handler.inv.player)
     }
 

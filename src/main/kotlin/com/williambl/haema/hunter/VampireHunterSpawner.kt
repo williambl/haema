@@ -15,7 +15,7 @@ import net.minecraft.world.GameRules
 import net.minecraft.world.Heightmap
 import net.minecraft.world.SpawnHelper
 import net.minecraft.world.biome.Biome
-import net.minecraft.world.gen.Spawner
+import net.minecraft.world.spawner.Spawner
 import java.util.*
 import kotlin.math.ceil
 
@@ -70,7 +70,7 @@ class VampireHunterSpawner: Spawner {
             return 0
 
         val biome = serverWorld.getBiome(mutable)
-        val category = biome.category
+        val category = Biome.getCategory(biome)
         if (category == Biome.Category.MUSHROOM)
             return 0
 

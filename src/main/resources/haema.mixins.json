@@ -12,7 +12,8 @@
     "MixinServerWorld",
     "PlayerEntityMixin",
     "ServerPlayerInteractionManagerMixin",
-    "ServerPlayNetworkHandlerMixin"
+    "ServerPlayNetworkHandlerMixin",
+    "StructureFeatureAccessor"
   ],
   "client": [
     "AbstractClientPlayerEntityMixin",
