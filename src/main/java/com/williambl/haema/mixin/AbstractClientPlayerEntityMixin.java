@@ -21,7 +21,7 @@ public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity {
         super(world, pos, yaw, profile);
     }
 
-    @Redirect(method = "getSpeed", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;getAttributeValue(Lnet/minecraft/entity/attribute/EntityAttribute;)D"))
+    @Redirect(method = "getFovMultiplier", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;getAttributeValue(Lnet/minecraft/entity/attribute/EntityAttribute;)D"))
     public double disregardVampireSpeed(AbstractClientPlayerEntity abstractClientPlayerEntity, EntityAttribute attribute) {
         return EntityAttributeInstanceExtensionsKt.computeValueWithout(abstractClientPlayerEntity.getAttributeInstance(attribute), movementSpeedAttributeUUID);
     }
