@@ -1,5 +1,6 @@
 package com.williambl.haema.util
 
+import com.williambl.haema.ability.component.dash.DashAbilityComponent
 import com.williambl.haema.id
 import io.netty.buffer.Unpooled
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents
@@ -7,6 +8,7 @@ import net.fabricmc.fabric.api.gamerule.v1.CustomGameRuleCategory
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry
 import net.fabricmc.fabric.api.gamerule.v1.rule.DoubleRule
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.network.PacketByteBuf
@@ -38,14 +40,7 @@ object HaemaGameRules {
         "dashCooldown",
         GameRules.Category.PLAYER,
         GameRuleFactory.createIntRule(10, 0, 24000) { server, rule ->
-            val buf = PacketByteBuf(Unpooled.buffer())
-            buf.writeInt(rule.get())
-            server.playerManager.sendToAll(
-                ServerPlayNetworking.createS2CPacket(
-                    id("updatedashcooldown"),
-                    buf
-                )
-            )
+            PlayerLookup.all(server).forEach { DashAbilityComponent.entityKey.get(it).updateDashCooldown(rule.get()) }
         })
 
     val invisLength: GameRules.Key<GameRules.IntRule> = GameRuleRegistry.register(

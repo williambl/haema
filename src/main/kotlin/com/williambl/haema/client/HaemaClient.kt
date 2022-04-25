@@ -50,8 +50,6 @@ object HaemaClient: ClientModInitializer {
 
     val config: HaemaConfig by lazy { AutoConfig.getConfigHolder(HaemaConfig::class.java).config }
 
-    var dashCooldownValue = 10
-
     var invisLengthValue = 10
 
     var distortAmount = 0.0f
@@ -73,9 +71,6 @@ object HaemaClient: ClientModInitializer {
     }
 
     override fun onInitializeClient() {
-        ClientPlayNetworking.registerGlobalReceiver(id("updatedashcooldown")) { client, handler, buf, sender ->
-            dashCooldownValue = buf.readInt()
-        }
         ClientPlayNetworking.registerGlobalReceiver(id("updateinvislength")) { client, handler, buf, sender ->
             invisLengthValue = buf.readInt()
         }
@@ -110,11 +105,10 @@ object HaemaClient: ClientModInitializer {
         }
 
         VampireHudAddTextEvent.EVENT.register(VampireHudAddTextEvent { player, createText ->
-            val dashLevel = (player).getAbilityLevel(AbilityModule.DASH)
-            if (dashLevel > 0 && (player.vampireComponent).blood > 18f) {
+            if (ClientDashHandler.couldDash(player)) {
                 return@VampireHudAddTextEvent listOf(createText(
                     DASH_KEY.boundKeyLocalizedText.copy(),
-                    (player).isVampire && ClientDashHandler.canDash(player),
+                    ClientDashHandler.canDash(player),
                     TranslatableText("gui.haema.hud.vampiredash")
                 ))
             }

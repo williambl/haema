@@ -1,6 +1,6 @@
 package com.williambl.haema.util
 
-import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.entity.LivingEntity
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.hit.HitResult
 import net.minecraft.util.math.BlockPos
@@ -9,7 +9,7 @@ import net.minecraft.util.math.Vec3d
 import net.minecraft.world.RaycastContext
 import net.minecraft.world.World
 
-fun raytraceForDash(player: PlayerEntity): Vec3d? {
+fun raytraceForDash(player: LivingEntity): Vec3d? {
     val world = player.world
 
     val eyeVec: Vec3d = player.getCameraPosVec(0f)

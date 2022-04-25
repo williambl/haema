@@ -68,7 +68,7 @@
     "cloth-config": "*",
     "cardinal-components-entity": "*",
     "pehkui": "*",
-    "minecraft": "1.18.x"
+    "minecraft": "1.18.1"
   },
   "suggests": {
     "origins": ">=0.4.7"
@@ -80,7 +80,8 @@
       "haema:vampire",
       "haema:invisibility",
       "haema:strength",
-      "haema:mist_form"
+      "haema:mist_form",
+      "haema:dash"
     ],
     "vanguard": {
       "curse-project-id": "391257"

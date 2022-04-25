@@ -7,6 +7,7 @@ import com.williambl.haema.mixin.StructureFeatureAccessor
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.entity.EntityDimensions
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.SpawnGroup
@@ -15,6 +16,7 @@ import net.minecraft.entity.mob.HostileEntity
 import net.minecraft.item.Item
 import net.minecraft.item.ItemGroup
 import net.minecraft.util.registry.Registry
+import net.minecraft.world.Difficulty
 import net.minecraft.world.gen.GenerationStep
 import net.minecraft.world.gen.feature.StructurePoolFeatureConfig
 
@@ -53,5 +55,16 @@ object VampireHunterModule: ModInitializer {
                 .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 5.0)
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 64.0)
         )
+
+        val spawner = VampireHunterSpawner()
+        ServerTickEvents.END_SERVER_TICK.register { server ->
+            server.worlds.forEach { world ->
+                spawner.spawn(
+                    world,
+                    server.saveProperties.difficulty != Difficulty.PEACEFUL,
+                    server.shouldSpawnAnimals()
+                )
+            }
+        }
     }
 }

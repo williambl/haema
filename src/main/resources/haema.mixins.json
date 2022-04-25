@@ -9,7 +9,6 @@
     "HungerManagerMixin",
     "HurtBySensorMixin",
     "LivingEntityMixin",
-    "MinecraftServerMixin",
     "MixinServerWorld",
     "PlayerEntityMixin",
     "ServerPlayerInteractionManagerMixin",
