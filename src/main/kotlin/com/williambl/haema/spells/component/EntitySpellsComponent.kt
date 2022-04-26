@@ -64,17 +64,7 @@ class EntitySpellsComponent(val entity: LivingEntity): SpellsComponent, AutoSync
                 spell.spell.use(world, entity)
                 false
             } else {
-                for (i in 0..10) {
-                    world.addParticle(
-                        spell.spell.chargeParticle(entity),
-                        entity.x + world.random.nextGaussian() * entity.width / 2.0,
-                        entity.randomBodyY,
-                        entity.z + world.random.nextGaussian() * entity.width / 2.0,
-                        0.0,
-                        0.5,
-                        0.0
-                    )
-                }
+                spell.spell.createChargeParticles(world, entity)
                 true
             }
         }
