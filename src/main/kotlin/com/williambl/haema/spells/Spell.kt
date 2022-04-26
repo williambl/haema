@@ -1,10 +1,10 @@
 package com.williambl.haema.spells
 
 import net.minecraft.entity.LivingEntity
+import net.minecraft.particle.ParticleEffect
 import net.minecraft.text.MutableText
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Util
-import net.minecraft.util.math.Vec3f
 import net.minecraft.world.World
 
 abstract class Spell {
@@ -13,7 +13,7 @@ abstract class Spell {
     fun getName(): MutableText = TranslatableText(translationKey)
 
     abstract val chargeTime: Int
-    abstract val chargeColour: Vec3f
+    abstract fun chargeParticle(user: LivingEntity): ParticleEffect
 
     abstract fun use(world: World, user: LivingEntity)
 }

@@ -5,6 +5,7 @@ import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.passive.BatEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.particle.DustParticleEffect
+import net.minecraft.particle.ParticleEffect
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ChunkTicketType
 import net.minecraft.server.world.ServerWorld
@@ -17,8 +18,9 @@ import net.minecraft.util.registry.RegistryKey
 import net.minecraft.world.World
 
 class DissolutionSpell: Spell() {
-    override val chargeTime: Int = 20
-    override val chargeColour: Vec3f = Vec3f(0f, 0f, 0f)
+    override val chargeTime: Int = 60
+
+    override fun chargeParticle(user: LivingEntity): ParticleEffect = DustParticleEffect(Vec3f(0f, 0f, 0f), 1f)
 
     override fun use(world: World, user: LivingEntity) {
         for (i in 0..50) {

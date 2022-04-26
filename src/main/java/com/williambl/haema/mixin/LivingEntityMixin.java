@@ -6,6 +6,7 @@ import com.williambl.haema.criteria.VampireHunterTriggerCriterion;
 import com.williambl.haema.damagesource.BloodLossDamageSource;
 import com.williambl.haema.damagesource.DamageSourceModule;
 import com.williambl.haema.hunter.VampireHunterSpawner;
+import com.williambl.haema.spells.component.SpellsComponent;
 import com.williambl.haema.util.HaemaGameRules;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -67,6 +68,16 @@ public abstract class LivingEntityMixin extends Entity {
     @Redirect(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isSleeping()Z"))
     boolean dontWakeForFeeding(LivingEntity livingEntity) {
         return livingEntity.isSleeping() && currentSource != BloodLossDamageSource.Companion.getInstance();
+    }
+
+    @Inject(method = "damage", at = @At("RETURN"))
+    void haema$clearSpellsOnDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+        if (cir.getReturnValueZ()) {
+            var component = SpellsComponent.Companion.getEntityKey().getNullable(this);
+            if (component != null) {
+                component.clearSpells();
+            }
+        }
     }
 
     @Inject(method = "onDeath", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setPose(Lnet/minecraft/entity/EntityPose;)V"))

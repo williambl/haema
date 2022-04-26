@@ -9,7 +9,6 @@ import net.minecraft.nbt.NbtElement
 import net.minecraft.nbt.NbtList
 import net.minecraft.nbt.NbtOps
 import net.minecraft.network.PacketByteBuf
-import net.minecraft.particle.DustParticleEffect
 import net.minecraft.server.network.ServerPlayerEntity
 
 class EntitySpellsComponent(val entity: LivingEntity): SpellsComponent, AutoSyncedComponent {
@@ -67,7 +66,7 @@ class EntitySpellsComponent(val entity: LivingEntity): SpellsComponent, AutoSync
             } else {
                 for (i in 0..10) {
                     world.addParticle(
-                        DustParticleEffect(spell.spell.chargeColour, 1f),
+                        spell.spell.chargeParticle(entity),
                         entity.x + world.random.nextGaussian() * entity.width / 2.0,
                         entity.randomBodyY,
                         entity.z + world.random.nextGaussian() * entity.width / 2.0,
