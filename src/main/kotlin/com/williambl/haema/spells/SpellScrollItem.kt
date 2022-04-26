@@ -1,5 +1,6 @@
 package com.williambl.haema.spells
 
+import com.williambl.haema.spells.component.SpellsComponent
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.Item
@@ -12,7 +13,7 @@ import net.minecraft.world.World
 
 class SpellScrollItem(private val spell: Spell, settings: Settings): Item(settings) {
     override fun use(world: World, user: PlayerEntity, hand: Hand): TypedActionResult<ItemStack> {
-        spell.use(world, user, hand)
+        SpellsComponent.entityKey.get(user).addSpell(SpellInstance(spell, world.time + spell.chargeTime))
 
         return TypedActionResult.success(user.getStackInHand(hand).also { it.decrement(1) }, false)
     }

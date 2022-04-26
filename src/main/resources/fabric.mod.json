@@ -47,6 +47,7 @@
     "cardinal-components-entity": [
       {"adapter": "kotlin", "value": "com.williambl.haema.Haema"},
       {"adapter": "kotlin", "value": "com.williambl.haema.ability.AbilityModule"},
+      {"adapter": "kotlin", "value": "com.williambl.haema.spells.SpellsModule"},
       {"adapter": "kotlin", "value": "com.williambl.haema.compat.rats.RatsMischiefCompatKt::registerEntityComponentFactories"},
       {"adapter": "kotlin", "value": "com.williambl.haema.compat.bewitchment.BewitchmentEntrypointKt::entityComponentInit"}
     ],
@@ -82,7 +83,8 @@
       "haema:invisibility",
       "haema:strength",
       "haema:mist_form",
-      "haema:dash"
+      "haema:dash",
+      "haema:spells"
     ],
     "vanguard": {
       "curse-project-id": "391257"
