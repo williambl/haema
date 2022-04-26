@@ -1,6 +1,7 @@
 {
   "values": [
     "minecraft:torch",
+    "minecraft:lantern",
     "#minecraft:candles",
     "minecraft:campfire",
     {
@@ -13,6 +14,10 @@
     },
     {
       "id": "bewitchment:golden_candelabra",
+      "required": false
+    },
+    {
+      "id": "#aurorasdeco:braziers",
       "required": false
     }
   ]

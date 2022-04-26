@@ -3,6 +3,11 @@
     "minecraft:iron_bars",
     "#minecraft:fences",
     "#minecraft:fence_gates",
-    "#minecraft:trapdoors"
+    "#minecraft:trapdoors",
+    "minecraft:spawner",
+    {
+      "id": "#halfdoors:halfdoors",
+      "required": false
+    }
   ]
 }

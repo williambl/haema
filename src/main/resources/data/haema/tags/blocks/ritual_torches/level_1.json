@@ -1,9 +1,14 @@
 {
   "values": [
     "minecraft:soul_torch",
+    "minecraft:soul_lantern",
     "minecraft:soul_campfire",
     {
       "id": "bewitchment:netherite_candelabra",
+      "required": false
+    },
+    {
+      "id": "aurorasdeco:soul_brazier",
       "required": false
     }
   ]
