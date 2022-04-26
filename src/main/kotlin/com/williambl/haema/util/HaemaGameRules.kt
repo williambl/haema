@@ -10,7 +10,6 @@ import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry
 import net.fabricmc.fabric.api.gamerule.v1.rule.DoubleRule
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
-import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.TranslatableText
@@ -82,14 +81,6 @@ object HaemaGameRules {
     )
 
     fun registerGameRules() {
-        ServerEntityEvents.ENTITY_LOAD.register(ServerEntityEvents.Load { entity, serverWorld ->
-            if (entity is PlayerEntity) {
-                val buf = PacketByteBuf(Unpooled.buffer())
-                buf.writeInt(serverWorld.gameRules.get(dashCooldown).get())
-                ServerPlayNetworking.send(entity as ServerPlayerEntity, id("updatedashcooldown"), buf)
-            }
-        })
-
         ServerEntityEvents.ENTITY_LOAD.register(ServerEntityEvents.Load { entity, serverWorld ->
             if (entity is ServerPlayerEntity) {
                 val buf = PacketByteBuf(Unpooled.buffer())
