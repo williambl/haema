@@ -1,11 +1,11 @@
 package com.williambl.haema.spells
 
+import com.williambl.haema.Haema
 import com.williambl.haema.id
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute
 import net.minecraft.item.Item
-import net.minecraft.item.ItemGroup
 import net.minecraft.util.registry.Registry
 
 object SpellsModule: ModInitializer {
@@ -16,7 +16,7 @@ object SpellsModule: ModInitializer {
     val SPELL_SCROLL: SpellScrollItem = Registry.register(
         Registry.ITEM,
         id("spell_scroll"),
-        SpellScrollItem(DISSOLUTION, Item.Settings().group(ItemGroup.MISC))
+        SpellScrollItem(DISSOLUTION, Item.Settings().group(Haema.ITEM_GROUP))
     )
 
     override fun onInitialize() {
