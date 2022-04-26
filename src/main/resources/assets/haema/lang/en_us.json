@@ -176,6 +176,10 @@
   "gui.haema.repeatable.true": "Repeatable",
   "gui.haema.repeatable.false": "Not Repeatable",
 
+  "command.haema.error.not_vampire": "%1$s is not a vampire.",
+  "command.haema.blood.get.feedback": "%1$s has %2$s blood",
+  "command.haema.blood.set.feedback": "Set %1$s to %2$s blood",
+
   "text.autoconfig.haema.title": "Haema",
   "text.autoconfig.haema.option.vampireHudPlacement": "Vampire HUD placement",
   "text.autoconfig.haema.option.vampireShaderEnabled": "Enable Vampire Shader",

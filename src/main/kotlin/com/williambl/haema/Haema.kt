@@ -160,6 +160,7 @@ object Haema: ModInitializer, EntityComponentInitializer {
             BookOfBloodRecipe.Serializer
         )
 
+        //TODO: redo these commands a bit, use translatabletexts + entities not players + move into separate class(es)
         CommandRegistrationCallback.EVENT.register { dispatcher, isDedicated ->
             dispatcher.register(
                 literal("haema")
@@ -183,14 +184,64 @@ object Haema: ModInitializer, EntityComponentInitializer {
                     )
                     .then(literal("blood")
                         .requires(Permissions.require("haema.command.blood", 2))
-                        .then(argument("targets", EntityArgumentType.players()).then(argument("amount", DoubleArgumentType.doubleArg(0.0, 20.0)).executes { context ->
-                            EntityArgumentType.getPlayers(context, "targets").forEach {
-                                if ((it).isVampire) {
-                                    (it.vampireComponent).absoluteBlood = DoubleArgumentType.getDouble(context, "amount")
+                        .then(literal("get").then(argument("target", EntityArgumentType.entity()).executes { context ->
+                            val target = EntityArgumentType.getEntity(context, "target")
+                            if (target !is LivingEntity || !target.isVampire) {
+                                context.source.sendError(TranslatableText("command.haema.error.not_vampire", target.name))
+                                return@executes 0
+                            }
+
+                            val blood = target.vampireComponent.blood
+
+                            context.source.sendFeedback(TranslatableText("command.haema.blood.get.feedback", target.name, blood), false)
+                            return@executes blood.toInt()
+                        }))
+                        .then(literal("set").then(argument("targets", EntityArgumentType.entities()).then(argument("value", DoubleArgumentType.doubleArg(0.0, 20.0)).executes { context ->
+                            val targets = EntityArgumentType.getEntities(context, "targets")
+                            val value = DoubleArgumentType.getDouble(context, "value")
+
+                            targets.forEach { target ->
+                                if (target !is LivingEntity || !target.isVampire) {
+                                    context.source.sendError(TranslatableText("command.haema.error.not_vampire", target.name))
+                                } else {
+                                    target.vampireComponent.absoluteBlood = value
+                                    context.source.sendFeedback(TranslatableText("command.haema.blood.set.feedback", target.name, target.vampireComponent.blood), true)
                                 }
                             }
-                            return@executes 1
+
+                            return@executes targets.size
                         })))
+                        .then(literal("add").then(argument("targets", EntityArgumentType.entities()).then(argument("value", DoubleArgumentType.doubleArg(-20.0, 20.0)).executes { context ->
+                            val targets = EntityArgumentType.getEntities(context, "targets")
+                            val value = DoubleArgumentType.getDouble(context, "value")
+
+                            targets.forEach { target ->
+                                if (target !is LivingEntity || !target.isVampire) {
+                                    context.source.sendError(TranslatableText("command.haema.error.not_vampire", target.name))
+                                } else {
+                                    target.vampireComponent.addBlood(value)
+                                    context.source.sendFeedback(TranslatableText("command.haema.blood.set.feedback", target.name, target.vampireComponent.blood), true)
+                                }
+                            }
+
+                            return@executes targets.size
+                        })))
+                        .then(literal("remove").then(argument("targets", EntityArgumentType.entities()).then(argument("value", DoubleArgumentType.doubleArg(-20.0, 20.0)).executes { context ->
+                            val targets = EntityArgumentType.getEntities(context, "targets")
+                            val value = DoubleArgumentType.getDouble(context, "value")
+
+                            targets.forEach { target ->
+                                if (target !is LivingEntity || !target.isVampire) {
+                                    context.source.sendError(TranslatableText("command.haema.error.not_vampire", target.name))
+                                } else {
+                                    target.vampireComponent.removeBlood(value)
+                                    context.source.sendFeedback(TranslatableText("command.haema.blood.set.feedback", target.name, target.vampireComponent.blood), true)
+                                }
+                            }
+
+                            return@executes targets.size
+                        })))
+                    )
                     .then(literal("abilities")
                         .requires(Permissions.require("haema.command.abilities", 2))
                         .then(literal("get").then(argument("targets", EntityArgumentType.players()).executes {  context ->
