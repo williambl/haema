@@ -67,6 +67,9 @@
   "gamerule.dashCooldown": "Dash Cooldown",
   "gamerule.dashCooldown.description": "Ticks between which a vampire can use the dash ability",
 
+  "gamerule.vampireInvisibilityLength": "Vampire Invisibility Length",
+  "gamerule.vampireInvisibilityLength.description": "Base amount of ticks vampire invisibility lasts for.",
+
   "gamerule.vampireHunterNoticeChance": "Vampire Hunter Notice Chance",
   "gamerule.vampireHunterNoticeChance.description": "Chance that a vampire hunter group will spawn when killing a mob through feeding",
 
