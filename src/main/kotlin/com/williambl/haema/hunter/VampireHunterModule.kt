@@ -1,5 +1,6 @@
 package com.williambl.haema.hunter
 
+import com.williambl.haema.Haema
 import com.williambl.haema.hunter.structure.SmallVampireHunterOutpostFeature
 import com.williambl.haema.hunter.structure.VampireHunterOutpostFeature
 import com.williambl.haema.id
@@ -14,7 +15,6 @@ import net.minecraft.entity.SpawnGroup
 import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.mob.HostileEntity
 import net.minecraft.item.Item
-import net.minecraft.item.ItemGroup
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.Difficulty
 import net.minecraft.world.gen.GenerationStep
@@ -33,7 +33,7 @@ object VampireHunterModule: ModInitializer {
     val VAMPIRE_HUNTER_CONTRACT: VampireHunterContract = Registry.register(
         Registry.ITEM,
         id("vampire_hunter_contract"),
-        VampireHunterContract(Item.Settings().group(ItemGroup.MISC))
+        VampireHunterContract(Item.Settings().group(Haema.ITEM_GROUP))
     )
 
     val VAMPIRE_HUNTER_OUTPOST_FEATURE: VampireHunterOutpostFeature = StructureFeatureAccessor.callRegister(

@@ -1,5 +1,6 @@
 package com.williambl.haema.ritual
 
+import com.williambl.haema.Haema
 import com.williambl.haema.id
 import com.williambl.haema.ritual.craft.RitualRecipe
 import com.williambl.haema.util.MultiTagMatcher
@@ -7,7 +8,6 @@ import net.fabricmc.api.ModInitializer
 import net.minecraft.block.Block
 import net.minecraft.item.BlockItem
 import net.minecraft.item.Item
-import net.minecraft.item.ItemGroup
 import net.minecraft.recipe.RecipeSerializer
 import net.minecraft.recipe.RecipeType
 import net.minecraft.state.property.Properties
@@ -31,7 +31,7 @@ object RitualModule: ModInitializer {
     val RITUAL_TABLE_ITEM: BlockItem = Registry.register(
             Registry.ITEM,
             id("ritual_table"),
-            BlockItem(RitualTable.instance, Item.Settings().group(ItemGroup.DECORATIONS))
+            BlockItem(RitualTable.instance, Item.Settings().group(Haema.ITEM_GROUP))
         )
 
     val LEVEL_0_RITUAL_MATERIALS: TagKey<Block> = TagKey.of(Registry.BLOCK_KEY, id("ritual_materials/level_0"))

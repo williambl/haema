@@ -7,6 +7,7 @@ import com.williambl.haema.ability.VampireAbilityArgumentType
 import com.williambl.haema.api.BloodDrinkingEvents
 import com.williambl.haema.api.VampireBurningEvents
 import com.williambl.haema.api.WorldSleepEvents
+import com.williambl.haema.blood.BloodModule
 import com.williambl.haema.component.EntityVampireComponent
 import com.williambl.haema.component.VampireComponent
 import com.williambl.haema.craft.BookOfBloodRecipe
@@ -18,6 +19,7 @@ import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer
 import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy
 import me.lucko.fabric.api.permissions.v0.Permissions
 import net.fabricmc.api.ModInitializer
+import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
@@ -30,6 +32,7 @@ import net.minecraft.command.argument.IdentifierArgumentType
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.passive.VillagerEntity
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.item.ItemGroup
 import net.minecraft.server.command.CommandManager.argument
 import net.minecraft.server.command.CommandManager.literal
 import net.minecraft.server.network.ServerPlayerEntity
@@ -52,6 +55,9 @@ fun id(path: String): Identifier = Identifier("haema", path)
 
 object Haema: ModInitializer, EntityComponentInitializer {
     val LOGGER: Logger = LogManager.getLogger("Haema")
+    val ITEM_GROUP: ItemGroup = FabricItemGroupBuilder.create(id("items"))
+        .icon { BloodModule.VAMPIRE_BLOOD.defaultStack }
+        .build()
 
     override fun onInitialize() {
         UseEntityCallback.EVENT.register(UseEntityCallback { player, world, hand, entity, entityHitResult ->
