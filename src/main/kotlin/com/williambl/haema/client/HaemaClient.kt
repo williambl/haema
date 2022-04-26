@@ -46,7 +46,9 @@ object HaemaClient: ClientModInitializer {
     val VAMPIRE_SHADER: ManagedShaderEffect = ShaderEffectManager.getInstance()
         .manage(id("shaders/post/vampirevision.json"))
 
-    val DASH_KEY = KeyBinding("key.haema.dash", GLFW.GLFW_KEY_Z, "key.categories.movement")
+    val HAEMA_KEY_CATEGORY = "key.categories.haema"
+
+    val DASH_KEY = KeyBinding("key.haema.dash", GLFW.GLFW_KEY_Z, HAEMA_KEY_CATEGORY)
 
     val config: HaemaConfig by lazy { AutoConfig.getConfigHolder(HaemaConfig::class.java).config }
 

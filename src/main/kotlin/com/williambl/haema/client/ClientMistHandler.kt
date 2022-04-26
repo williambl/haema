@@ -15,8 +15,8 @@ import net.minecraft.network.PacketByteBuf
 import org.lwjgl.glfw.GLFW
 
 object ClientMistHandler: ClientTickEvents.StartTick {
-    val MIST_KEY = KeyBinding("key.haema.mist_form", GLFW.GLFW_KEY_K, "key.categories.movement")
-    val EXPAND_MIST_KEY = KeyBinding("key.haema.expand_mist_form", GLFW.GLFW_KEY_M, "key.categories.movement")
+    val MIST_KEY = KeyBinding("key.haema.mist_form", GLFW.GLFW_KEY_K, HaemaClient.HAEMA_KEY_CATEGORY)
+    val EXPAND_MIST_KEY = KeyBinding("key.haema.expand_mist_form", GLFW.GLFW_KEY_M,  HaemaClient.HAEMA_KEY_CATEGORY)
 
     private var wasMistKeyPressedLast = false
     private var wasExpandKeyPressedLast = false
