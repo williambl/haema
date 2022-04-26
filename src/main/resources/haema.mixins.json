@@ -18,7 +18,8 @@
   "client": [
     "AbstractClientPlayerEntityMixin",
     "ClientPlayerInteractionManagerMixin",
-    "InGameHudMixin"
+    "InGameHudMixin",
+    "LightmapTextureManagerMixin"
   ],
   "server": [
   ],
