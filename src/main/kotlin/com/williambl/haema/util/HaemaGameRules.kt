@@ -18,67 +18,67 @@ import net.minecraft.util.Formatting
 import net.minecraft.world.GameRules
 
 object HaemaGameRules {
+    val haemaCategory = CustomGameRuleCategory(
+        id("haema"), TranslatableText("gamerule.category.haema").formatted(
+            Formatting.BOLD
+        ).formatted(Formatting.YELLOW)
+    )
+
     val vampiresBurn: GameRules.Key<GameRules.BooleanRule> = GameRuleRegistry.register(
-    "vampiresBurn",
-    GameRules.Category.PLAYER,
-    GameRuleFactory.createBooleanRule(true)
+        "vampiresBurn",
+        haemaCategory,
+        GameRuleFactory.createBooleanRule(true)
     )
 
     val vampiresDrown: GameRules.Key<GameRules.BooleanRule> = GameRuleRegistry.register(
-    "vampiresDrown",
-    GameRules.Category.PLAYER,
-    GameRuleFactory.createBooleanRule(true)
+        "vampiresDrown",
+        haemaCategory,
+        GameRuleFactory.createBooleanRule(true)
     )
 
     val feedCooldown: GameRules.Key<GameRules.IntRule> = GameRuleRegistry.register(
         "feedCooldown",
-        GameRules.Category.PLAYER,
+        haemaCategory,
         GameRuleFactory.createIntRule(10, 0, 24000)
     )
 
     val dashCooldown: GameRules.Key<GameRules.IntRule> = GameRuleRegistry.register(
         "dashCooldown",
-        GameRules.Category.PLAYER,
+        haemaCategory,
         GameRuleFactory.createIntRule(10, 0, 24000) { server, rule ->
             PlayerLookup.all(server).forEach { DashAbilityComponent.entityKey.get(it).updateDashCooldown(rule.get()) }
         })
 
     val invisLength: GameRules.Key<GameRules.IntRule> = GameRuleRegistry.register(
-    "vampireInvisibilityLength",
-    GameRules.Category.PLAYER,
-    GameRuleFactory.createIntRule(80, 0, 24000) { server, rule ->
-        val buf = PacketByteBuf(Unpooled.buffer())
-        buf.writeInt(rule.get())
-        server.playerManager.sendToAll(
-            ServerPlayNetworking.createS2CPacket(
-                id("updateinvislength"),
-                buf
+        "vampireInvisibilityLength",
+        haemaCategory,
+        GameRuleFactory.createIntRule(80, 0, 24000) { server, rule ->
+            val buf = PacketByteBuf(Unpooled.buffer())
+            buf.writeInt(rule.get())
+            server.playerManager.sendToAll(
+                ServerPlayNetworking.createS2CPacket(
+                    id("updateinvislength"),
+                    buf
+                )
             )
-        )
-    })
+        })
 
     val vampireHunterNoticeChance: GameRules.Key<DoubleRule> = GameRuleRegistry.register(
-    "vampireHunterNoticeChance",
-    GameRules.Category.MOBS,
-    GameRuleFactory.createDoubleRule(0.1, 0.0, 1.0)
+        "vampireHunterNoticeChance",
+        GameRules.Category.MOBS,
+        GameRuleFactory.createDoubleRule(0.1, 0.0, 1.0)
     )
 
     val playerVampireConversion: GameRules.Key<GameRules.BooleanRule> = GameRuleRegistry.register(
         "playerVampireConversion",
-        GameRules.Category.PLAYER,
+        haemaCategory,
         GameRuleFactory.createBooleanRule(true)
     )
 
     val sunlightDamagesArmour: GameRules.Key<GameRules.BooleanRule> = GameRuleRegistry.register(
-    "sunlightDamagesArmour",
-    GameRules.Category.PLAYER,
-    GameRuleFactory.createBooleanRule(true)
-    )
-
-    val haemaCategory = CustomGameRuleCategory(
-        id("haema"), TranslatableText("gamerule.category.haema").formatted(
-            Formatting.BOLD
-        ).formatted(Formatting.YELLOW)
+        "sunlightDamagesArmour",
+        haemaCategory,
+        GameRuleFactory.createBooleanRule(true)
     )
 
     fun registerGameRules() {
