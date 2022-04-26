@@ -1,4 +1,4 @@
-package com.williambl.haema.mixin;
+package com.williambl.haema.mixin.client;
 
 import com.mojang.authlib.GameProfile;
 import com.williambl.haema.util.EntityAttributeInstanceExtensionsKt;

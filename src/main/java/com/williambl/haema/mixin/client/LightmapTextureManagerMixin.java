@@ -1,4 +1,4 @@
-package com.williambl.haema.mixin;
+package com.williambl.haema.mixin.client;
 
 import com.williambl.haema.VampirableKt;
 import com.williambl.haema.ability.AbilityModule;

@@ -16,10 +16,10 @@
     "StructureFeatureAccessor"
   ],
   "client": [
-    "AbstractClientPlayerEntityMixin",
-    "ClientPlayerInteractionManagerMixin",
-    "InGameHudMixin",
-    "LightmapTextureManagerMixin"
+    "client.AbstractClientPlayerEntityMixin",
+    "client.ClientPlayerInteractionManagerMixin",
+    "client.InGameHudMixin",
+    "client.LightmapTextureManagerMixin"
   ],
   "server": [
   ],

@@ -1,4 +1,4 @@
-package com.williambl.haema.mixin;
+package com.williambl.haema.mixin.client;
 
 import com.williambl.haema.ability.component.mist_form.MistFormAbilityComponent;
 import net.minecraft.client.network.ClientPlayerEntity;

@@ -1,4 +1,4 @@
-package com.williambl.haema.mixin;
+package com.williambl.haema.mixin.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.williambl.haema.VampirableKt;
