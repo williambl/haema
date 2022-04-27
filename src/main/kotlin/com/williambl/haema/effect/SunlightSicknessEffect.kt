@@ -10,6 +10,7 @@ import net.minecraft.entity.effect.StatusEffect
 import net.minecraft.entity.effect.StatusEffectCategory
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.particle.ParticleTypes
+import net.minecraft.server.world.ServerWorld
 
 class SunlightSicknessEffect(type: StatusEffectCategory?, color: Int) : StatusEffect(type, color) {
 
@@ -34,9 +35,19 @@ class SunlightSicknessEffect(type: StatusEffectCategory?, color: Int) : StatusEf
                 (entity.vampireComponent).removeBlood(0.25)
             }
             val pos = entity.pos
-            val rand = entity.random
-            for (i in 0..10) {
-                entity.world.addParticle(ParticleTypes.FLAME, pos.x-0.5+rand.nextDouble(), pos.y+rand.nextDouble()*2, pos.z-0.5+rand.nextDouble(), 0.0, 0.0, 0.0)
+            val world = entity.world
+            if (world is ServerWorld) {
+                world.spawnParticles(
+                    ParticleTypes.FLAME,
+                    pos.x - entity.width/4.0,
+                    pos.y,
+                    pos.z - entity.width/4.0,
+                    10,
+                    entity.width.toDouble()/2.0,
+                    entity.height.toDouble()/2.0,
+                    entity.width.toDouble()/2.0,
+                    0.0
+                )
             }
         }
     }

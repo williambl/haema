@@ -4,7 +4,6 @@ import com.williambl.haema.VampirableKt;
 import com.williambl.haema.ability.AbilityModule;
 import com.williambl.haema.api.VampireBurningEvents;
 import com.williambl.haema.compat.rats.RatsMischiefIntegrationKt;
-import com.williambl.haema.compat.rats.VampiRatAttackGoal;
 import com.williambl.haema.effect.SunlightSicknessEffect;
 import com.williambl.haema.hunter.VampireHunterEntity;
 import com.williambl.haema.util.ConvertActiveTargetGoal;
@@ -51,7 +50,7 @@ public abstract class RatEntityMixin extends TameableEntity {
                         && VampireBurningEvents.INSTANCE.getTRIGGER().invoker().willVampireBurn(this, world).get()
                         && VampireBurningEvents.INSTANCE.getVETO().invoker().willVampireBurn(this, world).get()
                 ) {
-                    this.addStatusEffect(new StatusEffectInstance(SunlightSicknessEffect.Companion.getInstance(), 5, 0));
+                    this.addStatusEffect(new StatusEffectInstance(SunlightSicknessEffect.Companion.getInstance(), 10, 0, false, false, true));
                 }
             }
 

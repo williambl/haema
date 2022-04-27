@@ -7,7 +7,6 @@ import com.williambl.haema.api.VampireBurningEvents;
 import com.williambl.haema.damagesource.DamageSourceModule;
 import com.williambl.haema.effect.SunlightSicknessEffect;
 import com.williambl.haema.util.HaemaGameRules;
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -64,7 +63,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
                     && VampireBurningEvents.INSTANCE.getTRIGGER().invoker().willVampireBurn((PlayerEntity) (Object) this, world).get()
                     && VampireBurningEvents.INSTANCE.getVETO().invoker().willVampireBurn((PlayerEntity) (Object) this, world).get()
             ) {
-                this.addStatusEffect(new StatusEffectInstance(SunlightSicknessEffect.Companion.getInstance(), 5, 0));
+                this.addStatusEffect(new StatusEffectInstance(SunlightSicknessEffect.Companion.getInstance(), 10, 0, false, false, true));
             }
         }
     }
