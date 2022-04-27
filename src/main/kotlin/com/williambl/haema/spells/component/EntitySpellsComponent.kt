@@ -64,7 +64,7 @@ class EntitySpellsComponent(val entity: LivingEntity): SpellsComponent, AutoSync
                 spell.spell.use(world, entity)
                 false
             } else {
-                spell.spell.createChargeParticles(world, entity)
+                spell.spell.createChargeParticles(world, entity, (spell.timeSpellCharged - world.time).toInt())
                 true
             }
         }

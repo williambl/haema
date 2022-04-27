@@ -12,7 +12,7 @@ abstract class Spell {
     fun getName(): MutableText = TranslatableText(translationKey)
 
     abstract val chargeTime: Int
-    abstract fun createChargeParticles(world: World, user: LivingEntity)
+    abstract fun createChargeParticles(world: World, user: LivingEntity, ticksRemaining: Int)
 
     abstract fun use(world: World, user: LivingEntity)
 }

@@ -19,7 +19,7 @@ import net.minecraft.world.World
 class DissolutionSpell: Spell() {
     override val chargeTime: Int = 60
 
-    override fun createChargeParticles(world: World, user: LivingEntity) {
+    override fun createChargeParticles(world: World, user: LivingEntity, ticksRemaining: Int) {
         for (i in 0..20) {
             val yAmount = world.random.nextDouble()
             world.addParticle(

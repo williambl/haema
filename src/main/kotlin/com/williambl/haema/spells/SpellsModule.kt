@@ -17,11 +17,18 @@ object SpellsModule: ModInitializer, EntityComponentInitializer {
     val SPELL_REGISTRY: Registry<Spell> = FabricRegistryBuilder.createSimple(Spell::class.java, id("spell")).attribute(RegistryAttribute.SYNCED).buildAndRegister()
 
     val DISSOLUTION: Spell = Registry.register(SPELL_REGISTRY, id("dissolution"), DissolutionSpell())
+    val FROST: Spell = Registry.register(SPELL_REGISTRY, id("frost"), FrostSpell())
 
-    val SPELL_SCROLL: SpellScrollItem = Registry.register(
+    val DISSOLUTION_SCROLL: SpellScrollItem = Registry.register(
         Registry.ITEM,
-        id("spell_scroll"),
+        id("spell_scroll/dissolution"),
         SpellScrollItem(DISSOLUTION, Item.Settings().group(Haema.ITEM_GROUP))
+    )
+
+    val FROST_SCROLL: SpellScrollItem = Registry.register(
+        Registry.ITEM,
+        id("spell_scroll/frost"),
+        SpellScrollItem(FROST, Item.Settings().group(Haema.ITEM_GROUP))
     )
 
     override fun onInitialize() {
