@@ -1,17 +1,15 @@
-package com.williambl.haema.util
+package com.williambl.haema.vampiremobs
 
-import com.williambl.haema.component.EntityVampireComponent
+import com.williambl.haema.isVampirable
 import com.williambl.haema.isVampire
-import com.williambl.haema.vampireComponent
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.ai.goal.ActiveTargetGoal
-import net.minecraft.entity.mob.HostileEntity
 import net.minecraft.entity.mob.MobEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.network.ServerPlayerEntity
 import java.util.function.Predicate
 
-class DrinkBloodActiveTargetGoal<T : LivingEntity?> : ActiveTargetGoal<T> {
+class ConvertActiveTargetGoal<T : LivingEntity?> : ActiveTargetGoal<T> {
     constructor(mob: MobEntity, targetClass: Class<T>, checkVisibility: Boolean) : super(
         mob,
         targetClass,
@@ -50,14 +48,6 @@ class DrinkBloodActiveTargetGoal<T : LivingEntity?> : ActiveTargetGoal<T> {
             return false
         }
 
-        if (mob.vampireComponent.blood >= 20) {
-            return false
-        }
-
-        if (mob.vampireComponent.blood >= 15) {
-            return mob is HostileEntity
-        }
-
         return super.canStart()
     }
 
@@ -65,7 +55,7 @@ class DrinkBloodActiveTargetGoal<T : LivingEntity?> : ActiveTargetGoal<T> {
         targetEntity = if (targetClass != PlayerEntity::class.java && targetClass != ServerPlayerEntity::class.java) {
             mob.world.getClosestEntity(
                 mob.world.getEntitiesByClass(targetClass, getSearchBox(this.followRange)) { livingEntity: T ->
-                    livingEntity != null && !livingEntity.isVampire && (livingEntity.type.isIn(EntityVampireComponent.goodBloodTag) || livingEntity.type.isIn(EntityVampireComponent.mediumBloodTag) || livingEntity.type.isIn(EntityVampireComponent.poorBloodTag))
+                    livingEntity != null && !livingEntity.isVampire && livingEntity.isVampirable()
                 },
                 targetPredicate, mob, mob.x, mob.eyeY, mob.z
             )

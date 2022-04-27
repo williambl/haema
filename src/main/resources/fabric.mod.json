@@ -31,6 +31,7 @@
       {"adapter": "kotlin", "value": "com.williambl.haema.criteria.CriteriaModule"},
       {"adapter": "kotlin", "value": "com.williambl.haema.blood.BloodModule"},
       {"adapter": "kotlin", "value": "com.williambl.haema.ability.AbilityModule"},
+      {"adapter": "kotlin", "value": "com.williambl.haema.vampiremobs.VampireMobsModule"},
       {"adapter": "kotlin", "value": "com.williambl.haema.compat.origins.HaemaOriginsPluginKt::init"},
       {"adapter": "kotlin", "value": "com.williambl.haema.compat.rats.RatsMischiefCompatKt::init"},
       {"adapter": "kotlin", "value": "com.williambl.haema.compat.bewitchment.BewitchmentEntrypointKt::init"},
@@ -46,6 +47,7 @@
     "cardinal-components-entity": [
       {"adapter": "kotlin", "value": "com.williambl.haema.Haema"},
       {"adapter": "kotlin", "value": "com.williambl.haema.ability.AbilityModule"},
+      {"adapter": "kotlin", "value": "com.williambl.haema.vampiremobs.VampireMobsModule"},
       {"adapter": "kotlin", "value": "com.williambl.haema.compat.rats.RatsMischiefCompatKt::registerEntityComponentFactories"},
       {"adapter": "kotlin", "value": "com.williambl.haema.compat.bewitchment.BewitchmentEntrypointKt::entityComponentInit"}
     ],
