@@ -43,38 +43,45 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 
-class EntityVampireComponent(val entity: LivingEntity) : VampireComponent, AutoSyncedComponent, CopyableComponent<EntityVampireComponent> {
+class EntityVampireComponent
+@JvmOverloads constructor(
+    val entity: LivingEntity,
+    isVampireInitial: Boolean = false,
+    isPermanentVampireInitial: Boolean = false,
+    absoluteBloodInitial: Double = 7.0,
+    abilitiesInitial: Map<VampireAbility, Int> = mutableMapOf(
+        AbilityModule.STRENGTH to 1,
+        AbilityModule.DASH to 1,
+        AbilityModule.INVISIBILITY to 0,
+        AbilityModule.IMMORTALITY to 1,
+        AbilityModule.VISION to 1,
+        AbilityModule.MIST_FORM to 0
+    )
+) : VampireComponent, AutoSyncedComponent, CopyableComponent<EntityVampireComponent> {
     private val syncCallback = { _: KProperty<*>, _: Any?, _: Any? ->
-        if (!entity.world.isClient) {
+        if (!entity.world.isClient && VampireComponent.entityKey.isProvidedBy(entity)) {
             VampireComponent.entityKey.sync(entity)
         }
     }
 
     private val syncOne = { packetWriter: ComponentPacketWriter -> { _: KProperty<*>, _: Any?, _: Any? ->
-        if (!entity.world.isClient) {
+        if (!entity.world.isClient && VampireComponent.entityKey.isProvidedBy(entity)) {
             VampireComponent.entityKey.sync(entity, packetWriter)
         }
     }}
 
-    override var isVampire: Boolean by synced(false, syncOne, PacketByteBuf::writeBoolean, PacketByteBuf::readBoolean)
-    override var isPermanentVampire: Boolean by synced(false, syncOne, PacketByteBuf::writeBoolean, PacketByteBuf::readBoolean)
+    override var isVampire: Boolean by synced(isVampireInitial, syncOne, PacketByteBuf::writeBoolean, PacketByteBuf::readBoolean)
+    override var isPermanentVampire: Boolean by synced(isPermanentVampireInitial, syncOne, PacketByteBuf::writeBoolean, PacketByteBuf::readBoolean)
     override var isKilled: Boolean by synced(false, syncOne, PacketByteBuf::writeBoolean, PacketByteBuf::readBoolean)
 
-    override var absoluteBlood: Double by synced(7.0, syncOne, PacketByteBuf::writeDouble, PacketByteBuf::readDouble)
+    override var absoluteBlood: Double by synced(absoluteBloodInitial, syncOne, PacketByteBuf::writeDouble, PacketByteBuf::readDouble)
     override val blood: Double
         get() = if (entity.isSpectator || entity is PlayerEntity && entity.isCreative) 20.0 else 20.0 * (sin((absoluteBlood * PI) / 40.0))
 
     override var lastFed: Long by synced(-24000, syncOne, PacketByteBuf::writeVarLong, PacketByteBuf::readVarLong)
 
     override var abilities: MutableMap<VampireAbility, Int> by synced(
-        mutableMapOf(
-            AbilityModule.STRENGTH to 1,
-            AbilityModule.DASH to 1,
-            AbilityModule.INVISIBILITY to 0,
-            AbilityModule.IMMORTALITY to 1,
-            AbilityModule.VISION to 1,
-            AbilityModule.MIST_FORM to 0
-        ),
+        abilitiesInitial.toMutableMap(),
         syncOne,
         { buf, map -> buf.writeMap(
             map.mapKeys { (k, _) -> AbilityModule.ABILITY_REGISTRY.getId(k) },
