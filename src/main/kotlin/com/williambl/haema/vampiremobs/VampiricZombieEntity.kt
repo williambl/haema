@@ -42,7 +42,7 @@ class VampiricZombieEntity(entityType: EntityType<out VampiricZombieEntity>, wor
             && TRIGGER.invoker().willVampireBurn(this, world).get()
             && VETO.invoker().willVampireBurn(this, world).get()
         ) {
-            this.addStatusEffect(StatusEffectInstance(instance, 5, 0))
+            this.addStatusEffect(StatusEffectInstance(instance, 10, 0, false, false, true))
         }
     }
 
