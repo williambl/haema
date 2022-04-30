@@ -129,6 +129,13 @@ repositories {
         }
     }
     maven {
+        name = "Appleskin"
+        url = "https://maven.ryanliptak.com/"
+        content {
+            includeGroup 'squeek.appleskin'
+        }
+    }
+    maven {
         name = "CurseMaven"
         url "https://www.cursemaven.com"
         content {
@@ -247,6 +254,14 @@ dependencies {
     modCompileOnly("io.github.flemmli97:flan:${project.flan_version}") {
         exclude module: "fabric-structure-api-v1"
         exclude group: "net.fabricmc.fabric-api"
+    }
+
+    modCompileOnly("squeek.appleskin:appleskin-fabric:${project.appleskin_version}:api") {
+        transitive = false
+    }
+
+    modRuntimeOnly("squeek.appleskin:appleskin-fabric:mc1.18.2-2.4.0"){
+        exclude module: 'modmenu'
     }
 
     // ModMenu
