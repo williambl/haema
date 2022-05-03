@@ -5,6 +5,7 @@ import com.williambl.haema.id
 import com.williambl.haema.ritual.craft.RitualRecipe
 import com.williambl.haema.util.MultiTagMatcher
 import net.fabricmc.api.ModInitializer
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType
 import net.minecraft.block.Block
 import net.minecraft.item.BlockItem
 import net.minecraft.item.Item
@@ -22,6 +23,8 @@ object RitualModule: ModInitializer {
     val RITUAL_RECIPE_SERIALIZER: RitualRecipe.Companion.Serializer = RecipeSerializer.register("haema:ritual",
         RitualRecipe.Companion.Serializer
     )
+
+    val RITUAL_TABLE_SCREEN_HANDLER = Registry.register(Registry.SCREEN_HANDLER, id("ritual_table"), ExtendedScreenHandlerType(::RitualTableScreenHandler))
 
     val RITUAL_TABLE_BLOCK: RitualTable = Registry.register(
             Registry.BLOCK,

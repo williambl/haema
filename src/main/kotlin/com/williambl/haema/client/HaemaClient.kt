@@ -13,6 +13,7 @@ import com.williambl.haema.getAbilityLevel
 import com.williambl.haema.hunter.VampireHunterModule
 import com.williambl.haema.id
 import com.williambl.haema.isVampire
+import com.williambl.haema.ritual.RitualModule
 import com.williambl.haema.ritual.RitualTableScreenHandler
 import com.williambl.haema.vampireComponent
 import ladysnake.satin.api.event.ShaderEffectRenderCallback
@@ -28,8 +29,8 @@ import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback
-import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.gui.screen.ingame.HandledScreens
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.LivingEntity
@@ -102,7 +103,7 @@ object HaemaClient: ClientModInitializer {
 
         AutoConfig.register(HaemaConfig::class.java) { config, clazz -> Toml4jConfigSerializer(config, clazz) }
 
-        ScreenRegistry.register(RitualTableScreenHandler.ritualTableScreenHandlerType) {
+        HandledScreens.register(RitualModule.RITUAL_TABLE_SCREEN_HANDLER) {
                 screenHandler: RitualTableScreenHandler, inv: PlayerInventory, title: Text -> RitualTableScreen(screenHandler, inv, title)
         }
 
