@@ -100,8 +100,10 @@ object HaemaClient: ClientModInitializer {
         ClientMistHandler.init()
 
         EntityModelLayerRegistry.registerModelLayer(VampireHunterModel.layer, VampireHunterModel.Companion::getTexturedModelData)
+        EntityModelLayerRegistry.registerModelLayer(VampiragerModel.layer, VampiragerModel.Companion::getTexturedModelData)
         EntityRendererRegistry.register(VampireHunterModule.VAMPIRE_HUNTER) { context -> VampireHunterEntityRenderer(context) }
         EntityRendererRegistry.register(VampireMobsModule.VAMPIRIC_ZOMBIE) { context -> ZombieEntityRenderer(context) }
+        EntityRendererRegistry.register(VampireMobsModule.VAMPIRAGER) { context -> VampiragerEntityRenderer(context) }
 
         AutoConfig.register(HaemaConfig::class.java) { config, clazz -> Toml4jConfigSerializer(config, clazz) }
 
