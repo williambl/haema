@@ -28,14 +28,16 @@ class VampireDashThroughPathGoal(actor: PathAwareEntity, private val minimumDash
             for (i in it.length-1 downTo 0) {
                 nodePos = it.getNode(i).pos
                 val dist = this.actor.squaredDistanceTo(nodePos)
-                if (dist <= this.sqrMaxDashDistance) {
-                    break
-                }
 
                 if (dist < this.sqrMinDashDistance) {
                     nodePos = null
                     break
                 }
+
+                if (dist <= this.sqrMaxDashDistance) {
+                    break
+                }
+
 
                 if (i == 0) {
                     nodePos = null
