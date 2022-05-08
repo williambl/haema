@@ -9,6 +9,7 @@ import com.williambl.haema.isVampire
 import com.williambl.haema.vampireComponent
 import net.minecraft.entity.EntityData
 import net.minecraft.entity.EntityType
+import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.SpawnReason
 import net.minecraft.entity.ai.goal.*
 import net.minecraft.entity.attribute.DefaultAttributeContainer
@@ -50,6 +51,7 @@ class VampiragerEntity(entityType: EntityType<out VampiragerEntity>, world: Worl
         this.goalSelector.add(7, LookAroundGoal(this))
         this.targetSelector.add(1, RevengeGoal(this))
         this.targetSelector.add(2, ActiveTargetGoal(this, PlayerEntity::class.java, 10, true, false) { !it.isVampire })
+        this.targetSelector.add(3, DrinkBloodActiveTargetGoal(this, LivingEntity::class.java, true))
     }
 
     override fun tick() {
