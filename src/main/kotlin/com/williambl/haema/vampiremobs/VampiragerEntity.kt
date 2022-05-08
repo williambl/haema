@@ -7,10 +7,7 @@ import com.williambl.haema.api.VampireBurningEvents
 import com.williambl.haema.effect.SunlightSicknessEffect
 import com.williambl.haema.isVampire
 import com.williambl.haema.vampireComponent
-import net.minecraft.entity.EntityData
-import net.minecraft.entity.EntityType
-import net.minecraft.entity.LivingEntity
-import net.minecraft.entity.SpawnReason
+import net.minecraft.entity.*
 import net.minecraft.entity.ai.goal.*
 import net.minecraft.entity.attribute.DefaultAttributeContainer
 import net.minecraft.entity.attribute.EntityAttributes
@@ -75,6 +72,14 @@ class VampiragerEntity(entityType: EntityType<out VampiragerEntity>, world: Worl
         ) {
             this.addStatusEffect(StatusEffectInstance(SunlightSicknessEffect.instance, 10, 0, false, false, true))
         }
+    }
+
+    override fun tryAttack(target: Entity?): Boolean {
+        val bl = super.tryAttack(target)
+        if (bl && target is LivingEntity && this.vampireComponent.blood <= 20) {
+            this.vampireComponent.feed(target)
+        }
+        return bl
     }
 
     fun dashTarget(): Vec3d? {
