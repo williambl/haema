@@ -15,7 +15,7 @@
   "repeatable": false,
   "minLevel": 0,
   "action": {
-    "name": "add_level",
+    "name": "haema:add_levels",
     "arg": 1
   }
 }

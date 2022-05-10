@@ -12,6 +12,7 @@ import me.shedaniel.rei.api.common.util.EntryStacks
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
+import net.minecraft.util.Util
 
 class RitualCategory: DisplayCategory<RitualDisplay> {
     override fun getCategoryIdentifier(): CategoryIdentifier<out RitualDisplay> = HaemaREIPlugin.ritualId
@@ -36,7 +37,7 @@ class RitualCategory: DisplayCategory<RitualDisplay> {
 
         widgets.add(Widgets.createLabel(Point(bounds.centerX+16, bounds.centerY+16), TranslatableText("gui.haema.repeatable.${recipeDisplay.recipe.isRepeatable}").formatted(if (recipeDisplay.recipe.isRepeatable) Formatting.DARK_GREEN else Formatting.DARK_RED)).noShadow())
 
-        widgets.add(Widgets.createLabel(outputPoint, TranslatableText("ritual.action.${recipeDisplay.recipe.actionName}", recipeDisplay.recipe.actionArg).formatted(Formatting.DARK_GRAY)).noShadow())
+        widgets.add(Widgets.createLabel(outputPoint, TranslatableText(Util.createTranslationKey("ritual_action", recipeDisplay.recipe.actionName), recipeDisplay.recipe.actionArg).formatted(Formatting.DARK_GRAY)).noShadow())
 
         return widgets
     }
