@@ -194,7 +194,7 @@ object HaemaClient: ClientModInitializer {
 
         ClientTickEvents.START_CLIENT_TICK.register { client ->
             val player = client.cameraEntity ?: return@register
-            if (player !is LivingEntity) {
+            if (player !is LivingEntity || !player.isVampire) {
                 return@register
             }
 
