@@ -12,7 +12,6 @@ import net.minecraft.entity.damage.DamageSource
 import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.entity.mob.ZombieEntity
-import net.minecraft.entity.mob.ZombifiedPiglinEntity
 import net.minecraft.entity.passive.IronGolemEntity
 import net.minecraft.entity.passive.MerchantEntity
 import net.minecraft.entity.passive.TurtleEntity
@@ -28,6 +27,7 @@ import java.util.*
 
 class VampiricZombieEntity(entityType: EntityType<out VampiricZombieEntity>, world: World) : ZombieEntity(entityType, world), OwnedMob {
     var ownerUuid: UUID? = null
+        private set
 
     override var owner: LivingEntity?
         get() {
@@ -45,7 +45,7 @@ class VampiricZombieEntity(entityType: EntityType<out VampiricZombieEntity>, wor
             }
         }
         set(value) {
-            this.ownerUuid = owner?.uuid
+            this.ownerUuid = value?.uuid
         }
 
     override fun initCustomGoals() {
@@ -70,7 +70,7 @@ class VampiricZombieEntity(entityType: EntityType<out VampiricZombieEntity>, wor
 
     override fun writeCustomDataToNbt(nbt: NbtCompound) {
         super.writeCustomDataToNbt(nbt)
-        uuid?.let { nbt.put(OWNER_NBT_TAG, NbtHelper.fromUuid(it)) }
+        ownerUuid?.let { nbt.put(OWNER_NBT_TAG, NbtHelper.fromUuid(it)) }
     }
 
     override fun canTarget(target: LivingEntity?): Boolean {

@@ -15,17 +15,18 @@ import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.mob.HostileEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.nbt.NbtCompound
+import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.LocalDifficulty
 import net.minecraft.world.ServerWorldAccess
 import net.minecraft.world.World
-import java.util.function.Predicate
-import kotlin.math.max
-import kotlin.math.min
 
-class VampiragerEntity(entityType: EntityType<out VampiragerEntity>, world: World) : HostileEntity(entityType, world) {
+class VampiragerEntity(entityType: EntityType<out VampiragerEntity>, world: World) : HostileEntity(entityType, world), ReinforcementSpawner {
     private var spawnData: VampiragerData? = null
     private lateinit var dashThroughPathGoal: VampireDashThroughPathGoal
+
+    override var timesSpawnedReinforcements: Int = 0
+        private set
 
     override fun initialize(
         world: ServerWorldAccess,
@@ -40,9 +41,11 @@ class VampiragerEntity(entityType: EntityType<out VampiragerEntity>, world: Worl
     }
 
     override fun initGoals() {
+        this.goalSelector.add(1, SwimGoal(this))
         this.dashThroughPathGoal = VampireDashThroughPathGoal(this, 5.0, 16.0)
-        this.goalSelector.add(1, this.dashThroughPathGoal)
-        this.goalSelector.add(2, MeleeAttackGoal(this, 1.0, true))
+        this.goalSelector.add(2, this.dashThroughPathGoal)
+        this.goalSelector.add(2, SpawnReinforcementsGoal(this, 3, 1000) { this.health <= this.maxHealth/2f })
+        this.goalSelector.add(3, MeleeAttackGoal(this, 1.0, true))
         this.goalSelector.add(4, WanderAroundFarGoal(this, 0.25))
         this.goalSelector.add(6, LookAtEntityGoal(this, PlayerEntity::class.java, 6.0f))
         this.goalSelector.add(7, LookAroundGoal(this))
@@ -74,12 +77,40 @@ class VampiragerEntity(entityType: EntityType<out VampiragerEntity>, world: Worl
         }
     }
 
+    override fun spawnReinforcements() {
+        for (i in 0..5) {
+            val zombie = VampireMobsModule.VAMPIRIC_ZOMBIE.spawn(
+                this.world as ServerWorld,
+                null,
+                null,
+                null,
+                this.blockPos.add(this.random.nextInt(-3, 4), 0, this.random.nextInt(-3, 4)),
+                SpawnReason.REINFORCEMENT,
+                true,
+                false
+            )
+            zombie?.owner = this
+        }
+
+        this.timesSpawnedReinforcements++
+    }
+
     override fun tryAttack(target: Entity?): Boolean {
         val bl = super.tryAttack(target)
         if (bl && target is LivingEntity && this.vampireComponent.blood <= 20) {
             this.vampireComponent.feed(target)
         }
         return bl
+    }
+
+    override fun writeCustomDataToNbt(nbt: NbtCompound) {
+        super.writeCustomDataToNbt(nbt)
+        nbt.putInt("timesSpawnedReinforcements", this.timesSpawnedReinforcements)
+    }
+
+    override fun readCustomDataFromNbt(nbt: NbtCompound) {
+        super.readCustomDataFromNbt(nbt)
+        this.timesSpawnedReinforcements = nbt.getInt("timesSpawnedReinforcements")
     }
 
     fun dashTarget(): Vec3d? {
