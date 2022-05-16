@@ -10,21 +10,19 @@ import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory
-import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.screen.PropertyDelegate
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.ScreenHandlerContext
-import net.minecraft.screen.ScreenHandlerType
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.LiteralText
 import net.minecraft.text.Text
 import net.minecraft.util.registry.Registry
 
 class RitualTableScreenHandler(syncId: Int, val inv: RitualInventory, private val context: ScreenHandlerContext)
-    : ScreenHandler(ritualTableScreenHandlerType, syncId) {
+    : ScreenHandler(RitualModule.RITUAL_TABLE_SCREEN_HANDLER, syncId) {
 
     constructor(syncId: Int, playerInventory: PlayerInventory, packetByteBuf: PacketByteBuf) : this(
         syncId,
@@ -79,13 +77,6 @@ class RitualTableScreenHandler(syncId: Int, val inv: RitualInventory, private va
             buf.writeIdentifier(Registry.FLUID.getId(inv.fluid))
             buf.writeBlockPos(inv.pos)
             buf.writeVarInt(inv.level)
-        }
-    }
-
-    companion object {
-        val ritualTableScreenHandlerType: ScreenHandlerType<RitualTableScreenHandler>
-                = ScreenHandlerRegistry.registerExtended(id("ritual_table")) {
-                i: Int, inv: PlayerInventory, buf: PacketByteBuf -> RitualTableScreenHandler(i, inv, buf)
         }
     }
 }

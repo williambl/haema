@@ -15,6 +15,6 @@
   "repeatable": true,
   "minLevel": 0,
   "action": {
-    "name": "change_abilities"
+    "name": "haema:change_abilities"
   }
 }

@@ -2,9 +2,14 @@ package com.williambl.haema.ritual
 
 import com.williambl.haema.Haema
 import com.williambl.haema.id
+import com.williambl.haema.ritual.craft.AddLevelsRitualAction
+import com.williambl.haema.ritual.craft.ChangeAbilitiesRitualAction
+import com.williambl.haema.ritual.craft.RitualAction
 import com.williambl.haema.ritual.craft.RitualRecipe
 import com.williambl.haema.util.MultiTagMatcher
 import net.fabricmc.api.ModInitializer
+import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType
 import net.minecraft.block.Block
 import net.minecraft.item.BlockItem
 import net.minecraft.item.Item
@@ -18,10 +23,16 @@ import vazkii.patchouli.common.multiblock.MultiblockRegistry
 import vazkii.patchouli.common.multiblock.StateMatcher
 
 object RitualModule: ModInitializer {
+    val RITUAL_ACTION_REGISTRY: Registry<RitualAction> = FabricRegistryBuilder.createSimple(RitualAction::class.java, id("ritual_action")).buildAndRegister()
+    val ADD_LEVELS_RITUAL_ACTION: RitualAction = Registry.register(RITUAL_ACTION_REGISTRY, id("add_levels"), AddLevelsRitualAction)
+    val CHANGE_ABILITIES_RITUAL_ACTION: RitualAction = Registry.register(RITUAL_ACTION_REGISTRY, id("change_abilities"), ChangeAbilitiesRitualAction)
+
     val RITUAL_RECIPE_TYPE: RecipeType<RitualRecipe> = RecipeType.register("haema:ritual")
     val RITUAL_RECIPE_SERIALIZER: RitualRecipe.Companion.Serializer = RecipeSerializer.register("haema:ritual",
         RitualRecipe.Companion.Serializer
     )
+
+    val RITUAL_TABLE_SCREEN_HANDLER = Registry.register(Registry.SCREEN_HANDLER, id("ritual_table"), ExtendedScreenHandlerType(::RitualTableScreenHandler))
 
     val RITUAL_TABLE_BLOCK: RitualTable = Registry.register(
             Registry.BLOCK,

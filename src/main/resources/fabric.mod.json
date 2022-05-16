@@ -53,6 +53,9 @@
     ],
     "modmenu": [
       {"adapter": "kotlin", "value": "com.williambl.haema.compat.modmenu.HaemaModMenuPlugin"}
+    ],
+    "appleskin": [
+      {"adapter": "kotlin", "value": "com.williambl.haema.compat.appleskin.AppleskinEntrypoint"}
     ]
   },
   "mixins": [

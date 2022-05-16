@@ -1,12 +1,9 @@
 package com.williambl.haema.ritual.craft
 
 import com.google.gson.JsonObject
-import com.williambl.haema.ability.AbilityModule
-import com.williambl.haema.getAbilityLevel
+import com.mojang.serialization.JsonOps
 import com.williambl.haema.hasUsedRitual
 import com.williambl.haema.ritual.RitualModule
-import com.williambl.haema.ritual.RitualTableScreenHandler
-import com.williambl.haema.setAbilityLevel
 import com.williambl.haema.setHasUsedRitual
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -14,6 +11,8 @@ import kotlinx.coroutines.launch
 import net.minecraft.block.Blocks
 import net.minecraft.fluid.Fluid
 import net.minecraft.item.ItemStack
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.nbt.NbtOps
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.particle.ParticleTypes
@@ -37,8 +36,8 @@ class RitualRecipe(
     val ingredients: List<Ingredient>,
     val minLevel: Int,
     val isRepeatable: Boolean,
-    val actionName: String,
-    val actionArg: Int
+    val actionName: Identifier,
+    val actionArg: NbtCompound
 )
     : Recipe<RitualInventory> {
 
@@ -117,7 +116,7 @@ class RitualRecipe(
         GlobalScope.launch {
             delay(200)
             (inv.player.world as ServerWorld).server.submit {
-                ritualActions[actionName]?.invoke(inv, actionArg)
+                RitualModule.RITUAL_ACTION_REGISTRY.get(actionName)?.runAction(inv, actionArg.get("data") ?: NbtCompound())
                 (inv.player).setHasUsedRitual(id, true)
             }
         }
@@ -145,17 +144,6 @@ class RitualRecipe(
     }
 
     companion object {
-
-        val ritualActions = mapOf<String, (RitualInventory, Int) -> Unit>(
-            "add_level" to { inv, arg ->
-                (inv.player).setAbilityLevel(
-                    AbilityModule.NONE, (inv.player).getAbilityLevel(
-                        AbilityModule.NONE)+arg)
-                inv.player.openHandledScreen(RitualTableScreenHandler.Factory(inv))
-            },
-            "change_abilities" to { inv, _ -> inv.player.openHandledScreen(RitualTableScreenHandler.Factory(inv)) }
-        )
-
         object Serializer: RecipeSerializer<RitualRecipe> {
 
             override fun read(id: Identifier, json: JsonObject): RitualRecipe {
@@ -167,8 +155,13 @@ class RitualRecipe(
                     json.getAsJsonArray("ingredients").map(Ingredient::fromJson),
                     json.get("minLevel").asInt,
                     json.get("repeatable").asBoolean,
-                    actionElement.get("name").asString,
-                    actionElement.get("arg")?.asInt ?: 0
+                    Identifier(actionElement.get("name").asString),
+                    (actionElement.get("arg") ?: JsonObject()).let {
+                        val nbt = JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, it)
+                        val wrapper = NbtCompound()
+                        wrapper.put("data", nbt)
+                        return@let wrapper
+                    }
                 )
             }
 
@@ -182,8 +175,8 @@ class RitualRecipe(
                     ingredients,
                     buf.readInt(),
                     buf.readBoolean(),
-                    buf.readString(),
-                    buf.readInt()
+                    buf.readIdentifier(),
+                    buf.readNbt() ?: NbtCompound()
                 )
             }
 
@@ -193,8 +186,8 @@ class RitualRecipe(
                 buf.writeIdentifier(Registry.FLUID.getId(recipe.fluid))
                 buf.writeInt(recipe.minLevel)
                 buf.writeBoolean(recipe.isRepeatable)
-                buf.writeString(recipe.actionName)
-                buf.writeInt(recipe.actionArg)
+                buf.writeIdentifier(recipe.actionName)
+                buf.writeNbt(recipe.actionArg)
             }
         }
     }

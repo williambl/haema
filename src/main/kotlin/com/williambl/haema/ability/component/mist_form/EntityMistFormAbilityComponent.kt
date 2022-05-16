@@ -76,8 +76,12 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
     override fun canExpandMist(): Boolean = this.mistExpansionCooldownTime < this.entity.world.time
 
     override fun serverTick() {
-        if (!this.entity.isVampire) {
+        if (!this.entity.isVampire || this.entity.isSpectator) {
             this.isInMistForm = false
+            MODIFY_HEIGHT_TYPE.getScaleData(entity).run {
+                targetScale = 1.0f
+                scaleTickDelay = 3
+            }
         }
 
         if (isInMistForm) {
@@ -161,9 +165,9 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
 
     private fun attackInBox(box: Box) {
         this.entity.world.getOtherEntities(this.entity, box).forEach {
-            if (it !is LivingEntity) return@forEach
+            if (it !is LivingEntity || it.hasStatusEffect(EffectsModule.MISTED)) return@forEach
 
-            it.addStatusEffect(StatusEffectInstance(EffectsModule.MISTED, 20))
+            it.addStatusEffect(StatusEffectInstance(EffectsModule.MISTED, 50))
         }
     }
 

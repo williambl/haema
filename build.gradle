@@ -129,6 +129,13 @@ repositories {
         }
     }
     maven {
+        name = "Appleskin"
+        url = "https://maven.ryanliptak.com/"
+        content {
+            includeGroup 'squeek.appleskin'
+        }
+    }
+    maven {
         name = "CurseMaven"
         url "https://www.cursemaven.com"
         content {
@@ -150,7 +157,6 @@ dependencies {
 
     // Fabric API
     modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}") {
-        exclude module: "fabric-structure-api-v1"
     }
 
     // Fabric Language Kotlin
@@ -162,25 +168,21 @@ dependencies {
 
     // Satin
     modImplementation include("io.github.ladysnake:satin:${project.satin_version}") {
-        exclude module: "fabric-structure-api-v1"
         exclude group: "net.fabricmc.fabric-api"
     }
 
     // Reach Entity Attributes
     modImplementation include("com.jamieswhiteshirt:reach-entity-attributes:${project.rea_version}") {
-        exclude module: "fabric-structure-api-v1"
         exclude group: "net.fabricmc.fabric-api"
     }
 
     // Patchouli
     modImplementation include("vazkii.patchouli:Patchouli:${project.patchouli_version}") {
-        exclude module: "fabric-structure-api-v1"
         exclude group: "net.fabricmc.fabric-api"
     }
 
     // Cloth Config
-    modApi include("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
-        exclude module: "fabric-structure-api-v1"
+    modImplementation include("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
         exclude group: "net.fabricmc.fabric-api"
     }
 
@@ -198,13 +200,11 @@ dependencies {
 
     // Fabric Permissions API
     modImplementation include("me.lucko:fabric-permissions-api:${project.fpa_version}") {
-        exclude module: "fabric-structure-api-v1"
         exclude group: "net.fabricmc.fabric-api"
     }
 
     // Pehkui
     modImplementation include("com.github.Virtuoel:Pehkui:${project.pehkui_version}") {
-        exclude module: "fabric-structure-api-v1"
         exclude group: "net.fabricmc.fabric-api"
     }
 
@@ -221,37 +221,39 @@ dependencies {
     modCompileOnly("com.github.apace100:origins-fabric:${project.origins_version}") {
         exclude module: "modmenu"
         exclude group: "io.github.OnyxStudios.Cardinal-Components-API"
-        exclude module: "fabric-structure-api-v1"
         exclude group: "net.fabricmc.fabric-api"
     }
 
     // Rat's Mischief
     modCompileOnly("curse.maven:rats-mischief-431787:${project.rats_version}") {
-        exclude module: "fabric-structure-api-v1"
         exclude group: "net.fabricmc.fabric-api"
     }
     modCompileOnly("software.bernie.geckolib:geckolib-fabric-1.18:${project.geckolib_version}") {
         exclude group: "com.eliotlash.mclib"
         exclude group: "com.eliotlash.molang"
-        exclude module: "fabric-structure-api-v1"
         exclude group: "net.fabricmc.fabric-api"
     }
 
     // Bewitchment
     modCompileOnly("curse.maven:bewitchment-394915:${project.bewitchment_version}") {
-        exclude module: "fabric-structure-api-v1"
         exclude group: "net.fabricmc.fabric-api"
     }
 
     // Flan
     modCompileOnly("io.github.flemmli97:flan:${project.flan_version}") {
-        exclude module: "fabric-structure-api-v1"
         exclude group: "net.fabricmc.fabric-api"
+    }
+
+    modCompileOnly("squeek.appleskin:appleskin-fabric:${project.appleskin_version}:api") {
+        transitive = false
+    }
+
+    modRuntimeOnly("squeek.appleskin:appleskin-fabric:mc1.18.2-2.4.0"){
+        exclude module: 'modmenu'
     }
 
     // ModMenu
     modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}") {
-        exclude module: "fabric-structure-api-v1"
         exclude group: "net.fabricmc.fabric-api"
     }
 }
@@ -291,7 +293,14 @@ publishing {
     }
 
     repositories {
-        // Add repositories to publish to here.
+        maven {
+            name = "willBlRepositoryReleases"
+            url = "https://maven.willbl.dev/releases"
+            credentials(PasswordCredentials)
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
     }
 }
 
