@@ -1,8 +1,10 @@
 package com.williambl.haema.vampiremobs
 
 import com.williambl.haema.ability.AbilityModule
-import com.williambl.haema.ability.component.dash.DashAbilityComponent
 import com.williambl.haema.ability.component.dash.AiControlledEntityDashAbilityComponent
+import com.williambl.haema.ability.component.dash.DashAbilityComponent
+import com.williambl.haema.ability.component.strength.EntityStrengthAbilityComponent
+import com.williambl.haema.ability.component.strength.StrengthAbilityComponent
 import com.williambl.haema.api.BloodDrinkingEvents
 import com.williambl.haema.component.EntityVampireComponent
 import com.williambl.haema.component.VampireComponent
@@ -54,6 +56,8 @@ object VampireMobsModule: ModInitializer, EntityComponentInitializer {
             )
         )}
 
+        registry.registerFor(VampiricZombieEntity::class.java, StrengthAbilityComponent.entityKey, ::EntityStrengthAbilityComponent)
+
         registry.registerFor(VampiragerEntity::class.java, VampireComponent.entityKey) { entity -> EntityVampireComponent(
             entity,
             isVampireInitial = true,
@@ -68,6 +72,8 @@ object VampireMobsModule: ModInitializer, EntityComponentInitializer {
                 AbilityModule.MIST_FORM to 0
             )
         )}
+
+        registry.registerFor(VampiragerEntity::class.java, StrengthAbilityComponent.entityKey, ::EntityStrengthAbilityComponent)
 
         registry.registerFor(VampiragerEntity::class.java, DashAbilityComponent.entityKey) { entity -> AiControlledEntityDashAbilityComponent(
             entity,
