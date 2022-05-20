@@ -1,0 +1,24 @@
+{
+    "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
+    "display": {
+        "title": {
+            "translate": "advancement.haema.use_mist"
+        },
+        "description": {
+            "translate": "advancement.haema.use_mist.description"
+        },
+        "icon": {
+            "item": "minecraft:cobweb"
+        },
+        "frame": "task",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false
+    },
+    "criteria": {
+        "usevampireinvis": {
+            "trigger": "haema:use_mist"
+        }
+    },
+    "parent": "haema:use_ritual_table"
+}

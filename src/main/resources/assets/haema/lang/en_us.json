@@ -236,6 +236,8 @@
   "advancement.haema.use_invis.description": "Use vampire invisibility",
   "advancement.haema.use_ritual_table": "Ancient Rites",
   "advancement.haema.use_ritual_table.description": "Perform a Ritual",
+  "advancement.haema.use_mist": "The fog is coming",
+  "advancement.haema.use_mist.description": "Use mist form",
 
   "ritual.action.add_level": "+%d ability points",
   "ritual.action.change_abilities": "Customise abilities",

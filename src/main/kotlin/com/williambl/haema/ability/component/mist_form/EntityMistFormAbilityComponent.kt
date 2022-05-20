@@ -1,6 +1,7 @@
 package com.williambl.haema.ability.component.mist_form
 
 import com.williambl.haema.ability.AbilityModule
+import com.williambl.haema.criteria.UseMistCriterion
 import com.williambl.haema.effect.EffectsModule
 import com.williambl.haema.effect.MistFormEffect
 import com.williambl.haema.id
@@ -45,6 +46,10 @@ class EntityMistFormAbilityComponent(val entity: LivingEntity): MistFormAbilityC
             scaleTickDelay = 3
         }
         if (isInMistForm) {
+            if (entity is ServerPlayerEntity) {
+                UseMistCriterion.trigger(entity)
+            }
+
             PlayerLookup.tracking(entity).forEach { p ->
                 ServerPlayNetworking.send(
                     p,
