@@ -2,10 +2,10 @@
     "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
     "display": {
         "title": {
-            "text": "βῐβλος αἵμᾰτος"
+            "translate": "advancement.haema.root"
         },
         "description": {
-            "text": "Gain the book of ancient knowledge..."
+            "translate": "advancement.haema.root.description"
         },
         "icon": {
             "item": "patchouli:guide_book",

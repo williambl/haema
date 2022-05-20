@@ -2,10 +2,10 @@
     "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
     "display": {
         "title": {
-            "text": "Bring Me Blood!"
+            "translate": "advancement.haema.get_blood"
         },
         "description": {
-            "text": "Find ancient vampire blood as loot"
+            "translate": "advancement.haema.get_blood.description"
         },
         "icon": {
             "item": "haema:vampire_blood"

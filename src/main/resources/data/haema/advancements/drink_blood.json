@@ -2,10 +2,10 @@
     "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
     "display": {
         "title": {
-            "text": "Quenching Thirst"
+            "translate": "advancement.haema.drink_blood"
         },
         "description": {
-            "text": "Schlurp a mob."
+            "translate": "advancement.haema.drink_blood.description"
         },
         "icon": {
             "item": "haema:vampire_blood"

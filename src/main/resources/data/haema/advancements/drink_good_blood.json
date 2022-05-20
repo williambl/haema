@@ -2,10 +2,10 @@
     "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
     "display": {
         "title": {
-            "text": "The Good Gtuff"
+            "translate": "The Good Stuff"
         },
         "description": {
-            "text": "Get some good quality blood from a villager"
+            "translate": "Get some good quality blood from a villager"
         },
         "icon": {
             "item": "minecraft:hay_block"

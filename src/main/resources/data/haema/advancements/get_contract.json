@@ -2,10 +2,10 @@
     "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
     "display": {
         "title": {
-            "text": "Mercenary"
+            "translate": "advancement.haema.get_contract"
         },
         "description": {
-            "text": "Take a contract from a Vampire Hunter Leader"
+            "translate": "advancement.haema.get_contract.description"
         },
         "icon": {
             "item": "haema:vampire_hunter_contract"

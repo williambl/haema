@@ -2,10 +2,10 @@
     "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
     "display": {
         "title": {
-            "text": "Don't Mess With Vampires"
+            "translate": "advancement.haema.kill_vampire_hunter"
         },
         "description": {
-            "text": "Kill a vampire hunter"
+            "translate": "advancement.haema.kill_vampire_hunter.description"
         },
         "icon": {
             "item": "minecraft:crossbow"

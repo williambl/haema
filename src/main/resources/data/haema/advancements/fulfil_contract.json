@@ -1,10 +1,10 @@
 {
     "display": {
         "title": {
-            "text": "Vampire Money"
+            "translate": "advancement.haema.fulfil_contract"
         },
         "description": {
-            "text": "Fulfil a Vampire Hunter Contract"
+            "translate": "advancement.haema.fulfil_contract.description"
         },
         "icon": {
             "item": "haema:vampire_hunter_contract"

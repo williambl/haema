@@ -2,10 +2,10 @@
     "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
     "display": {
         "title": {
-            "text": "Portable Blood Storage"
+            "translate": "advancement.haema.store_blood"
         },
         "description": {
-            "text": "Take some blood out for later"
+            "translate": "advancement.haema.store_blood.description"
         },
         "icon": {
             "item": "haema:vampire_blood_injector"
