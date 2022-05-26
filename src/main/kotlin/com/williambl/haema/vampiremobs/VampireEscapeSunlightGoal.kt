@@ -7,9 +7,7 @@ import net.minecraft.entity.mob.PathAwareEntity
 
 class VampireEscapeSunlightGoal(mob: PathAwareEntity, speed: Double) : EscapeSunlightGoal(mob, speed) {
     override fun canStart(): Boolean {
-        return if (mob.target != null) {
-            false
-        } else if (!mob.world.isDay) {
+        return if (!mob.world.isDay) {
             false
         } else if (!mob.hasStatusEffect(SunlightSicknessEffect.instance)) {
             false

@@ -45,7 +45,7 @@ class VampiragerEntity(entityType: EntityType<out VampiragerEntity>, world: Worl
         this.goalSelector.add(1, VampireEscapeSunlightGoal(this, 1.0))
         this.dashThroughPathGoal = VampireDashThroughPathGoal(this, 5.0, 16.0)
         this.goalSelector.add(2, this.dashThroughPathGoal)
-        this.goalSelector.add(2, SpawnReinforcementsGoal(this, 3, 1000) { this.health <= this.maxHealth/2f })
+        this.goalSelector.add(2, SpawnReinforcementsGoal(this, 3, 1000) { this.health <= this.maxHealth/2f && this.target != null })
         this.goalSelector.add(3, MeleeAttackGoal(this, 1.0, true))
         this.goalSelector.add(4, WanderAroundFarGoal(this, 0.25))
         this.goalSelector.add(6, LookAtEntityGoal(this, PlayerEntity::class.java, 6.0f))
