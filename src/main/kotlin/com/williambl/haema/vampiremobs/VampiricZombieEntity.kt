@@ -35,7 +35,7 @@ class VampiricZombieEntity(entityType: EntityType<out VampiricZombieEntity>, wor
                 null
             } else if (this.world is ServerWorld) {
                 val res = (this.world as ServerWorld).getEntity(ownerUuid)
-                if (res is LivingEntity && res != this) {
+                if (res is LivingEntity && res != this && res.isAlive) {
                     res
                 } else {
                     null
