@@ -42,6 +42,7 @@ class VampiragerEntity(entityType: EntityType<out VampiragerEntity>, world: Worl
 
     override fun initGoals() {
         this.goalSelector.add(1, SwimGoal(this))
+        this.goalSelector.add(1, VampireEscapeSunlightGoal(this, 1.0))
         this.dashThroughPathGoal = VampireDashThroughPathGoal(this, 5.0, 16.0)
         this.goalSelector.add(2, this.dashThroughPathGoal)
         this.goalSelector.add(2, SpawnReinforcementsGoal(this, 3, 1000) { this.health <= this.maxHealth/2f })
