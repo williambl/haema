@@ -2,10 +2,10 @@
     "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
     "display": {
         "title": {
-            "text": "Potential for Power..."
+            "translate": "advancement.haema.create_ritual_table"
         },
         "description": {
-            "text": "Create a ritual table"
+            "translate": "advancement.haema.create_ritual_table.description"
         },
         "icon": {
             "item": "haema:ritual_table"

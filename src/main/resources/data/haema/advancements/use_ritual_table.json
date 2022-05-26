@@ -1,10 +1,10 @@
 {
     "display": {
         "title": {
-            "text": "Ancient Rites"
+            "translate": "advancement.haema.use_ritual_table"
         },
         "description": {
-            "text": "Perform a Ritual"
+            "translate": "advancement.haema.use_ritual_table.description"
         },
         "icon": {
             "item": "minecraft:fermented_spider_eye"

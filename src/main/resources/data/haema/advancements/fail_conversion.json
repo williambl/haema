@@ -2,10 +2,10 @@
     "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
     "display": {
         "title": {
-            "text": "I'm Not A Vampire"
+            "translate": "advancement.haema.fail_conversion"
         },
         "description": {
-            "text": "You forgot to have Strength II, didn't you?"
+            "translate": "advancement.haema.fail_conversion.description"
         },
         "icon": {
             "item": "minecraft:potion",

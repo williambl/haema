@@ -2,10 +2,10 @@
     "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
     "display": {
         "title": {
-            "text": "Give Me the Heart on Your Neck"
+            "translate": "advancement.haema.drink_player_blood"
         },
         "description": {
-            "text": "Drink some blood from another player"
+            "translate": "advancement.haema.drink_player_blood.description"
         },
         "icon": {
             "item": "minecraft:player_head"

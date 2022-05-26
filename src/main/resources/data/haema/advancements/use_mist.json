@@ -2,13 +2,13 @@
     "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
     "display": {
         "title": {
-            "translate": "advancement.haema.drink_blood"
+            "translate": "advancement.haema.use_mist"
         },
         "description": {
-            "translate": "advancement.haema.drink_blood.description"
+            "translate": "advancement.haema.use_mist.description"
         },
         "icon": {
-            "item": "haema:vampire_blood"
+            "item": "minecraft:cobweb"
         },
         "frame": "task",
         "show_toast": true,
@@ -16,12 +16,9 @@
         "hidden": false
     },
     "criteria": {
-        "drinkblood": {
-            "trigger": "haema:drink_blood"
+        "usevampireinvis": {
+            "trigger": "haema:use_mist"
         }
     },
-    "rewards": {
-        "experience": 15
-    },
-    "parent": "haema:use_blood"
+    "parent": "haema:use_ritual_table"
 }
