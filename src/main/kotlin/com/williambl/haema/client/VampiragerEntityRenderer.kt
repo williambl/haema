@@ -1,6 +1,5 @@
 package com.williambl.haema.client
 
-import com.williambl.haema.hunter.VampireHunterEntity
 import com.williambl.haema.id
 import com.williambl.haema.vampiremobs.VampiragerEntity
 import net.fabricmc.api.EnvType
@@ -37,7 +36,6 @@ class VampiragerEntityRenderer(context: EntityRendererFactory.Context) : MobEnti
 class VampiragerModel(val root: ModelPart) : SinglePartEntityModel<VampiragerEntity>(), ModelWithArms, ModelWithHead {
     private val head: ModelPart = root.getChild(EntityModelPartNames.HEAD)
     private val hat: ModelPart = head.getChild(EntityModelPartNames.HAT)
-    private val arms: ModelPart = root.getChild(EntityModelPartNames.ARMS)
     private val leftLeg: ModelPart = root.getChild(EntityModelPartNames.LEFT_LEG)
     private val rightLeg: ModelPart = root.getChild(EntityModelPartNames.RIGHT_LEG)
     private val rightAttackingArm: ModelPart = root.getChild(EntityModelPartNames.RIGHT_ARM)
@@ -50,9 +48,6 @@ class VampiragerModel(val root: ModelPart) : SinglePartEntityModel<VampiragerEnt
     override fun setAngles(entity: VampiragerEntity, f: Float, g: Float, h: Float, i: Float, j: Float) {
         head.yaw = i * 0.017453292f
         head.pitch = j * 0.017453292f
-        arms.pivotY = 3.0f
-        arms.pivotZ = -1.0f
-        arms.pitch = -0.75f
         if (riding) {
             rightAttackingArm.pitch = -0.62831855f
             rightAttackingArm.yaw = 0.0f
@@ -84,7 +79,7 @@ class VampiragerModel(val root: ModelPart) : SinglePartEntityModel<VampiragerEnt
             CrossbowPosing.hold(rightAttackingArm, leftAttackingArm, head, true)
         } else if (entity.isAttacking) {
             // hold arm up in the air
-            CrossbowPosing.meleeAttack(rightAttackingArm, leftAttackingArm, entity, handSwingProgress, h)
+            CrossbowPosing.swingArms(leftAttackingArm, rightAttackingArm, h)
         }
     }
 
@@ -126,17 +121,6 @@ class VampiragerModel(val root: ModelPart) : SinglePartEntityModel<VampiragerEnt
                 ModelPartBuilder.create().uv(16, 20).cuboid(-4.0f, 0.0f, -3.0f, 8.0f, 12.0f, 6.0f).uv(0, 38)
                     .cuboid(-4.0f, 0.0f, -3.0f, 8.0f, 18.0f, 6.0f, Dilation(0.5f)),
                 ModelTransform.pivot(0.0f, 0.0f, 0.0f)
-            )
-            val modelPartData3 = modelPartData.addChild(
-                EntityModelPartNames.ARMS,
-                ModelPartBuilder.create().uv(44, 22).cuboid(-8.0f, -2.0f, -2.0f, 4.0f, 8.0f, 4.0f).uv(40, 38)
-                    .cuboid(-4.0f, 2.0f, -2.0f, 8.0f, 4.0f, 4.0f),
-                ModelTransform.of(0.0f, 3.0f, -1.0f, -0.75f, 0.0f, 0.0f)
-            )
-            modelPartData3.addChild(
-                "left_shoulder",
-                ModelPartBuilder.create().uv(44, 22).mirrored().cuboid(4.0f, -2.0f, -2.0f, 4.0f, 8.0f, 4.0f),
-                ModelTransform.NONE
             )
             modelPartData.addChild(
                 EntityModelPartNames.RIGHT_LEG,
