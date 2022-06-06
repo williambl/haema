@@ -18,7 +18,7 @@ import net.minecraft.util.math.MathHelper
 
 @Environment(EnvType.CLIENT)
 class VampiragerEntityRenderer(context: EntityRendererFactory.Context) : MobEntityRenderer<VampiragerEntity, VampiragerModel>(context, VampiragerModel(context.getPart(VampiragerModel.layer)), 0.5f) {
-    private val texture = Identifier("textures/entity/illager/vindicator.png")
+    private val texture = id("textures/entity/vampirager.png")
 
     init {
         addFeature(HeadFeatureRenderer(this, context.modelLoader))
