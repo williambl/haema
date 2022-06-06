@@ -162,6 +162,13 @@ dependencies {
     // Fabric Language Kotlin
     modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
 
+    // GeckoLib
+    modImplementation("software.bernie.geckolib:geckolib-fabric-1.18:${project.geckolib_version}") {
+        exclude group: "com.eliotlash.mclib"
+        exclude group: "com.eliotlash.molang"
+        exclude group: "net.fabricmc.fabric-api"
+    }
+
     ///
     /// INCLUDED
     ///
@@ -228,11 +235,7 @@ dependencies {
     modCompileOnly("curse.maven:rats-mischief-431787:${project.rats_version}") {
         exclude group: "net.fabricmc.fabric-api"
     }
-    modCompileOnly("software.bernie.geckolib:geckolib-fabric-1.18:${project.geckolib_version}") {
-        exclude group: "com.eliotlash.mclib"
-        exclude group: "com.eliotlash.molang"
-        exclude group: "net.fabricmc.fabric-api"
-    }
+
 
     // Bewitchment
     modCompileOnly("curse.maven:bewitchment-394915:${project.bewitchment_version}") {
