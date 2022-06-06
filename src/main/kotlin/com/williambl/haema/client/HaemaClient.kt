@@ -33,7 +33,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.ingame.HandledScreens
 import net.minecraft.client.option.KeyBinding
-import net.minecraft.client.render.entity.ZombieEntityRenderer
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerInventory
@@ -103,7 +102,7 @@ object HaemaClient: ClientModInitializer {
         EntityModelLayerRegistry.registerModelLayer(VampireHunterModel.layer, VampireHunterModel.Companion::getTexturedModelData)
         EntityModelLayerRegistry.registerModelLayer(VampiragerModel.layer, VampiragerModel.Companion::getTexturedModelData)
         EntityRendererRegistry.register(VampireHunterModule.VAMPIRE_HUNTER) { context -> VampireHunterEntityRenderer(context) }
-        EntityRendererRegistry.register(VampireMobsModule.VAMPIRIC_ZOMBIE) { context -> ZombieEntityRenderer(context) }
+        EntityRendererRegistry.register(VampireMobsModule.VAMPIRIC_ZOMBIE) { context -> VampiricZombieRenderer(context) }
         EntityRendererRegistry.register(VampireMobsModule.VAMPIRAGER) { context -> VampiragerEntityRenderer(context) }
 
         AutoConfig.register(HaemaConfig::class.java) { config, clazz -> Toml4jConfigSerializer(config, clazz) }
