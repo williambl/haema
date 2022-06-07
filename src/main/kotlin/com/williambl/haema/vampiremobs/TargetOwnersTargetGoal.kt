@@ -18,7 +18,7 @@ class TargetOwnersTargetGoal<T>(private val actor: T) : TrackTargetGoal(actor, f
     }
 
     override fun start() {
-        this.actor.target = this.actor.owner.targets.filter(this.actor::canTarget).random(this.actor.random.asKotlinRandom())
+        this.actor.target = this.actor.owner.targets.filter(this.actor::canTarget).randomOrNull(this.actor.random.asKotlinRandom()) ?: return
         super.start()
     }
 
