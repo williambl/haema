@@ -15,15 +15,13 @@ import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
-import net.minecraft.entity.EntityDimensions
-import net.minecraft.entity.EntityType
-import net.minecraft.entity.SpawnGroup
-import net.minecraft.entity.SpawnRestriction
+import net.minecraft.entity.*
 import net.minecraft.entity.mob.HostileEntity
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.tag.TagKey
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.Heightmap
+import net.minecraft.world.World
 import net.minecraft.world.biome.Biome
 
 object VampireMobsModule: ModInitializer, EntityComponentInitializer {
@@ -62,6 +60,13 @@ object VampireMobsModule: ModInitializer, EntityComponentInitializer {
         FabricDefaultAttributeRegistry.register(VAMPIRAGER, VampiragerEntity.createVampiragerAttributes())
 
         BiomeModifications.addSpawn({ it.hasTag(BIOME_SPAWNS_VAMPIRAGERS) }, SpawnGroup.MONSTER, VAMPIRAGER, 4, 1, 1)
+
+        BloodDrinkingEvents.ON_BLOOD_DRINK.register { drinker: LivingEntity, target: LivingEntity, world: World ->
+            if (drinker is VampiricZombieEntity && target is ZombieEntity) {
+                val converted = target.convertTo(VAMPIRIC_ZOMBIE, true)
+                converted?.owner = drinker.owner
+            }
+        }
     }
 
     override fun registerEntityComponentFactories(registry: EntityComponentFactoryRegistry) {
