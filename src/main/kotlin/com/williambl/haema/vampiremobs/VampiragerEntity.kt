@@ -13,6 +13,7 @@ import net.minecraft.entity.attribute.DefaultAttributeContainer
 import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.mob.HostileEntity
+import net.minecraft.entity.mob.PathAwareEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.server.world.ServerWorld
@@ -46,7 +47,7 @@ class VampiragerEntity(entityType: EntityType<out VampiragerEntity>, world: Worl
         this.dashThroughPathGoal = VampireDashThroughPathGoal(this, 5.0, 16.0)
         this.goalSelector.add(2, this.dashThroughPathGoal)
         this.goalSelector.add(2, SpawnReinforcementsGoal(this, 3, 1000) { this.health <= this.maxHealth/2f && this.target != null })
-        this.goalSelector.add(3, MeleeAttackGoal(this, 1.0, true))
+        this.goalSelector.add(3, ExtraRangeMeleeAttackGoal(this, 1.0, true))
         this.goalSelector.add(4, WanderAroundFarGoal(this, 0.5))
         this.goalSelector.add(6, LookAtEntityGoal(this, PlayerEntity::class.java, 6.0f))
         this.goalSelector.add(7, LookAroundGoal(this))
@@ -122,10 +123,16 @@ class VampiragerEntity(entityType: EntityType<out VampiragerEntity>, world: Worl
         fun createVampiragerAttributes(): DefaultAttributeContainer.Builder {
             return createHostileAttributes()
                 .add(EntityAttributes.GENERIC_MAX_HEALTH, 30.0)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.35)
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0)
         }
     }
 
     data class VampiragerData(val abilities: Map<VampireAbility, Int>, val dashCooldown: Int) : EntityData
+
+    class ExtraRangeMeleeAttackGoal(mob: PathAwareEntity, speed: Double, pauseWhenMobIdle: Boolean) : MeleeAttackGoal(mob, speed, pauseWhenMobIdle) {
+        override fun getSquaredMaxAttackDistance(entity: LivingEntity?): Double {
+            return super.getSquaredMaxAttackDistance(entity) + 3.0
+        }
+    }
 }
