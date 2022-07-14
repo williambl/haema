@@ -1,14 +1,14 @@
 package com.williambl.haema.vampiremobs.elder_vampire
 
-import net.minecraft.block.Block
 import net.minecraft.block.BlockState
 import net.minecraft.block.ShapeContext
+import net.minecraft.block.TransparentBlock
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.shape.VoxelShape
 import net.minecraft.util.shape.VoxelShapes
 import net.minecraft.world.BlockView
 
-class VampiricEssenceBlock(settings: Settings) : Block(settings) {
+class VampiricEssenceBlock(settings: Settings) : TransparentBlock(settings) {
     override fun getOpacity(state: BlockState?, world: BlockView, pos: BlockPos?): Int {
         return world.maxLightLevel
     }
