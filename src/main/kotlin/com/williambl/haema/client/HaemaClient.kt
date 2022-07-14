@@ -17,6 +17,7 @@ import com.williambl.haema.isVampire
 import com.williambl.haema.ritual.RitualModule
 import com.williambl.haema.ritual.RitualTableScreenHandler
 import com.williambl.haema.vampireComponent
+import com.williambl.haema.vampiremobs.VampireMobsModule
 import ladysnake.satin.api.event.ShaderEffectRenderCallback
 import ladysnake.satin.api.managed.ManagedShaderEffect
 import ladysnake.satin.api.managed.ShaderEffectManager
@@ -102,7 +103,10 @@ object HaemaClient: ClientModInitializer {
         ClientMistHandler.init()
 
         EntityModelLayerRegistry.registerModelLayer(VampireHunterModel.layer, VampireHunterModel.Companion::getTexturedModelData)
+        EntityModelLayerRegistry.registerModelLayer(VampiragerModel.layer, VampiragerModel.Companion::getTexturedModelData)
         EntityRendererRegistry.register(VampireHunterModule.VAMPIRE_HUNTER) { context -> VampireHunterEntityRenderer(context) }
+        EntityRendererRegistry.register(VampireMobsModule.VAMPIRIC_ZOMBIE) { context -> VampiricZombieRenderer(context) }
+        EntityRendererRegistry.register(VampireMobsModule.VAMPIRAGER) { context -> VampiragerEntityRenderer(context) }
 
         GeoArmorRenderer.registerArmorRenderer<Entity>(VampireClothingRenderer(), DripModule.VAMPIRE_HAT, DripModule.VAMPIRE_COAT, DripModule.VAMPIRE_TROUSERS, DripModule.VAMPIRE_SHOES)
 
