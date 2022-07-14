@@ -3,6 +3,7 @@ package com.williambl.haema.hunter
 import com.williambl.haema.id
 import com.williambl.haema.isVampire
 import com.williambl.haema.util.contains
+import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags
 import net.minecraft.block.entity.BannerPattern
 import net.minecraft.command.argument.EntityAnchorArgumentType
 import net.minecraft.enchantment.EnchantmentHelper
@@ -30,15 +31,15 @@ import net.minecraft.nbt.NbtList
 import net.minecraft.potion.PotionUtil
 import net.minecraft.potion.Potions
 import net.minecraft.server.world.ServerWorld
-import net.minecraft.tag.TagKey
 import net.minecraft.text.TranslatableText
-import net.minecraft.util.*
-import net.minecraft.util.registry.Registry
+import net.minecraft.util.ActionResult
+import net.minecraft.util.DyeColor
+import net.minecraft.util.Formatting
+import net.minecraft.util.Hand
 import net.minecraft.world.Difficulty
 import net.minecraft.world.LocalDifficulty
 import net.minecraft.world.ServerWorldAccess
 import net.minecraft.world.World
-import kotlin.Pair
 
 class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, world: World?) : PatrolEntity(
     entityType,
@@ -67,7 +68,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
         goalSelector.add(0, SwimGoal(this))
         goalSelector.add(1, VampireHunterOnHorseAttackGoal(this, 1.3, 10.0f))
         goalSelector.add(2, VampireHunterCrossbowAttackGoal(this, 1.0, 8.0f))
-        goalSelector.add(3, VampireHunterMeleeAttackGoal(this, 1.0, true))
+        goalSelector.add(3, VampireHunterMeleeAttackGoal(this, 1.0, false))
         goalSelector.add(8, WanderAroundGoal(this, 0.6))
         goalSelector.add(9, LookAtEntityGoal(this, PlayerEntity::class.java, 15.0f, 1.0f))
         goalSelector.add(10, LookAtEntityGoal(this, MobEntity::class.java, 15.0f))
@@ -111,13 +112,13 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
     }
 
     fun takeItem(item: Item): ItemStack {
-        return takeItem { it == item }
+        return takeItem { it.item == item }
     }
 
-    fun takeItem(prediacte: (Item) -> Boolean): ItemStack {
+    fun takeItem(predicate: (ItemStack) -> Boolean): ItemStack {
         for (i in 0 until inventory.size()) {
             val stack = inventory.getStack(i)
-            if (prediacte(stack.item)) {
+            if (predicate(stack)) {
                 inventory.removeStack(i)
                 return stack
             }
@@ -361,7 +362,7 @@ class VampireHunterMeleeAttackGoal(private val actor: VampireHunterEntity, speed
         return value
     }
 
-    private fun isSword(item: Item) = item.registryEntry.isIn(TagKey.of(Registry.ITEM_KEY, Identifier("fabric:swords")));
+    private fun isSword(item: ItemStack) = item.isIn(ConventionalItemTags.SWORDS)
 }
 
 class VampireHunterOnHorseAttackGoal(private val actor: VampireHunterEntity, speed: Double, range: Float) : VampireHunterCrossbowAttackGoal(
