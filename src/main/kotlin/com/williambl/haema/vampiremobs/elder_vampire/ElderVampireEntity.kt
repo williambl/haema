@@ -1,4 +1,4 @@
-package com.williambl.haema.vampiremobs
+package com.williambl.haema.vampiremobs.elder_vampire
 
 import com.williambl.haema.ability.AbilityModule
 import com.williambl.haema.ability.VampireAbility
@@ -7,6 +7,7 @@ import com.williambl.haema.api.VampireBurningEvents
 import com.williambl.haema.effect.SunlightSicknessEffect
 import com.williambl.haema.isVampire
 import com.williambl.haema.vampireComponent
+import com.williambl.haema.vampiremobs.*
 import net.minecraft.entity.*
 import net.minecraft.entity.ai.goal.*
 import net.minecraft.entity.attribute.DefaultAttributeContainer
@@ -21,7 +22,8 @@ import net.minecraft.world.LocalDifficulty
 import net.minecraft.world.ServerWorldAccess
 import net.minecraft.world.World
 
-class ElderVampireEntity(entityType: EntityType<out ElderVampireEntity>, world: World) : HostileEntity(entityType, world), ReinforcementSpawner {
+class ElderVampireEntity(entityType: EntityType<out ElderVampireEntity>, world: World) : HostileEntity(entityType, world),
+    ReinforcementSpawner {
     private var spawnData: ElderVampireData? = null
     private lateinit var dashThroughPathGoal: VampireDashThroughPathGoal
 

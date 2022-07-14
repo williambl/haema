@@ -9,17 +9,24 @@ import com.williambl.haema.api.BloodDrinkingEvents
 import com.williambl.haema.component.EntityVampireComponent
 import com.williambl.haema.component.VampireComponent
 import com.williambl.haema.id
+import com.williambl.haema.vampiremobs.elder_vampire.VampiricEssenceBlock
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications
+import net.fabricmc.fabric.api.`object`.builder.v1.block.FabricMaterialBuilder
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
+import net.minecraft.block.AbstractBlock
+import net.minecraft.block.BlockState
+import net.minecraft.block.MapColor
 import net.minecraft.entity.*
 import net.minecraft.entity.mob.HostileEntity
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.tag.TagKey
+import net.minecraft.util.math.BlockPos
 import net.minecraft.util.registry.Registry
+import net.minecraft.world.BlockView
 import net.minecraft.world.Heightmap
 import net.minecraft.world.World
 import net.minecraft.world.biome.Biome
@@ -45,6 +52,18 @@ object VampireMobsModule: ModInitializer, EntityComponentInitializer {
             .dimensions(EntityDimensions.fixed(0.6f, 1.95f))
             .spawnRestriction(SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark)
             .build()
+    )
+
+    val VAMPIRIC_ESSENCE: VampiricEssenceBlock = Registry.register(
+        Registry.BLOCK,
+        id("vampiric_essence"),
+        VampiricEssenceBlock(AbstractBlock.Settings.of(FabricMaterialBuilder(MapColor.BLACK).destroyedByPiston().build())
+            .nonOpaque()
+            .allowsSpawning {_, _, _, _ -> false}
+            .solidBlock(::never)
+            .suffocates(::never)
+            .blockVision(::never)
+        )
     )
 
     private val BIOME_SPAWNS_VAMPIRAGERS: TagKey<Biome> = TagKey.of(Registry.BIOME_KEY, id("spawns_vampiragers"))
@@ -107,5 +126,9 @@ object VampireMobsModule: ModInitializer, EntityComponentInitializer {
             entity,
             entity::dashTarget
         )}
+    }
+
+    private fun never(state: BlockState, world: BlockView, pos: BlockPos): Boolean {
+        return false
     }
 }

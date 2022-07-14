@@ -98,6 +98,8 @@ object HaemaClient: ClientModInitializer {
             }
         })
 
+        VampiricEssenceFx.init()
+
         KeyBindingHelper.registerKeyBinding(DASH_KEY)
 
         ClientMistHandler.init()
