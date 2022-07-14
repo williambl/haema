@@ -5,6 +5,7 @@ import com.williambl.haema.ability.VampireAbility
 import com.williambl.haema.ability.component.dash.DashAbilityComponent
 import com.williambl.haema.api.VampireBurningEvents
 import com.williambl.haema.effect.SunlightSicknessEffect
+import com.williambl.haema.hunter.VampireHunterEntity
 import com.williambl.haema.isVampire
 import com.williambl.haema.vampireComponent
 import net.minecraft.entity.*
@@ -53,6 +54,7 @@ class VampiragerEntity(entityType: EntityType<out VampiragerEntity>, world: Worl
         this.goalSelector.add(7, LookAroundGoal(this))
         this.targetSelector.add(1, RevengeGoal(this))
         this.targetSelector.add(2, ActiveTargetGoal(this, PlayerEntity::class.java, 10, true, false) { !it.isVampire })
+        this.targetSelector.add(2, ActiveTargetGoal(this, VampireHunterEntity::class.java, true, false))
         this.targetSelector.add(3, DrinkBloodActiveTargetGoal(this, LivingEntity::class.java, true))
     }
 
