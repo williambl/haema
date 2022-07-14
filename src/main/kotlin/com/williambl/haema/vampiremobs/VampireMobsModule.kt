@@ -12,26 +12,44 @@ import com.williambl.haema.id
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer
 import net.fabricmc.api.ModInitializer
+import net.fabricmc.fabric.api.biome.v1.BiomeModifications
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
 import net.minecraft.entity.EntityDimensions
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.SpawnGroup
+import net.minecraft.entity.SpawnRestriction
+import net.minecraft.entity.mob.HostileEntity
 import net.minecraft.entity.mob.ZombieEntity
+import net.minecraft.tag.TagKey
 import net.minecraft.util.registry.Registry
+import net.minecraft.world.Heightmap
+import net.minecraft.world.biome.Biome
 
 object VampireMobsModule: ModInitializer, EntityComponentInitializer {
     val VAMPIRIC_ZOMBIE: EntityType<VampiricZombieEntity> = Registry.register(
         Registry.ENTITY_TYPE,
         id("vampiric_zombie"),
-        FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, ::VampiricZombieEntity).dimensions(EntityDimensions.fixed(0.6f, 1.95f)).build()
+        FabricEntityTypeBuilder.createMob<VampiricZombieEntity>()
+            .spawnGroup(SpawnGroup.MONSTER)
+            .entityFactory(::VampiricZombieEntity)
+            .dimensions(EntityDimensions.fixed(0.6f, 1.95f))
+            .spawnRestriction(SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark)
+            .build()
     )
 
     val VAMPIRAGER: EntityType<VampiragerEntity> = Registry.register(
         Registry.ENTITY_TYPE,
         id("vampirager"),
-        FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, ::VampiragerEntity).dimensions(EntityDimensions.fixed(0.6f, 1.95f)).build()
+        FabricEntityTypeBuilder.createMob<VampiragerEntity>()
+            .spawnGroup(SpawnGroup.MONSTER)
+            .entityFactory(::VampiragerEntity)
+            .dimensions(EntityDimensions.fixed(0.6f, 1.95f))
+            .spawnRestriction(SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark)
+            .build()
     )
+
+    private val BIOME_SPAWNS_VAMPIRAGERS: TagKey<Biome> = TagKey.of(Registry.BIOME_KEY, id("spawns_vampiragers"))
 
     override fun onInitialize() {
         BloodDrinkingEvents.ON_BLOOD_DRINK.register { drinker, target, world ->
@@ -42,6 +60,8 @@ object VampireMobsModule: ModInitializer, EntityComponentInitializer {
 
         FabricDefaultAttributeRegistry.register(VAMPIRIC_ZOMBIE, ZombieEntity.createZombieAttributes())
         FabricDefaultAttributeRegistry.register(VAMPIRAGER, VampiragerEntity.createVampiragerAttributes())
+
+        BiomeModifications.addSpawn({ it.hasTag(BIOME_SPAWNS_VAMPIRAGERS) }, SpawnGroup.MONSTER, VAMPIRAGER, 4, 1, 1)
     }
 
     override fun registerEntityComponentFactories(registry: EntityComponentFactoryRegistry) {
@@ -82,8 +102,5 @@ object VampireMobsModule: ModInitializer, EntityComponentInitializer {
             entity,
             entity::dashTarget
         )}
-
-
-        BiomeModifications.addSpawn({ it.hasTag(BIOME_SPAWNS_VAMPIRAGERS) }, SpawnGroup.MONSTER, VAMPIRAGER, 400, 1, 1)
     }
 }
