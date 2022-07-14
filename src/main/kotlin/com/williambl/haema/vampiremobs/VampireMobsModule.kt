@@ -39,6 +39,9 @@ object VampireMobsModule: ModInitializer, EntityComponentInitializer {
                 VampiricZombieEntity.convert(target)
             }
         }
+
+        FabricDefaultAttributeRegistry.register(VAMPIRIC_ZOMBIE, ZombieEntity.createZombieAttributes())
+        FabricDefaultAttributeRegistry.register(VAMPIRAGER, VampiragerEntity.createVampiragerAttributes())
     }
 
     override fun registerEntityComponentFactories(registry: EntityComponentFactoryRegistry) {
@@ -80,7 +83,7 @@ object VampireMobsModule: ModInitializer, EntityComponentInitializer {
             entity::dashTarget
         )}
 
-        FabricDefaultAttributeRegistry.register(VAMPIRIC_ZOMBIE, ZombieEntity.createZombieAttributes())
-        FabricDefaultAttributeRegistry.register(VAMPIRAGER, VampiragerEntity.createVampiragerAttributes())
+
+        BiomeModifications.addSpawn({ it.hasTag(BIOME_SPAWNS_VAMPIRAGERS) }, SpawnGroup.MONSTER, VAMPIRAGER, 400, 1, 1)
     }
 }
