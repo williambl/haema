@@ -5,6 +5,10 @@
     "minecraft:leather_chestplate",
     "minecraft:leather_leggings",
     "minecraft:leather_boots",
+    "haema:vampire_hat",
+    "haema:vampire_coat",
+    "haema:vampire_trousers",
+    "haema:vampire_shoes",
     {
       "id": "bewitchment:alchemist_hood",
       "required": false

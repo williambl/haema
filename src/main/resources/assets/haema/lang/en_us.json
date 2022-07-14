@@ -11,6 +11,10 @@
   "item.haema.vampire_hunter_contract.fulfilled": "Fulfilled",
   "item.haema.vampire_hunter_contract.target": "Target: %1$s",
   "item.haema.vampire_converter": "[DEBUG ITEM] Vampire Converter",
+  "item.haema.vampire_hat": "Vampire Hat",
+  "item.haema.vampire_coat": "Vampire Coat",
+  "item.haema.vampire_trousers": "Vampire Trousers",
+  "item.haema.vampire_shoes": "Vampire Shoes",
 
   "block.haema.righteous_banner": "Righteous Banner",
   "block.haema.ritual_table": "Ritual Table",
