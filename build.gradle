@@ -77,6 +77,7 @@ repositories {
         content {
             includeGroup "io.github.prospector"
             includeGroup "com.terraformersmc"
+            includeGroup "dev.emi"
         }
     }
     maven {
@@ -222,6 +223,12 @@ dependencies {
     // REI
     modCompileOnly("me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}") {
         exclude group: "net.fabricmc.fabric-api"
+    }
+
+    // EMI
+    modImplementation("dev.emi:emi:${project.emi_version}") {
+        exclude group: "net.fabricmc.fabric_api"
+        exclude group: "null"
     }
 
     // Origins
