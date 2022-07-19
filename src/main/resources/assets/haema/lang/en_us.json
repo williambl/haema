@@ -250,6 +250,7 @@
   "ritual_action.haema.change_abilities": "Customise abilities",
 
   "rei.haema.ritual": "Ritual",
+  "emi.category.haema.ritual": "Ritual",
 
   "compat.bewitchment.gui.haema.hud.untransform": "Untransform",
   "compat.bewitchment.gui.haema.hud.transform": "Transform"

@@ -45,6 +45,9 @@
     "rei_plugins": [
       {"adapter": "kotlin", "value": "com.williambl.haema.compat.rei.HaemaREIPlugin"}
     ],
+    "emi": [
+      {"adapter": "kotlin", "value": "com.williambl.haema.compat.emi.HaemaEmiPlugin"}
+    ],
     "cardinal-components-entity": [
       {"adapter": "kotlin", "value": "com.williambl.haema.Haema"},
       {"adapter": "kotlin", "value": "com.williambl.haema.ability.AbilityModule"},
