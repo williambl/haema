@@ -146,7 +146,7 @@
   "bookOfBlood.rituals.performing.title": "Performing Rituals",
   "bookOfBlood.rituals.performing.text.1.text": "Rituals can give you more ability points, which you can use to gain or upgrade abilities.",
   "bookOfBlood.rituals.performing.text.2.text": "Rituals are performed by filling the altar's ditch with fluid and dropping in items, then standing on the table block and interacting ($(k:use)) with it.",
-  "bookOfBlood.rituals.performing.image.1.text": "Right click on the ritual table with the Book of Blood in your hand to view all rituals in the REI recipe viewer.",
+  "bookOfBlood.rituals.performing.image.1.text": "Right click on the ritual table with the Book of Blood in your hand to view all rituals in the REI/EMI recipe viewer.",
 
   "gui.haema.moreinfo": "More Info",
   "gui.haema.lessinfo": "Less Info",
