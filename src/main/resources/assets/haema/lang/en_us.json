@@ -175,6 +175,7 @@
 
   "gui.haema.message.conversion_blocked_by_gamerule": "Game Rule 'playerVampireConversion' is not set to true.",
   "gui.haema.message.conversion_not_possible": "Player is a permanent vampire and cannot be converted.",
+  "gui.haema.message.no_recipe_viewer": "Install Roughly Enough Items or EMI to view rituals.",
 
   "gui.haema.requires": "Requires ",
   "gui.haema.altar_level.0": "Basic Altar",

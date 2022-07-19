@@ -1,6 +1,7 @@
 package com.williambl.haema.ritual
 
 import com.williambl.haema.Haema
+import com.williambl.haema.api.RitualTableUseEvent
 import com.williambl.haema.id
 import com.williambl.haema.ritual.craft.AddLevelsRitualAction
 import com.williambl.haema.ritual.craft.ChangeAbilitiesRitualAction
@@ -10,14 +11,23 @@ import com.williambl.haema.util.MultiTagMatcher
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.block.Block
+import net.minecraft.block.BlockState
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.BlockItem
 import net.minecraft.item.Item
 import net.minecraft.recipe.RecipeSerializer
 import net.minecraft.recipe.RecipeType
 import net.minecraft.state.property.Properties
 import net.minecraft.tag.TagKey
+import net.minecraft.text.TranslatableText
+import net.minecraft.util.Hand
+import net.minecraft.util.hit.BlockHitResult
+import net.minecraft.util.math.BlockPos
 import net.minecraft.util.registry.Registry
+import net.minecraft.world.World
+import vazkii.patchouli.common.item.PatchouliItems
 import vazkii.patchouli.common.multiblock.DenseMultiblock
 import vazkii.patchouli.common.multiblock.MultiblockRegistry
 import vazkii.patchouli.common.multiblock.StateMatcher
@@ -52,6 +62,12 @@ object RitualModule: ModInitializer {
     val LEVEL_1_RITUAL_TORCHES: TagKey<Block> = TagKey.of(Registry.BLOCK_KEY, id("ritual_torches/level_1"))
 
     override fun onInitialize() {
+        RitualTableUseEvent.EVENT.register { _: BlockState, world: World, _: BlockPos, player: PlayerEntity, hand: Hand, _: BlockHitResult ->
+            if (player.getStackInHand(hand).item == PatchouliItems.BOOK && world.isClient && !FabricLoader.getInstance().isModLoaded("roughlyenoughitems")) {
+                player.sendMessage(TranslatableText("gui.haema.message.no_recipe_viewer"), true);
+            }
+        }
+
         MultiblockRegistry.registerMultiblock(
             id("basic_altar"), DenseMultiblock(
                 arrayOf(
