@@ -63,7 +63,7 @@ object RitualModule: ModInitializer {
 
     override fun onInitialize() {
         RitualTableUseEvent.EVENT.register { _: BlockState, world: World, _: BlockPos, player: PlayerEntity, hand: Hand, _: BlockHitResult ->
-            if (player.getStackInHand(hand).item == PatchouliItems.BOOK && world.isClient && !FabricLoader.getInstance().isModLoaded("roughlyenoughitems")) {
+            if (player.getStackInHand(hand).item == PatchouliItems.BOOK && world.isClient && !FabricLoader.getInstance().isModLoaded("roughlyenoughitems") && !FabricLoader.getInstance().isModLoaded("emi")) {
                 player.sendMessage(TranslatableText("gui.haema.message.no_recipe_viewer"), true);
             }
         }
