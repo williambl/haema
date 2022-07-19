@@ -246,8 +246,8 @@
   "advancement.haema.use_mist": "The fog is coming",
   "advancement.haema.use_mist.description": "Use mist form",
 
-  "ritual.action.add_level": "+%d ability points",
-  "ritual.action.change_abilities": "Customise abilities",
+  "ritual_action.haema.add_levels": "+%d ability points",
+  "ritual_action.haema.change_abilities": "Customise abilities",
 
   "rei.haema.ritual": "Ritual",
 

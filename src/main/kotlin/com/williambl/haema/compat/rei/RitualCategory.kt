@@ -1,5 +1,6 @@
 package com.williambl.haema.compat.rei
 
+import com.williambl.haema.ritual.RitualModule
 import com.williambl.haema.ritual.RitualTable
 import me.shedaniel.math.Point
 import me.shedaniel.math.Rectangle
@@ -9,6 +10,8 @@ import me.shedaniel.rei.api.client.gui.widgets.Widgets
 import me.shedaniel.rei.api.client.registry.display.DisplayCategory
 import me.shedaniel.rei.api.common.category.CategoryIdentifier
 import me.shedaniel.rei.api.common.util.EntryStacks
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.text.LiteralText
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
@@ -37,7 +40,7 @@ class RitualCategory: DisplayCategory<RitualDisplay> {
 
         widgets.add(Widgets.createLabel(Point(bounds.centerX+16, bounds.centerY+16), TranslatableText("gui.haema.repeatable.${recipeDisplay.recipe.isRepeatable}").formatted(if (recipeDisplay.recipe.isRepeatable) Formatting.DARK_GREEN else Formatting.DARK_RED)).noShadow())
 
-        widgets.add(Widgets.createLabel(outputPoint, TranslatableText(Util.createTranslationKey("ritual_action", recipeDisplay.recipe.actionName), recipeDisplay.recipe.actionArg).formatted(Formatting.DARK_GRAY)).noShadow())
+        widgets.add(Widgets.createLabel(outputPoint, (RitualModule.RITUAL_ACTION_REGISTRY.get(recipeDisplay.recipe.actionName)?.getName(recipeDisplay.recipe.actionArg.get("data") ?: NbtCompound()) ?: LiteralText("?")).formatted(Formatting.DARK_GRAY)).noShadow())
 
         return widgets
     }
