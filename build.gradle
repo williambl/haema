@@ -226,7 +226,7 @@ dependencies {
     }
 
     // EMI
-    modImplementation("dev.emi:emi:${project.emi_version}") {
+    modCompileOnly("dev.emi:emi:${project.emi_version}") {
         exclude group: "net.fabricmc.fabric_api"
         exclude group: "null"
     }
