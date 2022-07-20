@@ -20,7 +20,7 @@ import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy
 import me.lucko.fabric.api.permissions.v0.Permissions
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
@@ -160,7 +160,7 @@ object Haema: ModInitializer, EntityComponentInitializer {
         )
 
         //TODO: redo these commands a bit, use translatabletexts + entities not players + move into separate class(es)
-        CommandRegistrationCallback.EVENT.register { dispatcher, isDedicated ->
+        CommandRegistrationCallback.EVENT.register { dispatcher, registryAccess, environment ->
             dispatcher.register(
                 literal("haema")
                     .then(literal("convert")

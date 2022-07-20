@@ -255,11 +255,8 @@ dependencies {
     }
 
     modCompileOnly("squeek.appleskin:appleskin-fabric:${project.appleskin_version}:api") {
+        exclude group: "net.fabricmc.fabric-api"
         transitive = false
-    }
-
-    modRuntimeOnly("squeek.appleskin:appleskin-fabric:mc1.18.2-2.4.0"){
-        exclude module: 'modmenu'
     }
 
     // ModMenu

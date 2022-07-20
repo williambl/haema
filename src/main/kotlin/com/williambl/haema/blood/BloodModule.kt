@@ -4,14 +4,15 @@ import com.williambl.haema.Haema
 import com.williambl.haema.id
 import com.williambl.haema.util.addTradesToProfession
 import net.fabricmc.api.ModInitializer
-import net.fabricmc.fabric.api.loot.v1.FabricLootPoolBuilder
-import net.fabricmc.fabric.api.loot.v1.FabricLootSupplierBuilder
-import net.fabricmc.fabric.api.loot.v1.event.LootTableLoadingCallback
+import net.fabricmc.fabric.api.loot.v2.FabricLootTableBuilder
+import net.fabricmc.fabric.api.loot.v2.LootTableEvents
+import net.fabricmc.fabric.api.loot.v2.LootTableSource
 import net.minecraft.block.DispenserBlock
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.loot.LootManager
+import net.minecraft.loot.LootPool
 import net.minecraft.loot.entry.LootTableEntry
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider
 import net.minecraft.resource.ResourceManager
@@ -50,17 +51,17 @@ object BloodModule: ModInitializer {
         val dungeonLootTable = Identifier("minecraft:chests/simple_dungeon")
         val jungleTempleLootTable = Identifier("minecraft:chests/jungle_temple")
         val desertPyramidLootTable = Identifier("minecraft:chests/desert_pyramid")
-        LootTableLoadingCallback.EVENT.register(LootTableLoadingCallback { resourceManager: ResourceManager?, lootManager: LootManager?, id: Identifier?, supplier: FabricLootSupplierBuilder, setter: LootTableLoadingCallback.LootTableSetter? ->
+        LootTableEvents.MODIFY.register { resourceManager: ResourceManager?, lootManager: LootManager?, id: Identifier?, tableBuilder: FabricLootTableBuilder, source: LootTableSource ->
             if (id == dungeonLootTable || id == jungleTempleLootTable || id == desertPyramidLootTable) {
-                val poolBuilder: FabricLootPoolBuilder = FabricLootPoolBuilder.builder()
+                val poolBuilder: LootPool.Builder = LootPool.builder()
                     .rolls(ConstantLootNumberProvider.create(1f))
-                    .withEntry(
+                    .with(
                         LootTableEntry.builder(id("injected/chests/${if (id == dungeonLootTable) "dungeon" else "temple"}_blood"))
                             .weight(12)
                             .build()
                     )
-                supplier.withPool(poolBuilder.build())
+                tableBuilder.pool(poolBuilder.build())
             }
-        })
+        }
     }
 }
