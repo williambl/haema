@@ -23,7 +23,6 @@ import moriyashiine.bewitchment.common.registry.BWDamageSources
 import moriyashiine.bewitchment.common.registry.BWPledges
 import moriyashiine.bewitchment.common.registry.BWTransformations
 import net.minecraft.text.Text
-import net.minecraft.text.TranslatableText
 import kotlin.math.ceil
 
 fun registerBewitchmentEventListeners() {
@@ -112,7 +111,7 @@ fun registerBewitchmentClientEventListeners() {
                     createText(
                         BewitchmentClient.TRANSFORMATION_ABILITY.boundKeyLocalizedText.copy(),
                         true,
-                        TranslatableText("compat.bewitchment.gui.haema.hud.transform")
+                        Text.translatable("compat.bewitchment.gui.haema.hud.transform")
                     )
                 )
             } else {
@@ -120,7 +119,7 @@ fun registerBewitchmentClientEventListeners() {
                     createText(
                         BewitchmentClient.TRANSFORMATION_ABILITY.boundKeyLocalizedText.copy(),
                         BewitchmentAPI.isPledged(player, BWPledges.LILITH) && BWComponents.BLOOD_COMPONENT.get(player).blood > 0,
-                        TranslatableText("compat.bewitchment.gui.haema.hud.untransform")
+                        Text.translatable("compat.bewitchment.gui.haema.hud.untransform")
                     )
                 )
             }

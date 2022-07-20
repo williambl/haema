@@ -15,11 +15,11 @@ import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer
 import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy
 import net.fabricmc.api.ModInitializer
+import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute
 import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
-import net.minecraft.command.argument.ArgumentTypes
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.network.PacketByteBuf
@@ -46,10 +46,10 @@ object AbilityModule: ModInitializer, EntityComponentInitializer {
     val MIST_PARTICLE = Registry.register(Registry.PARTICLE_TYPE, id("mist"), object : DefaultParticleType(false) {})
 
     override fun onInitialize() {
-        ArgumentTypes.register(
-            "haema:ability",
+        ArgumentTypeRegistry.registerArgumentType(
+            id("ability"),
             VampireAbilityArgumentType::class.java,
-            VampireAbilityArgumentType.Serialiser
+            VampireAbilityArgumentType.SERIALISER
         )
 
         ServerPlayNetworking.registerGlobalReceiver(id("transferlevels")) { server: MinecraftServer, player: ServerPlayerEntity, networkHandler: ServerPlayNetworkHandler, buf: PacketByteBuf, sender: PacketSender ->

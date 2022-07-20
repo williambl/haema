@@ -12,12 +12,12 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
+import net.minecraft.item.ItemStack
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.screen.PropertyDelegate
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.ScreenHandlerContext
 import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.text.LiteralText
 import net.minecraft.text.Text
 import net.minecraft.util.registry.Registry
 
@@ -62,6 +62,8 @@ class RitualTableScreenHandler(syncId: Int, val inv: RitualInventory, private va
         ClientPlayNetworking.send(id("transferlevels"), PacketByteBuf(Unpooled.buffer()).writeVarInt(syncId).writeVarInt(amount).writeVarInt(from).writeVarInt(to))
     }
 
+    override fun transferSlot(player: PlayerEntity?, index: Int): ItemStack = ItemStack.EMPTY
+
     override fun canUse(player: PlayerEntity): Boolean = canUse(context, player, RitualTable.instance)
 
     class Factory(private val inv: RitualInventory): ExtendedScreenHandlerFactory {
@@ -70,7 +72,7 @@ class RitualTableScreenHandler(syncId: Int, val inv: RitualInventory, private va
         }
 
         override fun getDisplayName(): Text {
-            return LiteralText("Ritual Table")
+            return Text.of("Ritual Table")
         }
 
         override fun writeScreenOpeningData(player: ServerPlayerEntity, buf: PacketByteBuf) {

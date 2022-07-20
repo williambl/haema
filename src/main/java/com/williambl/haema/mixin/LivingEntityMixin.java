@@ -21,6 +21,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -63,6 +64,19 @@ public abstract class LivingEntityMixin extends Entity {
             }
         }
     }
+
+    @ModifyVariable(method = "modifyAppliedDamage",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;hasStatusEffect(Lnet/minecraft/entity/effect/StatusEffect;)Z"),
+            argsOnly = true
+    )
+    float haema$tweakDamageIfVampire(float amount, DamageSource source) {
+        float result = VampirableKt.isVampire((LivingEntity) (Object) this) && DamageSourceModule.INSTANCE.isEffectiveAgainstVampires(source, world) ?
+                amount * 1.25f
+                : amount;
+
+        return Float.isFinite(result) && source != DamageSource.OUT_OF_WORLD ? result : amount;
+    }
+
 
     @Redirect(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isSleeping()Z"))
     boolean dontWakeForFeeding(LivingEntity livingEntity) {

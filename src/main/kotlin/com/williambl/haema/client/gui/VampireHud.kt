@@ -7,7 +7,6 @@ import com.williambl.haema.isVampire
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawableHelper
 import net.minecraft.client.util.math.MatrixStack
-import net.minecraft.text.LiteralText
 import net.minecraft.text.MutableText
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
@@ -44,6 +43,6 @@ object VampireHud : DrawableHelper() {
 
     private fun createText(key: MutableText, available: Boolean, description: Text): Text {
         val keyText = key.formatted(if (available) Formatting.GREEN else Formatting.RED)
-        return LiteralText("[").append(keyText).append("] ").append(description)
+        return Text.literal("[").append(keyText).append("] ").append(description)
     }
 }

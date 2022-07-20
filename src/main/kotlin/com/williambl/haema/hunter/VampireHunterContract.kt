@@ -15,7 +15,6 @@ import net.minecraft.nbt.NbtHelper
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.text.Text
-import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
 import net.minecraft.world.World
 
@@ -42,12 +41,12 @@ class VampireHunterContract(settings: Settings): Item(settings) {
         context: TooltipContext?
     ) {
         if (stack.isContractFulfilled()) {
-            tooltip.add(TranslatableText("$translationKey.fulfilled").formatted(Formatting.AQUA))
+            tooltip.add(Text.translatable("$translationKey.fulfilled").formatted(Formatting.AQUA))
         } else {
-            tooltip.add(TranslatableText("$translationKey.unfulfilled").formatted(Formatting.RED))
+            tooltip.add(Text.translatable("$translationKey.unfulfilled").formatted(Formatting.RED))
         }
         stack.getContractTarget()?.let {
-            tooltip.add(TranslatableText("$translationKey.target", it.name))
+            tooltip.add(Text.translatable("$translationKey.target", it.name))
         }
         super.appendTooltip(stack, world, tooltip, context)
     }

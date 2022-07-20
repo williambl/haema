@@ -8,23 +8,22 @@ import net.minecraft.client.gui.DrawableHelper
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.client.util.math.MatrixStack
-import net.minecraft.text.LiteralText
-import net.minecraft.text.TranslatableText
+import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 
 
-class HaemaMainConfigScreen(private val parent: Screen?) : Screen(LiteralText("HAEMA").formatted(Formatting.UNDERLINE)) {
+class HaemaMainConfigScreen(private val parent: Screen?) : Screen(Text.literal("HAEMA").formatted(Formatting.UNDERLINE)) {
     val icon = id("icon.png")
 
     override fun init() {
         super.init()
-        addDrawableChild(ButtonWidget(width / 4 - 75, 120, 150, 20, TranslatableText("gui.haema.config.client")) {
+        addDrawableChild(ButtonWidget(width / 4 - 75, 120, 150, 20, Text.translatable("gui.haema.config.client")) {
             client?.setScreen(AutoConfig.getConfigScreen(HaemaConfig::class.java, this).get())
         })
-        addDrawableChild(ButtonWidget(3 * width / 4 - 75, 120, 150, 20, TranslatableText("gui.haema.config.gameplay")) {
+        addDrawableChild(ButtonWidget(3 * width / 4 - 75, 120, 150, 20, Text.translatable("gui.haema.config.gameplay")) {
             client?.setScreen(HaemaGameplayConfigScreen(this))
         })
-        addDrawableChild(ButtonWidget(width / 2 - 100, 180, 200, 20, TranslatableText("gui.done")) {
+        addDrawableChild(ButtonWidget(width / 2 - 100, 180, 200, 20, Text.translatable("gui.done")) {
             close()
         })
     }
@@ -44,7 +43,7 @@ class HaemaMainConfigScreen(private val parent: Screen?) : Screen(LiteralText("H
                 40,
                 40
         )
-        DrawableHelper.drawCenteredText(matrices, textRenderer, TranslatableText("gui.haema.title").formatted(Formatting.UNDERLINE), width / 2, 75, 0xffffff)
+        DrawableHelper.drawCenteredText(matrices, textRenderer, Text.translatable("gui.haema.title").formatted(Formatting.UNDERLINE), width / 2, 75, 0xffffff)
     }
 
     override fun close() {

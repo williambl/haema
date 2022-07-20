@@ -4,8 +4,8 @@ import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.ai.goal.TrackTargetGoal
 import net.minecraft.entity.mob.MobEntity
 import net.minecraft.entity.mob.PathAwareEntity
+import net.minecraft.util.math.random.Random
 import java.util.*
-import kotlin.random.asKotlinRandom
 
 class TargetOwnersTargetGoal<T>(private val actor: T) : TrackTargetGoal(actor, false) where T: PathAwareEntity, T: OwnedMob {
     init {
@@ -18,7 +18,7 @@ class TargetOwnersTargetGoal<T>(private val actor: T) : TrackTargetGoal(actor, f
     }
 
     override fun start() {
-        this.actor.target = this.actor.owner.targets.filter(this.actor::canTarget).randomOrNull(this.actor.random.asKotlinRandom()) ?: return
+        this.actor.target = this.actor.owner.targets.filter(this.actor::canTarget).randomOrNull(this.actor.random) ?: return
         super.start()
     }
 
@@ -36,4 +36,11 @@ class TargetOwnersTargetGoal<T>(private val actor: T) : TrackTargetGoal(actor, f
                 }
             }
         }
+
+    private fun <T> Collection<T>.randomOrNull(random: Random): T? {
+        if (isEmpty()) {
+            return null
+        }
+        return elementAt(random.nextInt(size))
+    }
 }

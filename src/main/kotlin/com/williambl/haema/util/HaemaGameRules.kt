@@ -12,13 +12,13 @@ import net.fabricmc.fabric.api.networking.v1.PlayerLookup
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.text.TranslatableText
+import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import net.minecraft.world.GameRules
 
 object HaemaGameRules {
     val haemaCategory = CustomGameRuleCategory(
-        id("haema"), TranslatableText("gamerule.category.haema").formatted(
+        id("haema"), Text.translatable("gamerule.category.haema").formatted(
             Formatting.BOLD
         ).formatted(Formatting.YELLOW)
     )

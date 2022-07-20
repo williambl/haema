@@ -39,7 +39,6 @@ import net.minecraft.entity.Entity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.text.Text
-import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
 import net.minecraft.util.hit.EntityHitResult
 import net.minecraft.util.hit.HitResult
@@ -61,7 +60,7 @@ object HaemaClient: ClientModInitializer {
 
     var distortAmount = 0.0f
         set(value) {
-            field = value * config.distortionAdjust * MinecraftClient.getInstance().options.distortionEffectScale
+            field = (value * config.distortionAdjust * MinecraftClient.getInstance().options.distortionEffectScale.value).toFloat()
             VAMPIRE_SHADER.setUniformValue("DistortAmount", field)
         }
 
@@ -121,7 +120,7 @@ object HaemaClient: ClientModInitializer {
                 return@VampireHudAddTextEvent listOf(createText(
                     DASH_KEY.boundKeyLocalizedText.copy(),
                     ClientDashHandler.canDash(player),
-                    TranslatableText("gui.haema.hud.vampiredash")
+                    Text.translatable("gui.haema.hud.vampiredash")
                 ))
             }
             return@VampireHudAddTextEvent emptyList()
@@ -134,7 +133,7 @@ object HaemaClient: ClientModInitializer {
                     createText(
                         MinecraftClient.getInstance().options.sneakKey.boundKeyLocalizedText.copy(),
                         (player).isVampire && player.world.time - InvisibilityAbilityComponent.entityKey.get(player).invisTicks >= 120 + invisLevel * invisLengthValue,
-                        TranslatableText("gui.haema.hud.invisibility")
+                        Text.translatable("gui.haema.hud.invisibility")
                     )
                 )
             }
@@ -147,7 +146,7 @@ object HaemaClient: ClientModInitializer {
                     createText(
                         ClientMistHandler.MIST_KEY.boundKeyLocalizedText.copy(),
                         (player).isVampire && MistFormAbilityComponent.entityKey.get(player).canUseMistForm(),
-                        TranslatableText(if (MistFormAbilityComponent.entityKey[player].isInMistForm) "gui.haema.hud.normal_form" else "gui.haema.hud.mist_form")
+                        Text.translatable(if (MistFormAbilityComponent.entityKey[player].isInMistForm) "gui.haema.hud.normal_form" else "gui.haema.hud.mist_form")
                     )
                 )
             }
@@ -160,7 +159,7 @@ object HaemaClient: ClientModInitializer {
                     createText(
                         ClientMistHandler.EXPAND_MIST_KEY.boundKeyLocalizedText.copy(),
                         (player).isVampire && ClientMistHandler.canExpandMist(player),
-                        TranslatableText("gui.haema.hud.expand_mist_form")
+                        Text.translatable("gui.haema.hud.expand_mist_form")
                     )
                 )
             }
@@ -175,15 +174,15 @@ object HaemaClient: ClientModInitializer {
                 if (lookingAt.isIn(EntityVampireComponent.poorBloodTag) || lookingAt.isIn(EntityVampireComponent.mediumBloodTag) || lookingAt.isIn(EntityVampireComponent.goodBloodTag)) {
                     if (player.isSneaking) {
                         texts.add(
-                            TranslatableText("gui.haema.hud.bloodquality").append(
+                            Text.translatable("gui.haema.hud.bloodquality").append(
                                 when {
-                                    lookingAt.isIn(EntityVampireComponent.goodBloodTag) -> TranslatableText("gui.haema.hud.bloodquality.good").formatted(
+                                    lookingAt.isIn(EntityVampireComponent.goodBloodTag) -> Text.translatable("gui.haema.hud.bloodquality.good").formatted(
                                         Formatting.GREEN
                                     )
-                                    lookingAt.isIn(EntityVampireComponent.mediumBloodTag) -> TranslatableText("gui.haema.hud.bloodquality.medium").formatted(
+                                    lookingAt.isIn(EntityVampireComponent.mediumBloodTag) -> Text.translatable("gui.haema.hud.bloodquality.medium").formatted(
                                         Formatting.YELLOW
                                     )
-                                    else -> TranslatableText("gui.haema.hud.bloodquality.poor").formatted(Formatting.RED)
+                                    else -> Text.translatable("gui.haema.hud.bloodquality.poor").formatted(Formatting.RED)
                                 }
                             )
                         )
@@ -191,9 +190,9 @@ object HaemaClient: ClientModInitializer {
 
                     texts.add(
                         createText(
-                            TranslatableText("key.sneak").append(" + ").append(mc.options.useKey.boundKeyLocalizedText),
+                            Text.translatable("key.sneak").append(" + ").append(mc.options.useKey.boundKeyLocalizedText),
                             true,
-                            TranslatableText("gui.haema.hud.feed")
+                            Text.translatable("gui.haema.hud.feed")
                         )
                     )
                 }

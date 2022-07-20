@@ -41,7 +41,6 @@ import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.tag.TagKey
 import net.minecraft.text.Text
-import net.minecraft.text.TranslatableText
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.Box
@@ -187,13 +186,13 @@ object Haema: ModInitializer, EntityComponentInitializer {
                         .then(literal("get").then(argument("target", EntityArgumentType.entity()).executes { context ->
                             val target = EntityArgumentType.getEntity(context, "target")
                             if (target !is LivingEntity || !target.isVampire) {
-                                context.source.sendError(TranslatableText("command.haema.error.not_vampire", target.name))
+                                context.source.sendError(Text.translatable("command.haema.error.not_vampire", target.name))
                                 return@executes 0
                             }
 
                             val blood = target.vampireComponent.blood
 
-                            context.source.sendFeedback(TranslatableText("command.haema.blood.get.feedback", target.name, blood), false)
+                            context.source.sendFeedback(Text.translatable("command.haema.blood.get.feedback", target.name, blood), false)
                             return@executes blood.toInt()
                         }))
                         .then(literal("set").then(argument("targets", EntityArgumentType.entities()).then(argument("value", DoubleArgumentType.doubleArg(0.0, 20.0)).executes { context ->
@@ -202,10 +201,10 @@ object Haema: ModInitializer, EntityComponentInitializer {
 
                             targets.forEach { target ->
                                 if (target !is LivingEntity || !target.isVampire) {
-                                    context.source.sendError(TranslatableText("command.haema.error.not_vampire", target.name))
+                                    context.source.sendError(Text.translatable("command.haema.error.not_vampire", target.name))
                                 } else {
                                     target.vampireComponent.absoluteBlood = value
-                                    context.source.sendFeedback(TranslatableText("command.haema.blood.set.feedback", target.name, target.vampireComponent.blood), true)
+                                    context.source.sendFeedback(Text.translatable("command.haema.blood.set.feedback", target.name, target.vampireComponent.blood), true)
                                 }
                             }
 
@@ -217,10 +216,10 @@ object Haema: ModInitializer, EntityComponentInitializer {
 
                             targets.forEach { target ->
                                 if (target !is LivingEntity || !target.isVampire) {
-                                    context.source.sendError(TranslatableText("command.haema.error.not_vampire", target.name))
+                                    context.source.sendError(Text.translatable("command.haema.error.not_vampire", target.name))
                                 } else {
                                     target.vampireComponent.addBlood(value)
-                                    context.source.sendFeedback(TranslatableText("command.haema.blood.set.feedback", target.name, target.vampireComponent.blood), true)
+                                    context.source.sendFeedback(Text.translatable("command.haema.blood.set.feedback", target.name, target.vampireComponent.blood), true)
                                 }
                             }
 
@@ -232,10 +231,10 @@ object Haema: ModInitializer, EntityComponentInitializer {
 
                             targets.forEach { target ->
                                 if (target !is LivingEntity || !target.isVampire) {
-                                    context.source.sendError(TranslatableText("command.haema.error.not_vampire", target.name))
+                                    context.source.sendError(Text.translatable("command.haema.error.not_vampire", target.name))
                                 } else {
                                     target.vampireComponent.removeBlood(value)
-                                    context.source.sendFeedback(TranslatableText("command.haema.blood.set.feedback", target.name, target.vampireComponent.blood), true)
+                                    context.source.sendFeedback(Text.translatable("command.haema.blood.set.feedback", target.name, target.vampireComponent.blood), true)
                                 }
                             }
 
@@ -249,7 +248,7 @@ object Haema: ModInitializer, EntityComponentInitializer {
                                 if ((it).isVampire) {
                                     context.source.sendFeedback(it.name.copy().append(" has abilities:"), false)
                                     AbilityModule.ABILITY_REGISTRY.entrySet.forEach { (key, ability) ->
-                                        context.source.sendFeedback(TranslatableText("ability.${key.value.namespace}.${key.value.path}").append(": ${it.getAbilityLevel(ability)}"), false)
+                                        context.source.sendFeedback(Text.translatable("ability.${key.value.namespace}.${key.value.path}").append(": ${it.getAbilityLevel(ability)}"), false)
                                     }
                                 }
                             }

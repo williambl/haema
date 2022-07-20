@@ -4,7 +4,6 @@ import com.williambl.haema.ritual.RitualTableScreenHandler
 import net.minecraft.nbt.NbtElement
 import net.minecraft.text.MutableText
 import net.minecraft.text.Text
-import net.minecraft.text.TranslatableText
 
 object ChangeAbilitiesRitualAction: RitualAction() {
     override fun runAction(inv: RitualInventory, data: NbtElement) {
@@ -12,6 +11,6 @@ object ChangeAbilitiesRitualAction: RitualAction() {
     }
 
     override fun getName(data: NbtElement): MutableText {
-        return TranslatableText(this.translationKey)
+        return Text.translatable(this.translationKey)
     }
 }

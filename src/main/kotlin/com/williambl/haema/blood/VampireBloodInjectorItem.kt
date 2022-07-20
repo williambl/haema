@@ -16,7 +16,6 @@ import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
-import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
 import net.minecraft.util.Hand
 import net.minecraft.util.TypedActionResult
@@ -35,7 +34,7 @@ class VampireBloodInjectorItem(settings: Settings?) : Item(settings) {
 
     override fun appendTooltip(stack: ItemStack?, world: World?, tooltip: MutableList<Text>, context: TooltipContext?) {
         super.appendTooltip(stack, world, tooltip, context)
-        tooltip.add(TranslatableText("item.haema.vampire_blood_injector.desc").formatted(Formatting.DARK_RED))
+        tooltip.add(Text.translatable("item.haema.vampire_blood_injector.desc").formatted(Formatting.DARK_RED))
     }
 
     fun tryUse(user: PlayerEntity, hand: Hand? = null): Boolean {
@@ -61,7 +60,7 @@ class VampireBloodInjectorItem(settings: Settings?) : Item(settings) {
         }
 
         if (!user.world.gameRules[HaemaGameRules.playerVampireConversion].get()) {
-            user.sendMessage(TranslatableText("gui.haema.message.conversion_blocked_by_gamerule"), true)
+            user.sendMessage(Text.translatable("gui.haema.message.conversion_blocked_by_gamerule"), true)
             return false
         }
 

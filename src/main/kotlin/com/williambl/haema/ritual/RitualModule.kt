@@ -21,7 +21,7 @@ import net.minecraft.recipe.RecipeSerializer
 import net.minecraft.recipe.RecipeType
 import net.minecraft.state.property.Properties
 import net.minecraft.tag.TagKey
-import net.minecraft.text.TranslatableText
+import net.minecraft.text.Text
 import net.minecraft.util.Hand
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
@@ -64,7 +64,7 @@ object RitualModule: ModInitializer {
     override fun onInitialize() {
         RitualTableUseEvent.EVENT.register { _: BlockState, world: World, _: BlockPos, player: PlayerEntity, hand: Hand, _: BlockHitResult ->
             if (player.getStackInHand(hand).item == PatchouliItems.BOOK && world.isClient && !FabricLoader.getInstance().isModLoaded("roughlyenoughitems") && !FabricLoader.getInstance().isModLoaded("emi")) {
-                player.sendMessage(TranslatableText("gui.haema.message.no_recipe_viewer"), true);
+                player.sendMessage(Text.translatable("gui.haema.message.no_recipe_viewer"), true);
             }
         }
 

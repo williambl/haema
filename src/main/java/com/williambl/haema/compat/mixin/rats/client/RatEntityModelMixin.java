@@ -16,7 +16,7 @@ import static com.williambl.haema.HaemaKt.id;
 public abstract class RatEntityModelMixin extends GeoModelProvider<RatEntity> {
     private static final Identifier VAMPIRAT_TEXTURE = id("textures/entity/vampirat.png");
 
-    @Inject(method = "getTextureLocation(Lladysnake/ratsmischief/common/entity/RatEntity;)Lnet/minecraft/util/Identifier;", at=@At("HEAD"), cancellable = true)
+    @Inject(method = "getTextureResource(Lladysnake/ratsmischief/common/entity/RatEntity;)Lnet/minecraft/util/Identifier;", at=@At("HEAD"), cancellable = true)
     void useVampireTexture(RatEntity rat, CallbackInfoReturnable<Identifier> cir) {
         if (VampirableKt.isVampire(rat)) {
             cir.setReturnValue(VAMPIRAT_TEXTURE);

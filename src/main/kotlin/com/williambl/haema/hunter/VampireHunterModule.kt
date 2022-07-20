@@ -1,14 +1,12 @@
 package com.williambl.haema.hunter
 
 import com.williambl.haema.Haema
-import com.williambl.haema.hunter.structure.SmallVampireHunterOutpostFeature
-import com.williambl.haema.hunter.structure.VampireHunterOutpostFeature
+import com.williambl.haema.hunter.structure.SmallVampireHunterOutpostStructure
 import com.williambl.haema.id
-import com.williambl.haema.mixin.StructureFeatureAccessor
 import net.fabricmc.api.ModInitializer
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.entity.EntityDimensions
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.SpawnGroup
@@ -17,8 +15,7 @@ import net.minecraft.entity.mob.HostileEntity
 import net.minecraft.item.Item
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.Difficulty
-import net.minecraft.world.gen.GenerationStep
-import net.minecraft.world.gen.feature.StructurePoolFeatureConfig
+import net.minecraft.world.gen.structure.StructureType
 
 object VampireHunterModule: ModInitializer {
     val VAMPIRE_HUNTER: EntityType<VampireHunterEntity> =
@@ -36,15 +33,10 @@ object VampireHunterModule: ModInitializer {
         VampireHunterContract(Item.Settings().group(Haema.ITEM_GROUP))
     )
 
-    val VAMPIRE_HUNTER_OUTPOST_FEATURE: VampireHunterOutpostFeature = StructureFeatureAccessor.callRegister(
-        id("vampire_hunter_outpost").toString(),
-        VampireHunterOutpostFeature(StructurePoolFeatureConfig.CODEC),
-        GenerationStep.Feature.SURFACE_STRUCTURES
-    )
-    val SMALL_VAMPIRE_HUNTER_OUTPOST_FEATURE: SmallVampireHunterOutpostFeature = StructureFeatureAccessor.callRegister(
-        id("small_vampire_hunter_outpost").toString(),
-        SmallVampireHunterOutpostFeature(StructurePoolFeatureConfig.CODEC),
-        GenerationStep.Feature.SURFACE_STRUCTURES
+    val SMALL_VAMPIRE_HUNTER_OUTPOST_FEATURE: StructureType<SmallVampireHunterOutpostStructure> = Registry.register(
+        Registry.STRUCTURE_TYPE,
+        id("small_vampire_hunter_outpost"),
+        StructureType { SmallVampireHunterOutpostStructure.CODEC }
     )
 
     override fun onInitialize() {

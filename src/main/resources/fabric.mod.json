@@ -78,7 +78,7 @@
     "cardinal-components-entity": "*",
     "pehkui": "*",
     "geckolib3": "*",
-    "minecraft": "1.18.2"
+    "minecraft": ">=1.19"
   },
   "suggests": {
     "origins": ">=0.4.7"

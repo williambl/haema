@@ -9,7 +9,9 @@ import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.client.gui.widget.ButtonWidget.PressAction
 import net.minecraft.client.util.InputUtil
 import net.minecraft.client.util.math.MatrixStack
-import net.minecraft.text.*
+import net.minecraft.text.ClickEvent
+import net.minecraft.text.Style
+import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import net.minecraft.util.Util
 import org.lwjgl.glfw.GLFW
@@ -17,7 +19,7 @@ import java.awt.Color
 import java.net.URI
 import java.net.URISyntaxException
 
-class HaemaGameplayConfigScreen(private val parent: Screen?) : Screen(LiteralText("HAEMA").formatted(Formatting.UNDERLINE)) {
+class HaemaGameplayConfigScreen(private val parent: Screen?) : Screen(Text.literal("HAEMA").formatted(Formatting.UNDERLINE)) {
     val icon = id("icon.png")
 
     var isShowingMore = false
@@ -41,8 +43,8 @@ class HaemaGameplayConfigScreen(private val parent: Screen?) : Screen(LiteralTex
     private var isDoingAnim = false
 
     private val texts = listOf(
-        TranslatableText("gui.haema.config.gameplay.main").formatted(Formatting.UNDERLINE),
-        TranslatableText("gui.haema.config.gameplay.gameruleslink")
+        Text.translatable("gui.haema.config.gameplay.main").formatted(Formatting.UNDERLINE),
+        Text.translatable("gui.haema.config.gameplay.gameruleslink")
             .setStyle(Style.EMPTY
                 .withClickEvent(
                     ClickEvent(ClickEvent.Action.OPEN_URL, "https://minecraft.gamepedia.com/Commands/gamerule")
@@ -50,7 +52,7 @@ class HaemaGameplayConfigScreen(private val parent: Screen?) : Screen(LiteralTex
                 .withUnderline(true)
                 .withColor(Formatting.BLUE)
             ),
-        TranslatableText("gui.haema.config.gameplay.datapackslink")
+        Text.translatable("gui.haema.config.gameplay.datapackslink")
             .setStyle(Style.EMPTY
                 .withClickEvent(
                     ClickEvent(ClickEvent.Action.OPEN_URL, "https://minecraft.gamepedia.com/Data_Pack")
@@ -60,27 +62,27 @@ class HaemaGameplayConfigScreen(private val parent: Screen?) : Screen(LiteralTex
             )
     )
     private val extratexts = listOf(
-        TranslatableText("gui.haema.config.gameplay.bloodsources"),
-        LiteralText("haema:good_blood_sources").formatted(Formatting.UNDERLINE),
-        LiteralText("haema:medium_blood_sources").formatted(Formatting.UNDERLINE),
-        LiteralText("haema:poor_blood_sources").formatted(Formatting.UNDERLINE),
+        Text.translatable("gui.haema.config.gameplay.bloodsources"),
+        Text.literal("haema:good_blood_sources").formatted(Formatting.UNDERLINE),
+        Text.literal("haema:medium_blood_sources").formatted(Formatting.UNDERLINE),
+        Text.literal("haema:poor_blood_sources").formatted(Formatting.UNDERLINE),
 
-        TranslatableText("gui.haema.config.gameplay.vampireweapons")
-            .append(LiteralText("haema:vampire_weapons").formatted(Formatting.UNDERLINE)),
+        Text.translatable("gui.haema.config.gameplay.vampireweapons")
+            .append(Text.literal("haema:vampire_weapons").formatted(Formatting.UNDERLINE)),
 
-        TranslatableText("gui.haema.config.gameplay.gamerules")
+        Text.translatable("gui.haema.config.gameplay.gamerules")
     )
 
     override fun init() {
         super.init()
-        addDrawableChild(object : ButtonWidget(width/2-210, 180, 200, 20, TranslatableText("gui.haema.moreinfo"), PressAction {
+        addDrawableChild(object : ButtonWidget(width/2-210, 180, 200, 20, Text.translatable("gui.haema.moreinfo"), PressAction {
             isShowingMore = !isShowingMore
         }) {
             override fun getMessage(): Text {
-                return TranslatableText(if (isShowingMore) "gui.haema.lessinfo" else "gui.haema.moreinfo")
+                return Text.translatable(if (isShowingMore) "gui.haema.lessinfo" else "gui.haema.moreinfo")
             }
         })
-        addDrawableChild(ButtonWidget(width/2+10, 180, 200, 20, TranslatableText("gui.done")) {
+        addDrawableChild(ButtonWidget(width/2+10, 180, 200, 20, Text.translatable("gui.done")) {
             close()
         })
     }

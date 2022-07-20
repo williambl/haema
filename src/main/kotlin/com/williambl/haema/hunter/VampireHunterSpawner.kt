@@ -10,13 +10,13 @@ import net.minecraft.entity.passive.PassiveEntity
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.tag.BiomeTags
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.random.Random
 import net.minecraft.world.GameRules
 import net.minecraft.world.Heightmap
 import net.minecraft.world.SpawnHelper
-import net.minecraft.world.biome.Biome
 import net.minecraft.world.spawner.Spawner
-import java.util.*
 import kotlin.math.ceil
 
 class VampireHunterSpawner: Spawner {
@@ -70,8 +70,7 @@ class VampireHunterSpawner: Spawner {
             return 0
 
         val biome = serverWorld.getBiome(mutable)
-        val category = Biome.getCategory(biome)
-        if (category == Biome.Category.MUSHROOM)
+        if (biome.isIn(BiomeTags.WITHOUT_PATROL_SPAWNS))
             return 0
 
         var amountToSpawn = 0

@@ -88,7 +88,7 @@ class VampiragerEntity(entityType: EntityType<out VampiragerEntity>, world: Worl
                 null,
                 null,
                 null,
-                this.blockPos.add(this.random.nextInt(-3, 4), 0, this.random.nextInt(-3, 4)),
+                this.blockPos.add(this.random.nextBetween(-3, 3), 0, this.random.nextBetween(-3, 3)),
                 SpawnReason.REINFORCEMENT,
                 true,
                 false

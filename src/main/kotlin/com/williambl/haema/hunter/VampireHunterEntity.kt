@@ -5,6 +5,7 @@ import com.williambl.haema.isVampire
 import com.williambl.haema.util.contains
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags
 import net.minecraft.block.entity.BannerPattern
+import net.minecraft.block.entity.BannerPatterns
 import net.minecraft.command.argument.EntityAnchorArgumentType
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.enchantment.Enchantments
@@ -31,11 +32,12 @@ import net.minecraft.nbt.NbtList
 import net.minecraft.potion.PotionUtil
 import net.minecraft.potion.Potions
 import net.minecraft.server.world.ServerWorld
-import net.minecraft.text.TranslatableText
+import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.DyeColor
 import net.minecraft.util.Formatting
 import net.minecraft.util.Hand
+import net.minecraft.util.math.random.Random
 import net.minecraft.world.Difficulty
 import net.minecraft.world.LocalDifficulty
 import net.minecraft.world.ServerWorldAccess
@@ -59,7 +61,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
         if (spawnReason == SpawnReason.SPAWN_EGG && random.nextDouble() < 0.3) {
             isPatrolLeader = true
         }
-        initEquipment(difficulty)
+        initEquipment(this.random, difficulty)
         return result
     }
 
@@ -82,7 +84,7 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
         dataTracker.startTracking(CHARGING, false)
     }
 
-    override fun initEquipment(difficulty: LocalDifficulty) {
+    override fun initEquipment(random: Random, difficulty: LocalDifficulty) {
         val crossbow = ItemStack(Items.CROSSBOW)
 
         val crossbowEnchants = mutableMapOf(Pair(Enchantments.QUICK_CHARGE, 3))
@@ -100,13 +102,13 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
             val banner = ItemStack(Items.WHITE_BANNER)
             val compoundNbt: NbtCompound = banner.getOrCreateSubNbt("BlockEntityTag")
             val listNbt = BannerPattern.Patterns()
-                .add(BannerPattern.RHOMBUS_MIDDLE, DyeColor.RED)
-                .add(BannerPattern.HALF_HORIZONTAL_MIRROR, DyeColor.LIGHT_BLUE)
-                .add(BannerPattern.CIRCLE_MIDDLE, DyeColor.RED)
+                .add(BannerPatterns.RHOMBUS, DyeColor.RED)
+                .add(BannerPatterns.HALF_HORIZONTAL_BOTTOM, DyeColor.LIGHT_BLUE)
+                .add(BannerPatterns.CIRCLE, DyeColor.RED)
                 .toNbt()
             compoundNbt.put("Patterns", listNbt)
             banner.addHideFlag(ItemStack.TooltipSection.ADDITIONAL)
-            banner.setCustomName(TranslatableText("block.haema.righteous_banner").formatted(Formatting.GOLD))
+            banner.setCustomName(Text.translatable("block.haema.righteous_banner").formatted(Formatting.GOLD))
             equipStack(EquipmentSlot.HEAD, banner)
         }
     }

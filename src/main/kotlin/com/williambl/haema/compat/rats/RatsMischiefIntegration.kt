@@ -6,15 +6,14 @@ import com.williambl.haema.ability.component.strength.EntityStrengthAbilityCompo
 import com.williambl.haema.ability.component.strength.StrengthAbilityComponent
 import com.williambl.haema.api.BloodDrinkingEvents
 import com.williambl.haema.api.VampireConversionEvents
-import com.williambl.haema.component.VampireComponent
 import com.williambl.haema.component.EntityVampireComponent
+import com.williambl.haema.component.VampireComponent
 import com.williambl.haema.isVampire
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
-import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy
 import ladysnake.ratsmischief.common.entity.RatEntity
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry
-import net.minecraft.text.LiteralText
+import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import net.minecraft.world.GameRules
 
@@ -28,7 +27,7 @@ fun initRatsMischiefIntegration() {
     })
     VampireConversionEvents.CONVERT.register(VampireConversionEvents.ConversionEvent {
         if (it is RatEntity && !it.hasCustomName()) {
-            it.customName = LiteralText(if (it.random.nextFloat() < 0.02) if (it.random.nextBoolean()) "Count D-Rat-Cula" else "Capri-Sun" else "VampiRat")
+            it.customName = Text.literal(if (it.random.nextFloat() < 0.02) if (it.random.nextBoolean()) "Count D-Rat-Cula" else "Capri-Sun" else "VampiRat")
                 .formatted(Formatting.DARK_RED)
         }
     })

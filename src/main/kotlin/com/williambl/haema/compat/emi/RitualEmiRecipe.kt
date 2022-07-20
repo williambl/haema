@@ -10,12 +10,10 @@ import dev.emi.emi.api.widget.WidgetHolder
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants
 import net.minecraft.client.MinecraftClient
 import net.minecraft.nbt.NbtCompound
-import net.minecraft.text.LiteralText
 import net.minecraft.text.OrderedText
-import net.minecraft.text.TranslatableText
+import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
-import net.minecraft.util.Util
 
 class RitualEmiRecipe(private val recipe: RitualRecipe): EmiRecipe {
     @Suppress("UnstableApiUsage")
@@ -44,7 +42,7 @@ class RitualEmiRecipe(private val recipe: RitualRecipe): EmiRecipe {
 
         this.addCenteredText(
             widgets,
-            (TranslatableText("gui.haema.requires").append(TranslatableText("gui.haema.altar_level."+this.recipe.minLevel))).formatted(
+            (Text.translatable("gui.haema.requires").append(Text.translatable("gui.haema.altar_level."+this.recipe.minLevel))).formatted(
                 Formatting.UNDERLINE).formatted(Formatting.DARK_GRAY).asOrderedText(),
             widgets.width/2, widgets.height/2 - 28,
             0xffffff,
@@ -53,7 +51,7 @@ class RitualEmiRecipe(private val recipe: RitualRecipe): EmiRecipe {
 
         this.addCenteredText(
             widgets,
-            TranslatableText("gui.haema.repeatable.${this.recipe.isRepeatable}").formatted(if (this.recipe.isRepeatable) Formatting.DARK_GREEN else Formatting.DARK_RED).asOrderedText(),
+            Text.translatable("gui.haema.repeatable.${this.recipe.isRepeatable}").formatted(if (this.recipe.isRepeatable) Formatting.DARK_GREEN else Formatting.DARK_RED).asOrderedText(),
             widgets.width/2+16, widgets.height/2+16,
             0xffffff,
             false
@@ -61,7 +59,7 @@ class RitualEmiRecipe(private val recipe: RitualRecipe): EmiRecipe {
 
         this.addCenteredText(
             widgets,
-            (RitualModule.RITUAL_ACTION_REGISTRY.get(this.recipe.actionName)?.getName(this.recipe.actionArg.get("data") ?: NbtCompound()) ?: LiteralText("?")).formatted(Formatting.DARK_GRAY).asOrderedText(),
+            (RitualModule.RITUAL_ACTION_REGISTRY.get(this.recipe.actionName)?.getName(this.recipe.actionArg.get("data") ?: NbtCompound()) ?: Text.literal("?")).formatted(Formatting.DARK_GRAY).asOrderedText(),
             outputPoint.first, outputPoint.second,
             0xffffff,
             false

@@ -11,16 +11,13 @@ import me.shedaniel.rei.api.client.registry.display.DisplayCategory
 import me.shedaniel.rei.api.common.category.CategoryIdentifier
 import me.shedaniel.rei.api.common.util.EntryStacks
 import net.minecraft.nbt.NbtCompound
-import net.minecraft.text.LiteralText
 import net.minecraft.text.Text
-import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
-import net.minecraft.util.Util
 
 class RitualCategory: DisplayCategory<RitualDisplay> {
     override fun getCategoryIdentifier(): CategoryIdentifier<out RitualDisplay> = HaemaREIPlugin.ritualId
 
-    override fun getTitle(): Text = TranslatableText("rei.${identifier.toString().replace(':', '.')}")
+    override fun getTitle(): Text = Text.translatable("rei.${identifier.toString().replace(':', '.')}")
 
     override fun setupDisplay(recipeDisplay: RitualDisplay, bounds: Rectangle): MutableList<Widget> {
         val inputsPoint = Point(bounds.centerX - 64, bounds.centerY - 16)
@@ -35,12 +32,12 @@ class RitualCategory: DisplayCategory<RitualDisplay> {
         })
 
         widgets.add(Widgets.createLabel(Point(bounds.centerX, bounds.centerY-28),
-            (TranslatableText("gui.haema.requires").append(TranslatableText("gui.haema.altar_level."+recipeDisplay.recipe.minLevel))).formatted(Formatting.UNDERLINE).formatted(Formatting.DARK_GRAY)
+            (Text.translatable("gui.haema.requires").append(Text.translatable("gui.haema.altar_level."+recipeDisplay.recipe.minLevel))).formatted(Formatting.UNDERLINE).formatted(Formatting.DARK_GRAY)
         ).noShadow())
 
-        widgets.add(Widgets.createLabel(Point(bounds.centerX+16, bounds.centerY+16), TranslatableText("gui.haema.repeatable.${recipeDisplay.recipe.isRepeatable}").formatted(if (recipeDisplay.recipe.isRepeatable) Formatting.DARK_GREEN else Formatting.DARK_RED)).noShadow())
+        widgets.add(Widgets.createLabel(Point(bounds.centerX+16, bounds.centerY+16), Text.translatable("gui.haema.repeatable.${recipeDisplay.recipe.isRepeatable}").formatted(if (recipeDisplay.recipe.isRepeatable) Formatting.DARK_GREEN else Formatting.DARK_RED)).noShadow())
 
-        widgets.add(Widgets.createLabel(outputPoint, (RitualModule.RITUAL_ACTION_REGISTRY.get(recipeDisplay.recipe.actionName)?.getName(recipeDisplay.recipe.actionArg.get("data") ?: NbtCompound()) ?: LiteralText("?")).formatted(Formatting.DARK_GRAY)).noShadow())
+        widgets.add(Widgets.createLabel(outputPoint, (RitualModule.RITUAL_ACTION_REGISTRY.get(recipeDisplay.recipe.actionName)?.getName(recipeDisplay.recipe.actionArg.get("data") ?: NbtCompound()) ?: Text.literal("?")).formatted(Formatting.DARK_GRAY)).noShadow())
 
         return widgets
     }

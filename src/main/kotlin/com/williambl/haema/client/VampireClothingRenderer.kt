@@ -17,10 +17,10 @@ class VampireClothingRenderer: GeoArmorRenderer<VampireClothingItem>(Model()) {
         this.leftBootBone = "armorRightBoot"
     }
     class Model: AnimatedGeoModel<VampireClothingItem>() {
-        override fun getModelLocation(`object`: VampireClothingItem?): Identifier = id("geo/vampire_clothing.geo.json")
+        override fun getModelResource(`object`: VampireClothingItem?): Identifier = id("geo/vampire_clothing.geo.json")
 
-        override fun getTextureLocation(`object`: VampireClothingItem?): Identifier = id("textures/armour/vampire_clothing.png")
+        override fun getTextureResource(`object`: VampireClothingItem?): Identifier = id("textures/armour/vampire_clothing.png")
 
-        override fun getAnimationFileLocation(animatable: VampireClothingItem?): Identifier = id("animations/vampire_clothing.animation.json")
+        override fun getAnimationResource(animatable: VampireClothingItem?): Identifier = id("animations/vampire_clothing.animation.json")
     }
 }

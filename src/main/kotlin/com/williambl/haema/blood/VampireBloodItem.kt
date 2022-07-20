@@ -5,7 +5,6 @@ import net.minecraft.client.item.TooltipContext
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.text.Text
-import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
 import net.minecraft.world.World
 
@@ -17,6 +16,6 @@ class VampireBloodItem : Item(Settings().group(Haema.ITEM_GROUP)) {
         context: TooltipContext?
     ) {
         super.appendTooltip(stack, world, tooltip, context)
-        tooltip.add(TranslatableText("item.haema.vampire_blood.desc").formatted(Formatting.DARK_RED))
+        tooltip.add(Text.translatable("item.haema.vampire_blood.desc").formatted(Formatting.DARK_RED))
     }
 }

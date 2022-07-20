@@ -12,9 +12,7 @@ import net.minecraft.client.gui.screen.advancement.AdvancementObtainedStatus
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.player.PlayerInventory
-import net.minecraft.text.LiteralText
 import net.minecraft.text.Text
-import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
 
@@ -102,9 +100,9 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
         drawTextWithShadow(
             matrices,
             client!!.textRenderer,
-            LiteralText("Ability Points remaining: ")
+            Text.literal("Ability Points remaining: ")
                 .append(
-                    LiteralText(pointsRemaining.toString())
+                    Text.literal(pointsRemaining.toString())
                         .formatted(if (pointsRemaining == 0) Formatting.RED else Formatting.GREEN)
                 ),
             xBase + 6,
@@ -120,9 +118,9 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
         if (widget != null) {
             renderTooltip(
                 matrices, listOf(
-                    TranslatableText("ability.${widget.abilityIds.first.namespace}.${widget.abilityIds.first.path}").append(" ${widget.level}")
+                    Text.translatable("ability.${widget.abilityIds.first.namespace}.${widget.abilityIds.first.path}").append(" ${widget.level}")
                         .formatted(Formatting.BOLD).formatted(Formatting.UNDERLINE),
-                    TranslatableText("ability.${widget.abilityIds.first.namespace}.${widget.abilityIds.first.path}.description")
+                    Text.translatable("ability.${widget.abilityIds.first.namespace}.${widget.abilityIds.first.path}.description")
                 ), mouseX, mouseY
             )
         }

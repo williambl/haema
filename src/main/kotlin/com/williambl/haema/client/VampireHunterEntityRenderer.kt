@@ -21,8 +21,8 @@ class VampireHunterEntityRenderer(context: EntityRendererFactory.Context) : MobE
     private val texture = id("textures/entity/vampire_hunter.png")
 
     init {
-        addFeature(HeadFeatureRenderer(this, context.modelLoader))
-        addFeature(HeldItemFeatureRenderer(this))
+        addFeature(HeadFeatureRenderer(this, context.modelLoader, context.heldItemRenderer))
+        addFeature(HeldItemFeatureRenderer(this, context.heldItemRenderer))
     }
 
     override fun scale(entity: VampireHunterEntity, matrixStack: MatrixStack, f: Float) {

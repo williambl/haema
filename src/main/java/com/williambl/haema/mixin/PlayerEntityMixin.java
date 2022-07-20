@@ -4,12 +4,10 @@ import com.williambl.haema.VampirableKt;
 import com.williambl.haema.ability.AbilityModule;
 import com.williambl.haema.ability.component.mist_form.MistFormAbilityComponent;
 import com.williambl.haema.api.VampireBurningEvents;
-import com.williambl.haema.damagesource.DamageSourceModule;
 import com.williambl.haema.effect.SunlightSicknessEffect;
 import com.williambl.haema.util.HaemaGameRules;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -21,7 +19,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -66,20 +63,6 @@ public abstract class PlayerEntityMixin extends LivingEntity {
                 this.addStatusEffect(new StatusEffectInstance(SunlightSicknessEffect.Companion.getInstance(), 10, 0, false, false, true));
             }
         }
-    }
-
-    @ModifyVariable(method = "applyDamage",
-            at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/player/PlayerEntity;applyEnchantmentsToDamage(Lnet/minecraft/entity/damage/DamageSource;F)F"),
-            argsOnly = true,
-            require = 1,
-            index = 2
-    )
-    float tweakDamageIfVampire(float amount, DamageSource source) {
-        float result = VampirableKt.isVampire(this) && DamageSourceModule.INSTANCE.isEffectiveAgainstVampires(source, world) ?
-                amount * 1.25f
-                : amount;
-
-        return Float.isFinite(result) ? result : amount;
     }
 
     @Redirect(method = "isInvulnerableTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$Key;)Z", ordinal = 1))
