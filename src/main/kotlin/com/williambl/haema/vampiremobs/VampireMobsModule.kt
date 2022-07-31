@@ -18,6 +18,7 @@ import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilde
 import net.minecraft.entity.*
 import net.minecraft.entity.mob.HostileEntity
 import net.minecraft.entity.mob.ZombieEntity
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.tag.TagKey
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.Heightmap
@@ -51,7 +52,7 @@ object VampireMobsModule: ModInitializer, EntityComponentInitializer {
 
     override fun onInitialize() {
         BloodDrinkingEvents.ON_BLOOD_DRINK.register { drinker, target, world ->
-            if (target is ZombieEntity && target !is VampiricZombieEntity) {
+            if (drinker !is PlayerEntity && target is ZombieEntity && target !is VampiricZombieEntity) {
                 VampiricZombieEntity.convert(target)
             }
         }
