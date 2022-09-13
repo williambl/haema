@@ -18,12 +18,12 @@ repositories {
         url = "https://maven.fabricmc.net/"
     }
     maven {
-        name = "JitPack"
-        url 'https://jitpack.io'
-    }
-    maven {
         name = "Sonatype"
         url 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
+    maven {
+        name = "willBlRepositoryReleases"
+        url = "https://maven.willbl.dev/releases"
     }
     maven {
         name = "Jamies"
@@ -50,7 +50,7 @@ repositories {
     }
     maven {
         name = "GeckoLib"
-        url = "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven"
+        url = "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/"
         content {
             includeGroup "software.bernie.geckolib"
         }
@@ -142,6 +142,10 @@ repositories {
         content {
             includeGroup "curse.maven"
         }
+    }
+    maven {
+        name = "JitPack"
+        url 'https://jitpack.io'
     }
 
     mavenLocal()
@@ -239,7 +243,9 @@ dependencies {
     }
 
     // Rat's Mischief
-    modCompileOnly("curse.maven:rats-mischief-431787:${project.rats_version}") {
+    modCompileOnly("io.github.ladysnake:rats-mischief:${project.rats_version}") {
+        exclude group: "com.eliotlash.mclib"
+        exclude group: "com.eliotlash.molang"
         exclude group: "net.fabricmc.fabric-api"
     }
 
