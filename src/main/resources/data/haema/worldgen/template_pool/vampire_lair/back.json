@@ -1,0 +1,16 @@
+{
+  "name": "haema:vampire_lair/back",
+  "fallback": "minecraft:empty",
+
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "location": "haema:vampire_lair/back",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "haema:vampire_lair",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 63048098,
+    "spacing": 120,
+    "separation": 70,
+    "type": "minecraft:random_spread"
+  }
+}
