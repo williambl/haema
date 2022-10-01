@@ -1,0 +1,257 @@
+{
+  "itemGroup.haema.items": "Haema",
+  "item.haema.vampire_blood": "Vampierbloed",
+  "item.haema.vampire_blood.desc": "Stop het in een Vampierbloed Injectiespuit...",
+  "item.haema.vampire_blood_injector": "Vampierbloed Injectiespuit",
+  "item.haema.vampire_blood_injector.desc": "Heb jij de kracht om een vampier te worden?",
+  "item.haema.empty_vampire_blood_injector": "Lege Vampierbloed Injectiespuit",
+  "item.haema.empty_vampire_blood_injector.desc": "Als je zwak bent, kan je weer normaal worden",
+  "item.haema.vampire_hunter_contract": "Vampierenjager Contract",
+  "item.haema.vampire_hunter_contract.unfulfilled": "Onvervuld",
+  "item.haema.vampire_hunter_contract.fulfilled": "Vervuld",
+  "item.haema.vampire_hunter_contract.target": "Doelwit: %1$s",
+  "item.haema.vampire_converter": "[DEBUG VOORWERP] Vampierenbekeerder",
+  "item.haema.vampire_hat": "Vampierenhoed",
+  "item.haema.vampire_coat": "Vampierenjas",
+  "item.haema.vampire_trousers": "Vampierenbroek",
+  "item.haema.vampire_shoes": "Vampierenschoenen",
+
+  "block.haema.righteous_banner": "Rechtvaardige Banier",
+  "block.haema.ritual_table": "Ritueel Tafel",
+
+  "entity.haema.vampire_hunter": "Vampierenjager",
+  "entity.haema.vampirager": "Vampierager",
+  "entity.haema.vampiric_zombie": "Vampierachtige Zombie",
+
+  "key.categories.haema": "Haema",
+  "key.haema.dash": "Vampierensprint",
+  "key.haema.mist_form": "Nevel Vorm",
+  "key.haema.expand_mist_form": "Mist Uitbreiden",
+
+  "effect.haema.sunlight_sickness": "Zonnenziekte",
+  "effect.haema.vampiric_weakness": "Vampierenzwakte",
+  "effect.haema.vampiric_strength": "Vampierensterkte",
+  "effect.haema.mist_form": "Nevel Vorm",
+  "effect.haema.misted": "Verneveld",
+
+  "death.attack.bloodLoss": "%1$s heeft teveel bloed verloren",
+  "death.attack.bloodLoss.player": "%1$s heeft teveel bloed verloren tijdens het vechten %2$s",
+  "death.attack.incompatibleBlood": "%1$s is vergeten om sterker te worden",
+  "death.attack.incompatibleBlood.player": "%1$s is vergeten om sterker te worden tijdens het vechten %2$s",
+  "death.attack.sunlight": "%1$s is verbrand in de zon",
+  "death.attack.sunlight.player": "%1$s is verbrand in de zon tijdens het vechten %2$s",
+
+  "origin.haema.vampire.name": "Vampier",
+  "origin.haema.vampire.description": "Ondanks dat ze niet tegen de zon kunnen, zijn vampieren erg sterk in het donker, mits ze genoeg bloed hebben."
+
+  "power.haema.vampire.name": "Bloeddorstig",
+  "power.haema.vampire.description": "Je hebt geen eten nodig, maar je drinkt bloed om voeding binnen te krijgen. Drink van wezens met shift+rechter muisknop - wezens die menselijker zijn geven beter bloed."
+
+  "power.haema.ritualistic.name": "Ritueel",
+  "power.haema.ritualistic.description": "Je capaciteiten kunnen verbeterd worden, en nieuwe verkregen worden, door rituelen te verrichten.",
+
+  "power.haema.night_vision.name": "Nachtzicht",
+  "power.haema.night_vision.description": "Jouw zicht, weliswaar slecht en onverzadigd, is beter in het oppikken van details in het donker.",
+
+  "power.haema.vampiric_strength.name": "Vampierenkracht",
+  "power.haema.vampiric_strength.description": "Je bent zwak als je niet veel bloed hebt - maar zodra je bloed niveau stijgt, word je sterker, sneller and meer resistent tegen schade.",
+
+  "power.haema.dash.name": "Vampierensprint",
+  "power.haema.dash.description": "Als je bloed niveau hoog genoeg is, kan je een kort durende sprint doen om rond te teleporteren.",
+
+  "gamerule.category.haema": "Haema",
+
+  "gamerule.vampiresBurn": "Vampieren Verbranden",
+  "gamerule.vampiresBurn.description": "Of vampieren beïnvloed worden door zonlicht",
+
+  "gamerule.vampiresDrown": "Vampieren Verdrinken",
+  "gamerule.vampiresDrown.description": "Of vampieren kunnen verdrinken",
+
+  "gamerule.feedCooldown": "Vampier Voedingsbenodigheid Afkoeltijd",
+  "gamerule.feedCooldown.description": "Tijd in ticks waarna een vampier weer kan voeden",
+
+  "gamerule.dashCooldown": "Dash Cooldown",
+  "gamerule.dashCooldown.description": "Tijd in ticks waarna een vampier weer kan sprinten",
+
+  "gamerule.vampireInvisibilityLength": "Vampierenonzichtbaarheid Tijd",
+  "gamerule.vampireInvisibilityLength.description": "De basistijd in ticks dat een vampier onzichtbaar kan zijn",
+
+  "gamerule.vampireHunterNoticeChance": "Vampierenjager Opmerkkans",
+  "gamerule.vampireHunterNoticeChance.description": "De kans dat een vampierenjager groep spawnt tijdens het vermoorden van een wezen door middel van voeden.",
+
+  "gamerule.playerVampireConversion": "Speler Vampierenbekering",
+  "gamerule.playerVampireConversion.description": "Of spelers bekeerd kunnen worden tot vampier en weer terug door middel van injectiespuiten",
+
+  "gamerule.sunlightDamagesArmour": "Zonlicht brengt schade aan vampier beschermde uitrusting",
+  "gamerule.sunlightDamagesArmour.description": "Of uitrustig dat een vampier beschermt van de zon zelf schade krijgt erdoor",
+
+  "bookOfBlood.name": "Boek van Bloed",
+
+  "bookOfBlood.beginning": "Het begin",
+  "bookOfBlood.beginning.description": "Jouw avontuur start hier...",
+
+  "bookOfBlood.beginning.blood.title": "Vampierenbloed Vinden",
+  "bookOfBlood.beginning.blood.spotlight.1.text": "$(item)Vampierenbloed/$ kan gevonden worden in kerkers, tempels, of door te ruilen met geestelijke dorpelingen. Het kan gebruikt worden om mensen, die niet oorspronkelijk vampieren zijn, te veranderen in een vampier.",
+
+  "bookOfBlood.beginning.injector.title": "Een Injectiespuit Maken",
+  "bookOfBlood.beginning.injector.text.1.text": "Zodra je $(item)Vampierenbloed/$ hebt, moet je het in een $(item)injectiespuit/$ doen - dit is het hulpmiddel dat je gebruikt om een vampier te worden!",
+
+  "bookOfBlood.beginning.becoming.title": "Een vampier worden!",
+  "bookOfBlood.beginning.becoming.text.1.text": "Een vampier worden is een gevaarlijk proces, je hebt $(thing)Strength II/$ nodig om het te overleven. Wanneer je het $(thing)Strength II/$ effect hebt, gebruik de $(item)Vampierenbloed Injectiespuit/$ op jezelf en word een vampier!",
+
+  "bookOfBlood.surviving": "Overleven",
+  "bookOfBlood.surviving.description": "Hoe in leven te blijven als een vampier",
+
+  "bookOfBlood.surviving.nourishment.title": "Voeding",
+  "bookOfBlood.surviving.nourishment.text.1.text": "Je zal er waarschijnlijk achter komen dat je zicht een stuk minder verzadigd is als je een vampier wordt - dit is omdat je niet genoeg $(thing)bloed/$ hebt.",
+  "bookOfBlood.surviving.nourishment.text.2.text": "Als een vampier, heb je geen eten meer nodig - je honger balk is nu een bloed balk.",
+  "bookOfBlood.surviving.nourishment.text.3.text": "Je kan bloed vekrijgen door te voeden aan wezens met $(k:sneak)+$(k:use) - menselijkere wezens geven beter bloed. Je kan zo vaak voeden als je wil, maar pas op - als je genoeg voed om iets te vermoorden, $(thing)Vampirenjagers/$ hebben een kans om je op te merken. Pas op met het voeden aan dorpelingen - als ze wakker worden en je opmerken, zullen ze niet erg blij zijn!",
+
+  "bookOfBlood.surviving.storage.title": "Bloed Opslag",
+  "bookOfBlood.surviving.storage.spotlight.1.text": "Je kan $(item)Vampierenbloed Injectiespuiten/$ en $(item)Lege Vampierenbloed Injectiespuiten/$ gebruiken om bloed op te slaan voor een andere keer.",
+
+  "bookOfBlood.surviving.hunters.title": "Een waarschuwing",
+  "bookOfBlood.surviving.hunters.text.1.text": "$(thing)Vampierenjagers/$ waren vroeger Illagers, die gestopt zijn met het aanvallen van dorpelingen en ze nu verdedigen tegen de dreiging van de vampieren.",
+  "bookOfBlood.surviving.hunters.text.2.text": "Ze hebben een kans om op te merken als een wezen dood gaat door een vampier die voedt; dorpelingen zullen ze ook om hulp vragen als ze erachter komen dat een vampier aan ze voedt!",
+  "bookOfBlood.surviving.hunters.text.3.text": "Ze hebben kruisbogen, en zullen ze gebruiken van een afstand. Ze hebben ook houten zwaarden voor een gevecht van dichtbij, pas dus op!",
+
+  "bookOfBlood.surviving.weaknesses.title": "Jouw Zwakheden",
+  "bookOfBlood.surviving.weaknesses.text.1.text": "Vampieren kunnen alleen maar gedood worden door bepaalde dingen. Dit zijn:$(br) - Zonlicht(br) - Bliksem(br) - Verdrinken(br) - Drakenadem$(br) - De Leegte$(br) - Bepaalde wapens, zoals houten zwaarden$(br) - Aanvallen met de Smite betovering",
+
+  "bookOfBlood.surviving.sunlight.title": "Zonlicht",
+  "bookOfBlood.surviving.sunlight.text.1.text": "Zonlicht is dodelijk voor vampieren! In het sterkte licht van de zon, zal je beginnen met verbranden.",
+  "bookOfBlood.surviving.sunlight.spotlight.1.text": "Het dragen van een compleet leren harnas zorgt ervoor dat je voor een korte tijd in de zon kan blijven.",
+
+  "bookOfBlood.powers": "Krachten en Vaardigheden",
+  "bookOfBlood.powers.description": "Wat kunnen vampieren doen?",
+
+  "bookOfBlood.powers.dash.title": "Sprint",
+  "bookOfBlood.powers.dash.text.1.text": "Jouw $(thing)sprint/$ capaciteit is een korte-afstand teleportatie, te gebruiken met $(k:haema.dash).$(br)Je kan alleen je sprint gebruiken als je 9 of meer bloed druppels hebt.$(br)Het verbeteren van je sprint verkleint de afkoelingsperiode.",
+  "bookOfBlood.powers.immortality.title": "Vampier Onsterfelijkheid",
+  "bookOfBlood.powers.immortality.text.1.text": "Vampieren met deze vaardigheid kunnen alleen dood gaan aan een paar dingen - de zon, wapens met smite, de leegte, en een paar extra...",
+  "bookOfBlood.powers.invisibility.title": "Onzichtbaarheid",
+  "bookOfBlood.powers.invisibility.text.1.text": "Met deze vaardigheid, kan je onzichtbaar worden voor korte periodes. Wanneer je de vaardigheid verkregen hebt door middel van een ritueel, activeer je het met $(k:sneak).$(br)Je kan alleen onzichtbaar worden als je 8 of meer bloed druppels hebt.$(br)Het verbeteren van je onzichtbaarheid vergroot de lengte hoe lang het duurt.",
+  "bookOfBlood.powers.strength.title": "Vampierenkracht",
+  "bookOfBlood.powers.strength.text.1.text": "Vampieren zijn een stuk sterker en sneller met hun aanvallen dan stervelingen - en hoe meer bloed ze hebben, hoe sterker en sneller ze worden!$(br)Het verbeteren van deze vaardigheid vergoot het maximum Vampierenkracht die je kan krijgen.",
+  "bookOfBlood.powers.vision.title": "Vampierenzicht",
+  "bookOfBlood.powers.vision.text.1.text": "Omdat ze wezens van de nacht zijn, hebben vampieren veel beter nachtzicht dan mensen - maar de dag is misschien te vel voor ze...",
+
+  "bookOfBlood.rituals": "Rituelen",
+  "bookOfBlood.rituals.description": "Leer over de rituelen die je nieuwe krachten geven",
+
+  "bookOfBlood.rituals.stone_altar.title": "Basisaltaar",
+  "bookOfBlood.rituals.stone_altar.text.1.text": "Het $(thing)Basisaltaar/$ kan een paar rituelen doen, en wordt gemaakt door middel van normale bakstenen.",
+  "bookOfBlood.rituals.blackstone_altar.title": "Zwart Altaar",
+  "bookOfBlood.rituals.blackstone_altar.text.1.text": "Het $(thing)Zwart Altaar/$ is in staat om meer rituelen te doen, aangedreven door de zielen die gevangen zitten in de fakkels...",
+  "bookOfBlood.rituals.performing.title": "Rituelen Uitvoeren",
+  "bookOfBlood.rituals.performing.text.1.text": "Rituelen kunnen je meer vaardigheid punten geven, die je kan gebruiken om vaardigheden te verkrijgen of te verbeteren.",
+  "bookOfBlood.rituals.performing.text.2.text": "Rituelen worden volbracht door de greppel voor het altaar te vullen met bloed, er voorwerpen in te laten vallen en dan op de tafel te staan en ($(k:use)) erop te doen.",
+  "bookOfBlood.rituals.performing.image.1.text": "Gebruik rechter-muisknop op de rituelen tafel met het Boek van Bloed in je hand om alle rituelen in REI/EMI te zien.",
+
+  "gui.haema.moreinfo": "Meer Informatie",
+  "gui.haema.lessinfo": "Minder Informatie",
+
+  "gui.haema.title": "HAEMA",
+
+  "gui.haema.hud.vampiredash": "Vampierensprint",
+  "gui.haema.hud.invisibility": "Onzichtbaarheid",
+  "gui.haema.hud.mist_form": "Nevel Vorm",
+  "gui.haema.hud.normal_form": "Normale Vorm",
+  "gui.haema.hud.expand_mist_form": "Mist Vorm Uitbreiden",
+  "gui.haema.hud.feed": "Voeden",
+  "gui.haema.hud.bloodquality": "Bloed Kwaliteit: ",
+  "gui.haema.hud.bloodquality.good": "Goed",
+  "gui.haema.hud.bloodquality.medium": "Medium",
+  "gui.haema.hud.bloodquality.poor": "Slecht",
+
+  "gui.haema.config.client": "Client Configureren",
+  "gui.haema.config.gameplay": "Spel Configureren",
+  "gui.haema.config.gameplay.main": "Haema is configureerbaar door middel van datapacks en spelregels.",
+  "gui.haema.config.gameplay.gameruleslink": "Om te leren hoe je de spelregels gebruikt, klik hier.",
+  "gui.haema.config.gameplay.datapackslink": "Om te leren hoe je datapacks gebruikt, klik hier.",
+  "gui.haema.config.gameplay.bloodsources": "Voor bloedbronnen, gebruikt Haema de entiteit tags: ",
+  "gui.haema.config.gameplay.vampireweapons": "Voor wapens die effectief zijn tegen vampieren, gebruikt Haema het voorwerp tag:",
+  "gui.haema.config.gameplay.gamerules": "De spelregels die Haema toe voegt, kunnen gebruikt worden in het Creeër Nieuwe Wereld scherm.",
+
+  "gui.haema.message.conversion_blocked_by_gamerule": "Spelregel 'spelerVampierBekering' is niet gezet op waar.",
+  "gui.haema.message.conversion_not_possible": "De speler is permanent een vampier en kan niet bekeerd worden.",
+  "gui.haema.message.no_recipe_viewer": "Installeer Roughly Enough Items or EMI om rituelen in te zien.",
+
+  "gui.haema.requires": "Vereist ",
+  "gui.haema.altar_level.0": "Basisaltaar",
+  "gui.haema.altar_level.1": "Black Altaar",
+  "gui.haema.repeatable.true": "Herhaalbaar",
+  "gui.haema.repeatable.false": "Niet Herhaalbaar",
+
+  "command.haema.error.not_vampire": "%1$s is is niet een vampier.",
+  "command.haema.blood.get.feedback": "%1$s heeft %2$s bloed",
+  "command.haema.blood.set.feedback": "%1$s heeft nu %2$s bloed",
+
+  "text.autoconfig.haema.title": "Haema",
+  "text.autoconfig.haema.option.vampireHudPlacement": "Vampieren HUD plaatsing",
+  "text.autoconfig.haema.option.vampireShaderEnabled": "Activeer Vampieren Shader",
+  "text.autoconfig.haema.option.brightAdjust": "Vampierenzicht felheid sterkte",
+  "text.autoconfig.haema.option.brightAdjust.@Tooltip": "0 = geen felheid boost. 1 = normale felheid boost.",
+  "text.autoconfig.haema.option.distortionAdjust": "Vampierensprint vervorming sterkte",
+  "text.autoconfig.haema.option.distortionAdjust.@Tooltip": "0 = geen vervorming. 1 = normale vervorming. Dit wordt vermenigvuldigd met de vanilla 'Vervorming Effect' instelling.",
+  "text.autoconfig.haema.option.saturationAdjust": "Vampierenzicht verzadigdheid sterkte",
+  "text.autoconfig.haema.option.saturationAdjust.@Tooltip": "0 = geen verzadigdheid verandering. 1 = normale verzadigdheid verandering.",
+
+  "ability.haema.none": "GEEN",
+  "ability.haema.strength": "KRACHT",
+  "ability.haema.strength.description": "Vampierenkracht geeft je verbeterde kracht en snelheid.",
+  "ability.haema.dash": "SPRINT",
+  "ability.haema.dash.description": "Je sprint vaardigheid is een teleportatie over een korte afstand.",
+  "ability.haema.invisibility": "ONZICHTBAARHEID",
+  "ability.haema.invisibility.description": "Een kort durende onzichtbaarheid wanneer je sluipt.",
+  "ability.haema.immortality": "ONSTERFELIJKHEID",
+  "ability.haema.immortality.description": "De kracht van onsterfelijkheid! Overleef praktisch alles.",
+  "ability.haema.vision": "ZICHT",
+  "ability.haema.vision.description": "Een vampierenzicht is beter in het donker - maar slechter als het licht is.",
+  "ability.haema.mist_form": "NEVEL VORM",
+  "ability.haema.mist_form.description": "Verander in een wolk van nevel, terwijl je je tegenstanders vergiftigd en verblind.",
+
+  "advancement.haema.create_ritual_table": "Potentie voor Kracht...",
+  "advancement.haema.create_ritual_table.description": "Maak een tafel voor rituelen",
+  "advancement.haema.drink_blood": "Dorst Lessen",
+  "advancement.haema.drink_blood.description": "Drink van een wezen.",
+  "advancement.haema.drink_good_blood": "Het Goede Spul",
+  "advancement.haema.drink_good_blood.description": "Krijg kwaliteitsbloed van een dorpeling",
+  "advancement.haema.drink_player_blood": "Geef Me het Hart Op Je Nek",
+  "advancement.haema.drink_player_blood.description": "Drink bloed van een andere speler",
+  "advancement.haema.fail_conversion": "Ik Ben Niet een Vampier",
+  "advancement.haema.fail_conversion.description": "Je bent vergeten sterker te worden, of niet?",
+  "advancement.haema.fulfil_contract": "Vampierengeld",
+  "advancement.haema.fulfil_contract.description": "Volbreng een Vampierenjager contract",
+  "advancement.haema.get_blood": "Pak een Glas",
+  "advancement.haema.get_blood.description": "Vind oud vampierenbloed als buit",
+  "advancement.haema.get_contract": "Huurling",
+  "advancement.haema.get_contract.description": "Neem een contract aan van een Vampierenjager leider",
+  "advancement.haema.kill_vampire_hunter": "Knoei Niet Met Vampieren",
+  "advancement.haema.kill_vampire_hunter.description": "Vermoord een Vampierenjager",
+  "advancement.haema.root": "βῐβλος αἵμᾰτος",
+  "advancement.haema.root.description": "Verkrijg het boek van oude kennis...",
+  "advancement.haema.store_blood": "Draagbare Bloedopslag",
+  "advancement.haema.store_blood.description": "Neem wat bloed voor later",
+  "advancement.haema.trigger_vampire_hunters": "Geen Saaie Omstandigheid",
+  "advancement.haema.trigger_vampire_hunters.description": "Trek de aandacht van Vampierenjagers",
+  "advancement.haema.use_blood": "IK VERWERP MIJN MENSELIJKHEID!",
+  "advancement.haema.use_blood.description": "Neem het bloed in je lichaam... vergeet niet om eerst sterker te worden.",
+  "advancement.haema.use_dash": "Woesj",
+  "advancement.haema.use_dash.description": "Gebruik de vampierensprint vaardigheid",
+  "advancement.haema.use_invis": "Nu Zie Je Me, En Nu Niet Meer",
+  "advancement.haema.use_invis.description": "Gebruik vampierenonzichtbaarheid",
+  "advancement.haema.use_ritual_table": "Oude Rituelen",
+  "advancement.haema.use_ritual_table.description": "Een ritueel volbrengen",
+  "advancement.haema.use_mist": "De nevel komt er aan",
+  "advancement.haema.use_mist.description": "Gebruik Nevel Vorm",
+
+  "ritual_action.haema.add_levels": "+%d vaardigheid punten",
+  "ritual_action.haema.change_abilities": "Vaardigheden aanpassen",
+
+  "rei.haema.ritual": "Ritueel",
+  "emi.category.haema.ritual": "Ritueel",
+
+  "compat.bewitchment.gui.haema.hud.untransform": "Ontransformeren",
+  "compat.bewitchment.gui.haema.hud.transform": "Transformeren"
+}
