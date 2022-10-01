@@ -1,0 +1,257 @@
+{
+  "itemGroup.haema.items": "Haema",
+  "item.haema.vampire_blood": "Vampire Blut",
+  "item.haema.vampire_blood.desc": "Füll das Vampir Blut in einen Injektor...",
+  "item.haema.vampire_blood_injector": "Vampir Blut Injektor",
+  "item.haema.vampire_blood_injector.desc": "Bist du stark genug um ein Vampir zu werden?",
+  "item.haema.empty_vampire_blood_injector": "Leere Vampri Blut Injektor",
+  "item.haema.empty_vampire_blood_injector.desc": "Wenn du zu schwacht bist, wirst du wieder normal",
+  "item.haema.vampire_hunter_contract": "Vampir Jäger Auftrag",
+  "item.haema.vampire_hunter_contract.unfulfilled": "Unerfüllt",
+  "item.haema.vampire_hunter_contract.fulfilled": "Erfüllt",
+  "item.haema.vampire_hunter_contract.target": "Ziel: %1$s",
+  "item.haema.vampire_converter": "[DEBUG ITEM] Vampir Konverter",
+  "item.haema.vampire_hat": "Vampir Hut",
+  "item.haema.vampire_coat": "Vampir Mantel",
+  "item.haema.vampire_trousers": "Vampir Hosen",
+  "item.haema.vampire_shoes": "Vampir Schuhe",
+
+  "block.haema.righteous_banner": "Rechtschaffenheits Banner",
+  "block.haema.ritual_table": "Ritual Tisch",
+
+  "entity.haema.vampire_hunter": "Vampir Jänger",
+  "entity.haema.vampirager": "Vampirager",
+  "entity.haema.vampiric_zombie": "Vampir Zombie",
+
+  "key.categories.haema": "Haema",
+  "key.haema.dash": "Vampir Schattenschritt",
+  "key.haema.mist_form": "Nebel Form",
+  "key.haema.expand_mist_form": "Nebel Ausbreiten",
+
+  "effect.haema.sunlight_sickness": "Sonnenlicht Krankheit",
+  "effect.haema.vampiric_weakness": "Vampirische Schwäche",
+  "effect.haema.vampiric_strength": "Vampirische Stärke",
+  "effect.haema.mist_form": "Nebel Form",
+  "effect.haema.misted": "Benebelt",
+
+  "death.attack.bloodLoss": "%1$s hat zu viel Blut verloren",
+  "death.attack.bloodLoss.player": "%1$s hat beim Kampf gegen %2$s zu viel Blut verloren",
+  "death.attack.incompatibleBlood": "%1$s hat vergessen Stärke zu trinken",
+  "death.attack.incompatibleBlood.player": "%1$s hat beim Kampf gegen %2$s vergessen Stärke zu trinken",
+  "death.attack.sunlight": "%1$s ist im Sonnenlicht verbrannt",
+  "death.attack.sunlight.player": "%1$s ist beim Kampf gegen %2$s im Sonnenlicht verbrannt",
+
+  "origin.haema.vampire.name": "Vampir",
+  "origin.haema.vampire.description": "Obwohl Sonnenlicht ihnen Schaded, besitzen Vampire große Körperliche Stärke in der Dunkelheit, voraußgesetzt sie haben ausreichend Blut.",
+
+  "power.haema.vampire.name": "Blutdurst",
+  "power.haema.vampire.description": "Du benötigst kein Essen, ernährst dich aber von Blut. Trink von Kreaturen mit Shift + Rechts Click, je menschlicher die Quelle des Blutes, desto höher ist die Qualität.",
+
+  "power.haema.ritualistic.name": "Rituale",
+  "power.haema.ritualistic.description": "Mithilfe von Ritualen, kannst du deine Fähigkeiten verbessern und sogar neue erhalten.",
+
+  "power.haema.night_vision.name": "Nacht Sicht",
+  "power.haema.night_vision.description": "Auch wenn nur unscharf und farbloss, kannst du in der Dunkelheit mehr Details ausmachen.",
+
+  "power.haema.vampiric_strength.name": "Vampirische Stärke",
+  "power.haema.vampiric_strength.description": "Ohne Blut bist du schwach - aber je mehr du davon hast, umso stärker, schneller und hartnäckiger wirst du.",
+
+  "power.haema.dash.name": "Vampir Schattenschritt",
+  "power.haema.dash.description": "Hast du ausreichen Blut, kannst du einen kurzen Sprint nutzen um dich herum zu Teleportieren.",
+
+  "gamerule.category.haema": "Haema",
+
+  "gamerule.vampiresBurn": "Vampire Brennen",
+  "gamerule.vampiresBurn.description": "Ob Sonnenlicht, Vampire beinflusst",
+
+  "gamerule.vampiresDrown": "Vampire Ertrinken",
+  "gamerule.vampiresDrown.description": "Ob Vampire ertrinken können",
+
+  "gamerule.feedCooldown": "Vampir Trink Abklingzeit",
+  "gamerule.feedCooldown.description": "Ticks die ein Vampir zwischen Blut trinken warten muss",
+
+  "gamerule.dashCooldown": "Schattenschritt Abklingzeit",
+  "gamerule.dashCooldown.description": "Ticks die ein Vampir zwischen einem Schattenschritt warten muss",
+
+  "gamerule.vampireInvisibilityLength": "Vampir Unsichtbarkeits Länge",
+  "gamerule.vampireInvisibilityLength.description": "Basis menge an ticks die Vampir Unsichtbarkeit anhält",
+
+  "gamerule.vampireHunterNoticeChance": "Vampir Jänger Bemerkungs Wahrscheinlichkeit",
+  "gamerule.vampireHunterNoticeChance.description": "Wahrscheinlichkeit, dass eine Vampir Jäger Gruppe spawnt, wenn eine Kreatur beim Blutsaugen stirbt",
+
+  "gamerule.playerVampireConversion": "Spieler Vampir Verwandlung",
+  "gamerule.playerVampireConversion.description": "Ob Spieler sich mit Injektionen in Vampire und zurück verwandeln können",
+
+  "gamerule.sunlightDamagesArmour": "Sonnenlicht zerstört Vampir-Schutz Rüstung",
+  "gamerule.sunlightDamagesArmour.description": "Ob Rüstung, die Vampire vor Sonnenlicht schützt, selbst schaden nimmt",
+
+  "bookOfBlood.name": "Buch des Blutes",
+
+  "bookOfBlood.beginning": "Der Anfang",
+  "bookOfBlood.beginning.description": "Deine Reise beginnt hier...",
+
+  "bookOfBlood.beginning.blood.title": "Vampir Blut Finden",  
+	"bookOfBlood.beginning.blood.spotlight.1.text": "$(item)Vampir Blut/$ kann in Dungeons, Tempeln gefunden oder bei Geistlichen Dorfbewohnern erhandelt werden. Es kann benutzt werden um Menschen, die ursprünglich keine Vampire sind, in welche zu verwandeln.",
+
+  "bookOfBlood.beginning.injector.title": "Herstellung der Injektion",  
+	"bookOfBlood.beginning.injector.text.1.text": "Sobald du das $(item)Vampir Blut/$ hast, musst du es in einen $(item)Injektor/$ füllen - diese benötigst du, um ein Vampir zu werden!",
+
+  "bookOfBlood.beginning.becoming.title": "Ein Vampir werden!",
+	"bookOfBlood.beginning.becoming.text.1.text": "Sich in einen Vampir zu verwandeln ist eine Gefährliche Prozedur, du brauchst $(thing)Stärke II/$ um zu überleben. Wenn du den $(thing)Stärke II/$ Effekt hast, nutze die $(item)Vampir Blut Injektion/$ an dir selbst, um ein Vampir zu werden!",
+
+  "bookOfBlood.surviving": "Überleben",
+  "bookOfBlood.surviving.description": "Wie Überlebt man als Vampir",
+
+  "bookOfBlood.surviving.nourishment.title": "Nahrung",
+	"bookOfBlood.surviving.nourishment.text.1.text": "Du hast vermutlich bemerkt, dass deine Sicht um einiges blasser geworden ist, als du ein Vampir wurdest - das liegt daran, dass du nicht ausreichend $(thing)Blut/$ hast.",
+  "bookOfBlood.surviving.nourishment.text.2.text": "Als Vampir, benötigst du kein Essen - deine Hunger Leiste ist nun eine Blut Leiste.",  
+	"bookOfBlood.surviving.nourishment.text.3.text": "Du kannst Blut trinken, indem du andere Kreaturen mit $(k:sneak)+$(k:use) aussaugst - 'menschlichere' Kreaturen haben Blut von höher Qualität. Du kannst sie so oft du möchtest aussaugen, aber sei Vorsichtig - trinkst du ausreichend um etwas zu töten, könnten $(thing)Vampir Jäger/$ dich bemerken. Sei auch vorsichtig bei Dorfbewohnern, wenn sie wach sind und dich bemerken, werden sie nicht gerade erfreut sein!",
+
+  "bookOfBlood.surviving.storage.title": "Blut Lagerung",  
+	"bookOfBlood.surviving.storage.spotlight.1.text": "Du kannst $(item)Vampir Blut Injektoren/$ und $(item)Leere Vampir Blut Injektoren/$ nutzen, um Blut für einen anderen Zeitpunkt zu lagern.",
+
+  "bookOfBlood.surviving.hunters.title": "Eine Warngung",  
+	"bookOfBlood.surviving.hunters.text.1.text": "$(thing)Vampir Jäger/$ waren einst Illager, die sich entschieden Dorfbewohner vor Vampiren zu beschützen, anstatt diese anzugreifen.",
+  "bookOfBlood.surviving.hunters.text.2.text": "Es ist möglich, dass sie nicht bemerken wenn eine Kreatur durch das Blutsuagen eines Vampirs stirbt. Dorfbewohner rufen sie aber zur hilfe, wenn sie bemerken, dass ein Vampir sie aussaugt!",
+  "bookOfBlood.surviving.hunters.text.3.text": "Sie haben Armbrüste und scheuen auch nicht davor zurück diese zu nutzen. Für den Nahkampf führen sie außerdem Holzschwerter mit sich, also sei Vorischtig!",
+	
+  "bookOfBlood.surviving.weaknesses.title": "Deine Schwäche",  
+	"bookOfBlood.surviving.weaknesses.text.1.text": "Vampire können nur auf bestimmte weißen Getötet werden. Diese sind: $(br) - Sonnenlicht$(br) - Blitze$(br) - Ertrinken$(br) - Drachen Atem$(br) - Das Void$(br) - Einige Waffen, wie Holzschwerter$(br) - Angriffe mit der Bann Verzauberung",
+
+  "bookOfBlood.surviving.sunlight.title": "Sonnenlicht",
+  "bookOfBlood.surviving.sunlight.text.1.text": "Sonnenlicht ist Tödlich für Vampire! In dem harschen light der Sonne, beginnst du zu brennen.",
+  "bookOfBlood.surviving.sunlight.spotlight.1.text": "Das tragen einer kompletten Leder Rüstung, kann dich für eine Weile vor der Sonne schützen.",
+
+  "bookOfBlood.powers": "Kräfte und Fähigkeiten",
+  "bookOfBlood.powers.description": "Was können Vampire machen?",
+
+  "bookOfBlood.powers.dash.title": "Schattenschritt",
+  "bookOfBlood.powers.dash.text.1.text": "Deine $(thing)Schattenschritt/$ Fähigkeit ist ein kurzstrecken Teleport, nutzbar mit $(k:haema.dash).$(br)Du kannst diese Fähigkeit nur nutzen, wenn du 9 oder mehr Blutstropfen hast.$(br)Verbessern der Fähigkeit, reduziert die Abklingzeit.",
+  "bookOfBlood.powers.immortality.title": "Vampir Unsterblichkeit",
+  "bookOfBlood.powers.immortality.text.1.text": "Vampire mit dieser Fähigkeit können nur durch einige weniger ursachen sterben - die Sonne, Waffen mit Bann, das Void, und ein paar mehr...",
+	"bookOfBlood.powers.invisibility.title": "Unsichtbarkeit",  
+	"bookOfBlood.powers.invisibility.text.1.text": "Diese Fähigkeit erlaubt es dir für kurze zeit Unsichtbar zu werden. Sobald du sie durch ein Ritual erhalten hasst, kannst du sie mit $(k:sneak) aktiveren.$(br)Du kannst nur unsichtbar werden, wenn du 8 oder mehr Blutstropfen hast.$(br)Verbessern der Fähigkeit, verlängert ihre dauer.",
+	"bookOfBlood.powers.strength.title": "Vampirische Stärke",
+  "bookOfBlood.powers.strength.text.1.text": "Vampire können viel stärker und schneller angreifen, als sterbliche - und je mehr Blut sie haben, desto stärker und schneller werden Sie!$(br)Verbessern dieser Fähigkeit, erhöht die maximale stufe der Vampirischen Stärke die du erhalten kannst.",
+  "bookOfBlood.powers.vision.title": "Vampirische Sicht",
+  "bookOfBlood.powers.vision.text.1.text": "Als Kreaturen der Nacht, können Vampire Nachts viel besser sehen als Menschen - jedoch kann es Tags über, zu hell für sie sein....",
+
+  "bookOfBlood.rituals": "Rituale",
+  "bookOfBlood.rituals.description": "Lerne mehr über Arkane Rituale, die dir neue Kräfte verleiehen",
+
+  "bookOfBlood.rituals.stone_altar.title": "Einfacher Altar",
+  "bookOfBlood.rituals.stone_altar.text.1.text": "Der $(thing)Einfacher Altar/$ kann einige Rituale abhalten und kann aus einfachen Stein Ziegeln gebaut werden.",
+  "bookOfBlood.rituals.blackstone_altar.title": "Schwarzstein Altar",
+  "bookOfBlood.rituals.blackstone_altar.text.1.text": "Der $(thing)Schwarzstein Altar/$ ist in der Lage mehr Rituale abzuhalten, befeuert durch die Seelen, gefangen in seinen Fackeln...",
+  "bookOfBlood.rituals.performing.title": "Abhalten von Ritualen",
+  "bookOfBlood.rituals.performing.text.1.text": "Rituale können dir mehr Fähigkeitspunkte geben, mit denen du deine Fähigkeiten verbessern kannst.",
+  "bookOfBlood.rituals.performing.text.2.text": "Um ein Ritual abzuhalten, fülle die aussparungen im Altar mit einer Flüssigkeit und werfe die Gegenstände auf ihn, stelle dich dann auf den Altar und Iteragiere ($(k:use)) mit ihm.",
+  "bookOfBlood.rituals.performing.image.1.text": "Rechts klicke auf den Altar mit deinem Buch des Blutes in deiner hand, um dir alle Rezepte in der REI/EMI Rezept Ansicht anzuschauen.",
+
+  "gui.haema.moreinfo": "Mehr Info",
+  "gui.haema.lessinfo": "Weniger Info",
+
+  "gui.haema.title": "HAEMA",
+
+  "gui.haema.hud.vampiredash": "Schattenschritt",
+  "gui.haema.hud.invisibility": "Unsichtbarkeit",
+  "gui.haema.hud.mist_form": "Nebel Form",
+  "gui.haema.hud.normal_form": "Normal Form",
+  "gui.haema.hud.expand_mist_form": "Vergrößerte Nebel Form",
+  "gui.haema.hud.feed": "Trink",
+  "gui.haema.hud.bloodquality": "Blut Qualität: ",
+  "gui.haema.hud.bloodquality.good": "Gut",
+  "gui.haema.hud.bloodquality.medium": "Durchschnit",
+  "gui.haema.hud.bloodquality.poor": "Schlecht",
+
+  "gui.haema.config.client": "Client Konfigurieren",
+  "gui.haema.config.gameplay": "Gameplay Konfigurieren",
+  "gui.haema.config.gameplay.main": "Haema wird mit Datapacks and Gamerules konfiguriert.",
+  "gui.haema.config.gameplay.gameruleslink": "Um herauszufinden, wie du Gamerules benutzt, klick hier.",
+  "gui.haema.config.gameplay.datapackslink": "Um herauszufinden, wie du Datapacks benutzt, klick hier.",
+  "gui.haema.config.gameplay.bloodsources": "Haema benutzt Entity Tags zum einstellen von Blut Quellen: ",
+  "gui.haema.config.gameplay.vampireweapons": "Haema benutzt Item Tags zum einstellen von For vampir-effektiven Waffen: ",
+  "gui.haema.config.gameplay.gamerules": "Die Gamerules, die Haema hinzufügt, können im Welt Erstellungs Menu angeschaut werden.",
+
+  "gui.haema.message.conversion_blocked_by_gamerule": "Gamerule 'playerVampireConversion' ist nicht auf true gesetzt.",
+  "gui.haema.message.conversion_not_possible": "Spieler ist ein Permanenter Vampir und kann nicht verwandelt werden.",
+  "gui.haema.message.no_recipe_viewer": "Installier Roughly Enough Items oder EMI um Rituale anzuschauen.",
+
+  "gui.haema.requires": "Benötigt ",
+  "gui.haema.altar_level.0": "Einfacher Altar",
+  "gui.haema.altar_level.1": "Schwarzstein Altar",
+  "gui.haema.repeatable.true": "Wiederholbar",
+  "gui.haema.repeatable.false": "Nicht Wiederholbar",
+
+  "command.haema.error.not_vampire": "%1$s ist kein Vampir.",
+  "command.haema.blood.get.feedback": "%1$s hat %2$s Blut",
+  "command.haema.blood.set.feedback": "Setze das Blut von %1$s auf %2$s",
+
+  "text.autoconfig.haema.title": "Haema",
+  "text.autoconfig.haema.option.vampireHudPlacement": "Vampir HUD platzierung",
+  "text.autoconfig.haema.option.vampireShaderEnabled": "Aktiviere Vampir Shader",
+  "text.autoconfig.haema.option.brightAdjust": "Vampir Sicht helligkeits stärke",
+  "text.autoconfig.haema.option.brightAdjust.@Tooltip": "0 = keine erhöhte Helligkeit. 1 = standard erhöhte Helligkeit.",
+  "text.autoconfig.haema.option.distortionAdjust": "Schattenschritt verzerrungs stärke",
+  "text.autoconfig.haema.option.distortionAdjust.@Tooltip": "0 = keine verzerrung. 1 = standard Verzerrung. Diese einstellung skaliert mit der Vanilla 'Verzerrungseffekte' Einstellung",
+  "text.autoconfig.haema.option.saturationAdjust": "Vampir Sicht sättigungs Effekt stärke",
+  "text.autoconfig.haema.option.saturationAdjust.@Tooltip": "0 = keine sättigungs änderung. 1 = standard sättiungs änderung.",
+
+  "ability.haema.none": "KEINE",
+  "ability.haema.strength": "STÄRKE",
+  "ability.haema.strength.description": "Vampirische Stärke gibt die erhöhte Angriffsstärke und -geschwindigkeit.",
+  "ability.haema.dash": "SCHATTENSCHRITT",
+  "ability.haema.dash.description": "Der Schattenschritt ist ein kurz strecken Teleport",
+  "ability.haema.invisibility": "UNSICHTBARKEIT",
+  "ability.haema.invisibility.description": "Werde kurz Unsichtbar wenn du Schleichst.",
+  "ability.haema.immortality": "UNSTERBLICHKEIT",
+  "ability.haema.immortality.description": "Die Macht der Unsterblichkeit! Überlebe praktisch alles.",
+  "ability.haema.vision": "SICHT",
+  "ability.haema.vision.description": "Vampire sehen besser im Dunkeln aber schlechter im Licht.",
+  "ability.haema.mist_form": "NEBEL FORM",
+  "ability.haema.mist_form.description": "Lös dich in eine Nebelwolke auf, die deine Gegner vergiftet und blendet.",
+
+  "advancement.haema.create_ritual_table": "Potential für Macht...",
+  "advancement.haema.create_ritual_table.description": "Baue einen Ritual Tisch",
+  "advancement.haema.drink_blood": "Durstlöscher",
+  "advancement.haema.drink_blood.description": "Schlurp eine Kreatur aus.",
+  "advancement.haema.drink_good_blood": "Der Gute Stoff",
+  "advancement.haema.drink_good_blood.description": "Trink Blut von guter Qualität aus einem Dorfbewohner",
+  "advancement.haema.drink_player_blood": "Gib mir das Herz an deinem Nacken",
+  "advancement.haema.drink_player_blood.description": "Trink etwas Blut von einem anderem Spieler",
+  "advancement.haema.fail_conversion": "Ich bin kein Vampir",
+  "advancement.haema.fail_conversion.description": "Du hast den Stärke II Trank vergessen, oder?",
+  "advancement.haema.fulfil_contract": "Vampir Geld",
+  "advancement.haema.fulfil_contract.description": "Erfülle einen Vampir Jäger Auftrag",
+  "advancement.haema.get_blood": "Schnapp dir ein Glass",
+  "advancement.haema.get_blood.description": "Finde antikes Vampir Blut als Loot",
+  "advancement.haema.get_contract": "Söldner",
+  "advancement.haema.get_contract.description": "Akzeptiere einen Auftrag von einem Vampir Jäger Anführer",
+  "advancement.haema.kill_vampire_hunter": "Leg dich nicht mit Vampiren an",
+  "advancement.haema.kill_vampire_hunter.description": "Töte einen Vampir Jäger",
+  "advancement.haema.root": "βῐβλος αἵμᾰτος",
+  "advancement.haema.root.description": "Finde das Buch des Antiken Wissens...",
+  "advancement.haema.store_blood": "Blut to Go",
+  "advancement.haema.store_blood.description": "Nimm etwas Blut für später mit",
+  "advancement.haema.trigger_vampire_hunters": "Nicht so erfeulichen Umstände",
+  "advancement.haema.trigger_vampire_hunters.description": "Erhalte die Aufmerksamkeit eines Vampir Jägers",
+  "advancement.haema.use_blood": "ICH LEHNE MENSCH SEIN AB!",
+  "advancement.haema.use_blood.description": "Nehme das Blut in deinen Körper auf... denk aber an den Stärke II trank",
+  "advancement.haema.use_dash": "Whoosh",
+  "advancement.haema.use_dash.description": "Nutze die Schattenschritt Fähigkeit",
+  "advancement.haema.use_invis": "Erst siehst du mich, dann nicht",
+  "advancement.haema.use_invis.description": "Benutze Vampir Unsichtbarkeit",
+  "advancement.haema.use_ritual_table": "Alte Rituale",
+  "advancement.haema.use_ritual_table.description": "Halte ein Ritual ab",
+  "advancement.haema.use_mist": "Der Nebel kommt",
+  "advancement.haema.use_mist.description": "Nutze die Nebel Form",
+
+  "ritual_action.haema.add_levels": "+%d Fähigkeits punkte",
+  "ritual_action.haema.change_abilities": "Fähigkeiten anpassen",
+
+  "rei.haema.ritual": "Ritual",
+  "emi.category.haema.ritual": "Ritual",
+
+  "compat.bewitchment.gui.haema.hud.untransform": "Rückgängig machen",
+  "compat.bewitchment.gui.haema.hud.transform": "Ändern"
+}
