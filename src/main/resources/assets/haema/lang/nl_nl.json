@@ -1,10 +1,10 @@
 {
   "itemGroup.haema.items": "Haema",
-  "item.haema.vampire_blood": "Vampierbloed",
+  "item.haema.vampire_blood": "Vampierenbloed",
   "item.haema.vampire_blood.desc": "Stop het in een Vampierbloed Injectiespuit...",
-  "item.haema.vampire_blood_injector": "Vampierbloed Injectiespuit",
+  "item.haema.vampire_blood_injector": "Vampierenbloed Injectiespuit",
   "item.haema.vampire_blood_injector.desc": "Heb jij de kracht om een vampier te worden?",
-  "item.haema.empty_vampire_blood_injector": "Lege Vampierbloed Injectiespuit",
+  "item.haema.empty_vampire_blood_injector": "Lege Vampierenbloed Injectiespuit",
   "item.haema.empty_vampire_blood_injector.desc": "Als je zwak bent, kan je weer normaal worden",
   "item.haema.vampire_hunter_contract": "Vampierenjager Contract",
   "item.haema.vampire_hunter_contract.unfulfilled": "Onvervuld",
@@ -26,7 +26,7 @@
   "key.categories.haema": "Haema",
   "key.haema.dash": "Vampierensprint",
   "key.haema.mist_form": "Nevel Vorm",
-  "key.haema.expand_mist_form": "Mist Uitbreiden",
+  "key.haema.expand_mist_form": "Nevel Uitbreiden",
 
   "effect.haema.sunlight_sickness": "Zonnenziekte",
   "effect.haema.vampiric_weakness": "Vampierenzwakte",
@@ -67,11 +67,11 @@
   "gamerule.vampiresDrown": "Vampieren Verdrinken",
   "gamerule.vampiresDrown.description": "Of vampieren kunnen verdrinken",
 
-  "gamerule.feedCooldown": "Vampier Voedingsbenodigheid Afkoeltijd",
+  "gamerule.feedCooldown": "Vampier Voedings Afkoeltijd",
   "gamerule.feedCooldown.description": "Tijd in ticks waarna een vampier weer kan voeden",
 
   "gamerule.dashCooldown": "Dash Cooldown",
-  "gamerule.dashCooldown.description": "Tijd in ticks waarna een vampier weer kan sprinten",
+  "gamerule.dashCooldown.description": "Tijd in ticks waarna een vampier weer een sprint kan doen",
 
   "gamerule.vampireInvisibilityLength": "Vampierenonzichtbaarheid Tijd",
   "gamerule.vampireInvisibilityLength.description": "De basistijd in ticks dat een vampier onzichtbaar kan zijn",
@@ -173,7 +173,7 @@
   "gui.haema.config.gameplay.vampireweapons": "Voor wapens die effectief zijn tegen vampieren, gebruikt Haema het voorwerp tag:",
   "gui.haema.config.gameplay.gamerules": "De spelregels die Haema toe voegt, kunnen gebruikt worden in het Creeër Nieuwe Wereld scherm.",
 
-  "gui.haema.message.conversion_blocked_by_gamerule": "Spelregel 'spelerVampierBekering' is niet gezet op waar.",
+  "gui.haema.message.conversion_blocked_by_gamerule": "Spelregel 'playerVampireConversion' is niet gezet op waar.",
   "gui.haema.message.conversion_not_possible": "De speler is permanent een vampier en kan niet bekeerd worden.",
   "gui.haema.message.no_recipe_viewer": "Installeer Roughly Enough Items or EMI om rituelen in te zien.",
 
