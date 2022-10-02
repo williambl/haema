@@ -11,7 +11,6 @@ import io.github.apace100.apoli.power.PowerType
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.NbtCompound
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.Identifier
@@ -71,10 +70,7 @@ class VampirePower(type: PowerType<*>?, entity: LivingEntity) : ModifyPlayerSpaw
             VampireConversionCriterion.trigger(entity as ServerPlayerEntity)
         }
         if (entity is PlayerEntity) {
-            val bookStack = ItemStack(Registry.ITEM[Identifier("patchouli:guide_book")])
-            val tag = NbtCompound()
-            tag.putString("patchouli:book", "haema:book_of_blood")
-            bookStack.nbt = tag
+            val bookStack = ItemStack(Registry.ITEM[Identifier("haema:book_of_blood")])
             (entity as PlayerEntity).inventory.offerOrDrop(bookStack)
         }
     }

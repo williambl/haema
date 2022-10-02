@@ -1,14 +1,14 @@
 {
   "replace": false,
   "values": [
-    "minecraft:leather_helmet",
-    "minecraft:leather_chestplate",
-    "minecraft:leather_leggings",
-    "minecraft:leather_boots",
     "haema:vampire_hat",
     "haema:vampire_coat",
     "haema:vampire_trousers",
     "haema:vampire_shoes",
+    "minecraft:leather_helmet",
+    "minecraft:leather_chestplate",
+    "minecraft:leather_leggings",
+    "minecraft:leather_boots",
     {
       "id": "bewitchment:alchemist_hood",
       "required": false

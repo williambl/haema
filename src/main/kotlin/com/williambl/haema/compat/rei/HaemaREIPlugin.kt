@@ -11,7 +11,6 @@ import me.shedaniel.rei.api.client.registry.display.DisplayRegistry
 import me.shedaniel.rei.api.client.view.ViewSearchBuilder
 import me.shedaniel.rei.api.common.category.CategoryIdentifier
 import me.shedaniel.rei.impl.client.REIRuntimeImpl
-import vazkii.patchouli.common.item.PatchouliItems
 
 class HaemaREIPlugin : REIClientPlugin {
     companion object {
@@ -30,7 +29,7 @@ class HaemaREIPlugin : REIClientPlugin {
 
     init {
         RitualTableUseEvent.EVENT.register(RitualTableUseEvent { _, world, _, player, hand, _ ->
-            if (player.getStackInHand(hand).item == PatchouliItems.BOOK && world.isClient) {
+            if (player.getStackInHand(hand).item == Haema.BOOK_OF_BLOOD && world.isClient) {
                 ViewSearchBuilder.builder().addCategory(ritualId).open()
                 REIRuntimeImpl.getInstance().previousScreen = SelfClosingScreen()
             }
