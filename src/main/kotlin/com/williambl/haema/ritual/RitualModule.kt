@@ -27,7 +27,6 @@ import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.World
-import vazkii.patchouli.common.item.PatchouliItems
 import vazkii.patchouli.common.multiblock.DenseMultiblock
 import vazkii.patchouli.common.multiblock.MultiblockRegistry
 import vazkii.patchouli.common.multiblock.StateMatcher
@@ -63,7 +62,7 @@ object RitualModule: ModInitializer {
 
     override fun onInitialize() {
         RitualTableUseEvent.EVENT.register { _: BlockState, world: World, _: BlockPos, player: PlayerEntity, hand: Hand, _: BlockHitResult ->
-            if (player.getStackInHand(hand).item == PatchouliItems.BOOK && world.isClient && !FabricLoader.getInstance().isModLoaded("roughlyenoughitems") && !FabricLoader.getInstance().isModLoaded("emi")) {
+            if (player.getStackInHand(hand).item == Haema.BOOK_OF_BLOOD && world.isClient && !FabricLoader.getInstance().isModLoaded("roughlyenoughitems") && !FabricLoader.getInstance().isModLoaded("emi")) {
                 player.sendMessage(Text.translatable("gui.haema.message.no_recipe_viewer"), true);
             }
         }

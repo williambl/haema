@@ -10,6 +10,7 @@ import com.williambl.haema.api.WorldSleepEvents
 import com.williambl.haema.blood.BloodModule
 import com.williambl.haema.component.EntityVampireComponent
 import com.williambl.haema.component.VampireComponent
+import com.williambl.haema.core.BookOfBloodItem
 import com.williambl.haema.craft.BookOfBloodRecipe
 import com.williambl.haema.criteria.VampireHunterTriggerCriterion
 import com.williambl.haema.hunter.VampireHunterSpawner
@@ -32,6 +33,7 @@ import net.minecraft.command.argument.IdentifierArgumentType
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.passive.VillagerEntity
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.item.Item
 import net.minecraft.item.ItemGroup
 import net.minecraft.server.command.CommandManager.argument
 import net.minecraft.server.command.CommandManager.literal
@@ -57,6 +59,10 @@ object Haema: ModInitializer, EntityComponentInitializer {
     val ITEM_GROUP: ItemGroup = FabricItemGroupBuilder.create(id("items"))
         .icon { BloodModule.VAMPIRE_BLOOD.defaultStack }
         .build()
+    val BOOK_OF_BLOOD: BookOfBloodItem = Registry.register(Registry.ITEM,
+        id("book_of_blood"),
+        BookOfBloodItem(Item.Settings().group(ITEM_GROUP).maxCount(1))
+    )
 
     override fun onInitialize() {
         UseEntityCallback.EVENT.register(UseEntityCallback { player, world, hand, entity, entityHitResult ->

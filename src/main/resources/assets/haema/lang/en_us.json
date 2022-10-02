@@ -85,7 +85,7 @@
   "gamerule.sunlightDamagesArmour": "Sunlight damages vampire-protecting armour",
   "gamerule.sunlightDamagesArmour.description": "Whether armour protecting a vampire from sun damage takes damage itself",
 
-  "bookOfBlood.name": "Book Of Blood",
+  "item.haema.book_of_blood": "Book Of Blood",
 
   "bookOfBlood.beginning": "Beginning",
   "bookOfBlood.beginning.description": "Your journey starts here...",
@@ -253,5 +253,8 @@
   "emi.category.haema.ritual": "Ritual",
 
   "compat.bewitchment.gui.haema.hud.untransform": "Untransform",
-  "compat.bewitchment.gui.haema.hud.transform": "Transform"
+  "compat.bewitchment.gui.haema.hud.transform": "Transform",
+
+  "tag.haema.vampire_protective_clothing" : "Vampire Protective Clothing",
+  "tag.haema.vampire_weapons" : "Vampire Effective Weapons"
 }

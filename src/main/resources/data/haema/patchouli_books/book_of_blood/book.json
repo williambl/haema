@@ -1,8 +1,11 @@
 {
-  "name": "bookOfBlood.name",
+  "name": "item.haema.book_of_blood",
   "landing_text": "",
   "model": "haema:book_of_blood",
   "book_texture": "haema:textures/gui/book_of_blood/book_of_blood_gui.png",
+  "creative_tab": "haema.items",
+  "dont_generate_book": true,
+  "custom_book_item": "haema:book_of_blood",
   "i18n": true,
   "version": 2
 }
