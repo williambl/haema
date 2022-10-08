@@ -24,7 +24,7 @@
   "entity.haema.vampiric_zombie": "Vampierachtige Zombie",
 
   "key.categories.haema": "Haema",
-  "key.haema.dash": "Vampierensprint",
+  "key.haema.dash": "Vampieren schaduw stap",
   "key.haema.mist_form": "Nevel Vorm",
   "key.haema.expand_mist_form": "Nevel Uitbreiden",
 
@@ -36,8 +36,8 @@
 
   "death.attack.bloodLoss": "%1$s heeft teveel bloed verloren",
   "death.attack.bloodLoss.player": "%1$s heeft teveel bloed verloren tijdens het vechten %2$s",
-  "death.attack.incompatibleBlood": "%1$s is vergeten om sterker te worden",
-  "death.attack.incompatibleBlood.player": "%1$s is vergeten om sterker te worden tijdens het vechten %2$s",
+  "death.attack.incompatibleBlood": "%1$s is de drank der kracht vergeten",
+  "death.attack.incompatibleBlood.player": "%1$s is de drank der kracht vergeten tijdens het vechten %2$s",
   "death.attack.sunlight": "%1$s is verbrand in de zon",
   "death.attack.sunlight.player": "%1$s is verbrand in de zon tijdens het vechten %2$s",
 
@@ -56,8 +56,8 @@
   "power.haema.vampiric_strength.name": "Vampierenkracht",
   "power.haema.vampiric_strength.description": "Je bent zwak als je niet veel bloed hebt - maar zodra je bloed niveau stijgt, word je sterker, sneller and meer resistent tegen schade.",
 
-  "power.haema.dash.name": "Vampierensprint",
-  "power.haema.dash.description": "Als je bloed niveau hoog genoeg is, kan je een kort durende sprint doen om rond te teleporteren.",
+  "power.haema.dash.name": "Vampieren schaduw stap",
+  "power.haema.dash.description": "Als je bloed niveau hoog genoeg is, kan je een kort durende schaduw stap doen om rond te teleporteren.",
 
   "gamerule.category.haema": "Haema",
 
@@ -71,7 +71,7 @@
   "gamerule.feedCooldown.description": "Tijd in ticks waarna een vampier weer kan voeden",
 
   "gamerule.dashCooldown": "Dash Cooldown",
-  "gamerule.dashCooldown.description": "Tijd in ticks waarna een vampier weer een sprint kan doen",
+  "gamerule.dashCooldown.description": "Tijd in ticks waarna een vampier weer een schaduw stap kan doen",
 
   "gamerule.vampireInvisibilityLength": "Vampierenonzichtbaarheid Tijd",
   "gamerule.vampireInvisibilityLength.description": "De basistijd in ticks dat een vampier onzichtbaar kan zijn",
@@ -125,8 +125,8 @@
   "bookOfBlood.powers": "Krachten en Vaardigheden",
   "bookOfBlood.powers.description": "Wat kunnen vampieren doen?",
 
-  "bookOfBlood.powers.dash.title": "Sprint",
-  "bookOfBlood.powers.dash.text.1.text": "Jouw $(thing)sprint/$ capaciteit is een korte-afstand teleportatie, te gebruiken met $(k:haema.dash).$(br)Je kan alleen je sprint gebruiken als je 9 of meer bloed druppels hebt.$(br)Het verbeteren van je sprint verkleint de afkoelingsperiode.",
+  "bookOfBlood.powers.dash.title": "Schaduw Stap",
+  "bookOfBlood.powers.dash.text.1.text": "Jouw $(thing)schaduw stap/$ capaciteit is een korte-afstand teleportatie, te gebruiken met $(k:haema.dash).$(br)Je kan alleen schaduw stap gebruiken als je 9 of meer bloed druppels hebt.$(br)Het verbeteren van je schaduw stap verkleint de afkoelingsperiode.",
   "bookOfBlood.powers.immortality.title": "Vampier Onsterfelijkheid",
   "bookOfBlood.powers.immortality.text.1.text": "Vampieren met deze vaardigheid kunnen alleen dood gaan aan een paar dingen - de zon, wapens met smite, de leegte, en een paar extra...",
   "bookOfBlood.powers.invisibility.title": "Onzichtbaarheid",
@@ -153,7 +153,7 @@
 
   "gui.haema.title": "HAEMA",
 
-  "gui.haema.hud.vampiredash": "Vampierensprint",
+  "gui.haema.hud.vampiredash": "Vampieren Schaduw Stap",
   "gui.haema.hud.invisibility": "Onzichtbaarheid",
   "gui.haema.hud.mist_form": "Nevel Vorm",
   "gui.haema.hud.normal_form": "Normale Vorm",
@@ -192,7 +192,7 @@
   "text.autoconfig.haema.option.vampireShaderEnabled": "Activeer Vampieren Shader",
   "text.autoconfig.haema.option.brightAdjust": "Vampierenzicht felheid sterkte",
   "text.autoconfig.haema.option.brightAdjust.@Tooltip": "0 = geen felheid boost. 1 = normale felheid boost.",
-  "text.autoconfig.haema.option.distortionAdjust": "Vampierensprint vervorming sterkte",
+  "text.autoconfig.haema.option.distortionAdjust": "Vampieren schaduw stap vervorming sterkte",
   "text.autoconfig.haema.option.distortionAdjust.@Tooltip": "0 = geen vervorming. 1 = normale vervorming. Dit wordt vermenigvuldigd met de vanilla 'Vervorming Effect' instelling.",
   "text.autoconfig.haema.option.saturationAdjust": "Vampierenzicht verzadigdheid sterkte",
   "text.autoconfig.haema.option.saturationAdjust.@Tooltip": "0 = geen verzadigdheid verandering. 1 = normale verzadigdheid verandering.",
@@ -200,8 +200,8 @@
   "ability.haema.none": "GEEN",
   "ability.haema.strength": "KRACHT",
   "ability.haema.strength.description": "Vampierenkracht geeft je verbeterde kracht en snelheid.",
-  "ability.haema.dash": "SPRINT",
-  "ability.haema.dash.description": "Je sprint vaardigheid is een teleportatie over een korte afstand.",
+  "ability.haema.dash": "SCHADUW STAP",
+  "ability.haema.dash.description": "Je schaduw stap vaardigheid is een teleportatie over een korte afstand.",
   "ability.haema.invisibility": "ONZICHTBAARHEID",
   "ability.haema.invisibility.description": "Een kort durende onzichtbaarheid wanneer je sluipt.",
   "ability.haema.immortality": "ONSTERFELIJKHEID",
@@ -220,7 +220,7 @@
   "advancement.haema.drink_player_blood": "Geef Me het Hart Op Je Nek",
   "advancement.haema.drink_player_blood.description": "Drink bloed van een andere speler",
   "advancement.haema.fail_conversion": "Ik Ben Niet een Vampier",
-  "advancement.haema.fail_conversion.description": "Je bent vergeten sterker te worden, of niet?",
+  "advancement.haema.fail_conversion.description": "Je bent de drank der kracht vergeten, of niet?",
   "advancement.haema.fulfil_contract": "Vampierengeld",
   "advancement.haema.fulfil_contract.description": "Volbreng een Vampierenjager contract",
   "advancement.haema.get_blood": "Pak een Glas",
@@ -236,9 +236,9 @@
   "advancement.haema.trigger_vampire_hunters": "Geen Saaie Omstandigheid",
   "advancement.haema.trigger_vampire_hunters.description": "Trek de aandacht van Vampierenjagers",
   "advancement.haema.use_blood": "IK VERWERP MIJN MENSELIJKHEID!",
-  "advancement.haema.use_blood.description": "Neem het bloed in je lichaam... vergeet niet om eerst sterker te worden.",
+  "advancement.haema.use_blood.description": "Neem het bloed in je lichaam... vergeet de drank der kracht niet.",
   "advancement.haema.use_dash": "Woesj",
-  "advancement.haema.use_dash.description": "Gebruik de vampierensprint vaardigheid",
+  "advancement.haema.use_dash.description": "Gebruik de vampieren schaduw stap vaardigheid",
   "advancement.haema.use_invis": "Nu Zie Je Me, En Nu Niet Meer",
   "advancement.haema.use_invis.description": "Gebruik vampierenonzichtbaarheid",
   "advancement.haema.use_ritual_table": "Oude Rituelen",
@@ -253,5 +253,8 @@
   "emi.category.haema.ritual": "Ritueel",
 
   "compat.bewitchment.gui.haema.hud.untransform": "Ontransformeren",
-  "compat.bewitchment.gui.haema.hud.transform": "Transformeren"
+  "compat.bewitchment.gui.haema.hud.transform": "Transformeren",
+
+  "tag.haema.vampire_protective_clothing" : "Beschermende kleding voor vampieren",
+  "tag.haema.vampire_weapons" : "Effectieve wapens tegen vampieren"
 }
