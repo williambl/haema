@@ -2,10 +2,10 @@
     "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
     "display": {
         "title": {
-            "translate": "The Good Stuff"
+            "translate": "advancement.haema.drink_good_blood"
         },
         "description": {
-            "translate": "Get some good quality blood from a villager"
+            "translate": "advancement.haema.drink_good_blood.description"
         },
         "icon": {
             "item": "minecraft:hay_block"
