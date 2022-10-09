@@ -8,8 +8,7 @@
             "translate": "advancement.haema.root.description"
         },
         "icon": {
-            "item": "patchouli:guide_book",
-            "nbt": "{\"patchouli:book\": \"haema:book_of_blood\"}"
+            "item": "haema:book_of_blood"
         },
         "frame": "task",
         "show_toast": true,
