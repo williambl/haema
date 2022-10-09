@@ -16,7 +16,7 @@
   "item.haema.vampire_trousers": "Vampir Hosen",
   "item.haema.vampire_shoes": "Vampir Schuhe",
 
-  "block.haema.righteous_banner": "Rechtschaffenheits Banner",
+  "block.haema.righteous_banner": "Gerechtes Banner",
   "block.haema.ritual_table": "Ritual Tisch",
 
   "entity.haema.vampire_hunter": "Vampir Jänger",
@@ -173,7 +173,7 @@
   "gui.haema.config.gameplay.vampireweapons": "Haema benutzt Item Tags zum einstellen von For vampir-effektiven Waffen: ",
   "gui.haema.config.gameplay.gamerules": "Die Gamerules, die Haema hinzufügt, können im Welt Erstellungs Menu angeschaut werden.",
 
-  "gui.haema.message.conversion_blocked_by_gamerule": "Gamerule 'playerVampireConversion' ist nicht auf true gesetzt.",
+  "gui.haema.message.conversion_blocked_by_gamerule": "Gamerule 'playerVampireConversion' ist nicht auf 'true'",
   "gui.haema.message.conversion_not_possible": "Spieler ist ein Permanenter Vampir und kann nicht verwandelt werden.",
   "gui.haema.message.no_recipe_viewer": "Installier Roughly Enough Items oder EMI um Rituale anzuschauen.",
 
@@ -206,7 +206,7 @@
   "ability.haema.invisibility.description": "Werde kurz Unsichtbar wenn du Schleichst.",
   "ability.haema.immortality": "UNSTERBLICHKEIT",
   "ability.haema.immortality.description": "Die Macht der Unsterblichkeit! Überlebe praktisch alles.",
-  "ability.haema.vision": "SICHT",
+  "ability.haema.vision": "VAMPIR SICHT",
   "ability.haema.vision.description": "Vampire sehen besser im Dunkeln aber schlechter im Licht.",
   "ability.haema.mist_form": "NEBEL FORM",
   "ability.haema.mist_form.description": "Lös dich in eine Nebelwolke auf, die deine Gegner vergiftet und blendet.",
@@ -215,9 +215,9 @@
   "advancement.haema.create_ritual_table.description": "Baue einen Ritual Tisch",
   "advancement.haema.drink_blood": "Durstlöscher",
   "advancement.haema.drink_blood.description": "Schlurp eine Kreatur aus.",
-  "advancement.haema.drink_good_blood": "Der Gute Stoff",
-  "advancement.haema.drink_good_blood.description": "Trink Blut von guter Qualität aus einem Dorfbewohner",
-  "advancement.haema.drink_player_blood": "Gib mir das Herz an deinem Nacken",
+  "advancement.haema.drink_good_blood": "Der Gute \"Wein\"",
+  "advancement.haema.drink_good_blood.description": "Trink Blut von guter Qualität aus einem Dorfbewoyner",
+  "advancement.haema.drink_player_blood": "Blutspende",
   "advancement.haema.drink_player_blood.description": "Trink etwas Blut von einem anderem Spieler",
   "advancement.haema.fail_conversion": "Ich bin kein Vampir",
   "advancement.haema.fail_conversion.description": "Du hast den Stärke II Trank vergessen, oder?",
