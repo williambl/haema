@@ -2,6 +2,7 @@ package com.williambl.haema.compat.emi
 
 import com.williambl.haema.Haema
 import com.williambl.haema.api.RitualTableUseEvent
+import com.williambl.haema.core.BookOfBloodItem
 import com.williambl.haema.craft.BookOfBloodRecipe
 import com.williambl.haema.ritual.RitualModule
 import dev.emi.emi.api.EmiApi
@@ -41,7 +42,7 @@ class HaemaEmiPlugin: EmiPlugin{
 
     init {
         RitualTableUseEvent.EVENT.register(RitualTableUseEvent { _, world, _, player, hand, _ ->
-            if (player.getStackInHand(hand).item == Haema.BOOK_OF_BLOOD && world.isClient) {
+            if (BookOfBloodItem.isBook(player.getStackInHand(hand)) && world.isClient) {
                 EmiApi.displayRecipeCategory(RitualCategory)
             }
         })

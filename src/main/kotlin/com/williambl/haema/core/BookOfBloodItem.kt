@@ -12,6 +12,7 @@ import net.minecraft.world.World
 import vazkii.patchouli.api.PatchouliAPI
 import vazkii.patchouli.common.base.PatchouliSounds
 import vazkii.patchouli.common.book.BookRegistry
+import vazkii.patchouli.common.item.PatchouliItems
 
 class BookOfBloodItem(settings: Settings?) : Item(settings) {
     override fun use(world: World, player: PlayerEntity, hand: Hand): TypedActionResult<ItemStack> {
@@ -24,5 +25,11 @@ class BookOfBloodItem(settings: Settings?) : Item(settings) {
             player.playSound(sfx, 1f, (0.7 + Math.random() * 0.4).toFloat())
         }
         return TypedActionResult(ActionResult.SUCCESS, stack)
+    }
+
+    companion object {
+        fun isBook(stack: ItemStack): Boolean {
+            return stack.item is BookOfBloodItem || stack.item == PatchouliItems.BOOK
+        }
     }
 }

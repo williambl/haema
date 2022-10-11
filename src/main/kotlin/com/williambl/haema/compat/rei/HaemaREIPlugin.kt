@@ -2,6 +2,7 @@ package com.williambl.haema.compat.rei
 
 import com.williambl.haema.Haema
 import com.williambl.haema.api.RitualTableUseEvent
+import com.williambl.haema.core.BookOfBloodItem
 import com.williambl.haema.craft.BookOfBloodRecipe
 import com.williambl.haema.ritual.craft.RitualRecipe
 import com.williambl.haema.util.SelfClosingScreen
@@ -29,7 +30,7 @@ class HaemaREIPlugin : REIClientPlugin {
 
     init {
         RitualTableUseEvent.EVENT.register(RitualTableUseEvent { _, world, _, player, hand, _ ->
-            if (player.getStackInHand(hand).item == Haema.BOOK_OF_BLOOD && world.isClient) {
+            if (BookOfBloodItem.isBook(player.getStackInHand(hand)) && world.isClient) {
                 ViewSearchBuilder.builder().addCategory(ritualId).open()
                 REIRuntimeImpl.getInstance().previousScreen = SelfClosingScreen()
             }
