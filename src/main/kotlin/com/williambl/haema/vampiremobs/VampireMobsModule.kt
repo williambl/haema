@@ -11,12 +11,16 @@ import com.williambl.haema.component.EntityVampireComponent
 import com.williambl.haema.component.VampireComponent
 import com.williambl.haema.id
 import com.williambl.haema.vampiremobs.elder.ElderVampireEntity
+import com.williambl.haema.vampiremobs.elder.SunShieldBlock
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
+import net.minecraft.block.AbstractBlock
+import net.minecraft.block.MapColor
+import net.minecraft.block.Material
 import net.minecraft.entity.*
 import net.minecraft.entity.ai.brain.MemoryModuleType
 import net.minecraft.entity.mob.HostileEntity
@@ -64,6 +68,12 @@ object VampireMobsModule: ModInitializer, EntityComponentInitializer {
             .dimensions(EntityDimensions.fixed(0.6f, 1.95f))
             .spawnRestriction(SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark)
             .build()
+    )
+
+    val SUN_SHIELD_BLOCK: SunShieldBlock = Registry.register(
+        Registry.BLOCK,
+        id("sun_shield"),
+        SunShieldBlock(AbstractBlock.Settings.of(Material.Builder(MapColor.CLEAR).replaceable().allowsMovement().build()).breakInstantly().ticksRandomly())
     )
 
     val ATTACK_TARGETS_MEMORY: MemoryModuleType<List<LivingEntity>> = Registry.register(

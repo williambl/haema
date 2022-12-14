@@ -23,6 +23,7 @@ import ladysnake.satin.api.managed.ShaderEffectManager
 import me.shedaniel.autoconfig.AutoConfig
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer
 import net.fabricmc.api.ClientModInitializer
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
@@ -33,6 +34,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.ingame.HandledScreens
 import net.minecraft.client.option.KeyBinding
+import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.entity.EmptyEntityRenderer
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.LivingEntity
@@ -98,6 +100,8 @@ object HaemaClient: ClientModInitializer {
         KeyBindingHelper.registerKeyBinding(DASH_KEY)
 
         ClientMistHandler.init()
+
+        BlockRenderLayerMap.INSTANCE.putBlock(VampireMobsModule.SUN_SHIELD_BLOCK, RenderLayer.getTranslucent())
 
         EntityModelLayerRegistry.registerModelLayer(VampireHunterModel.layer, VampireHunterModel.Companion::getTexturedModelData)
         EntityModelLayerRegistry.registerModelLayer(VampiragerModel.layer, VampiragerModel.Companion::getTexturedModelData)
