@@ -222,6 +222,11 @@ dependencies {
         exclude group: "net.fabricmc.fabric-api"
     }
 
+    // SmartBrainLib
+    modImplementation include("curse.maven:smartbrainlib-661293:4125897") {
+        exclude group: "net.fabricmc.fabric-api"
+    }
+
     ///
     /// SOFT DEPS
     ///
