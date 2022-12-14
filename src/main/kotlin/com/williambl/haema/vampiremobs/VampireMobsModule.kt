@@ -16,6 +16,7 @@ import net.fabricmc.fabric.api.biome.v1.BiomeModifications
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
 import net.minecraft.entity.*
+import net.minecraft.entity.ai.brain.MemoryModuleType
 import net.minecraft.entity.mob.HostileEntity
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.entity.player.PlayerEntity
@@ -27,6 +28,7 @@ import net.minecraft.registry.tag.TagKey
 import net.minecraft.world.Heightmap
 import net.minecraft.world.World
 import net.minecraft.world.biome.Biome
+import java.util.*
 
 object VampireMobsModule: ModInitializer, EntityComponentInitializer {
     val VAMPIRIC_ZOMBIE: EntityType<VampiricZombieEntity> = Registry.register(
@@ -49,6 +51,47 @@ object VampireMobsModule: ModInitializer, EntityComponentInitializer {
             .dimensions(EntityDimensions.fixed(0.6f, 1.95f))
             .spawnRestriction(SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark)
             .build()
+    )
+
+    val ELDER_VAMPIRE: EntityType<ElderVampireEntity> = Registry.register(
+        Registries.ENTITY_TYPE,
+        id("elder_vampire"),
+        FabricEntityTypeBuilder.createMob<ElderVampireEntity>()
+            .spawnGroup(SpawnGroup.MONSTER)
+            .entityFactory(::ElderVampireEntity)
+            .dimensions(EntityDimensions.fixed(0.6f, 1.95f))
+            .spawnRestriction(SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark)
+            .build()
+    )
+
+    val ATTACK_TARGETS_MEMORY: MemoryModuleType<List<LivingEntity>> = Registry.register(
+        Registry.MEMORY_MODULE_TYPE,
+        id("attack_targets"),
+        MemoryModuleType(Optional.empty())
+    )
+
+    val ABILITIES_COOLDOWN_MEMORY: MemoryModuleType<Int> = Registry.register(
+        Registry.MEMORY_MODULE_TYPE,
+        id("abilities_cooldown"),
+        MemoryModuleType(Optional.of(Codec.INT))
+    )
+
+    val BLOOD_DRAIN_COOLDOWN_MEMORY: MemoryModuleType<Int> = Registry.register(
+        Registry.MEMORY_MODULE_TYPE,
+        id("blood_drain_cooldown"),
+        MemoryModuleType(Optional.of(Codec.INT))
+    )
+
+    val SUN_SHIELD_COOLDOWN_MEMORY: MemoryModuleType<Int> = Registry.register(
+        Registry.MEMORY_MODULE_TYPE,
+        id("sun_shield_cooldown"),
+        MemoryModuleType(Optional.of(Codec.INT))
+    )
+
+    val DASH_COOLDOWN_MEMORY: MemoryModuleType<Int> = Registry.register(
+        Registry.MEMORY_MODULE_TYPE,
+        id("dash_cooldown"),
+        MemoryModuleType(Optional.of(Codec.INT))
     )
 
     private val BIOME_SPAWNS_VAMPIRAGERS: TagKey<Biome> = TagKey.of(RegistryKeys.BIOME, id("spawns_vampiragers"))
