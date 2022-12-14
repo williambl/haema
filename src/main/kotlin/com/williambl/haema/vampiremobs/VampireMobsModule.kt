@@ -12,6 +12,7 @@ import com.williambl.haema.component.VampireComponent
 import com.williambl.haema.id
 import com.williambl.haema.vampiremobs.elder.ElderVampireEntity
 import com.williambl.haema.vampiremobs.elder.SunShieldBlock
+import com.williambl.haema.vampiremobs.elder.SunShieldProjectileEntity
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer
 import net.fabricmc.api.ModInitializer
@@ -67,6 +68,16 @@ object VampireMobsModule: ModInitializer, EntityComponentInitializer {
             .entityFactory(::ElderVampireEntity)
             .dimensions(EntityDimensions.fixed(0.6f, 1.95f))
             .spawnRestriction(SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark)
+            .build()
+    )
+
+    val SUN_SHIELD_PROJECTILE: EntityType<SunShieldProjectileEntity> = Registry.register(
+        Registry.ENTITY_TYPE,
+        id("sun_shield_projectile"),
+        FabricEntityTypeBuilder.create<SunShieldProjectileEntity>(SpawnGroup.MISC)
+            .entityFactory(::SunShieldProjectileEntity)
+            .dimensions(EntityDimensions.fixed(0.3125F, 0.3125F))
+            .trackRangeChunks(4)
             .build()
     )
 

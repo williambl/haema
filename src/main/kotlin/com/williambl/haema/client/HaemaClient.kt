@@ -36,6 +36,7 @@ import net.minecraft.client.gui.screen.ingame.HandledScreens
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.entity.EmptyEntityRenderer
+import net.minecraft.client.render.entity.FlyingItemEntityRenderer
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerInventory
@@ -109,6 +110,7 @@ object HaemaClient: ClientModInitializer {
         EntityRendererRegistry.register(VampireMobsModule.VAMPIRIC_ZOMBIE) { context -> VampiricZombieRenderer(context) }
         EntityRendererRegistry.register(VampireMobsModule.VAMPIRAGER) { context -> VampiragerEntityRenderer(context) }
         EntityRendererRegistry.register(VampireMobsModule.ELDER_VAMPIRE) { context -> EmptyEntityRenderer(context) }
+        EntityRendererRegistry.register(VampireMobsModule.SUN_SHIELD_PROJECTILE) { context -> FlyingItemEntityRenderer(context) }
 
         AutoConfig.register(HaemaConfig::class.java) { config, clazz -> Toml4jConfigSerializer(config, clazz) }
 

@@ -38,7 +38,7 @@ class SunShieldBlock(settings: Settings) : Block(settings) {
         }
         Direction.Type.HORIZONTAL.stream().forEach { dir ->
             val offsetPos = pos.offset(dir)
-            if (world.isAir(offsetPos)) {
+            if (world.isAir(offsetPos) || world.getBlockState(offsetPos).material.isReplaceable) {
                 world.setBlockState(offsetPos, state.with(DISTANCE, distance))
                 world.spawnParticles(DustParticleEffect(DustParticleEffect.RED, 2f), pos.x + 0.5, pos.y + 0.5, pos.z + 0.5, 4, 0.5, 0.5, 0.5, 0.0)
             }
@@ -47,7 +47,7 @@ class SunShieldBlock(settings: Settings) : Block(settings) {
 
     @Deprecated(message = "do not call directly")
     override fun randomTick(state: BlockState, world: ServerWorld, pos: BlockPos, random: Random) {
-        if (random.nextInt(5) == 0) {
+        if (random.nextInt(10) == 0) {
             world.breakBlock(pos, false)
         }
     }
