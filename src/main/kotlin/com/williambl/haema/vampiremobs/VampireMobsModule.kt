@@ -1,5 +1,6 @@
 package com.williambl.haema.vampiremobs
 
+import com.mojang.serialization.Codec
 import com.williambl.haema.ability.AbilityModule
 import com.williambl.haema.ability.component.dash.AiControlledEntityDashAbilityComponent
 import com.williambl.haema.ability.component.dash.DashAbilityComponent
@@ -9,6 +10,7 @@ import com.williambl.haema.api.BloodDrinkingEvents
 import com.williambl.haema.component.EntityVampireComponent
 import com.williambl.haema.component.VampireComponent
 import com.williambl.haema.id
+import com.williambl.haema.vampiremobs.elder.ElderVampireEntity
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer
 import net.fabricmc.api.ModInitializer
@@ -105,6 +107,7 @@ object VampireMobsModule: ModInitializer, EntityComponentInitializer {
 
         FabricDefaultAttributeRegistry.register(VAMPIRIC_ZOMBIE, ZombieEntity.createZombieAttributes())
         FabricDefaultAttributeRegistry.register(VAMPIRAGER, VampiragerEntity.createVampiragerAttributes())
+        FabricDefaultAttributeRegistry.register(ELDER_VAMPIRE, VampiragerEntity.createVampiragerAttributes())
 
         BiomeModifications.addSpawn({ it.hasTag(BIOME_SPAWNS_VAMPIRAGERS) }, SpawnGroup.MONSTER, VAMPIRAGER, 4, 1, 1)
 
@@ -151,6 +154,28 @@ object VampireMobsModule: ModInitializer, EntityComponentInitializer {
         registry.registerFor(VampiragerEntity::class.java, StrengthAbilityComponent.entityKey, ::EntityStrengthAbilityComponent)
 
         registry.registerFor(VampiragerEntity::class.java, DashAbilityComponent.entityKey) { entity -> AiControlledEntityDashAbilityComponent(
+            entity,
+            entity::dashTarget
+        )}
+
+        registry.registerFor(ElderVampireEntity::class.java, VampireComponent.entityKey) { entity -> EntityVampireComponent(
+            entity,
+            isVampireInitial = true,
+            isPermanentVampireInitial = true,
+            absoluteBloodInitial = 20.0,
+            abilitiesInitial = mutableMapOf(
+                AbilityModule.STRENGTH to 1,
+                AbilityModule.DASH to 1,
+                AbilityModule.INVISIBILITY to 0,
+                AbilityModule.IMMORTALITY to 0,
+                AbilityModule.VISION to 1,
+                AbilityModule.MIST_FORM to 0
+            )
+        )}
+
+        registry.registerFor(ElderVampireEntity::class.java, StrengthAbilityComponent.entityKey, ::EntityStrengthAbilityComponent)
+
+        registry.registerFor(ElderVampireEntity::class.java, DashAbilityComponent.entityKey) { entity -> AiControlledEntityDashAbilityComponent(
             entity,
             entity::dashTarget
         )}
