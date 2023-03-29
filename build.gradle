@@ -350,7 +350,7 @@ curseforge {
             displayName = "v${project.version.toString().split("\\+")[0]} for Fabric/Quilt&MC $project.minecraft_version"
             releaseType = "release"
             relations {
-                requiredDependency "fabric"
+                requiredDependency "fabric-api"
                 requiredDependency "fabric-language-kotlin"
                 requiredDependency "geckolib"
                 embeddedLibrary "cardinal-components"
