@@ -1,4 +1,4 @@
-package com.williambl.haema.vampiremobs.elder
+package com.williambl.haema.vampiremobs.elder.behaviour
 
 import com.mojang.datafixers.util.Pair
 import com.williambl.haema.ability.component.dash.DashAbilityComponent.Companion.entityKey

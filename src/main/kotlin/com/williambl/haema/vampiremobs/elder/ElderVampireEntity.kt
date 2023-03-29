@@ -7,8 +7,11 @@ import com.williambl.haema.api.VampireBurningEvents
 import com.williambl.haema.effect.SunlightSicknessEffect
 import com.williambl.haema.vampireComponent
 import com.williambl.haema.vampiremobs.ReinforcementSpawner
-import com.williambl.haema.vampiremobs.VampireDashThroughPathGoal
 import com.williambl.haema.vampiremobs.VampireMobsModule
+import com.williambl.haema.vampiremobs.elder.behaviour.CreateSunShield
+import com.williambl.haema.vampiremobs.elder.behaviour.DashToWalkTarget
+import com.williambl.haema.vampiremobs.elder.behaviour.MultiTargetOrRetaliate
+import com.williambl.haema.vampiremobs.elder.behaviour.SunVisibilitySensor
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import net.minecraft.entity.*
 import net.minecraft.entity.ai.brain.Brain
@@ -47,7 +50,6 @@ import kotlin.jvm.optionals.getOrNull
 class ElderVampireEntity(entityType: EntityType<out ElderVampireEntity>, world: World) : HostileEntity(entityType, world),
     ReinforcementSpawner, SmartBrainOwner<ElderVampireEntity> {
     private var spawnData: ElderVampireData? = null
-    private lateinit var dashThroughPathGoal: VampireDashThroughPathGoal
 
     override var timesSpawnedReinforcements: Int = 0
         private set
@@ -147,7 +149,8 @@ class ElderVampireEntity(entityType: EntityType<out ElderVampireEntity>, world: 
     override fun getSensors(): MutableList<ExtendedSensor<ElderVampireEntity>> {
         return ObjectArrayList.of(
             NearbyLivingEntitySensor(),
-            HurtBySensor()
+            HurtBySensor(),
+            SunVisibilitySensor()
         )
     }
 
@@ -155,7 +158,8 @@ class ElderVampireEntity(entityType: EntityType<out ElderVampireEntity>, world: 
         return BrainActivityGroup.coreTasks(
             LookAtTarget<MobEntity>(),  // Have the entity turn to face and look at its current look target
             DashToWalkTarget(this::dashTarget),
-            MoveToWalkTarget()          // Walk towards the current walk target
+            MoveToWalkTarget(),          // Walk towards the current walk target
+            CreateSunShield(20 * 60)
         )
     }
 

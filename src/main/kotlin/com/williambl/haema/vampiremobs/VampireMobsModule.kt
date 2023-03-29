@@ -13,6 +13,7 @@ import com.williambl.haema.id
 import com.williambl.haema.vampiremobs.elder.ElderVampireEntity
 import com.williambl.haema.vampiremobs.elder.SunShieldBlock
 import com.williambl.haema.vampiremobs.elder.SunShieldProjectileEntity
+import com.williambl.haema.vampiremobs.elder.behaviour.SunVisibilitySensor
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer
 import net.fabricmc.api.ModInitializer
@@ -24,6 +25,7 @@ import net.minecraft.block.MapColor
 import net.minecraft.block.Material
 import net.minecraft.entity.*
 import net.minecraft.entity.ai.brain.MemoryModuleType
+import net.minecraft.entity.ai.brain.sensor.SensorType
 import net.minecraft.entity.mob.HostileEntity
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.entity.player.PlayerEntity
@@ -93,28 +95,40 @@ object VampireMobsModule: ModInitializer, EntityComponentInitializer {
         MemoryModuleType(Optional.empty())
     )
 
-    val ABILITIES_COOLDOWN_MEMORY: MemoryModuleType<Int> = Registry.register(
+    val ABILITIES_COOLDOWN_MEMORY: MemoryModuleType<com.mojang.datafixers.util.Unit> = Registry.register(
         Registries.MEMORY_MODULE_TYPE,
         id("abilities_cooldown"),
-        MemoryModuleType(Optional.of(Codec.INT))
+        MemoryModuleType(Optional.of(Codec.unit(com.mojang.datafixers.util.Unit.INSTANCE)))
     )
 
-    val BLOOD_DRAIN_COOLDOWN_MEMORY: MemoryModuleType<Int> = Registry.register(
+    val BLOOD_DRAIN_COOLDOWN_MEMORY: MemoryModuleType<com.mojang.datafixers.util.Unit> = Registry.register(
         Registries.MEMORY_MODULE_TYPE,
         id("blood_drain_cooldown"),
-        MemoryModuleType(Optional.of(Codec.INT))
+        MemoryModuleType(Optional.of(Codec.unit(com.mojang.datafixers.util.Unit.INSTANCE)))
     )
 
-    val SUN_SHIELD_COOLDOWN_MEMORY: MemoryModuleType<Int> = Registry.register(
+    val SUN_SHIELD_COOLDOWN_MEMORY: MemoryModuleType<com.mojang.datafixers.util.Unit> = Registry.register(
         Registries.MEMORY_MODULE_TYPE,
         id("sun_shield_cooldown"),
-        MemoryModuleType(Optional.of(Codec.INT))
+        MemoryModuleType(Optional.of(Codec.unit(com.mojang.datafixers.util.Unit.INSTANCE)))
     )
 
-    val DASH_COOLDOWN_MEMORY: MemoryModuleType<Int> = Registry.register(
+    val DASH_COOLDOWN_MEMORY: MemoryModuleType<com.mojang.datafixers.util.Unit> = Registry.register(
         Registries.MEMORY_MODULE_TYPE,
         id("dash_cooldown"),
-        MemoryModuleType(Optional.of(Codec.INT))
+        MemoryModuleType(Optional.of(Codec.unit(com.mojang.datafixers.util.Unit.INSTANCE)))
+    )
+
+    val SKY_VISIBLE_MEMORY: MemoryModuleType<com.mojang.datafixers.util.Unit> = Registry.register(
+        Registries.MEMORY_MODULE_TYPE,
+        id("sky_visible"),
+        MemoryModuleType(Optional.of(Codec.unit(com.mojang.datafixers.util.Unit.INSTANCE)))
+    )
+
+    val SKY_VISIBLE_SENSOR: SensorType<out SunVisibilitySensor<*>> = Registry.register(
+        Registries.SENSOR_TYPE,
+        id("sky_visible"),
+        SensorType<SunVisibilitySensor<*>> { SunVisibilitySensor<LivingEntity>() }
     )
 
     private val BIOME_SPAWNS_VAMPIRAGERS: TagKey<Biome> = TagKey.of(RegistryKeys.BIOME, id("spawns_vampiragers"))
