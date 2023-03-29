@@ -85,13 +85,8 @@ class VampiragerEntity(entityType: EntityType<out VampiragerEntity>, world: Worl
         for (i in 0..5) {
             val zombie = VampireMobsModule.VAMPIRIC_ZOMBIE.spawn(
                 this.world as ServerWorld,
-                null,
-                null,
-                null,
                 this.blockPos.add(this.random.nextBetween(-3, 3), 0, this.random.nextBetween(-3, 3)),
-                SpawnReason.REINFORCEMENT,
-                true,
-                false
+                SpawnReason.REINFORCEMENT
             )
             zombie?.owner = this
         }

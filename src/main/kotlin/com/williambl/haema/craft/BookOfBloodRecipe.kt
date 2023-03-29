@@ -8,12 +8,14 @@ import net.minecraft.potion.Potions
 import net.minecraft.recipe.RecipeSerializer
 import net.minecraft.recipe.SpecialCraftingRecipe
 import net.minecraft.recipe.SpecialRecipeSerializer
+import net.minecraft.recipe.book.CraftingRecipeCategory
+import net.minecraft.registry.Registries
 import net.minecraft.util.Identifier
-import net.minecraft.util.registry.Registry
+
 import net.minecraft.world.World
 
-class BookOfBloodRecipe(id: Identifier?) : SpecialCraftingRecipe(id) {
-    val resultStack = ItemStack(Registry.ITEM[Identifier("haema:book_of_blood")])
+class BookOfBloodRecipe(id: Identifier, cat: CraftingRecipeCategory) : SpecialCraftingRecipe(id, cat) {
+    val resultStack = ItemStack(Registries.ITEM[Identifier("haema:book_of_blood")])
 
     override fun craft(inv: CraftingInventory): ItemStack {
         var foundBook = false
@@ -67,5 +69,5 @@ class BookOfBloodRecipe(id: Identifier?) : SpecialCraftingRecipe(id) {
         return foundBook && foundPotion
     }
 
-    companion object Serializer: SpecialRecipeSerializer<BookOfBloodRecipe>({ id -> BookOfBloodRecipe(id) })
+    companion object Serializer: SpecialRecipeSerializer<BookOfBloodRecipe>(::BookOfBloodRecipe)
 }

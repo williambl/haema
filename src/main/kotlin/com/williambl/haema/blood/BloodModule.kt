@@ -1,6 +1,5 @@
 package com.williambl.haema.blood
 
-import com.williambl.haema.Haema
 import com.williambl.haema.id
 import com.williambl.haema.util.addTradesToProfession
 import net.fabricmc.api.ModInitializer
@@ -15,29 +14,31 @@ import net.minecraft.loot.LootManager
 import net.minecraft.loot.LootPool
 import net.minecraft.loot.entry.LootTableEntry
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider
+import net.minecraft.registry.Registries
+import net.minecraft.registry.Registry
 import net.minecraft.resource.ResourceManager
 import net.minecraft.util.Identifier
-import net.minecraft.util.registry.Registry
 import net.minecraft.village.TradeOffer
 import net.minecraft.village.TradeOffers
 import net.minecraft.village.VillagerProfession
 
 object BloodModule: ModInitializer {
     val VAMPIRE_BLOOD: VampireBloodItem = Registry.register(
-        Registry.ITEM,
+        Registries.ITEM,
         id("vampire_blood"),
         VampireBloodItem()
     )
 
-    val VAMPIRE_BLOOD_INJECTOR: VampireBloodInjectorItem = Registry.register(Registry.ITEM,
+    val VAMPIRE_BLOOD_INJECTOR: VampireBloodInjectorItem = Registry.register(
+        Registries.ITEM,
         id("vampire_blood_injector"),
-        VampireBloodInjectorItem(Item.Settings().group(Haema.ITEM_GROUP).maxCount(1))
+        VampireBloodInjectorItem(Item.Settings().maxCount(1))
     )
 
     val EMPTY_VAMPIRE_BLOOD_INJECTOR: EmptyVampireBloodInjectorItem = Registry.register(
-        Registry.ITEM,
+        Registries.ITEM,
         id("empty_vampire_blood_injector"),
-        EmptyVampireBloodInjectorItem(Item.Settings().group(Haema.ITEM_GROUP).maxCount(1))
+        EmptyVampireBloodInjectorItem(Item.Settings().maxCount(1))
     )
 
     override fun onInitialize() {

@@ -4,9 +4,9 @@ import com.williambl.haema.ability.component.mist_form.MistFormAbilityComponent;
 import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
@@ -28,7 +28,7 @@ public abstract class AbstractBlockStateMixin {
 
     @Shadow public abstract boolean isIn(TagKey<Block> tag);
 
-    @Unique private static final TagKey<Block> PERMEABLE_BLOCKS = TagKey.of(Registry.BLOCK_KEY, id("mist_permeable"));
+    @Unique private static final TagKey<Block> PERMEABLE_BLOCKS = TagKey.of(RegistryKeys.BLOCK, id("mist_permeable"));
 
     @Inject(at = @At("HEAD"), method = "getCollisionShape(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/ShapeContext;)Lnet/minecraft/util/shape/VoxelShape;", cancellable = true)
     private void phaseThroughBlocks(BlockView world, BlockPos pos, ShapeContext context, CallbackInfoReturnable<VoxelShape> cir) {

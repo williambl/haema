@@ -20,11 +20,12 @@ import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer
 import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy
 import me.lucko.fabric.api.permissions.v0.Permissions
 import net.fabricmc.api.ModInitializer
-import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents
 import net.fabricmc.fabric.api.util.TriState
 import net.minecraft.block.BedBlock
 import net.minecraft.block.enums.BedPart
@@ -35,18 +36,21 @@ import net.minecraft.entity.passive.VillagerEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.Item
 import net.minecraft.item.ItemGroup
+import net.minecraft.registry.Registries
+import net.minecraft.registry.Registry
+import net.minecraft.registry.RegistryKeys
+import net.minecraft.registry.tag.TagKey
 import net.minecraft.server.command.CommandManager.argument
 import net.minecraft.server.command.CommandManager.literal
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
-import net.minecraft.tag.TagKey
 import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.Box
-import net.minecraft.util.registry.Registry
+
 import net.minecraft.village.VillageGossipType
 import net.minecraft.world.World
 import org.apache.logging.log4j.LogManager
@@ -56,12 +60,13 @@ fun id(path: String): Identifier = Identifier("haema", path)
 
 object Haema: ModInitializer, EntityComponentInitializer {
     val LOGGER: Logger = LogManager.getLogger("Haema")
-    val ITEM_GROUP: ItemGroup = FabricItemGroupBuilder.create(id("items"))
+    val ITEM_GROUP: ItemGroup = FabricItemGroup.builder(id("items"))
         .icon { BloodModule.VAMPIRE_BLOOD.defaultStack }
         .build()
-    val BOOK_OF_BLOOD: BookOfBloodItem = Registry.register(Registry.ITEM,
+    val BOOK_OF_BLOOD: BookOfBloodItem = Registry.register(
+        Registries.ITEM,
         id("book_of_blood"),
-        BookOfBloodItem(Item.Settings().group(ITEM_GROUP).maxCount(1))
+        BookOfBloodItem(Item.Settings().maxCount(1))
     )
 
     override fun onInitialize() {
@@ -116,7 +121,7 @@ object Haema: ModInitializer, EntityComponentInitializer {
         VampireBurningEvents.VETO.register(VampireBurningEvents.Veto { player, _ ->
             if (player.isSpectator || player is PlayerEntity && player.abilities.creativeMode) TriState.FALSE else TriState.DEFAULT
         })
-        val vampireProtectiveClothingTag = TagKey.of(Registry.ITEM_KEY, id("vampire_protective_clothing"))
+        val vampireProtectiveClothingTag = TagKey.of(RegistryKeys.ITEM, id("vampire_protective_clothing"))
         VampireBurningEvents.VETO.register(object : VampireBurningEvents.Veto {
             override fun getPriority(): Int = 10
 
@@ -160,10 +165,16 @@ object Haema: ModInitializer, EntityComponentInitializer {
         HaemaGameRules.registerGameRules()
 
         Registry.register(
-            Registry.RECIPE_SERIALIZER,
+            Registries.RECIPE_SERIALIZER,
             id("book_of_blood"),
             BookOfBloodRecipe.Serializer
         )
+
+        ItemGroupEvents.modifyEntriesEvent(ITEM_GROUP).register { entries ->
+            Registries.ITEM.streamEntries()
+                .filter { it.registryKey().value.namespace == "haema" }
+                .forEach { entries.add(it.value()) }
+        }
 
         //TODO: redo these commands a bit, use translatabletexts + entities not players + move into separate class(es)
         CommandRegistrationCallback.EVENT.register { dispatcher, registryAccess, environment ->

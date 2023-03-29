@@ -8,9 +8,9 @@ import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.mob.PatrolEntity
 import net.minecraft.entity.passive.PassiveEntity
 import net.minecraft.nbt.NbtCompound
+import net.minecraft.registry.tag.BiomeTags
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
-import net.minecraft.tag.BiomeTags
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.random.Random
 import net.minecraft.world.GameRules

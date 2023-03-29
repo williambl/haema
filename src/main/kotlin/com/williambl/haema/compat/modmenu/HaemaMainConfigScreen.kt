@@ -17,15 +17,15 @@ class HaemaMainConfigScreen(private val parent: Screen?) : Screen(Text.literal("
 
     override fun init() {
         super.init()
-        addDrawableChild(ButtonWidget(width / 4 - 75, 120, 150, 20, Text.translatable("gui.haema.config.client")) {
+        addDrawableChild(ButtonWidget.builder(Text.translatable("gui.haema.config.client")) {
             client?.setScreen(AutoConfig.getConfigScreen(HaemaConfig::class.java, this).get())
-        })
-        addDrawableChild(ButtonWidget(3 * width / 4 - 75, 120, 150, 20, Text.translatable("gui.haema.config.gameplay")) {
+        }.dimensions(width / 4 - 75, 120, 150, 20).build())
+        addDrawableChild(ButtonWidget.builder(Text.translatable("gui.haema.config.gameplay")) {
             client?.setScreen(HaemaGameplayConfigScreen(this))
-        })
-        addDrawableChild(ButtonWidget(width / 2 - 100, 180, 200, 20, Text.translatable("gui.done")) {
+        }.dimensions(3 * width / 4 - 75, 120, 150, 20).build())
+        addDrawableChild(ButtonWidget.builder(Text.translatable("gui.done")) {
             close()
-        })
+        }.dimensions(width / 2 - 100, 180, 200, 20).build())
     }
 
     override fun render(matrices: MatrixStack?, mouseX: Int, mouseY: Int, delta: Float) {

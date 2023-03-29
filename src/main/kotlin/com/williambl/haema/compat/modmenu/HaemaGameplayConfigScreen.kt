@@ -10,6 +10,7 @@ import net.minecraft.client.gui.widget.ButtonWidget.PressAction
 import net.minecraft.client.util.InputUtil
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.text.ClickEvent
+import net.minecraft.text.MutableText
 import net.minecraft.text.Style
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
@@ -18,6 +19,7 @@ import org.lwjgl.glfw.GLFW
 import java.awt.Color
 import java.net.URI
 import java.net.URISyntaxException
+import java.util.function.Supplier
 
 class HaemaGameplayConfigScreen(private val parent: Screen?) : Screen(Text.literal("HAEMA").formatted(Formatting.UNDERLINE)) {
     val icon = id("icon.png")
@@ -77,14 +79,14 @@ class HaemaGameplayConfigScreen(private val parent: Screen?) : Screen(Text.liter
         super.init()
         addDrawableChild(object : ButtonWidget(width/2-210, 180, 200, 20, Text.translatable("gui.haema.moreinfo"), PressAction {
             isShowingMore = !isShowingMore
-        }) {
+        }, Supplier<MutableText>::get) {
             override fun getMessage(): Text {
                 return Text.translatable(if (isShowingMore) "gui.haema.lessinfo" else "gui.haema.moreinfo")
             }
         })
-        addDrawableChild(ButtonWidget(width/2+10, 180, 200, 20, Text.translatable("gui.done")) {
+        addDrawableChild(ButtonWidget.builder(Text.translatable("gui.done")) {
             close()
-        })
+        }.dimensions(width/2+10, 180, 200, 20).build())
     }
 
     override fun render(matrices: MatrixStack?, mouseX: Int, mouseY: Int, delta: Float) {

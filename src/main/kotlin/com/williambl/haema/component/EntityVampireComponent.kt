@@ -28,12 +28,12 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.particle.DustParticleEffect
+import net.minecraft.registry.RegistryKeys
+import net.minecraft.registry.tag.TagKey
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.sound.SoundEvents
-import net.minecraft.tag.TagKey
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
-import net.minecraft.util.registry.Registry
 import net.minecraft.world.GameRules
 import net.minecraft.world.World
 import java.util.*
@@ -298,9 +298,9 @@ class EntityVampireComponent
         private val VAMPIRE_ATTACK_RANGE = EntityAttributeModifier(VAMPIRE_ATTACK_RANGE_UUID, "Vampire attack range extension", 2.0, EntityAttributeModifier.Operation.ADDITION)
         private val VAMPIRE_HEALTH_BOOST = EntityAttributeModifier(VAMPIRE_HEALTH_BOOST_UUID, "Vampire health boost", 1.0, EntityAttributeModifier.Operation.MULTIPLY_BASE)
 
-        val goodBloodTag: TagKey<EntityType<*>> = TagKey.of(Registry.ENTITY_TYPE_KEY, id("good_blood_sources"))
-        val mediumBloodTag: TagKey<EntityType<*>> = TagKey.of(Registry.ENTITY_TYPE_KEY, id("medium_blood_sources"))
-        val poorBloodTag: TagKey<EntityType<*>> = TagKey.of(Registry.ENTITY_TYPE_KEY, id("poor_blood_sources"))
+        val goodBloodTag: TagKey<EntityType<*>> = TagKey.of(RegistryKeys.ENTITY_TYPE, id("good_blood_sources"))
+        val mediumBloodTag: TagKey<EntityType<*>> = TagKey.of(RegistryKeys.ENTITY_TYPE, id("medium_blood_sources"))
+        val poorBloodTag: TagKey<EntityType<*>> = TagKey.of(RegistryKeys.ENTITY_TYPE, id("poor_blood_sources"))
 
         fun getFeedCooldown(world: World): Int = world.gameRules[HaemaGameRules.feedCooldown].get()
 

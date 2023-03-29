@@ -9,7 +9,6 @@ import com.williambl.haema.client.gui.RitualTableScreen
 import com.williambl.haema.client.gui.VampireHud
 import com.williambl.haema.component.EntityVampireComponent
 import com.williambl.haema.component.EntityVampireComponent.Companion.getFeedCooldown
-import com.williambl.haema.drip.DripModule
 import com.williambl.haema.getAbilityLevel
 import com.williambl.haema.hunter.VampireHunterModule
 import com.williambl.haema.id
@@ -35,7 +34,6 @@ import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.ingame.HandledScreens
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.util.math.MatrixStack
-import net.minecraft.entity.Entity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.text.Text
@@ -43,7 +41,6 @@ import net.minecraft.util.Formatting
 import net.minecraft.util.hit.EntityHitResult
 import net.minecraft.util.hit.HitResult
 import org.lwjgl.glfw.GLFW
-import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer
 import kotlin.math.max
 
 object HaemaClient: ClientModInitializer {
@@ -106,8 +103,6 @@ object HaemaClient: ClientModInitializer {
         EntityRendererRegistry.register(VampireHunterModule.VAMPIRE_HUNTER) { context -> VampireHunterEntityRenderer(context) }
         EntityRendererRegistry.register(VampireMobsModule.VAMPIRIC_ZOMBIE) { context -> VampiricZombieRenderer(context) }
         EntityRendererRegistry.register(VampireMobsModule.VAMPIRAGER) { context -> VampiragerEntityRenderer(context) }
-
-        GeoArmorRenderer.registerArmorRenderer<Entity>(VampireClothingRenderer(), DripModule.VAMPIRE_HAT, DripModule.VAMPIRE_COAT, DripModule.VAMPIRE_TROUSERS, DripModule.VAMPIRE_SHOES)
 
         AutoConfig.register(HaemaConfig::class.java) { config, clazz -> Toml4jConfigSerializer(config, clazz) }
 

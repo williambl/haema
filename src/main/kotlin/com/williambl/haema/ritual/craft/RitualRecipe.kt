@@ -20,6 +20,7 @@ import net.minecraft.recipe.Ingredient
 import net.minecraft.recipe.Recipe
 import net.minecraft.recipe.RecipeSerializer
 import net.minecraft.recipe.RecipeType
+import net.minecraft.registry.Registries
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
@@ -27,7 +28,7 @@ import net.minecraft.state.property.Properties
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
-import net.minecraft.util.registry.Registry
+
 import net.minecraft.world.World
 
 class RitualRecipe(
@@ -151,7 +152,7 @@ class RitualRecipe(
 
                 return RitualRecipe(
                     id,
-                    Registry.FLUID.get(Identifier(json.get("fluid").asString)),
+                    Registries.FLUID.get(Identifier(json.get("fluid").asString)),
                     json.getAsJsonArray("ingredients").map(Ingredient::fromJson),
                     json.get("minLevel").asInt,
                     json.get("repeatable").asBoolean,
@@ -171,7 +172,7 @@ class RitualRecipe(
 
                 return RitualRecipe(
                     id,
-                    Registry.FLUID.get(buf.readIdentifier()),
+                    Registries.FLUID.get(buf.readIdentifier()),
                     ingredients,
                     buf.readInt(),
                     buf.readBoolean(),
@@ -183,7 +184,7 @@ class RitualRecipe(
             override fun write(buf: PacketByteBuf, recipe: RitualRecipe) {
                 buf.writeInt(recipe.ingredients.size)
                 recipe.ingredients.forEach { it.write(buf) }
-                buf.writeIdentifier(Registry.FLUID.getId(recipe.fluid))
+                buf.writeIdentifier(Registries.FLUID.getId(recipe.fluid))
                 buf.writeInt(recipe.minLevel)
                 buf.writeBoolean(recipe.isRepeatable)
                 buf.writeIdentifier(recipe.actionName)

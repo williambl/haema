@@ -1,6 +1,5 @@
 package com.williambl.haema.blood
 
-import com.williambl.haema.Haema
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
@@ -8,7 +7,7 @@ import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import net.minecraft.world.World
 
-class VampireBloodItem : Item(Settings().group(Haema.ITEM_GROUP)) {
+class VampireBloodItem : Item(Settings()) {
     override fun appendTooltip(
         stack: ItemStack?,
         world: World?,

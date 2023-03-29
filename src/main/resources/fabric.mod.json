@@ -77,8 +77,8 @@
     "cloth-config": "*",
     "cardinal-components-entity": "*",
     "pehkui": "*",
-    "geckolib3": "*",
-    "minecraft": ">=1.19"
+    "geckolib": "*",
+    "minecraft": ">=1.19.3"
   },
   "suggests": {
     "origins": ">=0.4.7"

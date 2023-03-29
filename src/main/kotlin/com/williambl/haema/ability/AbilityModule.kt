@@ -26,11 +26,14 @@ import net.minecraft.network.PacketByteBuf
 import net.minecraft.particle.DefaultParticleType
 import net.minecraft.potion.PotionUtil
 import net.minecraft.potion.Potions
+import net.minecraft.registry.DefaultedRegistry
+import net.minecraft.registry.Registries
+import net.minecraft.registry.Registry
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayNetworkHandler
 import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.util.registry.DefaultedRegistry
-import net.minecraft.util.registry.Registry
+
+
 
 object AbilityModule: ModInitializer, EntityComponentInitializer {
     val ABILITY_REGISTRY: DefaultedRegistry<VampireAbility> = FabricRegistryBuilder.createDefaulted(VampireAbility::class.java, id("ability"), id("none")).attribute(RegistryAttribute.SYNCED).buildAndRegister()
@@ -43,7 +46,7 @@ object AbilityModule: ModInitializer, EntityComponentInitializer {
     val VISION: VampireAbility = Registry.register(ABILITY_REGISTRY, id("vision"), VampireAbility(1, ItemStack(Items.ENDER_EYE)))
     val MIST_FORM: VampireAbility = Registry.register(ABILITY_REGISTRY, id("mist_form"), VampireAbility(1, ItemStack(Items.COBWEB)))
 
-    val MIST_PARTICLE = Registry.register(Registry.PARTICLE_TYPE, id("mist"), object : DefaultParticleType(false) {})
+    val MIST_PARTICLE = Registry.register(Registries.PARTICLE_TYPE, id("mist"), object : DefaultParticleType(false) {})
 
     override fun onInitialize() {
         ArgumentTypeRegistry.registerArgumentType(

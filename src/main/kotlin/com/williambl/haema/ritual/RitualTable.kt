@@ -27,11 +27,11 @@ import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Direction
-import net.minecraft.util.math.Vec3f
 import net.minecraft.util.math.random.Random
 import net.minecraft.util.shape.VoxelShape
 import net.minecraft.world.BlockView
 import net.minecraft.world.World
+import org.joml.Vector3f
 import kotlin.math.min
 
 
@@ -208,7 +208,7 @@ class RitualTable(settings: Settings) : HorizontalFacingBlock(settings) {
                 val offsetX = 3*world.random.nextDouble() - 1.0
                 val offsetZ = 3*world.random.nextDouble() - 1.0
                 world.addParticle(
-                    DustParticleEffect(Vec3f(speed.toFloat(), 0f, 0f), 1f),
+                    DustParticleEffect(Vector3f(speed.toFloat(), 0f, 0f), 1f),
                     pos.x + offsetX,
                     pos.y - 0.2,
                     pos.z + offsetZ,

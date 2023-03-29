@@ -11,13 +11,14 @@ import io.github.apace100.apoli.power.PowerType
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
+import net.minecraft.registry.Registries
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.Identifier
 import net.minecraft.util.Pair
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
-import net.minecraft.util.registry.Registry
+
 
 class VampirePower(type: PowerType<*>?, entity: LivingEntity) : ModifyPlayerSpawnPower(type, entity, null, 1.0f, null, null, null, null) {
     override fun onAdded() {
@@ -70,7 +71,7 @@ class VampirePower(type: PowerType<*>?, entity: LivingEntity) : ModifyPlayerSpaw
             VampireConversionCriterion.trigger(entity as ServerPlayerEntity)
         }
         if (entity is PlayerEntity) {
-            val bookStack = ItemStack(Registry.ITEM[Identifier("haema:book_of_blood")])
+            val bookStack = ItemStack(Registries.ITEM[Identifier("haema:book_of_blood")])
             (entity as PlayerEntity).inventory.offerOrDrop(bookStack)
         }
     }

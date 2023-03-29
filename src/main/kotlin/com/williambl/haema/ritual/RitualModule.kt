@@ -1,6 +1,5 @@
 package com.williambl.haema.ritual
 
-import com.williambl.haema.Haema
 import com.williambl.haema.api.RitualTableUseEvent
 import com.williambl.haema.core.BookOfBloodItem
 import com.williambl.haema.id
@@ -20,15 +19,16 @@ import net.minecraft.item.BlockItem
 import net.minecraft.item.Item
 import net.minecraft.recipe.RecipeSerializer
 import net.minecraft.recipe.RecipeType
+import net.minecraft.registry.Registries
+import net.minecraft.registry.Registry
+import net.minecraft.registry.RegistryKeys
+import net.minecraft.registry.tag.TagKey
 import net.minecraft.state.property.Properties
-import net.minecraft.tag.TagKey
 import net.minecraft.text.Text
 import net.minecraft.util.Hand
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
-import net.minecraft.util.registry.Registry
 import net.minecraft.world.World
-import vazkii.patchouli.common.item.PatchouliItems
 import vazkii.patchouli.common.multiblock.DenseMultiblock
 import vazkii.patchouli.common.multiblock.MultiblockRegistry
 import vazkii.patchouli.common.multiblock.StateMatcher
@@ -43,24 +43,24 @@ object RitualModule: ModInitializer {
         RitualRecipe.Companion.Serializer
     )
 
-    val RITUAL_TABLE_SCREEN_HANDLER = Registry.register(Registry.SCREEN_HANDLER, id("ritual_table"), ExtendedScreenHandlerType(::RitualTableScreenHandler))
+    val RITUAL_TABLE_SCREEN_HANDLER = Registry.register(Registries.SCREEN_HANDLER, id("ritual_table"), ExtendedScreenHandlerType(::RitualTableScreenHandler))
 
     val RITUAL_TABLE_BLOCK: RitualTable = Registry.register(
-            Registry.BLOCK,
+            Registries.BLOCK,
             id("ritual_table"),
             RitualTable.instance
         )
     val RITUAL_TABLE_ITEM: BlockItem = Registry.register(
-            Registry.ITEM,
+            Registries.ITEM,
             id("ritual_table"),
-            BlockItem(RitualTable.instance, Item.Settings().group(Haema.ITEM_GROUP))
+            BlockItem(RitualTable.instance, Item.Settings())
         )
 
-    val LEVEL_0_RITUAL_MATERIALS: TagKey<Block> = TagKey.of(Registry.BLOCK_KEY, id("ritual_materials/level_0"))
-    val LEVEL_1_RITUAL_MATERIALS: TagKey<Block> = TagKey.of(Registry.BLOCK_KEY, id("ritual_materials/level_1"))
+    val LEVEL_0_RITUAL_MATERIALS: TagKey<Block> = TagKey.of(RegistryKeys.BLOCK, id("ritual_materials/level_0"))
+    val LEVEL_1_RITUAL_MATERIALS: TagKey<Block> = TagKey.of(RegistryKeys.BLOCK, id("ritual_materials/level_1"))
 
-    val LEVEL_0_RITUAL_TORCHES: TagKey<Block> = TagKey.of(Registry.BLOCK_KEY, id("ritual_torches/level_0"))
-    val LEVEL_1_RITUAL_TORCHES: TagKey<Block> = TagKey.of(Registry.BLOCK_KEY, id("ritual_torches/level_1"))
+    val LEVEL_0_RITUAL_TORCHES: TagKey<Block> = TagKey.of(RegistryKeys.BLOCK, id("ritual_torches/level_0"))
+    val LEVEL_1_RITUAL_TORCHES: TagKey<Block> = TagKey.of(RegistryKeys.BLOCK, id("ritual_torches/level_1"))
 
     override fun onInitialize() {
         RitualTableUseEvent.EVENT.register { _: BlockState, world: World, _: BlockPos, player: PlayerEntity, hand: Hand, _: BlockHitResult ->

@@ -19,15 +19,18 @@ import net.minecraft.entity.*
 import net.minecraft.entity.mob.HostileEntity
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.tag.TagKey
-import net.minecraft.util.registry.Registry
+import net.minecraft.registry.Registries
+import net.minecraft.registry.Registry
+import net.minecraft.registry.RegistryKeys
+import net.minecraft.registry.tag.TagKey
+
 import net.minecraft.world.Heightmap
 import net.minecraft.world.World
 import net.minecraft.world.biome.Biome
 
 object VampireMobsModule: ModInitializer, EntityComponentInitializer {
     val VAMPIRIC_ZOMBIE: EntityType<VampiricZombieEntity> = Registry.register(
-        Registry.ENTITY_TYPE,
+        Registries.ENTITY_TYPE,
         id("vampiric_zombie"),
         FabricEntityTypeBuilder.createMob<VampiricZombieEntity>()
             .spawnGroup(SpawnGroup.MONSTER)
@@ -38,7 +41,7 @@ object VampireMobsModule: ModInitializer, EntityComponentInitializer {
     )
 
     val VAMPIRAGER: EntityType<VampiragerEntity> = Registry.register(
-        Registry.ENTITY_TYPE,
+        Registries.ENTITY_TYPE,
         id("vampirager"),
         FabricEntityTypeBuilder.createMob<VampiragerEntity>()
             .spawnGroup(SpawnGroup.MONSTER)
@@ -48,7 +51,7 @@ object VampireMobsModule: ModInitializer, EntityComponentInitializer {
             .build()
     )
 
-    private val BIOME_SPAWNS_VAMPIRAGERS: TagKey<Biome> = TagKey.of(Registry.BIOME_KEY, id("spawns_vampiragers"))
+    private val BIOME_SPAWNS_VAMPIRAGERS: TagKey<Biome> = TagKey.of(RegistryKeys.BIOME, id("spawns_vampiragers"))
 
     override fun onInitialize() {
         BloodDrinkingEvents.ON_BLOOD_DRINK.register { drinker, target, world ->

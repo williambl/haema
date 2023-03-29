@@ -13,7 +13,7 @@ import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.particle.DustParticleEffect
-import net.minecraft.util.math.Vec3f
+import org.joml.Vector3f
 import kotlin.math.abs
 import kotlin.math.ln
 import kotlin.math.max
@@ -31,7 +31,7 @@ object ClientDashHandler: ClientTickEvents.StartTick {
             val target = raytraceForDash(player)
             if (target != null) for (i in 0..9) {
                 world.addParticle(
-                    DustParticleEffect(Vec3f(0f, 0f, 0f), 1f),
+                    DustParticleEffect(Vector3f(0f, 0f, 0f), 1f),
                     target.x - 0.5 + world.random.nextDouble(),
                     target.y + world.random.nextDouble() * 2,
                     target.z - 0.5 + world.random.nextDouble(),

@@ -14,12 +14,13 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.item.ItemStack
 import net.minecraft.network.PacketByteBuf
+import net.minecraft.registry.Registries
 import net.minecraft.screen.PropertyDelegate
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.ScreenHandlerContext
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
-import net.minecraft.util.registry.Registry
+
 
 class RitualTableScreenHandler(syncId: Int, val inv: RitualInventory, private val context: ScreenHandlerContext)
     : ScreenHandler(RitualModule.RITUAL_TABLE_SCREEN_HANDLER, syncId) {
@@ -28,7 +29,7 @@ class RitualTableScreenHandler(syncId: Int, val inv: RitualInventory, private va
         syncId,
         RitualInventory(
             listOf(),
-            Registry.FLUID.get(packetByteBuf.readIdentifier()),
+            Registries.FLUID.get(packetByteBuf.readIdentifier()),
             packetByteBuf.readBlockPos(),
             playerInventory.player,
             packetByteBuf.readVarInt()
@@ -62,7 +63,7 @@ class RitualTableScreenHandler(syncId: Int, val inv: RitualInventory, private va
         ClientPlayNetworking.send(id("transferlevels"), PacketByteBuf(Unpooled.buffer()).writeVarInt(syncId).writeVarInt(amount).writeVarInt(from).writeVarInt(to))
     }
 
-    override fun transferSlot(player: PlayerEntity?, index: Int): ItemStack = ItemStack.EMPTY
+    override fun quickMove(player: PlayerEntity?, index: Int): ItemStack = ItemStack.EMPTY
 
     override fun canUse(player: PlayerEntity): Boolean = canUse(context, player, RitualTable.instance)
 
@@ -76,7 +77,7 @@ class RitualTableScreenHandler(syncId: Int, val inv: RitualInventory, private va
         }
 
         override fun writeScreenOpeningData(player: ServerPlayerEntity, buf: PacketByteBuf) {
-            buf.writeIdentifier(Registry.FLUID.getId(inv.fluid))
+            buf.writeIdentifier(Registries.FLUID.getId(inv.fluid))
             buf.writeBlockPos(inv.pos)
             buf.writeVarInt(inv.level)
         }

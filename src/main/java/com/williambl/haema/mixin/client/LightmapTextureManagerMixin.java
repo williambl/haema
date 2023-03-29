@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public class LightmapTextureManagerMixin {
     @ModifyVariable(
             method = "update",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/Vec3f;<init>(FFF)V", ordinal = 0),
+            at = @At(value = "INVOKE", target = "Lorg/joml/Vector3f;<init>(FFF)V", ordinal = 0),
             ordinal = 3
     )
     private float haema$changeLightForVampireVision(float value) {

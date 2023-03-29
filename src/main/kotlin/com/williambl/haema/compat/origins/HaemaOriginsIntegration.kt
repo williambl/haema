@@ -12,7 +12,8 @@ import io.github.apace100.apoli.registry.ApoliRegistries
 import io.github.apace100.calio.data.SerializableData
 import net.fabricmc.fabric.api.util.TriState
 import net.minecraft.entity.LivingEntity
-import net.minecraft.util.registry.Registry
+import net.minecraft.registry.Registry
+
 import java.util.function.BiFunction
 
 fun registerPowerTypes() {

@@ -168,7 +168,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
 
     // GeckoLib
-    modImplementation("software.bernie.geckolib:geckolib-fabric-1.19:${project.geckolib_version}") {
+    modImplementation("software.bernie.geckolib:geckolib-fabric-1.19.3:${project.geckolib_version}") {
         exclude group: "com.eliotlash.mclib"
         exclude group: "com.eliotlash.molang"
         exclude group: "net.fabricmc.fabric-api"
@@ -227,12 +227,14 @@ dependencies {
     // REI
     modCompileOnly("me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}") {
         exclude group: "net.fabricmc.fabric-api"
+        transitive = false
     }
 
     // EMI
     modCompileOnly("dev.emi:emi:${project.emi_version}") {
         exclude group: "net.fabricmc.fabric_api"
         exclude group: "null"
+        transitive = false
     }
 
     // Origins
@@ -249,17 +251,19 @@ dependencies {
         exclude group: "net.fabricmc.fabric-api"
     }
 
-
     // Bewitchment
     modCompileOnly("curse.maven:bewitchment-394915:${project.bewitchment_version}") {
         exclude group: "net.fabricmc.fabric-api"
+        transitive = false
     }
 
     // Flan
-    modCompileOnly("io.github.flemmli97:flan:${project.flan_version}") {
+    modCompileOnly("io.github.flemmli97:flan:${project.flan_version}:fabric-api") {
         exclude group: "net.fabricmc.fabric-api"
+        transitive = false
     }
 
+    // Appleskin
     modCompileOnly("squeek.appleskin:appleskin-fabric:${project.appleskin_version}:api") {
         exclude group: "net.fabricmc.fabric-api"
         transitive = false

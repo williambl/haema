@@ -3,11 +3,12 @@ package com.williambl.haema.hunter.structure
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import com.williambl.haema.hunter.VampireHunterModule
+import net.minecraft.registry.entry.RegistryEntry
 import net.minecraft.structure.pool.StructurePool
 import net.minecraft.structure.pool.StructurePoolBasedGenerator
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
-import net.minecraft.util.registry.RegistryEntry
+
 import net.minecraft.world.Heightmap
 import net.minecraft.world.gen.heightprovider.HeightProvider
 import net.minecraft.world.gen.structure.Structure
