@@ -3,6 +3,8 @@ plugins {
     id 'io.github.juuxel.loom-quiltflower' version '1.6.0'
     id 'maven-publish'
     id "org.jetbrains.kotlin.jvm"
+    id 'com.matthewprenger.cursegradle' version '1.4.0'
+    id "com.modrinth.minotaur" version "2.+"
 }
 
 sourceCompatibility = JavaVersion.VERSION_16
@@ -329,5 +331,57 @@ compileKotlin.kotlinOptions.jvmTarget = "16"
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
         freeCompilerArgs += '-Xjvm-default=all'
+    }
+}
+
+curseforge {
+    apiKey = project.hasProperty('curseforge_api_key') ? project.property('curseforge_api_key') : ''
+    //noinspection GroovyAssignabilityCheck
+    project {
+        id = project.curseforge_project_id
+        changelogType = 'markdown'
+        changelog = file("changelog.md")
+
+        addGameVersion project.minecraft_version
+        addGameVersion "Fabric"
+        addGameVersion "Quilt"
+
+        mainArtifact(remapJar) {
+            displayName = "v${project.version.toString().split("\\+")[0]} for Fabric/Quilt&MC $project.minecraft_version"
+            releaseType = "release"
+            relations {
+                requiredDependency "fabric"
+                requiredDependency "fabric-language-kotlin"
+                requiredDependency "geckolib"
+                embeddedLibrary "cardinal-components"
+                embeddedLibrary "patchouli-fabric"
+                embeddedLibrary "satin-api"
+                optionalDependency "bewitchment"
+                optionalDependency "emi"
+                optionalDependency "origins"
+                optionalDependency "rats-mischief"
+            }
+        }
+    }
+}
+
+modrinth {
+    token = project.hasProperty("modrinth_api_key") ? project.property("modrinth_api_key") : ""
+    projectId = project.modrinth_project_id
+    versionNumber = project.version
+    changelog = file("changelog.md").text
+    versionType = "release"
+    uploadFile = remapJar
+    gameVersions = [project.minecraft_version]
+    loaders = ["fabric", "quilt"]
+    dependencies {
+        // The scope can be `required`, `optional`, `incompatible`, or `embedded`
+        // The type can either be `project` or `version`
+        required.project "fabric-api"
+        required.project "fabric-language-kotlin"
+        required.project "geckolib"
+        embedded.project "cardinal-components-api"
+        embedded.project "patchouli"
+        embedded.project "satin-api"
     }
 }
