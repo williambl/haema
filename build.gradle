@@ -223,7 +223,7 @@ dependencies {
     }
 
     // SmartBrainLib
-    modImplementation include("curse.maven:smartbrainlib-661293:4125897") {
+    modImplementation include("curse.maven:smartbrainlib-661293:${project.smartbrainlib_version}") {
         exclude group: "net.fabricmc.fabric-api"
     }
 

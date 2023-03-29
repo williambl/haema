@@ -26,7 +26,7 @@ class SunShieldBlock(settings: Settings) : Block(settings) {
     ) {
         super.onBlockAdded(state, world, pos, oldState, notify)
         if (state.get(DISTANCE) < 10) {
-            world.createAndScheduleBlockTick(pos, this, 2)
+            world.scheduleBlockTick(pos, this, 2)
         }
     }
 

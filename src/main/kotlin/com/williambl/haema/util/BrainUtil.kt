@@ -3,7 +3,7 @@ package com.williambl.haema.util
 import com.williambl.haema.vampiremobs.VampireMobsModule
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.mob.MobEntity
-import net.tslat.smartbrainlib.api.util.BrainUtils
+import net.tslat.smartbrainlib.util.BrainUtils
 
 fun setMultiTarget(entity: LivingEntity, target: List<LivingEntity>) {
     if (entity is MobEntity) {

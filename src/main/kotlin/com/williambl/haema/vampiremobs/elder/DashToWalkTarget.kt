@@ -10,7 +10,7 @@ import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import net.tslat.smartbrainlib.api.core.behaviour.DelayedBehaviour
-import net.tslat.smartbrainlib.api.util.BrainUtils
+import net.tslat.smartbrainlib.util.BrainUtils
 
 class DashToWalkTarget<E : PathAwareEntity>(val dashTargetFunc: () -> Vec3d?) : DelayedBehaviour<E>(10) {
     protected var lastTargetPos: BlockPos? = null

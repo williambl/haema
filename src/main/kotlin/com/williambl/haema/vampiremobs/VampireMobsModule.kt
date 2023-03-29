@@ -72,7 +72,7 @@ object VampireMobsModule: ModInitializer, EntityComponentInitializer {
     )
 
     val SUN_SHIELD_PROJECTILE: EntityType<SunShieldProjectileEntity> = Registry.register(
-        Registry.ENTITY_TYPE,
+        Registries.ENTITY_TYPE,
         id("sun_shield_projectile"),
         FabricEntityTypeBuilder.create<SunShieldProjectileEntity>(SpawnGroup.MISC)
             .entityFactory(::SunShieldProjectileEntity)
@@ -82,37 +82,37 @@ object VampireMobsModule: ModInitializer, EntityComponentInitializer {
     )
 
     val SUN_SHIELD_BLOCK: SunShieldBlock = Registry.register(
-        Registry.BLOCK,
+        Registries.BLOCK,
         id("sun_shield"),
         SunShieldBlock(AbstractBlock.Settings.of(Material.Builder(MapColor.CLEAR).replaceable().allowsMovement().build()).breakInstantly().ticksRandomly())
     )
 
     val ATTACK_TARGETS_MEMORY: MemoryModuleType<List<LivingEntity>> = Registry.register(
-        Registry.MEMORY_MODULE_TYPE,
+        Registries.MEMORY_MODULE_TYPE,
         id("attack_targets"),
         MemoryModuleType(Optional.empty())
     )
 
     val ABILITIES_COOLDOWN_MEMORY: MemoryModuleType<Int> = Registry.register(
-        Registry.MEMORY_MODULE_TYPE,
+        Registries.MEMORY_MODULE_TYPE,
         id("abilities_cooldown"),
         MemoryModuleType(Optional.of(Codec.INT))
     )
 
     val BLOOD_DRAIN_COOLDOWN_MEMORY: MemoryModuleType<Int> = Registry.register(
-        Registry.MEMORY_MODULE_TYPE,
+        Registries.MEMORY_MODULE_TYPE,
         id("blood_drain_cooldown"),
         MemoryModuleType(Optional.of(Codec.INT))
     )
 
     val SUN_SHIELD_COOLDOWN_MEMORY: MemoryModuleType<Int> = Registry.register(
-        Registry.MEMORY_MODULE_TYPE,
+        Registries.MEMORY_MODULE_TYPE,
         id("sun_shield_cooldown"),
         MemoryModuleType(Optional.of(Codec.INT))
     )
 
     val DASH_COOLDOWN_MEMORY: MemoryModuleType<Int> = Registry.register(
-        Registry.MEMORY_MODULE_TYPE,
+        Registries.MEMORY_MODULE_TYPE,
         id("dash_cooldown"),
         MemoryModuleType(Optional.of(Codec.INT))
     )

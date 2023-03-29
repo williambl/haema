@@ -40,6 +40,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetRandomLookTar
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor
+import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
 
@@ -95,13 +96,8 @@ class ElderVampireEntity(entityType: EntityType<out ElderVampireEntity>, world: 
         for (i in 0..10) {
             val zombie = VampireMobsModule.VAMPIRIC_ZOMBIE.spawn(
                 this.world as ServerWorld,
-                null,
-                null,
-                null,
                 this.blockPos.add(this.random.nextBetween(-3, 3), 0, this.random.nextBetween(-3, -3)),
-                SpawnReason.REINFORCEMENT,
-                true,
-                false
+                SpawnReason.REINFORCEMENT
             )
             zombie?.owner = this
         }
@@ -129,7 +125,7 @@ class ElderVampireEntity(entityType: EntityType<out ElderVampireEntity>, world: 
 
     @OptIn(ExperimentalStdlibApi::class)
     fun dashTarget(): Vec3d? {
-        return this.brain.getOptionalMemory(MemoryModuleType.WALK_TARGET).map { t -> t.lookTarget.pos }.filter {
+        return (this.brain.getOptionalMemory(MemoryModuleType.WALK_TARGET) ?: Optional.empty()).map { t -> t.lookTarget.pos }.filter {
                 pos -> (2..400).contains(squaredDistanceTo(pos).toInt())
         }.getOrNull()
     }

@@ -12,7 +12,7 @@ import net.minecraft.entity.mob.MobEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour
-import net.tslat.smartbrainlib.api.util.BrainUtils
+import net.tslat.smartbrainlib.util.BrainUtils
 import java.util.function.Predicate
 
 
