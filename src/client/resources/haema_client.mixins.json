@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "com.williambl.haema.mixin",
+  "package": "com.williambl.haema.client.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
   ],

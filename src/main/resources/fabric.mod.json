@@ -23,48 +23,29 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      {"adapter": "kotlin", "value": "com.williambl.haema.Haema"},
-      {"adapter": "kotlin", "value": "com.williambl.haema.ritual.RitualModule"},
-      {"adapter": "kotlin", "value": "com.williambl.haema.hunter.VampireHunterModule"},
-      {"adapter": "kotlin", "value": "com.williambl.haema.effect.EffectsModule"},
-      {"adapter": "kotlin", "value": "com.williambl.haema.damagesource.DamageSourceModule"},
-      {"adapter": "kotlin", "value": "com.williambl.haema.criteria.CriteriaModule"},
-      {"adapter": "kotlin", "value": "com.williambl.haema.blood.BloodModule"},
-      {"adapter": "kotlin", "value": "com.williambl.haema.ability.AbilityModule"},
-      {"adapter": "kotlin", "value": "com.williambl.haema.drip.DripModule"},
-      {"adapter": "kotlin", "value": "com.williambl.haema.vampiremobs.VampireMobsModule"},
-      {"adapter": "kotlin", "value": "com.williambl.haema.compat.origins.HaemaOriginsPluginKt::init"},
-      {"adapter": "kotlin", "value": "com.williambl.haema.compat.rats.RatsMischiefCompatKt::init"},
-      {"adapter": "kotlin", "value": "com.williambl.haema.compat.bewitchment.BewitchmentEntrypointKt::init"},
-      {"adapter": "kotlin", "value": "com.williambl.haema.compat.flan.FlanEntrypointKt::init"}
+      "com.williambl.haema.Haema"
     ],
     "client": [
-      {"adapter": "kotlin", "value": "com.williambl.haema.client.HaemaClient"},
-      {"adapter": "kotlin", "value": "com.williambl.haema.compat.bewitchment.BewitchmentEntrypointKt::clientInit"}
+      "com.williambl.haema.client.HaemaClient"
+    ],
+    "fabric-datagen": [
+      "com.williambl.haema.data.HaemaDatagen"
     ],
     "rei_client": [
-      {"adapter": "kotlin", "value": "com.williambl.haema.compat.rei.HaemaREIPlugin"}
     ],
     "emi": [
-      {"adapter": "kotlin", "value": "com.williambl.haema.compat.emi.HaemaEmiPlugin"}
     ],
     "cardinal-components-entity": [
-      {"adapter": "kotlin", "value": "com.williambl.haema.Haema"},
-      {"adapter": "kotlin", "value": "com.williambl.haema.ability.AbilityModule"},
-      {"adapter": "kotlin", "value": "com.williambl.haema.vampiremobs.VampireMobsModule"},
-      {"adapter": "kotlin", "value": "com.williambl.haema.compat.rats.RatsMischiefCompatKt::registerEntityComponentFactories"},
-      {"adapter": "kotlin", "value": "com.williambl.haema.compat.bewitchment.BewitchmentEntrypointKt::entityComponentInit"}
     ],
     "modmenu": [
-      {"adapter": "kotlin", "value": "com.williambl.haema.compat.modmenu.HaemaModMenuPlugin"}
     ],
     "appleskin": [
-      {"adapter": "kotlin", "value": "com.williambl.haema.compat.appleskin.AppleskinEntrypoint"}
     ]
   },
   "mixins": [
     "haema.mixins.json",
-    "haema_compat.mixins.json"
+    "haema_compat.mixins.json",
+    "haema_client.mixins.json"
   ],
   "depends": {
     "fabricloader": "*",
@@ -87,11 +68,6 @@
   },
   "custom": {
     "cardinal-components": [
-      "haema:vampire",
-      "haema:invisibility",
-      "haema:strength",
-      "haema:mist_form",
-      "haema:dash"
     ],
     "vanguard": {
       "curse-project-id": "391257"
