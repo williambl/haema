@@ -50,16 +50,8 @@
   "depends": {
     "fabricloader": "*",
     "fabric": "*",
-    "fabric-language-kotlin": "*",
-    "fabric-permissions-api-v0": "*",
-    "satin": "*",
-    "reach-entity-attributes": "*",
-    "patchouli": "*",
-    "cloth-config": "*",
     "cardinal-components-entity": "*",
-    "pehkui": "*",
-    "geckolib": "*",
-    "minecraft": ">=1.19.3"
+    "minecraft": ">=1.19.4"
   },
   "suggests": {
     "origins": ">=0.4.7"

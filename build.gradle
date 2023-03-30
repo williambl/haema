@@ -165,19 +165,20 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}") {
     }
 
-    // GeckoLib
-    modImplementation("software.bernie.geckolib:geckolib-fabric-1.19.3:${project.geckolib_version}") {
-        exclude group: "com.eliotlash.mclib"
-        exclude group: "com.eliotlash.molang"
-        exclude group: "net.fabricmc.fabric-api"
-    }
-
     ///
     /// INCLUDED
     ///
 
-    // Satin
-    modImplementation include("io.github.ladysnake:satin:${project.satin_version}") {
+    // Apoli
+    modCompileOnly ("com.github.apace100:apoli:${project.apoli_version}") {
+        exclude group: "net.fabricmc.fabric-api"
+    }
+
+    // Cardinal Components
+    modImplementation include("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cc_version}") {
+        exclude group: "net.fabricmc.fabric-api"
+    }
+    modImplementation include("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${project.cc_version}") {
         exclude group: "net.fabricmc.fabric-api"
     }
 }
@@ -203,6 +204,8 @@ loom {
             runDir "build/datagen"
         }
     }
+
+    accessWidenerPath = file("src/main/resources/haema.accesswidener")
 }
 
 // Add the generated resources to the main source set
