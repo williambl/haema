@@ -14,16 +14,14 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import java.util.Optional;
 
 public class HaemaUtil {
-    public static final Codec<Tag> NBT = Codec.PASSTHROUGH
-            .xmap(tag -> tag.convert(NbtOps.INSTANCE).getValue(), tag -> new Dynamic<>(NbtOps.INSTANCE, tag));
-    public static final Codec<AttributeModifier> ATTRIBUTE_MODIFIER_CODEC = NBT.comapFlatMap(
-            tag -> tag instanceof CompoundTag cTag ? Optional.ofNullable(AttributeModifier.load(cTag))
+    public static final Codec<AttributeModifier> ATTRIBUTE_MODIFIER_CODEC = CompoundTag.CODEC.comapFlatMap(
+            tag -> Optional.ofNullable(AttributeModifier.load(tag))
                     .map(DataResult::success)
-                    .orElse(DataResult.error(() -> "Unable to create Attribute from tag: "+tag))
-                    : DataResult.error(() -> "Not a compound tag: "+tag), AttributeModifier::save);
-    public static final Codec<MobEffectInstance> MOB_EFFECT_INSTANCE_CODEC = NBT.comapFlatMap(
-            tag -> tag instanceof CompoundTag cTag ? Optional.ofNullable(MobEffectInstance.load(cTag))
+                    .orElse(DataResult.error(() -> "Unable to create Attribute from tag: "+tag)),
+            AttributeModifier::save);
+    public static final Codec<MobEffectInstance> MOB_EFFECT_INSTANCE_CODEC = CompoundTag.CODEC.comapFlatMap(
+            tag -> Optional.ofNullable(MobEffectInstance.load(tag))
                     .map(DataResult::success)
-                    .orElse(DataResult.error(() -> "Unable to create MobEffectInstance from tag: "+tag))
-                    : DataResult.error(() -> "Not a compound tag: "+tag), instance -> instance.save(new CompoundTag()));
+                    .orElse(DataResult.error(() -> "Unable to create MobEffectInstance from tag: "+tag)),
+                    instance -> instance.save(new CompoundTag()));
 }
