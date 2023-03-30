@@ -10,6 +10,19 @@ import java.util.Set;
 
 import static com.williambl.haema.Haema.id;
 
+/**
+ * A vampire ability. This has a collection of 'powers', which are granted to the player when the ability is applied.
+ * <p>
+ * If you are familiar with Origins, this is <em>somewhat</em> similar to an Origin, in that it holds a list of powers.
+ * However, a player may have many abilities applied at once, unlike Origins, which can only have one per 'layer'.
+ *
+ * @param enabled           whether the ability should be available in-game
+ * @param isAlwaysActive    whether the ability should be active at all times (i.e. the player cannot remove it)
+ * @param enabledByDefault  whether the ability should be enabled by default
+ * @param prerequisites     the abilities that must be applied for this ability to be applied
+ * @param conflicts         the abilities that cannot be applied at the same time as this ability
+ * @param powers            the powers that are granted when this ability is applied
+ */
 public record VampireAbility(boolean enabled,
                              boolean isAlwaysActive,
                              boolean enabledByDefault,
