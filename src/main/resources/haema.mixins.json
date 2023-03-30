@@ -3,6 +3,8 @@
   "package": "com.williambl.haema.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "vampire.ability.RegistryDataLoaderMixin",
+    "vampire.ability.RegistrySynchronizationMixin"
   ],
   "client": [
   ],

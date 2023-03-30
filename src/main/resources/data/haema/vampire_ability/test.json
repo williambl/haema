@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "is_always_active": true,
+  "enabled_by_default": true,
+  "prerequisites": [],
+  "conflicts": [],
+  "powers": [
+    {
+      "type": "haema:apoli",
+      "id": "haema:dash"
+    }
+  ]
+}

@@ -47,6 +47,7 @@
     "haema_compat.mixins.json",
     "haema_client.mixins.json"
   ],
+  "accessWidener": "haema.accesswidener",
   "depends": {
     "fabricloader": "*",
     "fabric": "*",
