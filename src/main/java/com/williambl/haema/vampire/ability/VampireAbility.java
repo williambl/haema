@@ -17,14 +17,14 @@ import static com.williambl.haema.Haema.id;
  * However, a player may have many abilities applied at once, unlike Origins, which can only have one per 'layer'.
  *
  * @param enabled           whether the ability should be available in-game
- * @param isAlwaysActive    whether the ability should be active at all times (i.e. the player cannot remove it)
+ * @param canPlayerModify   whether the player should be able to apply/remove this ability
  * @param enabledByDefault  whether the ability should be enabled by default
  * @param prerequisites     the abilities that must be applied for this ability to be applied
  * @param conflicts         the abilities that cannot be applied at the same time as this ability
  * @param powers            the powers that are granted when this ability is applied
  */
 public record VampireAbility(boolean enabled,
-                             boolean isAlwaysActive,
+                             boolean canPlayerModify,
                              boolean enabledByDefault,
                              Set<ResourceKey<VampireAbility>> prerequisites,
                              Set<ResourceKey<VampireAbility>> conflicts,
@@ -34,7 +34,7 @@ public record VampireAbility(boolean enabled,
 
     public static final Codec<VampireAbility> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.BOOL.fieldOf("enabled").forGetter(VampireAbility::enabled),
-            Codec.BOOL.fieldOf("is_always_active").forGetter(VampireAbility::isAlwaysActive),
+            Codec.BOOL.fieldOf("can_player_modify").forGetter(VampireAbility::canPlayerModify),
             Codec.BOOL.fieldOf("enabled_by_default").forGetter(VampireAbility::enabledByDefault),
             ResourceKey.codec(REGISTRY_KEY).listOf().fieldOf("prerequisites").xmap(Set::copyOf, List::copyOf).forGetter(VampireAbility::prerequisites),
             ResourceKey.codec(REGISTRY_KEY).listOf().fieldOf("conflicts").xmap(Set::copyOf, List::copyOf).forGetter(VampireAbility::conflicts),
