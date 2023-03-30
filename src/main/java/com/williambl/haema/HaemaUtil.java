@@ -8,6 +8,7 @@ import com.mojang.serialization.JsonOps;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 import java.util.Optional;
@@ -20,4 +21,9 @@ public class HaemaUtil {
                     .map(DataResult::success)
                     .orElse(DataResult.error(() -> "Unable to create Attribute from tag: "+tag))
                     : DataResult.error(() -> "Not a compound tag: "+tag), AttributeModifier::save);
+    public static final Codec<MobEffectInstance> MOB_EFFECT_INSTANCE_CODEC = NBT.comapFlatMap(
+            tag -> tag instanceof CompoundTag cTag ? Optional.ofNullable(MobEffectInstance.load(cTag))
+                    .map(DataResult::success)
+                    .orElse(DataResult.error(() -> "Unable to create MobEffectInstance from tag: "+tag))
+                    : DataResult.error(() -> "Not a compound tag: "+tag), instance -> instance.save(new CompoundTag()));
 }

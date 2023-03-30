@@ -13,12 +13,10 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 public record AttributeVampireAbilityPower(Set<Data> modifiers) implements VampireAbilityPower {
-    public static final KeyDispatchDataCodec<AttributeVampireAbilityPower> CODEC = KeyDispatchDataCodec.of(Data.CODEC.listOf().fieldOf("modifiers")
+    public static final KeyDispatchDataCodec<AttributeVampireAbilityPower> CODEC = KeyDispatchDataCodec.of(Data.CODEC.listOf().fieldOf("effects")
             .xmap(mods -> new AttributeVampireAbilityPower(Set.copyOf(mods)), power -> List.copyOf(power.modifiers)));
 
     @Override
