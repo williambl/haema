@@ -37,6 +37,13 @@ public interface VampireAbilityPower {
     void apply(LivingEntity entity, VampireAbility source);
 
     /**
+     * Tick this power on the given entity.
+     * @param entity    the entity which has the power
+     * @param source    the ability that this power was applied for
+     */
+    void tick(LivingEntity entity, VampireAbility source);
+
+    /**
      * Remove this power from the given entity.
      * @param entity    the entity to remove the power from
      * @param source    the ability that this power is being removed for
