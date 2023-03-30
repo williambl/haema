@@ -2,9 +2,8 @@ package com.williambl.haema.vampire;
 
 import com.mojang.serialization.Codec;
 import com.williambl.haema.Haema;
-import com.williambl.haema.vampire.ability.VampireAbility;
-import com.williambl.haema.vampire.ability.VampireAbilityPower;
-import com.williambl.haema.vampire.ability.powers.ApoliVampireAbilityPower;
+import com.williambl.haema.api.vampire.ability.VampireAbility;
+import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.AttributeVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.DummyVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.EffectVampireAbilityPower;

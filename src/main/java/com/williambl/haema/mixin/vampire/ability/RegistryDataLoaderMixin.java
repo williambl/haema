@@ -1,6 +1,6 @@
 package com.williambl.haema.mixin.vampire.ability;
 
-import com.williambl.haema.vampire.ability.VampireAbility;
+import com.williambl.haema.api.vampire.ability.VampireAbility;
 import net.minecraft.resources.RegistryDataLoader;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

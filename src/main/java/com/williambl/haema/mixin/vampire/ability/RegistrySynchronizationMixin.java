@@ -1,9 +1,7 @@
 package com.williambl.haema.mixin.vampire.ability;
 
-import com.mojang.serialization.Codec;
-import com.williambl.haema.vampire.ability.VampireAbility;
+import com.williambl.haema.api.vampire.ability.VampireAbility;
 import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.RegistrySynchronization;
 import net.minecraft.resources.ResourceKey;
 import org.spongepowered.asm.mixin.Final;

@@ -2,9 +2,9 @@ package com.williambl.haema.vampire.ability.powers;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.williambl.haema.vampire.VampireComponent;
-import com.williambl.haema.vampire.ability.VampireAbility;
-import com.williambl.haema.vampire.ability.VampireAbilityPower;
+import com.williambl.haema.api.vampire.VampireComponent;
+import com.williambl.haema.api.vampire.ability.VampireAbility;
+import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.effect.MobEffect;

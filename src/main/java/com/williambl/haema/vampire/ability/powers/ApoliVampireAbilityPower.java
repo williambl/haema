@@ -1,8 +1,7 @@
 package com.williambl.haema.vampire.ability.powers;
 
-import com.mojang.serialization.Codec;
-import com.williambl.haema.vampire.ability.VampireAbility;
-import com.williambl.haema.vampire.ability.VampireAbilityPower;
+import com.williambl.haema.api.vampire.ability.VampireAbility;
+import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
 import io.github.apace100.apoli.component.PowerHolderComponent;
 import io.github.apace100.apoli.power.PowerTypeRegistry;
 import net.minecraft.resources.ResourceLocation;

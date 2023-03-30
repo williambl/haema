@@ -1,4 +1,4 @@
-package com.williambl.haema.vampire;
+package com.williambl.haema.api.vampire;
 
 import dev.onyxstudios.cca.api.v3.component.Component;
 import dev.onyxstudios.cca.api.v3.component.ComponentKey;

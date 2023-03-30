@@ -1,4 +1,4 @@
-package com.williambl.haema.vampire.ability;
+package com.williambl.haema.api.vampire.ability;
 
 import com.mojang.serialization.Codec;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
