@@ -3,6 +3,7 @@ package com.williambl.haema.api.vampire;
 import dev.onyxstudios.cca.api.v3.component.Component;
 import dev.onyxstudios.cca.api.v3.component.ComponentKey;
 import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
+import org.jetbrains.annotations.Nullable;
 
 import static com.williambl.haema.Haema.id;
 
@@ -17,10 +18,30 @@ public interface VampireComponent extends Component {
     boolean isVampire();
 
     /**
+     * Get the source of the entity's vampirism.
+     * @return the source of the entity's vampirism, or null if the entity is not a vampire
+     */
+    @Nullable VampirismSource getVampirismSource();
+
+    /**
      * Set whether the entity is a vampire.
      * @param vampire whether the entity is a vampire
      */
     void setVampire(boolean vampire);
+
+    /**
+     * Try to convert the entity to a vampire.
+     * @param source    the source to convert this entity with
+     * @return          whether the entity was successfully converted
+     */
+    boolean tryConvert(VampirismSource source);
+
+    /**
+     * Try to cure the entity of vampirism.
+     * @param source    the source to cure this entity with
+     * @return          whether the entity was successfully cured
+     */
+    boolean tryCure(VampirismSource source);
 
     /**
      * Get the entity's blood level.

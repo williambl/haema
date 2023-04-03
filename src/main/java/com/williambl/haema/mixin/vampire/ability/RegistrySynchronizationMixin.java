@@ -1,5 +1,6 @@
 package com.williambl.haema.mixin.vampire.ability;
 
+import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistrySynchronization;
@@ -20,8 +21,9 @@ public class RegistrySynchronizationMixin {
     @Shadow @Mutable @Final private static Map<ResourceKey<? extends Registry<?>>, RegistrySynchronization.NetworkedRegistryData<?>> NETWORKABLE_REGISTRIES;
 
     @Inject(method = "<clinit>", at = @At("TAIL"))
-    private static void haema$syncVampireAbilityRegistry(CallbackInfo ci) {
+    private static void haema$syncVampireRegistries(CallbackInfo ci) {
         NETWORKABLE_REGISTRIES = new HashMap<>(NETWORKABLE_REGISTRIES);
         NETWORKABLE_REGISTRIES.put(VampireAbility.REGISTRY_KEY, new RegistrySynchronization.NetworkedRegistryData<>(VampireAbility.REGISTRY_KEY, VampireAbility.CODEC));
+        NETWORKABLE_REGISTRIES.put(VampirismSource.REGISTRY_KEY, new RegistrySynchronization.NetworkedRegistryData<>(VampirismSource.REGISTRY_KEY, VampirismSource.CODEC));
     }
 }

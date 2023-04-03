@@ -1,5 +1,6 @@
 package com.williambl.haema.mixin.vampire.ability;
 
+import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import net.minecraft.resources.RegistryDataLoader;
 import org.spongepowered.asm.mixin.Final;
@@ -19,8 +20,9 @@ public class RegistryDataLoaderMixin {
     @Shadow @Mutable @Final public static List<RegistryDataLoader.RegistryData<?>> WORLDGEN_REGISTRIES;
 
     @Inject(method = "<clinit>", at = @At("TAIL"))
-    private static void haema$registerVampireAbilityRegistry(CallbackInfo ci) {
+    private static void haema$registerVampireRegistries(CallbackInfo ci) {
         WORLDGEN_REGISTRIES = new ArrayList<>(WORLDGEN_REGISTRIES);
         WORLDGEN_REGISTRIES.add(new RegistryDataLoader.RegistryData<>(VampireAbility.REGISTRY_KEY, VampireAbility.CODEC));
+        WORLDGEN_REGISTRIES.add(new RegistryDataLoader.RegistryData<>(VampirismSource.REGISTRY_KEY, VampirismSource.CODEC));
     }
 }
