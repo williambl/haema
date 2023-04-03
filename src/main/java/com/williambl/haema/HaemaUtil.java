@@ -17,7 +17,7 @@ public class HaemaUtil {
     public static final Codec<AttributeModifier> ATTRIBUTE_MODIFIER_CODEC = CompoundTag.CODEC.comapFlatMap(
             tag -> Optional.ofNullable(AttributeModifier.load(tag))
                     .map(DataResult::success)
-                    .orElse(DataResult.error(() -> "Unable to create Attribute from tag: "+tag)),
+                    .orElse(DataResult.error(() -> "Unable to create Attribute Modifier from tag: "+tag)),
             AttributeModifier::save);
     public static final Codec<MobEffectInstance> MOB_EFFECT_INSTANCE_CODEC = CompoundTag.CODEC.comapFlatMap(
             tag -> Optional.ofNullable(MobEffectInstance.load(tag))
