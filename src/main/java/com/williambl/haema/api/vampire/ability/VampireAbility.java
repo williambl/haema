@@ -28,7 +28,7 @@ public record VampireAbility(boolean enabled,
                              boolean enabledByDefault,
                              Set<ResourceKey<VampireAbility>> prerequisites,
                              Set<ResourceKey<VampireAbility>> conflicts,
-                             Set<VampireAbilityPower> powers) {
+                             List<VampireAbilityPower> powers) {
 
     public static final ResourceKey<Registry<VampireAbility>> REGISTRY_KEY = ResourceKey.createRegistryKey(id( "vampire_ability"));
 
@@ -38,6 +38,6 @@ public record VampireAbility(boolean enabled,
             Codec.BOOL.fieldOf("enabled_by_default").forGetter(VampireAbility::enabledByDefault),
             ResourceKey.codec(REGISTRY_KEY).listOf().fieldOf("prerequisites").xmap(Set::copyOf, List::copyOf).forGetter(VampireAbility::prerequisites),
             ResourceKey.codec(REGISTRY_KEY).listOf().fieldOf("conflicts").xmap(Set::copyOf, List::copyOf).forGetter(VampireAbility::conflicts),
-            VampireAbilityPower.POWER_CODEC.listOf().fieldOf("powers").xmap(Set::copyOf, List::copyOf).forGetter(VampireAbility::powers)
+            VampireAbilityPower.POWER_CODEC.listOf().fieldOf("powers").forGetter(VampireAbility::powers)
     ).apply(instance, VampireAbility::new));
 }
