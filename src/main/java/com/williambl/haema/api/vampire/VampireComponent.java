@@ -24,12 +24,6 @@ public interface VampireComponent extends Component {
     @Nullable VampirismSource getVampirismSource();
 
     /**
-     * Set whether the entity is a vampire.
-     * @param vampire whether the entity is a vampire
-     */
-    void setVampire(boolean vampire);
-
-    /**
      * Try to convert the entity to a vampire.
      * @param source    the source to convert this entity with
      * @return          whether the entity was successfully converted
