@@ -183,9 +183,15 @@
   "gui.haema.repeatable.true": "Repeatable",
   "gui.haema.repeatable.false": "Not Repeatable",
 
-  "command.haema.error.not_vampire": "%1$s is not a vampire.",
-  "command.haema.blood.get.feedback": "%1$s has %2$s blood",
-  "command.haema.blood.set.feedback": "Set %1$s to %2$s blood",
+  "command.haema.query.yes": "YES",
+  "command.haema.query.no": "NO",
+  "command.haema.query.vampirism_source": "(Vampirism Source: %1$s)",
+  "command.haema.query.no_abilities_line": "%1$s has no abilities.",
+  "command.haema.query.abilities_line": "%1$s has %2$s abilities:",
+  "command.haema.query.first_line": "Vampire information for %1$s:",
+  "command.haema.query.is_vampire_line": "Is %1$s a vampire: %2$s %3$s",
+  "command.haema.query.blood_line": "%1$s has %2$s blood",
+  "command.haema.query.ability_line": " - %1$s",
 
   "text.autoconfig.haema.title": "Haema",
   "text.autoconfig.haema.option.vampireHudPlacement": "Vampire HUD placement",

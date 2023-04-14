@@ -1,6 +1,6 @@
 {
   "enabled": true,
-  "is_always_active": true,
+  "can_player_modify": true,
   "enabled_by_default": true,
   "prerequisites": [],
   "conflicts": [],

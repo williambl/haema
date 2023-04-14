@@ -36,6 +36,7 @@
     "emi": [
     ],
     "cardinal-components-entity": [
+      "com.williambl.haema.Haema"
     ],
     "modmenu": [
     ],
@@ -61,6 +62,8 @@
   },
   "custom": {
     "cardinal-components": [
+      "haema:vampire",
+      "haema:vampire_abilities"
     ],
     "vanguard": {
       "curse-project-id": "391257"

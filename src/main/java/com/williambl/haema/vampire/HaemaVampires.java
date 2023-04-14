@@ -2,12 +2,16 @@ package com.williambl.haema.vampire;
 
 import com.mojang.serialization.Codec;
 import com.williambl.haema.Haema;
+import com.williambl.haema.api.vampire.VampireComponent;
 import com.williambl.haema.api.vampire.VampirismSource;
+import com.williambl.haema.api.vampire.ability.VampireAbilitiesComponent;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.AttributeVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.DummyVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.EffectVampireAbilityPower;
+import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
+import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -23,6 +27,11 @@ public class HaemaVampires {
         });
         VampireAbilityPowers.init();
         VampirismSources.init();
+    }
+
+    public static void initEntityComponents(EntityComponentFactoryRegistry registry) {
+        registry.registerForPlayers(VampireComponent.KEY, EntityVampireComponent::new, RespawnCopyStrategy.CHARACTER);
+        registry.registerForPlayers(VampireAbilitiesComponent.KEY, EntityVampireAbilitiesComponent::new, RespawnCopyStrategy.CHARACTER);
     }
 
     public static class VampireAbilityPowers {
