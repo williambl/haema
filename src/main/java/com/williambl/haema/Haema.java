@@ -2,6 +2,7 @@ package com.williambl.haema;
 
 import com.williambl.haema.vampire.HaemaVampires;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,5 +18,6 @@ public class Haema implements ModInitializer {
     @Override
     public void onInitialize() {
         HaemaVampires.init();
+        CommandRegistrationCallback.EVENT.register(HaemaCommand::register);
     }
 }
