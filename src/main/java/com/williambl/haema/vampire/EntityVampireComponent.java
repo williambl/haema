@@ -3,6 +3,8 @@ package com.williambl.haema.vampire;
 import com.williambl.haema.Haema;
 import com.williambl.haema.api.vampire.VampireComponent;
 import com.williambl.haema.api.vampire.VampirismSource;
+import com.williambl.haema.api.vampire.ability.VampireAbilitiesComponent;
+import com.williambl.haema.api.vampire.ability.VampireAbility;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
@@ -10,6 +12,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 public class EntityVampireComponent implements VampireComponent {
     private double blood;
@@ -40,6 +44,15 @@ public class EntityVampireComponent implements VampireComponent {
         }
 
         this.vampirismSource = source;
+        var abilityComponent = VampireAbilitiesComponent.KEY.getNullable(this.entity);
+        if (abilityComponent != null) {
+            var abilityRegistry = this.entity.level.registryAccess().registryOrThrow(VampireAbility.REGISTRY_KEY);
+            source.grantedAbilities().stream()
+                    .map(abilityRegistry::get)
+                    .filter(Objects::nonNull)
+                    .filter(VampireAbility::enabled)
+                    .forEach(abilityComponent::addAbility);
+        }
         return true;
     }
 
@@ -50,6 +63,8 @@ public class EntityVampireComponent implements VampireComponent {
         }
 
         this.vampirismSource = null;
+        VampireAbilitiesComponent.KEY.maybeGet(this.entity).ifPresent(abilityComponent ->
+                abilityComponent.getAbilities().forEach(abilityComponent::removeAbility));
         return true;
     }
 
