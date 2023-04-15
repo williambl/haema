@@ -21,6 +21,7 @@ public class Haema implements ModInitializer, EntityComponentInitializer {
     public void onInitialize() {
         HaemaVampires.init();
         CommandRegistrationCallback.EVENT.register(HaemaCommand::register);
+        HaemaDPredicates.init();
     }
 
     @Override

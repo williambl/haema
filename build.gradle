@@ -181,6 +181,11 @@ dependencies {
     modImplementation include("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${project.cc_version}") {
         exclude group: "net.fabricmc.fabric-api"
     }
+
+    // Datapackable Predicates
+    modImplementation include("com.williambl.dpred:datapackable-predicates:${project.dpred_version}") {
+        exclude group: "net.fabricmc.fabric-api"
+    }
 }
 
 loom {
