@@ -50,4 +50,5 @@ public interface VampireComponent extends Component {
     void setBlood(double blood);
 
     ComponentKey<VampireComponent> KEY = ComponentRegistry.getOrCreate(id("vampire"), VampireComponent.class);
+    double MAX_BLOOD = 20;
 }
