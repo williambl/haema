@@ -29,7 +29,7 @@ public record VampireAbility(boolean enabled,
                              DPredicate<Entity> canPlayerModify,
                              Set<ResourceKey<VampireAbility>> prerequisites,
                              Set<ResourceKey<VampireAbility>> conflicts,
-                             Set<ResourceKey<VampireAbility>> supercedes,
+                             Set<ResourceKey<VampireAbility>> supercedes, //TODO do something with this
                              List<VampireAbilityPower> powers) {
 
     public static final ResourceKey<Registry<VampireAbility>> REGISTRY_KEY = ResourceKey.createRegistryKey(id( "vampire_ability"));

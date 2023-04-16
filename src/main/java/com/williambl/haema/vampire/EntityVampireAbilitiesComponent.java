@@ -34,11 +34,17 @@ public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponen
     @Override
     public void addAbility(VampireAbility ability) {
         this.abilities.add(ability);
+        for (var power : ability.powers()) {
+            power.apply(entity, ability);
+        }
     }
 
     @Override
     public void removeAbility(VampireAbility ability) {
         this.abilities.remove(ability);
+        for (var power : ability.powers()) {
+            power.remove(entity, ability);
+        }
     }
 
     @Override
