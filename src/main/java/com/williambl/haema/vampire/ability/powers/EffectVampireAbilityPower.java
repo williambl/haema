@@ -2,13 +2,14 @@ package com.williambl.haema.vampire.ability.powers;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.williambl.haema.api.vampire.VampireComponent;
+import com.williambl.dpred.DPredicate;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.List;
@@ -25,8 +26,7 @@ public record EffectVampireAbilityPower(Set<Data> effects) implements VampireAbi
     @Override
     public void tick(LivingEntity entity, VampireAbility source) {
         for (var effect : this.effects) {
-            double blood = entity.getComponent(VampireComponent.KEY).getBlood();
-            if (blood >= effect.minBloodInclusive() && blood < effect.maxBloodExclusive()) {
+            if (effect.predicate().test(entity)) {
                 entity.addEffect(effect.createInstance());
             }
         }
@@ -44,7 +44,7 @@ public record EffectVampireAbilityPower(Set<Data> effects) implements VampireAbi
         return CODEC;
     }
 
-    private record Data(MobEffect effect, int amplifier, int duration, boolean ambient, boolean showParticles, boolean showIcon, double minBloodInclusive, double maxBloodExclusive) {
+    private record Data(MobEffect effect, int amplifier, int duration, boolean ambient, boolean showParticles, boolean showIcon, DPredicate<Entity> predicate) {
         private static final Codec<Data> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 BuiltInRegistries.MOB_EFFECT.byNameCodec().fieldOf("effect").forGetter(Data::effect),
                 Codec.INT.optionalFieldOf("amplifier", 0).forGetter(Data::amplifier),
@@ -52,8 +52,7 @@ public record EffectVampireAbilityPower(Set<Data> effects) implements VampireAbi
                 Codec.BOOL.optionalFieldOf("ambient", false).forGetter(Data::ambient),
                 Codec.BOOL.optionalFieldOf("show_particles", true).forGetter(Data::showParticles),
                 Codec.BOOL.optionalFieldOf("show_icon", true).forGetter(Data::showIcon),
-                Codec.DOUBLE.optionalFieldOf("min_blood_inclusive", Double.NEGATIVE_INFINITY).forGetter(Data::minBloodInclusive),
-                Codec.DOUBLE.optionalFieldOf("max_blood_exclusive", Double.POSITIVE_INFINITY).forGetter(Data::maxBloodExclusive)
+                DPredicate.ENTITY_PREDICATE_TYPE_REGISTRY.codec().fieldOf("predicate").forGetter(Data::predicate)
         ).apply(instance, Data::new));
 
         private MobEffectInstance createInstance() {

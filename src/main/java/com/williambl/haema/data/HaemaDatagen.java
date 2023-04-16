@@ -64,7 +64,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         }
 
         private ResourceKey<VampireAbility> createHealingAbility(HolderLookup.Provider registries, Entries entries) {
-            var healingAbility = new VampireAbility(true, false, Set.of(), Set.of(), List.of(
+            var healingAbility = new VampireAbility(true, EntityDPredicates.CONSTANT.factory().apply(false), Set.of(), Set.of(), Set.of(), List.of(
                     new HealingVampireAbilityPower(EntityDPredicates.AND.factory().apply(List.of(
                             EntityDPredicates.LEVEL_PREDICATE.factory().apply(LevelDPredicates.BOOLEAN_GAME_RULE.factory().apply("naturalRegeneration")),
                             EntityDPredicates.NOT.factory().apply(EntityDPredicates.DEAD_OR_DYING.factory().get()),
@@ -96,18 +96,16 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         }
 
         private ResourceKey<VampireAbility> createReachAbility(HolderLookup.Provider registries, Entries entries) {
-            var reachAbility = new VampireAbility(true, false, Set.of(), Set.of(), List.of(new AttributeVampireAbilityPower(Set.of(
+            var reachAbility = new VampireAbility(true, EntityDPredicates.CONSTANT.factory().apply(false), Set.of(), Set.of(), Set.of(), List.of(new AttributeVampireAbilityPower(Set.of(
                     new AttributeVampireAbilityPower.Data(
                             ReachEntityAttributes.REACH,
                             new AttributeModifier(UUID.fromString("0eb4fc5f-71d5-4440-b517-bcc18e1df6f4"), "Vampire Reach bonus", 2.0, AttributeModifier.Operation.ADDITION),
-                            6,
-                            Double.POSITIVE_INFINITY
+                            HaemaDPredicates.BLOOD.factory().apply(NumberDPredicates.COMPARISON.factory().apply(Comparison.GREATER_THAN_OR_EQUAL, 6.0))
                     ),
                     new AttributeVampireAbilityPower.Data(
                             ReachEntityAttributes.ATTACK_RANGE,
                             new AttributeModifier(UUID.fromString("3267a46b-2b48-429f-a3a8-439aa87a876d"), "Vampire Attack Range bonus", 2.0, AttributeModifier.Operation.ADDITION),
-                            6,
-                            Double.POSITIVE_INFINITY
+                            HaemaDPredicates.BLOOD.factory().apply(NumberDPredicates.COMPARISON.factory().apply(Comparison.GREATER_THAN_OR_EQUAL, 6.0))
                     )
             ))));
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("reach"));
@@ -116,12 +114,11 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         }
 
         private ResourceKey<VampireAbility> createHealthBoostAbility(HolderLookup.Provider registries, Entries entries) {
-            var healthBoostAbility = new VampireAbility(true, false, Set.of(), Set.of(), List.of(new AttributeVampireAbilityPower(Set.of(
+            var healthBoostAbility = new VampireAbility(true, EntityDPredicates.CONSTANT.factory().apply(false), Set.of(), Set.of(), Set.of(), List.of(new AttributeVampireAbilityPower(Set.of(
                     new AttributeVampireAbilityPower.Data(
                             Attributes.MAX_HEALTH,
                             new AttributeModifier(UUID.fromString("858a6a28-5092-49ea-a94e-eb74db018a92"), "Vampire Max Health bonus", 1.0, AttributeModifier.Operation.MULTIPLY_BASE),
-                            3,
-                            Double.POSITIVE_INFINITY
+                            HaemaDPredicates.BLOOD.factory().apply(NumberDPredicates.COMPARISON.factory().apply(Comparison.GREATER_THAN_OR_EQUAL, 3.0))
                     )
             ))));
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("health_boost"));

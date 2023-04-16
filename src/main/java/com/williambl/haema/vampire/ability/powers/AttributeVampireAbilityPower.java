@@ -2,12 +2,14 @@ package com.williambl.haema.vampire.ability.powers;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.williambl.dpred.DPredicate;
 import com.williambl.haema.HaemaUtil;
 import com.williambl.haema.api.vampire.VampireComponent;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.KeyDispatchDataCodec;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -31,9 +33,11 @@ public record AttributeVampireAbilityPower(Set<Data> modifiers) implements Vampi
             if (attr == null) {
                 continue;
             }
-            if (attr.hasModifier(modifier.modifier()) && (blood < modifier.minBloodInclusive() || blood >= modifier.maxBloodExclusive())) {
+
+            boolean predValue = modifier.predicate().test(entity);
+            if (attr.hasModifier(modifier.modifier()) && !predValue) {
                 attr.removeModifier(modifier.modifier());
-            } else if (!attr.hasModifier(modifier.modifier()) && blood >= modifier.minBloodInclusive() && blood < modifier.maxBloodExclusive()) {
+            } else if (!attr.hasModifier(modifier.modifier()) && predValue) {
                 attr.addTransientModifier(modifier.modifier());
             }
         }
@@ -55,12 +59,11 @@ public record AttributeVampireAbilityPower(Set<Data> modifiers) implements Vampi
         return CODEC;
     }
 
-    public record Data(Attribute attribute, AttributeModifier modifier, double minBloodInclusive, double maxBloodExclusive) {
+    public record Data(Attribute attribute, AttributeModifier modifier, DPredicate<Entity> predicate) {
         private static final Codec<Data> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 BuiltInRegistries.ATTRIBUTE.byNameCodec().fieldOf("attribute").forGetter(Data::attribute),
                 HaemaUtil.ATTRIBUTE_MODIFIER_CODEC.fieldOf("modifier").forGetter(Data::modifier),
-                Codec.DOUBLE.optionalFieldOf("min_blood_inclusive", Double.NEGATIVE_INFINITY).forGetter(Data::minBloodInclusive),
-                Codec.DOUBLE.optionalFieldOf("max_blood_exclusive", Double.POSITIVE_INFINITY).forGetter(Data::maxBloodExclusive)
+                DPredicate.ENTITY_PREDICATE_TYPE_REGISTRY.codec().fieldOf("predicate").forGetter(Data::predicate)
         ).apply(instance, Data::new));
     }
 }
