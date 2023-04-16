@@ -186,6 +186,11 @@ dependencies {
     modImplementation include("com.williambl.dpred:datapackable-predicates:${project.dpred_version}") {
         exclude group: "net.fabricmc.fabric-api"
     }
+
+    // Reach Entity Attributes
+    include modImplementation("com.jamieswhiteshirt:reach-entity-attributes:${project.rea_version}") {
+        exclude group: "net.fabricmc.fabric-api"
+    }
 }
 
 loom {

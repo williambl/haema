@@ -55,7 +55,7 @@ public record AttributeVampireAbilityPower(Set<Data> modifiers) implements Vampi
         return CODEC;
     }
 
-    private record Data(Attribute attribute, AttributeModifier modifier, double minBloodInclusive, double maxBloodExclusive) {
+    public record Data(Attribute attribute, AttributeModifier modifier, double minBloodInclusive, double maxBloodExclusive) {
         private static final Codec<Data> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 BuiltInRegistries.ATTRIBUTE.byNameCodec().fieldOf("attribute").forGetter(Data::attribute),
                 HaemaUtil.ATTRIBUTE_MODIFIER_CODEC.fieldOf("modifier").forGetter(Data::modifier),

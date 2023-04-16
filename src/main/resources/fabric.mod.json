@@ -45,8 +45,7 @@
   },
   "mixins": [
     "haema.mixins.json",
-    "haema_compat.mixins.json",
-    "haema_client.mixins.json"
+    "haema_compat.mixins.json"
   ],
   "accessWidener": "haema.accesswidener",
   "depends": {
