@@ -20,6 +20,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -57,7 +58,8 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         protected void configure(HolderLookup.Provider registries, Entries entries) {
             var healingAbility = this.createHealingAbility(registries, entries);
             var reachAbility = this.createReachAbility(registries, entries);
-            entries.add(HaemaVampires.VampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaVampires.VampirismSources.BLOOD_INJECTOR), Set.of(healingAbility, reachAbility)));
+            var healthBoostAbility = this.createHealthBoostAbility(registries, entries);
+            entries.add(HaemaVampires.VampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaVampires.VampirismSources.BLOOD_INJECTOR), Set.of(healingAbility, reachAbility, healthBoostAbility)));
             entries.add(HaemaVampires.VampirismSources.COMMAND, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of()));
         }
 
@@ -110,6 +112,20 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             ))));
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("reach"));
             entries.add(key, reachAbility);
+            return key;
+        }
+
+        private ResourceKey<VampireAbility> createHealthBoostAbility(HolderLookup.Provider registries, Entries entries) {
+            var healthBoostAbility = new VampireAbility(true, false, Set.of(), Set.of(), List.of(new AttributeVampireAbilityPower(Set.of(
+                    new AttributeVampireAbilityPower.Data(
+                            Attributes.MAX_HEALTH,
+                            new AttributeModifier(UUID.fromString("858a6a28-5092-49ea-a94e-eb74db018a92"), "Vampire Max Health bonus", 1.0, AttributeModifier.Operation.MULTIPLY_BASE),
+                            3,
+                            Double.POSITIVE_INFINITY
+                    )
+            ))));
+            var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("health_boost"));
+            entries.add(key, healthBoostAbility);
             return key;
         }
 
