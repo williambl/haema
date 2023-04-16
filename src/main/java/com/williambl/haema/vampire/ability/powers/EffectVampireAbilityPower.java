@@ -44,7 +44,7 @@ public record EffectVampireAbilityPower(Set<Data> effects) implements VampireAbi
         return CODEC;
     }
 
-    private record Data(MobEffect effect, int amplifier, int duration, boolean ambient, boolean showParticles, boolean showIcon, DPredicate<Entity> predicate) {
+    public record Data(MobEffect effect, int amplifier, int duration, boolean ambient, boolean showParticles, boolean showIcon, DPredicate<Entity> predicate) {
         private static final Codec<Data> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 BuiltInRegistries.MOB_EFFECT.byNameCodec().fieldOf("effect").forGetter(Data::effect),
                 Codec.INT.optionalFieldOf("amplifier", 0).forGetter(Data::amplifier),

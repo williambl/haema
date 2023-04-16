@@ -11,6 +11,7 @@ import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.vampire.HaemaVampires;
 import com.williambl.haema.vampire.ability.powers.AttributeVampireAbilityPower;
+import com.williambl.haema.vampire.ability.powers.EffectVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.HealingVampireAbilityPower;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
@@ -56,14 +57,15 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
 
         @Override
         protected void configure(HolderLookup.Provider registries, Entries entries) {
-            var healingAbility = this.createHealingAbility(registries, entries);
-            var reachAbility = this.createReachAbility(registries, entries);
-            var healthBoostAbility = this.createHealthBoostAbility(registries, entries);
-            entries.add(HaemaVampires.VampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaVampires.VampirismSources.BLOOD_INJECTOR), Set.of(healingAbility, reachAbility, healthBoostAbility)));
+            var healingAbility = this.createHealingAbility(entries);
+            var reachAbility = this.createReachAbility(entries);
+            var healthBoostAbility = this.createHealthBoostAbility(entries);
+            var sunlightSicknessAbility = this.createSunlightSicknessAbility(entries);
+            entries.add(HaemaVampires.VampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaVampires.VampirismSources.BLOOD_INJECTOR), Set.of(healingAbility, reachAbility, healthBoostAbility, sunlightSicknessAbility)));
             entries.add(HaemaVampires.VampirismSources.COMMAND, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of()));
         }
 
-        private ResourceKey<VampireAbility> createHealingAbility(HolderLookup.Provider registries, Entries entries) {
+        private ResourceKey<VampireAbility> createHealingAbility(Entries entries) {
             var healingAbility = new VampireAbility(true, EntityDPredicates.CONSTANT.factory().apply(false), Set.of(), Set.of(), Set.of(), List.of(
                     new HealingVampireAbilityPower(EntityDPredicates.AND.factory().apply(List.of(
                             EntityDPredicates.LEVEL_PREDICATE.factory().apply(LevelDPredicates.BOOLEAN_GAME_RULE.factory().apply("naturalRegeneration")),
@@ -96,7 +98,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             return key;
         }
 
-        private ResourceKey<VampireAbility> createReachAbility(HolderLookup.Provider registries, Entries entries) {
+        private ResourceKey<VampireAbility> createReachAbility(Entries entries) {
             var reachAbility = new VampireAbility(true, EntityDPredicates.CONSTANT.factory().apply(false), Set.of(), Set.of(), Set.of(), List.of(new AttributeVampireAbilityPower(Set.of(
                     new AttributeVampireAbilityPower.Data(
                             ReachEntityAttributes.REACH,
@@ -114,7 +116,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             return key;
         }
 
-        private ResourceKey<VampireAbility> createHealthBoostAbility(HolderLookup.Provider registries, Entries entries) {
+        private ResourceKey<VampireAbility> createHealthBoostAbility(Entries entries) {
             var healthBoostAbility = new VampireAbility(true, EntityDPredicates.CONSTANT.factory().apply(false), Set.of(), Set.of(), Set.of(), List.of(new AttributeVampireAbilityPower(Set.of(
                     new AttributeVampireAbilityPower.Data(
                             Attributes.MAX_HEALTH,
@@ -124,6 +126,31 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             ))));
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("health_boost"));
             entries.add(key, healthBoostAbility);
+            return key;
+        }
+
+        private ResourceKey<VampireAbility> createSunlightSicknessAbility(Entries entries) {
+            var sunlightSicknessAbility = new VampireAbility(true, EntityDPredicates.CONSTANT.factory().apply(false), Set.of(), Set.of(), Set.of(), List.of(new EffectVampireAbilityPower(Set.of(
+                    new EffectVampireAbilityPower.Data(
+                            HaemaVampires.VampireMobEffects.SUNLIGHT_SICKNESS,
+                            0,
+                            10,
+                            false,
+                            true,
+                            true,
+                            EntityDPredicates.AND.factory().apply(List.of(
+                                    EntityDPredicates.OR.factory().apply(List.of(
+                                            EntityDPredicates.LEVEL_PREDICATE.factory().apply(LevelDPredicates.AND.factory().apply(List.of(
+                                                    LevelDPredicates.IS_DAY.factory().get(),
+                                                    LevelDPredicates.NOT.factory().apply(LevelDPredicates.IS_RAINING.factory().get())))),
+                                            HaemaDPredicates.TRIGGER_BURN_EVENT.factory().get())),
+                                    EntityDPredicates.AND.factory().apply(List.of(
+                                            EntityDPredicates.LEVEL_PREDICATE.factory().apply(LevelDPredicates.BOOLEAN_GAME_RULE.factory().apply(HaemaVampires.VampireGameRules.VAMPIRES_BURN.getId())),
+                                            EntityDPredicates.IS_SURVIVAL_LIKE.factory().get(),
+                                            EntityDPredicates.NOT.factory().apply(HaemaDPredicates.PREVENT_BURN_EVENT.factory().get()))))))))));
+
+            var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("sunlight_sickness"));
+            entries.add(key, sunlightSicknessAbility);
             return key;
         }
 
