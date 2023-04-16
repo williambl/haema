@@ -91,7 +91,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
                                             HaemaDPredicates.HEALTH_RELATIVE_TO_MAX.factory().apply(NumberDPredicates.COMPARISON.factory().apply(Comparison.LESS_THAN, 0.0), false)
                                     )))))),
                             1f,
-                            new double[] { 1.05, -1.0 }
+                            new double[] { 1.05, 0.0, -1.0 }
                             )));
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("healing"));
             entries.add(key, healingAbility);
