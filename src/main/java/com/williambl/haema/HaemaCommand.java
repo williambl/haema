@@ -3,7 +3,7 @@ package com.williambl.haema;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -58,13 +58,13 @@ public final class HaemaCommand {
                         argument("targets", EntityArgument.entities()).executes(HaemaCommand::getBlood))).then(
                 literal("set").then(
                         argument("targets", EntityArgument.entities()).then(
-                        argument("amount", IntegerArgumentType.integer()).executes(HaemaCommand::setBlood)))).then(
+                        argument("amount", DoubleArgumentType.doubleArg()).executes(HaemaCommand::setBlood)))).then(
                 literal("add").then(
                         argument("targets", EntityArgument.entities()).then(
-                        argument("amount", IntegerArgumentType.integer()).executes(HaemaCommand::addBlood)))).then(
+                        argument("amount", DoubleArgumentType.doubleArg()).executes(HaemaCommand::addBlood)))).then(
                 literal("remove").then(
                         argument("targets", EntityArgument.entities()).then(
-                        argument("amount", IntegerArgumentType.integer()).executes(HaemaCommand::removeBlood)))
+                        argument("amount", DoubleArgumentType.doubleArg()).executes(HaemaCommand::removeBlood)))
         );
         //@formatter:on
     }
@@ -118,11 +118,11 @@ public final class HaemaCommand {
     }
 
     private static int deconvert(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        return convert(ctx, () -> id("command"));
+        return deconvert(ctx, () -> id("command"));
     }
 
     private static int deconvertWithArgSource(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        int source = convert(ctx, () -> ResourceLocationArgument.getId(ctx, "source"));
+        int source = deconvert(ctx, () -> ResourceLocationArgument.getId(ctx, "source"));
         return source;
     }
 
@@ -172,7 +172,7 @@ public final class HaemaCommand {
                     ? Component.empty()
                     : Component.translatable("command.haema.query.vampirism_source", Component.literal(Objects.requireNonNull(sourceRegistry.getKey(source)).toString()).withStyle(ChatFormatting.GOLD)).withStyle(ChatFormatting.GRAY);
             Set<VampireAbility> abilities = VampireAbilitiesComponent.KEY.maybeGet(entity).map(VampireAbilitiesComponent::getAbilities).orElseGet(Set::of);
-            Component abilityCountText = (abilities.isEmpty() ? Component.translatable("command.haema.query.no_abilities_line", entity.getDisplayName()) : Component.translatable("command.haema.query.abilities_line", entity.getDisplayName(), abilities)).withStyle(ChatFormatting.GRAY);
+            Component abilityCountText = (abilities.isEmpty() ? Component.translatable("command.haema.query.no_abilities_line", entity.getDisplayName()) : Component.translatable("command.haema.query.abilities_line", entity.getDisplayName(), abilities.size())).withStyle(ChatFormatting.GRAY);
 
             ctx.getSource().sendSuccess(Component.translatable("command.haema.query.first_line", entity.getDisplayName()).withStyle(ChatFormatting.WHITE), false);
             ctx.getSource().sendSuccess(Component.translatable("command.haema.query.is_vampire_line", entity.getDisplayName(), isVampireText, vampirismSourceText).withStyle(ChatFormatting.GRAY), false);
@@ -191,9 +191,21 @@ public final class HaemaCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int setBlood(CommandContext<CommandSourceStack> ctx) {
-        //TODO
-        return Command.SINGLE_SUCCESS;
+    private static int setBlood(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        var entities = EntityArgument.getEntities(ctx, "targets");
+        double amount = DoubleArgumentType.getDouble(ctx, "amount");
+
+        for (var entity : entities) {
+            var component = VampireComponent.KEY.getNullable(entity);
+            if (component == null) {
+                throw NOT_VAMPIRABLE.create(entity.getDisplayName());
+            }
+
+            component.setBlood(amount);
+            ctx.getSource().sendSuccess(Component.translatable("command.haema.blood.set.success", entity.getDisplayName(), component.getBlood()), true);
+        }
+
+        return entities.size();
     }
 
     private static int addBlood(CommandContext<CommandSourceStack> ctx) {
