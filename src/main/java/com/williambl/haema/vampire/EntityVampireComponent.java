@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -75,7 +76,7 @@ public class EntityVampireComponent implements VampireComponent {
 
     @Override
     public void setBlood(double blood) {
-        this.blood = blood;
+        this.blood = Mth.clamp(blood, 0,  MAX_BLOOD);
     }
 
     @Override
