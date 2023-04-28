@@ -143,9 +143,11 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
                             EntityDPredicates.CONSTANT.factory().apply(true),
                             EntityDPredicates.AND.factory().apply(List.of(
                                     EntityDPredicates.OR.factory().apply(List.of(
-                                            EntityDPredicates.LEVEL_PREDICATE.factory().apply(LevelDPredicates.AND.factory().apply(List.of(
-                                                    LevelDPredicates.IS_DAY.factory().get(),
-                                                    LevelDPredicates.NOT.factory().apply(LevelDPredicates.IS_RAINING.factory().get())))),
+                                            EntityDPredicates.AND.factory().apply(List.of(
+                                                    EntityDPredicates.CAN_SEE_SKY.factory().get(),
+                                                    EntityDPredicates.LEVEL_PREDICATE.factory().apply(LevelDPredicates.AND.factory().apply(List.of(
+                                                            LevelDPredicates.IS_DAY.factory().get(),
+                                                            LevelDPredicates.NOT.factory().apply(LevelDPredicates.IS_RAINING.factory().get())))))),
                                             HaemaDFunctions.TRIGGER_BURN_EVENT.factory().get())),
                                     EntityDPredicates.AND.factory().apply(List.of(
                                             EntityDPredicates.LEVEL_PREDICATE.factory().apply(LevelDPredicates.BOOLEAN_GAME_RULE.factory().apply(HaemaVampires.VampireGameRules.VAMPIRES_BURN.getId())),
