@@ -154,6 +154,32 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             return key;
         }
 
+        private ResourceKey<VampireAbility> createVampiricWeaknessAbility(Entries entries) {
+            var sunlightSicknessAbility = new VampireAbility(true, EntityDPredicates.CONSTANT.factory().apply(false), Set.of(), Set.of(), Set.of(), List.of(new EffectVampireAbilityPower(Set.of(
+                    new EffectVampireAbilityPower.Data(
+                            HaemaVampires.VampireMobEffects.VAMPIRIC_WEAKNESS,
+                            0,
+                            10,
+                            false,
+                            true,
+                            true,
+                            EntityDPredicates.AND.factory().apply(List.of(
+                                    EntityDPredicates.OR.factory().apply(List.of(
+                                            EntityDPredicates.LEVEL_PREDICATE.factory().apply(LevelDPredicates.AND.factory().apply(List.of(
+                                                    LevelDPredicates.IS_DAY.factory().get(),
+                                                    LevelDPredicates.NOT.factory().apply(LevelDPredicates.IS_RAINING.factory().get())))),
+                                            HaemaDPredicates.TRIGGER_BURN_EVENT.factory().get())),
+                                    EntityDPredicates.AND.factory().apply(List.of(
+                                            EntityDPredicates.LEVEL_PREDICATE.factory().apply(LevelDPredicates.BOOLEAN_GAME_RULE.factory().apply(HaemaVampires.VampireGameRules.VAMPIRES_BURN.getId())),
+                                            EntityDPredicates.IS_SURVIVAL_LIKE.factory().get(),
+                                            EntityDPredicates.NOT.factory().apply(HaemaDPredicates.PREVENT_BURN_EVENT.factory().get()))))))))));
+
+            var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("sunlight_sickness"));
+            entries.add(key, sunlightSicknessAbility);
+            return key;
+
+        }
+
         @Override
         public String getName() {
             return "Dynamic Registry Objects";

@@ -12,6 +12,7 @@ import com.williambl.haema.vampire.ability.powers.DummyVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.EffectVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.HealingVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.sunlight_sickness.SunlightSicknessEffect;
+import com.williambl.haema.vampire.ability.powers.vampiric_weakness.VampiricWeaknessEffect;
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -63,6 +64,7 @@ public class HaemaVampires {
 
     public static class VampireMobEffects {
         public static final SunlightSicknessEffect SUNLIGHT_SICKNESS = Registry.register(BuiltInRegistries.MOB_EFFECT, id("sunlight_sickness"), new SunlightSicknessEffect());
+        public static final VampiricWeaknessEffect VAMPIRIC_WEAKNESS = Registry.register(BuiltInRegistries.MOB_EFFECT, id("vampiric_weakness"), new VampiricWeaknessEffect());
 
         private static void init() {}
     }
