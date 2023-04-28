@@ -2,7 +2,9 @@ package com.williambl.haema.vampire.ability.powers;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.williambl.dpred.DPredicate;
+import com.williambl.dfunc.DFunction;
+import com.williambl.dfunc.number.EntityNumberDFunctions;
+import com.williambl.dfunc.predicate.EntityDPredicates;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -26,8 +28,8 @@ public record EffectVampireAbilityPower(Set<Data> effects) implements VampireAbi
     @Override
     public void tick(LivingEntity entity, VampireAbility source) {
         for (var effect : this.effects) {
-            if (effect.predicate().test(entity)) {
-                entity.addEffect(effect.createInstance());
+            if (effect.predicate().apply(entity)) {
+                entity.addEffect(effect.createInstance(entity));
             }
         }
     }
@@ -44,19 +46,19 @@ public record EffectVampireAbilityPower(Set<Data> effects) implements VampireAbi
         return CODEC;
     }
 
-    public record Data(MobEffect effect, int amplifier, int duration, boolean ambient, boolean showParticles, boolean showIcon, DPredicate<Entity> predicate) {
+    public record Data(MobEffect effect, DFunction<Entity, Double> amplifier, DFunction<Entity, Double> duration, DFunction<Entity, Boolean> ambient, DFunction<Entity, Boolean> showParticles, DFunction<Entity, Boolean> showIcon, DFunction<Entity, Boolean> predicate) {
         private static final Codec<Data> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 BuiltInRegistries.MOB_EFFECT.byNameCodec().fieldOf("effect").forGetter(Data::effect),
-                Codec.INT.optionalFieldOf("amplifier", 0).forGetter(Data::amplifier),
-                Codec.INT.optionalFieldOf("duration", 0).forGetter(Data::duration),
-                Codec.BOOL.optionalFieldOf("ambient", false).forGetter(Data::ambient),
-                Codec.BOOL.optionalFieldOf("show_particles", true).forGetter(Data::showParticles),
-                Codec.BOOL.optionalFieldOf("show_icon", true).forGetter(Data::showIcon),
-                DPredicate.ENTITY_PREDICATE_TYPE_REGISTRY.codec().fieldOf("predicate").forGetter(Data::predicate)
+                DFunction.ENTITY_TO_NUMBER_FUNCTION_TYPE_REGISTRY.codec().optionalFieldOf("amplifier", EntityNumberDFunctions.CONSTANT.factory().apply(0.)).forGetter(Data::amplifier),
+                DFunction.ENTITY_TO_NUMBER_FUNCTION_TYPE_REGISTRY.codec().optionalFieldOf("duration", EntityNumberDFunctions.CONSTANT.factory().apply(0.)).forGetter(Data::duration),
+                DFunction.ENTITY_PREDICATE_TYPE_REGISTRY.codec().optionalFieldOf("ambient", EntityDPredicates.CONSTANT.factory().apply(false)).forGetter(Data::ambient),
+                DFunction.ENTITY_PREDICATE_TYPE_REGISTRY.codec().optionalFieldOf("show_particles", EntityDPredicates.CONSTANT.factory().apply(true)).forGetter(Data::showParticles),
+                DFunction.ENTITY_PREDICATE_TYPE_REGISTRY.codec().optionalFieldOf("show_icon", EntityDPredicates.CONSTANT.factory().apply(true)).forGetter(Data::showIcon),
+                DFunction.ENTITY_PREDICATE_TYPE_REGISTRY.codec().fieldOf("predicate").forGetter(Data::predicate)
         ).apply(instance, Data::new));
 
-        private MobEffectInstance createInstance() {
-            return new MobEffectInstance(this.effect, this.duration, this.amplifier, this.ambient, this.showParticles, this.showIcon);
+        private MobEffectInstance createInstance(Entity entity) {
+            return new MobEffectInstance(this.effect, this.duration.apply(entity).intValue(), this.amplifier.apply(entity).intValue(), this.ambient.apply(entity), this.showParticles.apply(entity), this.showIcon.apply(entity));
         }
     }
 }

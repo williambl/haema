@@ -1,12 +1,15 @@
 package com.williambl.haema.data;
 
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
-import com.williambl.dpred.Comparison;
-import com.williambl.dpred.EntityDPredicates;
-import com.williambl.dpred.LevelDPredicates;
-import com.williambl.dpred.NumberDPredicates;
+import com.williambl.dfunc.Comparison;
+import com.williambl.dfunc.number.BiNumberNumberDFunctions;
+import com.williambl.dfunc.number.EntityNumberDFunctions;
+import com.williambl.dfunc.number.NumberNumberFunctions;
+import com.williambl.dfunc.predicate.EntityDPredicates;
+import com.williambl.dfunc.predicate.LevelDPredicates;
+import com.williambl.dfunc.predicate.NumberDPredicates;
 import com.williambl.haema.Haema;
-import com.williambl.haema.HaemaDPredicates;
+import com.williambl.haema.HaemaDFunctions;
 import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.vampire.HaemaVampires;
@@ -61,7 +64,8 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             var reachAbility = this.createReachAbility(entries);
             var healthBoostAbility = this.createHealthBoostAbility(entries);
             var sunlightSicknessAbility = this.createSunlightSicknessAbility(entries);
-            entries.add(HaemaVampires.VampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaVampires.VampirismSources.BLOOD_INJECTOR), Set.of(healingAbility, reachAbility, healthBoostAbility, sunlightSicknessAbility)));
+            var vampiricWeaknessAbility = this.createVampiricWeaknessAbility(entries);
+            entries.add(HaemaVampires.VampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaVampires.VampirismSources.BLOOD_INJECTOR), Set.of(healingAbility, reachAbility, healthBoostAbility, sunlightSicknessAbility, vampiricWeaknessAbility)));
             entries.add(HaemaVampires.VampirismSources.COMMAND, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of()));
         }
 
@@ -70,29 +74,28 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
                     new HealingVampireAbilityPower(EntityDPredicates.AND.factory().apply(List.of(
                             EntityDPredicates.LEVEL_PREDICATE.factory().apply(LevelDPredicates.BOOLEAN_GAME_RULE.factory().apply("naturalRegeneration")),
                             EntityDPredicates.NOT.factory().apply(EntityDPredicates.DEAD_OR_DYING.factory().get()),
-                            EntityDPredicates.AGE.factory().apply(NumberDPredicates.MODULO.factory().apply(20.0, NumberDPredicates.COMPARISON.factory().apply(Comparison.EQUAL, 0.0))),
+                            EntityDPredicates.NUMBER_PREDICATE.factory().apply(EntityNumberDFunctions.TRANSFORMED_WITH_ARGUMENT.factory().apply(EntityNumberDFunctions.AGE.factory().get(), EntityNumberDFunctions.CONSTANT.factory().apply(20.), BiNumberNumberDFunctions.MODULO.factory().get()), NumberDPredicates.COMPARISON.factory().apply(Comparison.EQUAL, 0.0)),
                             //TODO test sunlight sickness
-                            HaemaDPredicates.HEALTH_RELATIVE_TO_MAX.factory().apply(NumberDPredicates.COMPARISON.factory().apply(Comparison.LESS_THAN, 0.0), true),
+                            EntityDPredicates.NUMBER_PREDICATE.factory().apply(EntityNumberDFunctions.TRANSFORMED_WITH_ARGUMENT.factory().apply(EntityNumberDFunctions.HEALTH.factory().get(), EntityNumberDFunctions.ATTRIBUTE.factory().apply(Attributes.MAX_HEALTH), BiNumberNumberDFunctions.SUBTRACT.factory().get()), NumberDPredicates.COMPARISON.factory().apply(Comparison.LESS_THAN, 0.0)),
                             EntityDPredicates.OR.factory().apply(List.of(
                                     EntityDPredicates.AND.factory().apply(List.of(
-                                            HaemaDPredicates.BLOOD.factory().apply(NumberDPredicates.COMPARISON.factory().apply(Comparison.GREATER_THAN_OR_EQUAL, 19.0)),
-                                            HaemaDPredicates.HEALTH_RELATIVE_TO_MAX.factory().apply(NumberDPredicates.COMPARISON.factory().apply(Comparison.LESS_THAN, 20.0), false)
+                                            EntityDPredicates.NUMBER_PREDICATE.factory().apply(HaemaDFunctions.BLOOD.factory().get(), NumberDPredicates.COMPARISON.factory().apply(Comparison.GREATER_THAN_OR_EQUAL, 19.0)),
+                                            EntityDPredicates.NUMBER_PREDICATE.factory().apply(EntityNumberDFunctions.TRANSFORMED_WITH_ARGUMENT.factory().apply(EntityNumberDFunctions.HEALTH.factory().get(), EntityNumberDFunctions.ATTRIBUTE_BASE.factory().apply(Attributes.MAX_HEALTH), BiNumberNumberDFunctions.SUBTRACT.factory().get()), NumberDPredicates.COMPARISON.factory().apply(Comparison.LESS_THAN, 20.0))
                                     )),
                                     EntityDPredicates.AND.factory().apply(List.of(
-                                            HaemaDPredicates.BLOOD.factory().apply(NumberDPredicates.COMPARISON.factory().apply(Comparison.GREATER_THAN_OR_EQUAL, 14.0)),
-                                            HaemaDPredicates.HEALTH_RELATIVE_TO_MAX.factory().apply(NumberDPredicates.COMPARISON.factory().apply(Comparison.LESS_THAN, 10.0), false)
+                                            EntityDPredicates.NUMBER_PREDICATE.factory().apply(HaemaDFunctions.BLOOD.factory().get(), NumberDPredicates.COMPARISON.factory().apply(Comparison.GREATER_THAN_OR_EQUAL, 14.0)),
+                                            EntityDPredicates.NUMBER_PREDICATE.factory().apply(EntityNumberDFunctions.TRANSFORMED_WITH_ARGUMENT.factory().apply(EntityNumberDFunctions.HEALTH.factory().get(), EntityNumberDFunctions.ATTRIBUTE_BASE.factory().apply(Attributes.MAX_HEALTH), BiNumberNumberDFunctions.SUBTRACT.factory().get()), NumberDPredicates.COMPARISON.factory().apply(Comparison.LESS_THAN, 10.0))
                                     )),
                                     EntityDPredicates.AND.factory().apply(List.of(
-                                            HaemaDPredicates.BLOOD.factory().apply(NumberDPredicates.COMPARISON.factory().apply(Comparison.GREATER_THAN_OR_EQUAL, 10.0)),
-                                            HaemaDPredicates.HEALTH_RELATIVE_TO_MAX.factory().apply(NumberDPredicates.COMPARISON.factory().apply(Comparison.LESS_THAN, 6.0), false)
+                                            EntityDPredicates.NUMBER_PREDICATE.factory().apply(HaemaDFunctions.BLOOD.factory().get(), NumberDPredicates.COMPARISON.factory().apply(Comparison.GREATER_THAN_OR_EQUAL, 10.0)),
+                                            EntityDPredicates.NUMBER_PREDICATE.factory().apply(EntityNumberDFunctions.TRANSFORMED_WITH_ARGUMENT.factory().apply(EntityNumberDFunctions.HEALTH.factory().get(), EntityNumberDFunctions.ATTRIBUTE_BASE.factory().apply(Attributes.MAX_HEALTH), BiNumberNumberDFunctions.SUBTRACT.factory().get()), NumberDPredicates.COMPARISON.factory().apply(Comparison.LESS_THAN, 6.0))
                                     )),
                                     EntityDPredicates.AND.factory().apply(List.of(
-                                            HaemaDPredicates.BLOOD.factory().apply(NumberDPredicates.COMPARISON.factory().apply(Comparison.GREATER_THAN_OR_EQUAL, 8.0)),
-                                            HaemaDPredicates.HEALTH_RELATIVE_TO_MAX.factory().apply(NumberDPredicates.COMPARISON.factory().apply(Comparison.LESS_THAN, 0.0), false)
+                                            EntityDPredicates.NUMBER_PREDICATE.factory().apply(HaemaDFunctions.BLOOD.factory().get(), NumberDPredicates.COMPARISON.factory().apply(Comparison.GREATER_THAN_OR_EQUAL, 8.0)),
+                                            EntityDPredicates.NUMBER_PREDICATE.factory().apply(EntityNumberDFunctions.TRANSFORMED_WITH_ARGUMENT.factory().apply(EntityNumberDFunctions.HEALTH.factory().get(), EntityNumberDFunctions.ATTRIBUTE_BASE.factory().apply(Attributes.MAX_HEALTH), BiNumberNumberDFunctions.SUBTRACT.factory().get()), NumberDPredicates.COMPARISON.factory().apply(Comparison.LESS_THAN, 0.0))
                                     )))))),
-                            1f,
-                            new double[] { 1.05, 0.0, -1.0 }
-                            )));
+                            EntityNumberDFunctions.CONSTANT.factory().apply(1.0),
+                            EntityNumberDFunctions.TRANSFORMED.factory().apply(EntityNumberDFunctions.TRANSFORMED_WITH_ARGUMENT.factory().apply(HaemaDFunctions.BLOOD.factory().get(), HaemaDFunctions.MAX_BLOOD.factory().get(), BiNumberNumberDFunctions.DIVIDE.factory().get()), NumberNumberFunctions.POLYNOMIAL.factory().apply(List.of(1.05, 0.0, -1.0))))));
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("healing"));
             entries.add(key, healingAbility);
             return key;
@@ -103,12 +106,12 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
                     new AttributeVampireAbilityPower.Data(
                             ReachEntityAttributes.REACH,
                             new AttributeModifier(UUID.fromString("0eb4fc5f-71d5-4440-b517-bcc18e1df6f4"), "Vampire Reach bonus", 2.0, AttributeModifier.Operation.ADDITION),
-                            HaemaDPredicates.BLOOD.factory().apply(NumberDPredicates.COMPARISON.factory().apply(Comparison.GREATER_THAN_OR_EQUAL, 6.0))
+                            EntityDPredicates.NUMBER_PREDICATE.factory().apply(HaemaDFunctions.BLOOD.factory().get(), NumberDPredicates.COMPARISON.factory().apply(Comparison.GREATER_THAN_OR_EQUAL, 6.0))
                     ),
                     new AttributeVampireAbilityPower.Data(
                             ReachEntityAttributes.ATTACK_RANGE,
                             new AttributeModifier(UUID.fromString("3267a46b-2b48-429f-a3a8-439aa87a876d"), "Vampire Attack Range bonus", 2.0, AttributeModifier.Operation.ADDITION),
-                            HaemaDPredicates.BLOOD.factory().apply(NumberDPredicates.COMPARISON.factory().apply(Comparison.GREATER_THAN_OR_EQUAL, 6.0))
+                            EntityDPredicates.NUMBER_PREDICATE.factory().apply(HaemaDFunctions.BLOOD.factory().get(), NumberDPredicates.COMPARISON.factory().apply(Comparison.GREATER_THAN_OR_EQUAL, 6.0))
                     )
             ))));
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("reach"));
@@ -121,7 +124,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
                     new AttributeVampireAbilityPower.Data(
                             Attributes.MAX_HEALTH,
                             new AttributeModifier(UUID.fromString("858a6a28-5092-49ea-a94e-eb74db018a92"), "Vampire Max Health bonus", 1.0, AttributeModifier.Operation.MULTIPLY_BASE),
-                            HaemaDPredicates.BLOOD.factory().apply(NumberDPredicates.COMPARISON.factory().apply(Comparison.GREATER_THAN_OR_EQUAL, 3.0))
+                            EntityDPredicates.NUMBER_PREDICATE.factory().apply(HaemaDFunctions.BLOOD.factory().get(), NumberDPredicates.COMPARISON.factory().apply(Comparison.GREATER_THAN_OR_EQUAL, 6.0))
                     )
             ))));
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("health_boost"));
@@ -133,21 +136,21 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             var sunlightSicknessAbility = new VampireAbility(true, EntityDPredicates.CONSTANT.factory().apply(false), Set.of(), Set.of(), Set.of(), List.of(new EffectVampireAbilityPower(Set.of(
                     new EffectVampireAbilityPower.Data(
                             HaemaVampires.VampireMobEffects.SUNLIGHT_SICKNESS,
-                            0,
-                            10,
-                            false,
-                            true,
-                            true,
+                            EntityNumberDFunctions.CONSTANT.factory().apply(0.0),
+                            EntityNumberDFunctions.CONSTANT.factory().apply(10.0),
+                            EntityDPredicates.CONSTANT.factory().apply(false),
+                            EntityDPredicates.CONSTANT.factory().apply(true),
+                            EntityDPredicates.CONSTANT.factory().apply(true),
                             EntityDPredicates.AND.factory().apply(List.of(
                                     EntityDPredicates.OR.factory().apply(List.of(
                                             EntityDPredicates.LEVEL_PREDICATE.factory().apply(LevelDPredicates.AND.factory().apply(List.of(
                                                     LevelDPredicates.IS_DAY.factory().get(),
                                                     LevelDPredicates.NOT.factory().apply(LevelDPredicates.IS_RAINING.factory().get())))),
-                                            HaemaDPredicates.TRIGGER_BURN_EVENT.factory().get())),
+                                            HaemaDFunctions.TRIGGER_BURN_EVENT.factory().get())),
                                     EntityDPredicates.AND.factory().apply(List.of(
                                             EntityDPredicates.LEVEL_PREDICATE.factory().apply(LevelDPredicates.BOOLEAN_GAME_RULE.factory().apply(HaemaVampires.VampireGameRules.VAMPIRES_BURN.getId())),
                                             EntityDPredicates.IS_SURVIVAL_LIKE.factory().get(),
-                                            EntityDPredicates.NOT.factory().apply(HaemaDPredicates.PREVENT_BURN_EVENT.factory().get()))))))))));
+                                            EntityDPredicates.NOT.factory().apply(HaemaDFunctions.PREVENT_BURN_EVENT.factory().get()))))))))));
 
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("sunlight_sickness"));
             entries.add(key, sunlightSicknessAbility);
@@ -155,27 +158,18 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         }
 
         private ResourceKey<VampireAbility> createVampiricWeaknessAbility(Entries entries) {
-            var sunlightSicknessAbility = new VampireAbility(true, EntityDPredicates.CONSTANT.factory().apply(false), Set.of(), Set.of(), Set.of(), List.of(new EffectVampireAbilityPower(Set.of(
+            var vampiricWeaknessAbility = new VampireAbility(true, EntityDPredicates.CONSTANT.factory().apply(false), Set.of(), Set.of(), Set.of(), List.of(new EffectVampireAbilityPower(Set.of(
                     new EffectVampireAbilityPower.Data(
                             HaemaVampires.VampireMobEffects.VAMPIRIC_WEAKNESS,
-                            0,
-                            10,
-                            false,
-                            true,
-                            true,
-                            EntityDPredicates.AND.factory().apply(List.of(
-                                    EntityDPredicates.OR.factory().apply(List.of(
-                                            EntityDPredicates.LEVEL_PREDICATE.factory().apply(LevelDPredicates.AND.factory().apply(List.of(
-                                                    LevelDPredicates.IS_DAY.factory().get(),
-                                                    LevelDPredicates.NOT.factory().apply(LevelDPredicates.IS_RAINING.factory().get())))),
-                                            HaemaDPredicates.TRIGGER_BURN_EVENT.factory().get())),
-                                    EntityDPredicates.AND.factory().apply(List.of(
-                                            EntityDPredicates.LEVEL_PREDICATE.factory().apply(LevelDPredicates.BOOLEAN_GAME_RULE.factory().apply(HaemaVampires.VampireGameRules.VAMPIRES_BURN.getId())),
-                                            EntityDPredicates.IS_SURVIVAL_LIKE.factory().get(),
-                                            EntityDPredicates.NOT.factory().apply(HaemaDPredicates.PREVENT_BURN_EVENT.factory().get()))))))))));
+                            EntityNumberDFunctions.TRANSFORMED_WITH_ARGUMENT.factory().apply(EntityNumberDFunctions.CONSTANT.factory().apply(3.0), HaemaDFunctions.BLOOD.factory().get(), BiNumberNumberDFunctions.SUBTRACT.factory().get()),
+                            EntityNumberDFunctions.CONSTANT.factory().apply(5.0),
+                            EntityDPredicates.CONSTANT.factory().apply(false),
+                            EntityDPredicates.CONSTANT.factory().apply(true),
+                            EntityDPredicates.CONSTANT.factory().apply(true),
+                            EntityDPredicates.NUMBER_PREDICATE.factory().apply(HaemaDFunctions.BLOOD.factory().get(), NumberDPredicates.COMPARISON.factory().apply(Comparison.LESS_THAN_OR_EQUAL, 3.0)))))));
 
-            var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("sunlight_sickness"));
-            entries.add(key, sunlightSicknessAbility);
+            var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("vampiric_weakness"));
+            entries.add(key, vampiricWeaknessAbility);
             return key;
 
         }

@@ -2,7 +2,7 @@ package com.williambl.haema.api.vampire.ability;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.williambl.dpred.DPredicate;
+import com.williambl.dfunc.DFunction;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
@@ -26,7 +26,7 @@ import static com.williambl.haema.Haema.id;
  * @param powers            the powers that are granted when this ability is applied
  */
 public record VampireAbility(boolean enabled,
-                             DPredicate<Entity> canPlayerModify,
+                             DFunction<Entity, Boolean> canPlayerModify,
                              Set<ResourceKey<VampireAbility>> prerequisites,
                              Set<ResourceKey<VampireAbility>> conflicts,
                              Set<ResourceKey<VampireAbility>> supercedes, //TODO do something with this
@@ -36,7 +36,7 @@ public record VampireAbility(boolean enabled,
 
     public static final Codec<VampireAbility> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.BOOL.fieldOf("enabled").forGetter(VampireAbility::enabled),
-            DPredicate.ENTITY_PREDICATE_TYPE_REGISTRY.codec().fieldOf("can_player_modify").forGetter(VampireAbility::canPlayerModify),
+            DFunction.ENTITY_PREDICATE_TYPE_REGISTRY.codec().fieldOf("can_player_modify").forGetter(VampireAbility::canPlayerModify),
             ResourceKey.codec(REGISTRY_KEY).listOf().fieldOf("prerequisites").xmap(Set::copyOf, List::copyOf).forGetter(VampireAbility::prerequisites),
             ResourceKey.codec(REGISTRY_KEY).listOf().fieldOf("conflicts").xmap(Set::copyOf, List::copyOf).forGetter(VampireAbility::conflicts),
             ResourceKey.codec(REGISTRY_KEY).listOf().fieldOf("supercedes").xmap(Set::copyOf, List::copyOf).forGetter(VampireAbility::supercedes),

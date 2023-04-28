@@ -182,8 +182,8 @@ dependencies {
         exclude group: "net.fabricmc.fabric-api"
     }
 
-    // Datapackable Predicates
-    modImplementation include("com.williambl.dpred:datapackable-predicates:${project.dpred_version}") {
+    // Data Functions
+    modImplementation include("com.williambl.dfunc:data-functions:${project.dfunc_version}") {
         exclude group: "net.fabricmc.fabric-api"
     }
 
