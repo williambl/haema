@@ -3,6 +3,7 @@ package com.williambl.haema.vampire;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.williambl.haema.Haema;
+import com.williambl.haema.HaemaUtil;
 import com.williambl.haema.api.vampire.ability.VampireAbilitiesComponent;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import net.minecraft.nbt.CompoundTag;
@@ -63,6 +64,7 @@ public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponen
                     .map(Pair::getFirst)
                     .orElseGet(List::of)
                     .stream()
+                    .filter(HaemaUtil.checkInRegistry(sourceRegistry, "Vampire Ability {} does not exist, skipping"))
                     .map(sourceRegistry::get)
                     .toList();
             this.abilities.addAll(abilities);

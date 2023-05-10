@@ -1,5 +1,6 @@
 package com.williambl.haema;
 
+import com.williambl.dfunc.ContextArg;
 import com.williambl.dfunc.DFunction;
 import com.williambl.dfunc.DFunctionType;
 import com.williambl.haema.api.vampire.VampireComponent;
@@ -8,31 +9,38 @@ import net.minecraft.core.Registry;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 import static com.williambl.haema.Haema.id;
 
 public final class HaemaDFunctions {
-    public static final DFunctionType<Entity, Double, ? extends Supplier<? extends DFunction<Entity, Double>>> BLOOD = Registry.register(
-            DFunction.ENTITY_TO_NUMBER_FUNCTION_TYPE_REGISTRY.registry(),
+    public static final DFunctionType<Double, ? extends Function<ContextArg<Entity>, ? extends DFunction<Double>>> BLOOD = Registry.register(
+            DFunction.NUMBER_FUNCTION.registry(),
             id("blood"),
-            DFunction.<Entity, Double>create(e -> VampireComponent.KEY.maybeGet(e).map(VampireComponent::getBlood).orElse(0.0)));
+            DFunction.<ContextArg<Entity>, Double>create(
+                    ContextArg.ENTITY,
+                    (e, ctx) -> VampireComponent.KEY.maybeGet(e.get(ctx)).map(VampireComponent::getBlood).orElse(0.0)));
 
-    public static final DFunctionType<Entity, Double, ? extends Supplier<? extends DFunction<Entity, Double>>> MAX_BLOOD = Registry.register(
-            DFunction.ENTITY_TO_NUMBER_FUNCTION_TYPE_REGISTRY.registry(),
+    public static final DFunctionType<Double, ? extends Function<ContextArg<Entity>, ? extends DFunction<Double>>> MAX_BLOOD = Registry.register(
+            DFunction.NUMBER_FUNCTION.registry(),
             id("max_blood"),
-            DFunction.<Entity, Double>create(e -> VampireComponent.MAX_BLOOD));
+            DFunction.<ContextArg<Entity>, Double>create(
+                    ContextArg.ENTITY,
+                    (e, ctx) -> VampireComponent.MAX_BLOOD));
 
-    public static final DFunctionType<Entity, Boolean, ? extends Supplier<? extends DFunction<Entity, Boolean>>> TRIGGER_BURN_EVENT = Registry.register(
-            DFunction.ENTITY_PREDICATE_TYPE_REGISTRY.registry(),
+    public static final DFunctionType<Boolean, ? extends Function<ContextArg<Entity>, ? extends DFunction<Boolean>>> TRIGGER_BURN_EVENT = Registry.register(
+            DFunction.PREDICATE.registry(),
             id("trigger_burn_event"),
-            DFunction.<Entity, Boolean>create(e -> e instanceof LivingEntity l && VampireBurnEvents.TRIGGER.invoker().shouldTriggerVampireBurn(l)));
+            DFunction.<ContextArg<Entity>, Boolean>create(
+                    ContextArg.ENTITY,
+                    (e, ctx) -> e.get(ctx) instanceof LivingEntity l && VampireBurnEvents.TRIGGER.invoker().shouldTriggerVampireBurn(l)));
 
-    public static final DFunctionType<Entity, Boolean, ? extends Supplier<? extends DFunction<Entity, Boolean>>> PREVENT_BURN_EVENT = Registry.register(
-            DFunction.ENTITY_PREDICATE_TYPE_REGISTRY.registry(),
+    public static final DFunctionType<Boolean, ? extends Function<ContextArg<Entity>, ? extends DFunction<Boolean>>> PREVENT_BURN_EVENT = Registry.register(
+            DFunction.PREDICATE.registry(),
             id("prevent_burn_event"),
-            DFunction.<Entity, Boolean>create(e -> e instanceof LivingEntity l && VampireBurnEvents.PREVENT.invoker().shouldPreventVampireBurn(l)));
-
+            DFunction.<ContextArg<Entity>, Boolean>create(
+                    ContextArg.ENTITY,
+                    (e, ctx) -> e.get(ctx) instanceof LivingEntity l && VampireBurnEvents.PREVENT.invoker().shouldPreventVampireBurn(l)));
 
     static void init() {}
 }
