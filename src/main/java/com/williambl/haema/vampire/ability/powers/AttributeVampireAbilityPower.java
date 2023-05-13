@@ -2,8 +2,8 @@ package com.williambl.haema.vampire.ability.powers;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.williambl.dfunc.DFContext;
-import com.williambl.dfunc.DFunction;
+import com.williambl.dfunc.api.DFunction;
+import com.williambl.dfunc.api.context.DFContext;
 import com.williambl.haema.HaemaUtil;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.api.vampire.ability.VampireAbilityPower;

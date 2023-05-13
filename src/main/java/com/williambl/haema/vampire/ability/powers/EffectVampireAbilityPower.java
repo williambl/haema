@@ -2,10 +2,10 @@ package com.williambl.haema.vampire.ability.powers;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.williambl.dfunc.DFContext;
-import com.williambl.dfunc.DFunction;
-import com.williambl.dfunc.functions.DPredicates;
-import com.williambl.dfunc.functions.NumberDFunctions;
+import com.williambl.dfunc.api.DFunction;
+import com.williambl.dfunc.api.context.DFContext;
+import com.williambl.dfunc.api.functions.DPredicates;
+import com.williambl.dfunc.api.functions.NumberDFunctions;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
 import net.minecraft.core.registries.BuiltInRegistries;

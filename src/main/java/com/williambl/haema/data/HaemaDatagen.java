@@ -1,12 +1,12 @@
 package com.williambl.haema.data;
 
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
-import com.williambl.dfunc.Comparison;
-import com.williambl.dfunc.ContextArg;
-import com.williambl.dfunc.functions.DPredicates;
-import com.williambl.dfunc.functions.EntityDFunctions;
-import com.williambl.dfunc.functions.LevelDFunctions;
-import com.williambl.dfunc.functions.NumberDFunctions;
+import com.williambl.dfunc.api.Comparison;
+import com.williambl.dfunc.api.context.ContextArg;
+import com.williambl.dfunc.api.functions.DPredicates;
+import com.williambl.dfunc.api.functions.EntityDFunctions;
+import com.williambl.dfunc.api.functions.LevelDFunctions;
+import com.williambl.dfunc.api.functions.NumberDFunctions;
 import com.williambl.haema.Haema;
 import com.williambl.haema.HaemaDFunctions;
 import com.williambl.haema.api.vampire.VampirismSource;
@@ -146,9 +146,8 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
                                     DPredicates.OR.factory().apply(List.of(
                                             DPredicates.AND.factory().apply(List.of(
                                                     EntityDFunctions.CAN_SEE_SKY.factory().apply(ContextArg.ENTITY.arg()),
-                                                    DPredicates.AND.factory().apply(List.of(
-                                                            LevelDFunctions.IS_DAY.factory().apply(ContextArg.LEVEL.arg()),
-                                                            DPredicates.NOT.factory().apply(LevelDFunctions.IS_RAINING.factory().apply(ContextArg.LEVEL.arg())))))),
+                                                    LevelDFunctions.IS_DAY.factory().apply(ContextArg.LEVEL.arg()),
+                                                    DPredicates.NOT.factory().apply(LevelDFunctions.IS_RAINING.factory().apply(ContextArg.LEVEL.arg())))),
                                             HaemaDFunctions.TRIGGER_BURN_EVENT.factory().apply(ContextArg.ENTITY.arg()))),
                                     DPredicates.NOT.factory().apply(HaemaDFunctions.PREVENT_BURN_EVENT.factory().apply(ContextArg.ENTITY.arg())))))))));
 

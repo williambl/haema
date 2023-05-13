@@ -1,8 +1,8 @@
 package com.williambl.haema;
 
-import com.williambl.dfunc.ContextArg;
-import com.williambl.dfunc.DFunction;
-import com.williambl.dfunc.DFunctionType;
+import com.williambl.dfunc.api.DFunction;
+import com.williambl.dfunc.api.context.ContextArg;
+import com.williambl.dfunc.api.type.DFunctionType;
 import com.williambl.haema.api.vampire.VampireComponent;
 import com.williambl.haema.api.vampire.ability.powers.sunlight_sickness.VampireBurnEvents;
 import net.minecraft.core.Registry;

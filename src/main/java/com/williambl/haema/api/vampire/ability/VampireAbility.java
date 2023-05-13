@@ -2,7 +2,7 @@ package com.williambl.haema.api.vampire.ability;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.williambl.dfunc.DFunction;
+import com.williambl.dfunc.api.DFunction;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 
