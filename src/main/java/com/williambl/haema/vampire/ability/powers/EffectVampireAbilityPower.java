@@ -4,8 +4,10 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.williambl.dfunc.api.DFunction;
 import com.williambl.dfunc.api.context.DFContext;
+import com.williambl.dfunc.api.context.DFContextSpec;
 import com.williambl.dfunc.api.functions.DPredicates;
 import com.williambl.dfunc.api.functions.NumberDFunctions;
+import com.williambl.haema.HaemaUtil;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -17,6 +19,7 @@ import net.minecraft.world.entity.LivingEntity;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 public record EffectVampireAbilityPower(Set<Data> effects) implements VampireAbilityPower {
     public static final KeyDispatchDataCodec<EffectVampireAbilityPower> CODEC = KeyDispatchDataCodec.of(Data.CODEC.listOf().fieldOf("effects")
@@ -50,12 +53,12 @@ public record EffectVampireAbilityPower(Set<Data> effects) implements VampireAbi
     public record Data(MobEffect effect, DFunction<Double> amplifier, DFunction<Double> duration, DFunction<Boolean> ambient, DFunction<Boolean> showParticles, DFunction<Boolean> showIcon, DFunction<Boolean> predicate) {
         private static final Codec<Data> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 BuiltInRegistries.MOB_EFFECT.byNameCodec().fieldOf("effect").forGetter(Data::effect),
-                DFunction.NUMBER_FUNCTION.codec().optionalFieldOf("amplifier", NumberDFunctions.CONSTANT.factory().apply(0.)).forGetter(Data::amplifier),
-                DFunction.NUMBER_FUNCTION.codec().optionalFieldOf("duration", NumberDFunctions.CONSTANT.factory().apply(0.)).forGetter(Data::duration),
-                DFunction.PREDICATE.codec().optionalFieldOf("ambient", DPredicates.CONSTANT.factory().apply(false)).forGetter(Data::ambient),
-                DFunction.PREDICATE.codec().optionalFieldOf("show_particles", DPredicates.CONSTANT.factory().apply(true)).forGetter(Data::showParticles),
-                DFunction.PREDICATE.codec().optionalFieldOf("show_icon", DPredicates.CONSTANT.factory().apply(true)).forGetter(Data::showIcon),
-                DFunction.PREDICATE.codec().fieldOf("predicate").forGetter(Data::predicate)
+                DFunction.NUMBER_FUNCTION.codec().comapFlatMap(HaemaUtil.verifyDFunction(DFContextSpec.ENTITY), Function.identity()).optionalFieldOf("amplifier", NumberDFunctions.CONSTANT.factory().apply(0.)).forGetter(Data::amplifier),
+                DFunction.NUMBER_FUNCTION.codec().comapFlatMap(HaemaUtil.verifyDFunction(DFContextSpec.ENTITY), Function.identity()).optionalFieldOf("duration", NumberDFunctions.CONSTANT.factory().apply(0.)).forGetter(Data::duration),
+                DFunction.PREDICATE.codec().comapFlatMap(HaemaUtil.verifyDFunction(DFContextSpec.ENTITY), Function.identity()).optionalFieldOf("ambient", DPredicates.CONSTANT.factory().apply(false)).forGetter(Data::ambient),
+                DFunction.PREDICATE.codec().comapFlatMap(HaemaUtil.verifyDFunction(DFContextSpec.ENTITY), Function.identity()).optionalFieldOf("show_particles", DPredicates.CONSTANT.factory().apply(true)).forGetter(Data::showParticles),
+                DFunction.PREDICATE.codec().comapFlatMap(HaemaUtil.verifyDFunction(DFContextSpec.ENTITY), Function.identity()).optionalFieldOf("show_icon", DPredicates.CONSTANT.factory().apply(true)).forGetter(Data::showIcon),
+                DFunction.PREDICATE.codec().comapFlatMap(HaemaUtil.verifyDFunction(DFContextSpec.ENTITY), Function.identity()).fieldOf("predicate").forGetter(Data::predicate)
         ).apply(instance, Data::new));
 
         private MobEffectInstance createInstance(Entity entity) {

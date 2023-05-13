@@ -3,11 +3,14 @@ package com.williambl.haema.api.vampire.ability;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.williambl.dfunc.api.DFunction;
+import com.williambl.dfunc.api.context.DFContextSpec;
+import com.williambl.haema.HaemaUtil;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 import static com.williambl.haema.Haema.id;
 
@@ -35,7 +38,7 @@ public record VampireAbility(boolean enabled,
 
     public static final Codec<VampireAbility> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.BOOL.fieldOf("enabled").forGetter(VampireAbility::enabled),
-            DFunction.PREDICATE.codec().fieldOf("can_player_modify").forGetter(VampireAbility::canPlayerModify),
+            DFunction.PREDICATE.codec().comapFlatMap(HaemaUtil.verifyDFunction(DFContextSpec.ENTITY), Function.identity()).fieldOf("can_player_modify").forGetter(VampireAbility::canPlayerModify),
             ResourceKey.codec(REGISTRY_KEY).listOf().fieldOf("prerequisites").xmap(Set::copyOf, List::copyOf).forGetter(VampireAbility::prerequisites),
             ResourceKey.codec(REGISTRY_KEY).listOf().fieldOf("conflicts").xmap(Set::copyOf, List::copyOf).forGetter(VampireAbility::conflicts),
             ResourceKey.codec(REGISTRY_KEY).listOf().fieldOf("supercedes").xmap(Set::copyOf, List::copyOf).forGetter(VampireAbility::supercedes),

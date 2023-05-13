@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.williambl.dfunc.api.DFunction;
 import com.williambl.dfunc.api.context.DFContext;
+import com.williambl.dfunc.api.context.DFContextSpec;
 import com.williambl.haema.HaemaUtil;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
@@ -15,6 +16,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 public record AttributeVampireAbilityPower(Set<Data> modifiers) implements VampireAbilityPower {
     public static final KeyDispatchDataCodec<AttributeVampireAbilityPower> CODEC = KeyDispatchDataCodec.of(Data.CODEC.listOf().fieldOf("effects")
@@ -61,7 +63,7 @@ public record AttributeVampireAbilityPower(Set<Data> modifiers) implements Vampi
         private static final Codec<Data> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 BuiltInRegistries.ATTRIBUTE.byNameCodec().fieldOf("attribute").forGetter(Data::attribute),
                 HaemaUtil.ATTRIBUTE_MODIFIER_CODEC.fieldOf("modifier").forGetter(Data::modifier),
-                DFunction.PREDICATE.codec().fieldOf("predicate").forGetter(Data::predicate)
+                DFunction.PREDICATE.codec().comapFlatMap(HaemaUtil.verifyDFunction(DFContextSpec.ENTITY), Function.identity()).fieldOf("predicate").forGetter(Data::predicate)
         ).apply(instance, Data::new));
     }
 }
