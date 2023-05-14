@@ -56,7 +56,7 @@ public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponen
 
     @Override
     public <T extends VampireAbilityPower> List<T> getPowersOfClass(Class<T> clazz) {
-        return this.powers.get(clazz).stream().map(clazz::cast).toList();
+        return this.powers.getOrDefault(clazz, List.of()).stream().map(clazz::cast).toList();
     }
 
     @Override

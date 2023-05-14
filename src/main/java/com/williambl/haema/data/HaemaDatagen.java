@@ -3,10 +3,7 @@ package com.williambl.haema.data;
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
 import com.williambl.dfunc.api.Comparison;
 import com.williambl.dfunc.api.context.ContextArg;
-import com.williambl.dfunc.api.functions.DPredicates;
-import com.williambl.dfunc.api.functions.EntityDFunctions;
-import com.williambl.dfunc.api.functions.LevelDFunctions;
-import com.williambl.dfunc.api.functions.NumberDFunctions;
+import com.williambl.dfunc.api.functions.*;
 import com.williambl.haema.Haema;
 import com.williambl.haema.HaemaDFunctions;
 import com.williambl.haema.api.vampire.VampirismSource;
@@ -15,15 +12,24 @@ import com.williambl.haema.vampire.HaemaVampires;
 import com.williambl.haema.vampire.ability.powers.AttributeVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.EffectVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.HealingVampireAbilityPower;
+import com.williambl.haema.vampire.ability.powers.damage_modification.DamageModificationAbilityPower;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantments;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -36,7 +42,10 @@ import static com.williambl.haema.Haema.id;
 public class HaemaDatagen implements DataGeneratorEntrypoint {
     @Override
     public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
-        fabricDataGenerator.createPack().addProvider(HaemaDynamicRegistryProvider::new);
+        var pack = fabricDataGenerator.createPack();
+        pack.addProvider(HaemaDynamicRegistryProvider::new);
+        pack.addProvider((o, r) -> new HaemaItemTagsProvider(o, r, null));
+        pack.addProvider(HaemaDamageTypeTagsProvider::new);
     }
 
     @Override
@@ -48,6 +57,35 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
     public void buildRegistry(RegistrySetBuilder registryBuilder) {
         registryBuilder.add(VampirismSource.REGISTRY_KEY, $ -> {});
         registryBuilder.add(VampireAbility.REGISTRY_KEY, $ -> {});
+    }
+
+    private static class HaemaItemTagsProvider extends FabricTagProvider.ItemTagProvider {
+        public HaemaItemTagsProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> completableFuture, @Nullable BlockTagProvider blockTagProvider) {
+            super(output, completableFuture, blockTagProvider);
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider arg) {
+            this.tag(HaemaVampires.VampireTags.VAMPIRE_EFFECTIVE_WEAPONS).add(BuiltInRegistries.ITEM.getResourceKey(Items.WOODEN_SWORD).orElseThrow());
+        }
+    }
+
+    private static class HaemaDamageTypeTagsProvider extends FabricTagProvider<DamageType> {
+
+        public HaemaDamageTypeTagsProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+            super(output, Registries.DAMAGE_TYPE, registriesFuture);
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider arg) {
+            this.getOrCreateTagBuilder(HaemaVampires.VampireTags.VAMPIRE_EFFECTIVE_DAMAGE)
+                    .add(DamageTypes.MAGIC)
+                    .forceAddTag(DamageTypeTags.BYPASSES_INVULNERABILITY)
+                    .forceAddTag(DamageTypeTags.BYPASSES_EFFECTS)
+                    .forceAddTag(DamageTypeTags.BYPASSES_RESISTANCE)
+                    .forceAddTag(DamageTypeTags.IS_LIGHTNING)
+                    .forceAddTag(DamageTypeTags.IS_DROWNING);
+        }
     }
 
     @SuppressWarnings("UnstableApiUsage")
@@ -64,7 +102,8 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             var healthBoostAbility = this.createHealthBoostAbility(entries);
             var sunlightSicknessAbility = this.createSunlightSicknessAbility(entries);
             var vampiricWeaknessAbility = this.createVampiricWeaknessAbility(entries);
-            entries.add(HaemaVampires.VampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaVampires.VampirismSources.BLOOD_INJECTOR), Set.of(healingAbility, reachAbility, healthBoostAbility, sunlightSicknessAbility, vampiricWeaknessAbility)));
+            var damageModificationAbility = this.createDamageModificationAbility(entries);
+            entries.add(HaemaVampires.VampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaVampires.VampirismSources.BLOOD_INJECTOR), Set.of(healingAbility, reachAbility, healthBoostAbility, sunlightSicknessAbility, vampiricWeaknessAbility, damageModificationAbility)));
             entries.add(HaemaVampires.VampirismSources.COMMAND, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of()));
         }
 
@@ -169,6 +208,30 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
 
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("vampiric_weakness"));
             entries.add(key, vampiricWeaknessAbility);
+            return key;
+        }
+
+        private ResourceKey<VampireAbility> createDamageModificationAbility(Entries entries) {
+            var damageModificationAbility = new VampireAbility(true, DPredicates.CONSTANT.factory().apply(false), Set.of(),Set.of(), Set.of(), List.of(new DamageModificationAbilityPower(
+                    NumberDFunctions.MULTIPLY.factory().apply(
+                            ContextArg.NUMBER_A.arg("damage_amount"),
+                            ContextArg.NUMBER_B.arg(NumberDFunctions.MAX.factory().apply(ContextArg.NUMBER_A.arg(
+                                            NumberDFunctions.IF_ELSE.factory().apply(
+                                                    ContextArg.NUMBER_A.arg(NumberDFunctions.CONSTANT.factory().apply(1.25)),
+                                                    ContextArg.NUMBER_B.arg(NumberDFunctions.CONSTANT.factory().apply(1.0)),
+                                                    DPredicates.OR.factory().apply(List.of(
+                                                            DamageSourceDFunctions.DAMAGE_TAG.factory().apply(HaemaVampires.VampireTags.VAMPIRE_EFFECTIVE_DAMAGE, ContextArg.DAMAGE_SOURCE.arg()),
+                                                            ItemStackDFunctions.ITEM_TAG.factory().apply(HaemaVampires.VampireTags.VAMPIRE_EFFECTIVE_WEAPONS, ContextArg.ITEM.arg("weapon")))))),
+                                    ContextArg.NUMBER_B.arg(ItemStackDFunctions.ENCHANTMENT_LEVEL.factory().apply(Enchantments.SMITE, ContextArg.ITEM.arg("weapon")))))),
+                    DPredicates.OR.factory().apply(List.of(NumberDFunctions.COMPARISON.factory().apply(
+                            ContextArg.NUMBER_A.arg(ItemStackDFunctions.ENCHANTMENT_LEVEL.factory().apply(Enchantments.SMITE, ContextArg.ITEM.arg("weapon"))),
+                            ContextArg.NUMBER_B.arg(NumberDFunctions.CONSTANT.factory().apply(0.0)),
+                            Comparison.GREATER_THAN),
+                            DamageSourceDFunctions.DAMAGE_TAG.factory().apply(HaemaVampires.VampireTags.VAMPIRE_EFFECTIVE_DAMAGE, ContextArg.DAMAGE_SOURCE.arg()),
+                            ItemStackDFunctions.ITEM_TAG.factory().apply(HaemaVampires.VampireTags.VAMPIRE_EFFECTIVE_WEAPONS, ContextArg.ITEM.arg("weapon")))))));
+
+            var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("damage_modification"));
+            entries.add(key, damageModificationAbility);
             return key;
         }
 

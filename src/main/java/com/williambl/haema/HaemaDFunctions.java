@@ -1,19 +1,41 @@
 package com.williambl.haema;
 
+import com.google.common.reflect.TypeToken;
 import com.williambl.dfunc.api.DFunction;
 import com.williambl.dfunc.api.context.ContextArg;
+import com.williambl.dfunc.api.context.DFContext;
+import com.williambl.dfunc.api.context.DFContextSpec;
 import com.williambl.dfunc.api.type.DFunctionType;
 import com.williambl.haema.api.vampire.VampireComponent;
 import com.williambl.haema.api.vampire.ability.powers.sunlight_sickness.VampireBurnEvents;
 import net.minecraft.core.Registry;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 import static com.williambl.haema.Haema.id;
 
 public final class HaemaDFunctions {
+    public static final DFContextSpec ENTITY_DAMAGE_WITH_WEAPON = new DFContextSpec(Map.of("entity", TypeToken.of(Entity.class), "level", TypeToken.of(Level.class), "damage_source", TypeToken.of(DamageSource.class), "damage_amount", TypeToken.of(Double.class), "attacker", new TypeToken<Optional<Entity>>() {}, "direct_attacker", new TypeToken<Optional<Entity>>() {}, "weapon", TypeToken.of(ItemStack.class)));
+
+    public static DFContext entityDamageWithWeapon(Entity entity, DamageSource source, float amount, ItemStack weapon) {
+        return DFContext.builder()
+                .addArgument("entity", entity)
+                .addArgument("level", entity.getLevel())
+                .addArgument("damage_source", source)
+                .addArgument("damage_amount", (double) amount)
+                .addArgument("attacker", Optional.ofNullable(source.getEntity()), new TypeToken<>() {})
+                .addArgument("direct_attacker", Optional.ofNullable(source.getDirectEntity()), new TypeToken<>() {})
+                .addArgument("weapon", weapon)
+                .build();
+    }
+
     public static final DFunctionType<Double, ? extends Function<ContextArg<Entity>, ? extends DFunction<Double>>> BLOOD = Registry.register(
             DFunction.NUMBER_FUNCTION.registry(),
             id("blood"),

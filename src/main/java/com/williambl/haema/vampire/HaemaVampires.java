@@ -22,8 +22,12 @@ import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.GameRules;
 
 import static com.williambl.haema.Haema.id;
@@ -39,6 +43,7 @@ public class HaemaVampires {
         VampireAbilityPowers.init();
         VampirismSources.init();
         VampireGameRules.init();
+        VampireTags.init();
     }
 
     public static void initEntityComponents(EntityComponentFactoryRegistry registry) {
@@ -76,6 +81,13 @@ public class HaemaVampires {
     public static class VampireGameRules {
         public static final CustomGameRuleCategory HAEMA_CATEGORY = new CustomGameRuleCategory(id("haema"), Component.translatable("gamerule.category.haema"));
         public static final GameRules.Key<GameRules.BooleanValue> VAMPIRES_BURN = GameRuleRegistry.register(id("vampires_burn").toString(), HAEMA_CATEGORY, GameRuleFactory.createBooleanRule(true));
+
+        private static void init() {}
+    }
+
+    public static class VampireTags {
+        public static final TagKey<DamageType> VAMPIRE_EFFECTIVE_DAMAGE = TagKey.create(Registries.DAMAGE_TYPE, id("vampire_effective"));
+        public static final TagKey<Item> VAMPIRE_EFFECTIVE_WEAPONS = TagKey.create(Registries.ITEM, id("vampire_effective_weapons"));
 
         private static void init() {}
     }

@@ -2,8 +2,7 @@ package com.williambl.haema.vampire.ability.powers.damage_modification;
 
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.williambl.dfunc.api.DFunction;
-import com.williambl.dfunc.api.context.DFContext;
-import com.williambl.dfunc.api.context.DFContextSpec;
+import com.williambl.haema.HaemaDFunctions;
 import com.williambl.haema.HaemaUtil;
 import com.williambl.haema.api.vampire.ability.VampireAbilitiesComponent;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
@@ -15,8 +14,8 @@ import java.util.function.Function;
 
 public record DamageModificationAbilityPower(DFunction<Double> damageModificationFunction, DFunction<Boolean> canDamageKillFunction) implements VampireAbilityPower {
     public static final KeyDispatchDataCodec<DamageModificationAbilityPower> CODEC = KeyDispatchDataCodec.of(RecordCodecBuilder.create(instance -> instance.group(
-            DFunction.NUMBER_FUNCTION.codec().comapFlatMap(HaemaUtil.verifyDFunction(DFContextSpec.ENTITY_DAMAGE), Function.identity()).fieldOf("damage_modification").forGetter(DamageModificationAbilityPower::damageModificationFunction),
-            DFunction.PREDICATE.codec().comapFlatMap(HaemaUtil.verifyDFunction(DFContextSpec.ENTITY_DAMAGE), Function.identity()).fieldOf("can_damage_kill").forGetter(DamageModificationAbilityPower::canDamageKillFunction)
+            DFunction.NUMBER_FUNCTION.codec().comapFlatMap(HaemaUtil.verifyDFunction(HaemaDFunctions.ENTITY_DAMAGE_WITH_WEAPON), Function.identity()).fieldOf("damage_modification").forGetter(DamageModificationAbilityPower::damageModificationFunction),
+            DFunction.PREDICATE.codec().comapFlatMap(HaemaUtil.verifyDFunction(HaemaDFunctions.ENTITY_DAMAGE_WITH_WEAPON), Function.identity()).fieldOf("can_damage_kill").forGetter(DamageModificationAbilityPower::canDamageKillFunction)
     ).apply(instance, DamageModificationAbilityPower::new)));
 
     @Override
@@ -41,7 +40,7 @@ public record DamageModificationAbilityPower(DFunction<Double> damageModificatio
             var component = VampireAbilitiesComponent.KEY.getNullable(entity);
             float workingAmount = amount;
             if (component != null) {
-                var context = DFContext.entityDamage(entity, source, amount);
+                var context = HaemaDFunctions.entityDamageWithWeapon(entity, source, amount, ((ExtendedDamageSource)source).weapon());
                 for (var power : component.getPowersOfClass(DamageModificationAbilityPower.class)) {
                     workingAmount = power.damageModificationFunction.apply(context).floatValue();
                 }
@@ -53,9 +52,10 @@ public record DamageModificationAbilityPower(DFunction<Double> damageModificatio
         CheatDeathCallback.EVENT.register((source, amount, entity) -> {
             var component = VampireAbilitiesComponent.KEY.getNullable(entity);
             if (component != null) {
-                var context = DFContext.entityDamage(entity, source, amount);
+                var context = HaemaDFunctions.entityDamageWithWeapon(entity, source, amount, ((ExtendedDamageSource)source).weapon());
                 for (var power : component.getPowersOfClass(DamageModificationAbilityPower.class)) {
-                    if (power.canDamageKillFunction.apply(context)) {
+                    if (!power.canDamageKillFunction.apply(context)) {
+                        entity.setHealth(1.0f);
                         return true;
                     }
                 }
