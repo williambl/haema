@@ -4,7 +4,9 @@
   "compatibilityLevel": "JAVA_16",
   "mixins": [
     "vampire.ability.RegistryDataLoaderMixin",
-    "vampire.ability.RegistrySynchronizationMixin"
+    "vampire.ability.RegistrySynchronizationMixin",
+    "vampire.ability.powers.damage_modification.DamageSourceMixin",
+    "vampire.ability.powers.damage_modification.LivingEntityMixin"
   ],
   "client": [
   ],

@@ -6,18 +6,17 @@ import com.williambl.haema.Haema;
 import com.williambl.haema.HaemaUtil;
 import com.williambl.haema.api.vampire.ability.VampireAbilitiesComponent;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
+import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.LivingEntity;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponent {
     private final LinkedHashSet<VampireAbility> abilities = new LinkedHashSet<>();
+    private final HashMap<Class<? extends VampireAbilityPower>, List<VampireAbilityPower>> powers = new HashMap<>();
     private final LivingEntity entity;
     
     private static final String ABILITIES_KEY = "abilities";
@@ -37,6 +36,7 @@ public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponen
         this.abilities.add(ability);
         for (var power : ability.powers()) {
             power.apply(entity, ability);
+            this.powers.computeIfAbsent(power.getClass(), k -> new ArrayList<>()).add(power);
         }
     }
 
@@ -45,6 +45,7 @@ public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponen
         this.abilities.remove(ability);
         for (var power : ability.powers()) {
             power.remove(entity, ability);
+            this.powers.computeIfAbsent(power.getClass(), k -> new ArrayList<>()).remove(power);
         }
     }
 
@@ -54,10 +55,16 @@ public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponen
     }
 
     @Override
+    public <T extends VampireAbilityPower> List<T> getPowersOfClass(Class<T> clazz) {
+        return this.powers.get(clazz).stream().map(clazz::cast).toList();
+    }
+
+    @Override
     public void readFromNbt(CompoundTag tag) {
         var registries = this.entity.level.registryAccess();
         var sourceRegistry = registries.registryOrThrow(VampireAbility.REGISTRY_KEY);
         this.abilities.clear();
+        this.powers.clear();
         if (tag.contains(ABILITIES_KEY)) {
             var abilities = ABILITIES_CODEC.decode(NbtOps.INSTANCE, tag.get(ABILITIES_KEY))
                     .resultOrPartial(e -> Haema.LOGGER.warn("Error decoding Vampire Abilities for entity {}: {}", this.entity.getScoreboardName(), e))
@@ -68,6 +75,11 @@ public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponen
                     .map(sourceRegistry::get)
                     .toList();
             this.abilities.addAll(abilities);
+            for (var ability : this.abilities) {
+                for (var power : ability.powers()) {
+                    this.powers.computeIfAbsent(power.getClass(), k -> new ArrayList<>()).add(power);
+                }
+            }
         }
     }
 
