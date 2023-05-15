@@ -191,6 +191,11 @@ dependencies {
     include modImplementation("com.jamieswhiteshirt:reach-entity-attributes:${project.rea_version}") {
         exclude group: "net.fabricmc.fabric-api"
     }
+
+    // Satin
+    modImplementation include("io.github.ladysnake:satin:${project.satin_version}") {
+        exclude group: "net.fabricmc.fabric-api"
+    }
 }
 
 loom {

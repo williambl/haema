@@ -3,6 +3,7 @@ package com.williambl.haema.api.vampire;
 import dev.onyxstudios.cca.api.v3.component.Component;
 import dev.onyxstudios.cca.api.v3.component.ComponentKey;
 import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
+import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import org.jetbrains.annotations.Nullable;
 
 import static com.williambl.haema.Haema.id;
@@ -10,7 +11,7 @@ import static com.williambl.haema.Haema.id;
 /**
  * Handles basic vampire state for an entity.
  */
-public interface VampireComponent extends Component {
+public interface VampireComponent extends Component, AutoSyncedComponent {
     /**
      * Get whether the entity is a vampire.
      * @return whether the entity is a vampire

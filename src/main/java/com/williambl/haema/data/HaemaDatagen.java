@@ -13,6 +13,7 @@ import com.williambl.haema.vampire.ability.powers.AttributeVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.EffectVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.HealingVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.damage_modification.DamageModificationAbilityPower;
+import com.williambl.haema.vampire.ability.powers.vision.VampireVisionVampireAbilityPower;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -103,7 +104,8 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             var sunlightSicknessAbility = this.createSunlightSicknessAbility(entries);
             var vampiricWeaknessAbility = this.createVampiricWeaknessAbility(entries);
             var damageModificationAbility = this.createDamageModificationAbility(entries);
-            entries.add(HaemaVampires.VampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaVampires.VampirismSources.BLOOD_INJECTOR), Set.of(healingAbility, reachAbility, healthBoostAbility, sunlightSicknessAbility, vampiricWeaknessAbility, damageModificationAbility)));
+            var vampireVisionAbility = this.createVampireVisionAbility(entries);
+            entries.add(HaemaVampires.VampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaVampires.VampirismSources.BLOOD_INJECTOR), Set.of(healingAbility, reachAbility, healthBoostAbility, sunlightSicknessAbility, vampiricWeaknessAbility, damageModificationAbility, vampireVisionAbility)));
             entries.add(HaemaVampires.VampirismSources.COMMAND, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of()));
         }
 
@@ -232,6 +234,15 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
 
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("damage_modification"));
             entries.add(key, damageModificationAbility);
+            return key;
+        }
+
+        private ResourceKey<VampireAbility> createVampireVisionAbility(Entries entries) {
+            var vampireVisionAbility = new VampireAbility(true, DPredicates.CONSTANT.factory().apply(false), Set.of(), Set.of(), Set.of(), List.of(
+                    new VampireVisionVampireAbilityPower()));
+
+            var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("vampire_vision"));
+            entries.add(key, vampireVisionAbility);
             return key;
         }
 

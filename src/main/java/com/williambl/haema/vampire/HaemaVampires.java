@@ -14,6 +14,7 @@ import com.williambl.haema.vampire.ability.powers.HealingVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.damage_modification.DamageModificationAbilityPower;
 import com.williambl.haema.vampire.ability.powers.sunlight_sickness.SunlightSicknessEffect;
 import com.williambl.haema.vampire.ability.powers.vampiric_weakness.VampiricWeaknessEffect;
+import com.williambl.haema.vampire.ability.powers.vision.VampireVisionVampireAbilityPower;
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -58,6 +59,7 @@ public class HaemaVampires {
         public static final Codec<EffectVampireAbilityPower> EFFECT_VAMPIRE_ABILITY_POWER_CODEC = Registry.register(VampireAbilityPower.REGISTRY, id("effect"), EffectVampireAbilityPower.CODEC.codec());
         public static final Codec<HealingVampireAbilityPower> HEALING_VAMPIRE_ABILITY_POWER_CODEC = Registry.register(VampireAbilityPower.REGISTRY, id("healing"), HealingVampireAbilityPower.CODEC.codec());
         public static final Codec<DamageModificationAbilityPower> DAMAGE_MODIFICATION_ABILITY_POWER_CODEC = Registry.register(VampireAbilityPower.REGISTRY, id("damage_modification"), DamageModificationAbilityPower.CODEC.codec());
+        public static final Codec<VampireVisionVampireAbilityPower> VAMPIRE_VISION_VAMPIRE_ABILITY_POWER_CODEC = Registry.register(VampireAbilityPower.REGISTRY, id("vampire_vision"), VampireVisionVampireAbilityPower.CODEC.codec());
 
         private static void init() {
             DamageModificationAbilityPower.init();

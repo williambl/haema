@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
@@ -54,6 +55,8 @@ public class EntityVampireComponent implements VampireComponent {
                     .filter(VampireAbility::enabled)
                     .forEach(abilityComponent::addAbility);
         }
+        VampireComponent.KEY.sync(this.entity);
+        VampireAbilitiesComponent.KEY.sync(this.entity);
         return true;
     }
 
@@ -66,6 +69,8 @@ public class EntityVampireComponent implements VampireComponent {
         this.vampirismSource = null;
         VampireAbilitiesComponent.KEY.maybeGet(this.entity).ifPresent(abilityComponent ->
                 abilityComponent.getAbilities().forEach(abilityComponent::removeAbility));
+        VampireComponent.KEY.sync(this.entity);
+        VampireAbilitiesComponent.KEY.sync(this.entity);
         return true;
     }
 
@@ -77,6 +82,7 @@ public class EntityVampireComponent implements VampireComponent {
     @Override
     public void setBlood(double blood) {
         this.blood = Mth.clamp(blood, 0,  MAX_BLOOD);
+        VampireComponent.KEY.sync(this.entity);
     }
 
     @Override
@@ -117,5 +123,12 @@ public class EntityVampireComponent implements VampireComponent {
         }
 
         tag.putDouble(BLOOD_KEY, this.blood);
+    }
+
+    //TODO proper sync packets
+
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return this.entity == player;
     }
 }

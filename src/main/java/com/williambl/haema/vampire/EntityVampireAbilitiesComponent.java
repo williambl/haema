@@ -10,6 +10,7 @@ import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.*;
@@ -95,6 +96,12 @@ public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponen
         ABILITIES_CODEC.encodeStart(NbtOps.INSTANCE, abilityKeys)
                 .resultOrPartial(e -> Haema.LOGGER.warn("Error encoding Vampire Abilities for entity {}: {}", this.entity.getScoreboardName(), e))
                 .ifPresent(t -> tag.put(ABILITIES_KEY, t));
+    }
+
+    //TODO make the sync packet less heavy if possible
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return this.entity == player; //TODO check if necessary
     }
 
     @Override

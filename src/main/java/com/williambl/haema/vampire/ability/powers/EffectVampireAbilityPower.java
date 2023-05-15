@@ -31,6 +31,10 @@ public record EffectVampireAbilityPower(Set<Data> effects) implements VampireAbi
 
     @Override
     public void tick(LivingEntity entity, VampireAbility source) {
+        if (entity.getLevel().isClientSide()) {
+            return;
+        }
+
         for (var effect : this.effects) {
             if (effect.predicate().apply(DFContext.entity(entity))) {
                 entity.addEffect(effect.createInstance(entity));

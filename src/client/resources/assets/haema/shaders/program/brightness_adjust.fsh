@@ -6,7 +6,6 @@ in vec2 texCoord;
 in vec2 oneTexel;
 
 uniform vec2 InSize;
-
 uniform float BrightnessAdjust;
 
 out vec4 fragColor;
