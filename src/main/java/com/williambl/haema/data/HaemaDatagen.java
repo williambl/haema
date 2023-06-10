@@ -115,7 +115,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
                             LevelDFunctions.BOOLEAN_GAME_RULE.factory().apply("naturalRegeneration", ContextArg.LEVEL.arg()),
                             DPredicates.NOT.factory().apply(EntityDFunctions.DEAD_OR_DYING.factory().apply(ContextArg.ENTITY.arg())),
                             NumberDFunctions.COMPARISON.factory().apply(ContextArg.NUMBER_A.arg(NumberDFunctions.MODULO.factory().apply(ContextArg.NUMBER_A.arg(EntityDFunctions.AGE.factory().apply(ContextArg.ENTITY.arg())), ContextArg.NUMBER_B.arg(NumberDFunctions.CONSTANT.factory().apply(20.0)))), ContextArg.NUMBER_B.arg(NumberDFunctions.CONSTANT.factory().apply(0.)), Comparison.EQUAL),
-                            //TODO test sunlight sickness
+                            DPredicates.NOT.factory().apply(EntityDFunctions.HAS_EFFECT.factory().apply(HaemaVampires.VampireMobEffects.SUNLIGHT_SICKNESS, ContextArg.ENTITY.arg())),
                             NumberDFunctions.COMPARISON.factory().apply(ContextArg.NUMBER_A.arg(EntityDFunctions.HEALTH.factory().apply(ContextArg.ENTITY.arg())), ContextArg.NUMBER_B.arg(EntityDFunctions.ATTRIBUTE.factory().apply(Attributes.MAX_HEALTH, ContextArg.ENTITY.arg())), Comparison.LESS_THAN),
                             DPredicates.OR.factory().apply(List.of(
                                     DPredicates.AND.factory().apply(List.of(
