@@ -2,6 +2,7 @@ package com.williambl.haema.data;
 
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
 import com.williambl.dfunc.api.Comparison;
+import com.williambl.dfunc.api.DFunction;
 import com.williambl.dfunc.api.context.ContextArg;
 import com.williambl.dfunc.api.functions.*;
 import com.williambl.haema.Haema;
@@ -33,9 +34,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 import static com.williambl.haema.Haema.id;
@@ -98,14 +97,29 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
 
         @Override
         protected void configure(HolderLookup.Provider registries, Entries entries) {
+            var defaultAbilties = new HashSet<ResourceKey<VampireAbility>>();
             var healingAbility = this.createHealingAbility(entries);
+            defaultAbilties.add(healingAbility);
             var reachAbility = this.createReachAbility(entries);
+            defaultAbilties.add(reachAbility);
             var healthBoostAbility = this.createHealthBoostAbility(entries);
+            defaultAbilties.add(healthBoostAbility);
             var sunlightSicknessAbility = this.createSunlightSicknessAbility(entries);
+            defaultAbilties.add(sunlightSicknessAbility);
             var vampiricWeaknessAbility = this.createVampiricWeaknessAbility(entries);
+            defaultAbilties.add(vampiricWeaknessAbility);
             var damageModificationAbility = this.createDamageModificationAbility(entries);
+            defaultAbilties.add(damageModificationAbility);
             var vampireVisionAbility = this.createVampireVisionAbility(entries);
-            entries.add(HaemaVampires.VampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaVampires.VampirismSources.BLOOD_INJECTOR), Set.of(healingAbility, reachAbility, healthBoostAbility, sunlightSicknessAbility, vampiricWeaknessAbility, damageModificationAbility, vampireVisionAbility)));
+            defaultAbilties.add(vampireVisionAbility);
+            var vampiricStrengthAbilities = new ArrayList<ResourceKey<VampireAbility>>();
+            for (int i = 0; i < 3; i++) {
+                vampiricStrengthAbilities.add(this.createStrengthAbility(entries, i+1, vampiricStrengthAbilities));
+            }
+            defaultAbilties.addAll(vampiricStrengthAbilities);
+
+
+            entries.add(HaemaVampires.VampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaVampires.VampirismSources.BLOOD_INJECTOR), defaultAbilties));
             entries.add(HaemaVampires.VampirismSources.COMMAND, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of()));
         }
 
@@ -243,6 +257,40 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
 
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("vampire_vision"));
             entries.add(key, vampireVisionAbility);
+            return key;
+        }
+
+
+        private ResourceKey<VampireAbility> createStrengthAbility(Entries entries, int level, Collection<ResourceKey<VampireAbility>> before) {
+            var match = new HashMap<DFunction<Boolean>, ContextArg<Double>>();
+            class Util {
+                void addMatch(double blood, double amplifier) {
+                    match.put(NumberDFunctions.COMPARISON.factory().apply(
+                                    ContextArg.NUMBER_A.arg(HaemaDFunctions.BLOOD.factory().apply(ContextArg.ENTITY.arg())),
+                                    ContextArg.NUMBER_B.arg(NumberDFunctions.CONSTANT.factory().apply(blood)),
+                                    Comparison.GREATER_THAN_OR_EQUAL),
+                            ContextArg.NUMBER_A.arg(NumberDFunctions.CONSTANT.factory().apply(amplifier)));
+                }
+            }
+            var util = new Util();
+            if (level >= 2) {
+                util.addMatch(14.0, 1.0);
+            }
+            if (level >= 3) {
+                util.addMatch(19.0, 2.0);
+            }
+            var strengthAbility = new VampireAbility(true, DPredicates.CONSTANT.factory().apply(true), Set.copyOf(before), Set.of(), Set.copyOf(before), List.of(
+                    new EffectVampireAbilityPower(Set.of(
+                            new EffectVampireAbilityPower.Data(
+                                    HaemaVampires.VampireMobEffects.VAMPIRIC_STRENGTH,
+                                    NumberDFunctions.MATCH.factory().apply(match, ContextArg.NUMBER_A.arg(NumberDFunctions.CONSTANT.factory().apply(0.0))),
+                                    NumberDFunctions.CONSTANT.factory().apply(40.0),
+                                    DPredicates.CONSTANT.factory().apply(false),
+                                    DPredicates.CONSTANT.factory().apply(true),
+                                    DPredicates.CONSTANT.factory().apply(true),
+                                    NumberDFunctions.COMPARISON.factory().apply(ContextArg.NUMBER_A.arg(HaemaDFunctions.BLOOD.factory().apply(ContextArg.ENTITY.arg())), ContextArg.NUMBER_B.arg(NumberDFunctions.CONSTANT.factory().apply(10.0)), Comparison.GREATER_THAN_OR_EQUAL))))));
+            var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("strength/"+level));
+            entries.add(key, strengthAbility);
             return key;
         }
 

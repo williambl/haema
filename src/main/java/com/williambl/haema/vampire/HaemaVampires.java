@@ -7,6 +7,7 @@ import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.api.vampire.ability.VampireAbilitiesComponent;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
+import com.williambl.haema.vampire.ability.abilities.strength.VampiricStrengthEffect;
 import com.williambl.haema.vampire.ability.powers.AttributeVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.DummyVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.EffectVampireAbilityPower;
@@ -79,6 +80,7 @@ public class HaemaVampires {
     public static class VampireMobEffects {
         public static final SunlightSicknessEffect SUNLIGHT_SICKNESS = Registry.register(BuiltInRegistries.MOB_EFFECT, id("sunlight_sickness"), new SunlightSicknessEffect());
         public static final VampiricWeaknessEffect VAMPIRIC_WEAKNESS = Registry.register(BuiltInRegistries.MOB_EFFECT, id("vampiric_weakness"), new VampiricWeaknessEffect());
+        public static final VampiricStrengthEffect VAMPIRIC_STRENGTH = Registry.register(BuiltInRegistries.MOB_EFFECT, id("vampiric_strength"), new VampiricStrengthEffect());
 
         private static void init() {}
     }
