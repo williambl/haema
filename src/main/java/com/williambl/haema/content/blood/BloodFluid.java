@@ -137,6 +137,10 @@ public abstract class BloodFluid extends FlowingFluid {
 		return Optional.of(SoundEvents.BUCKET_FILL_LAVA);
 	}
 
+	public BloodQuality getQuality() {
+		return this.quality;
+	}
+
 	public static class Flowing extends BloodFluid {
 		public Flowing(BloodQuality quality) {
 			super(quality);

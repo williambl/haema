@@ -65,7 +65,7 @@ public class InjectorItem extends Item {
         }
 
         if (component.isVampire()) {
-            component.addBlood(HaemaContent.Config.INJECTOR_CAPACITY * this.quality.multiplier);
+            component.addBlood(HaemaContent.Config.INJECTOR_CAPACITY_BLOOD_UNITS * this.quality.multiplier);
             return InjectionResult.INJECTED;
         }
 

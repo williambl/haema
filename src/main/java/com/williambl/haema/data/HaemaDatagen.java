@@ -32,13 +32,18 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.models.BlockModelGenerators;
 import net.minecraft.data.models.ItemModelGenerators;
+import net.minecraft.data.models.model.ModelLocationUtils;
+import net.minecraft.data.models.model.ModelTemplate;
 import net.minecraft.data.models.model.ModelTemplates;
+import net.minecraft.data.models.model.TextureMapping;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import org.jetbrains.annotations.Nullable;
@@ -85,11 +90,15 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         public void generateItemModels(ItemModelGenerators models) {
             models.generateFlatItem(HaemaContent.Items.EMPTY_INJECTOR, ModelTemplates.FLAT_ITEM);
             for (var item : HaemaContent.Items.INJECTORS.values()) {
-                models.generateFlatItem(item, ModelTemplates.FLAT_ITEM);
+                generateFlatItem(item, id("item/full_injector"), ModelTemplates.FLAT_ITEM, models);
             }
             for (var item : HaemaContent.Items.BUCKETS.values()) {
                 models.generateFlatItem(item, Items.WATER_BUCKET, ModelTemplates.FLAT_ITEM); //TODO use own texture
             }
+        }
+
+        public final void generateFlatItem(Item item, ResourceLocation texture, ModelTemplate modelTemplate, ItemModelGenerators models) {
+            modelTemplate.create(ModelLocationUtils.getModelLocation(item), TextureMapping.layer0(texture), models.output);
         }
     }
 

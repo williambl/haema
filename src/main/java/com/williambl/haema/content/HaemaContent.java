@@ -6,8 +6,13 @@ import com.williambl.haema.content.blood.BloodFluid;
 import com.williambl.haema.content.blood.BloodLiquidBlock;
 import com.williambl.haema.content.blood.BloodQuality;
 import com.williambl.haema.content.injector.EmptyInjectorItem;
+import com.williambl.haema.content.injector.EmptyInjectorStorage;
 import com.williambl.haema.content.injector.IncompatibleBloodEffect;
 import com.williambl.haema.content.injector.InjectorItem;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.fluid.base.FullItemFluidStorage;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
@@ -73,7 +78,13 @@ public class HaemaContent {
                                 id(quality.getSerializedName() + "_blood_bucket"),
                                 new BloodBucketItem(Fluids.BLOOD.get(quality), quality, new Item.Properties().stacksTo(1))))));
 
-        public static void init() {}
+        @SuppressWarnings("UnstableApiUsage")
+        public static void init() {
+            for (var quality : BloodQuality.values()) {
+                FluidStorage.combinedItemApiProvider(INJECTORS.get(quality)).register(ctx -> new FullItemFluidStorage(ctx, EMPTY_INJECTOR, FluidVariant.of(Fluids.BLOOD.get(quality)), Config.INJECTOR_CAPACITY_DROPLETS));
+            }
+            FluidStorage.combinedItemApiProvider(EMPTY_INJECTOR).register(EmptyInjectorStorage::new);
+        }
     }
 
     public static class VampirismSources {
@@ -92,8 +103,11 @@ public class HaemaContent {
         public static void init() {}
     }
 
-    public static class Config {
-        public static final double INJECTOR_CAPACITY = 6.0;
+    @SuppressWarnings("UnstableApiUsage")
+    public static class Config { //TODO make this configurable somehow
+        public static final double INJECTOR_CAPACITY_BLOOD_UNITS = 6.0;
+        public static final long DROPLETS_PER_BLOOD_UNIT = FluidConstants.BUCKET * 2 / 20; // one player holds two buckets of blood
+        public static final long INJECTOR_CAPACITY_DROPLETS = (long) (INJECTOR_CAPACITY_BLOOD_UNITS * DROPLETS_PER_BLOOD_UNIT);
         public static void init() {}
     }
 }
