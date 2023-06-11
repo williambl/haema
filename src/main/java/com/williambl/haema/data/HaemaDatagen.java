@@ -10,6 +10,7 @@ import com.williambl.haema.HaemaCommand;
 import com.williambl.haema.HaemaDFunctions;
 import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
+import com.williambl.haema.content.HaemaContent;
 import com.williambl.haema.vampire.HaemaVampires;
 import com.williambl.haema.vampire.ability.powers.AttributeVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.EffectVampireAbilityPower;
@@ -329,6 +330,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             translations.add(HaemaCommand.BLOOD_SET_SUCCESS, "%1$s now has %2$s blood");
             translations.add(HaemaCommand.ABILITY_ADDED, "Given %1$s ability %2$s");
             translations.add(HaemaCommand.ABILITY_REMOVED, "Removed ability %2$s from %1$s");
+            translations.add(HaemaContent.Fluids.BLOOD_BLOCK, "Blood");
         }
     }
 }
