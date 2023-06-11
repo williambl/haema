@@ -114,10 +114,9 @@ public class HaemaContent {
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    public static class Config { //TODO make this configurable somehow
+    public static class Config {
+        public static final long INJECTOR_CAPACITY_DROPLETS = FluidConstants.BOTTLE;
         public static final double INJECTOR_CAPACITY_BLOOD_UNITS = 6.0;
-        public static final long DROPLETS_PER_BLOOD_UNIT = FluidConstants.BUCKET * 2 / 20; // one player holds two buckets of blood
-        public static final long INJECTOR_CAPACITY_DROPLETS = (long) (INJECTOR_CAPACITY_BLOOD_UNITS * DROPLETS_PER_BLOOD_UNIT);
         public static void init() {}
     }
 }
