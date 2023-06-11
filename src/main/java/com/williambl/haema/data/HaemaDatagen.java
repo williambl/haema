@@ -6,6 +6,7 @@ import com.williambl.dfunc.api.DFunction;
 import com.williambl.dfunc.api.context.ContextArg;
 import com.williambl.dfunc.api.functions.*;
 import com.williambl.haema.Haema;
+import com.williambl.haema.HaemaCommand;
 import com.williambl.haema.HaemaDFunctions;
 import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
@@ -19,6 +20,7 @@ import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
@@ -46,6 +48,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         pack.addProvider(HaemaDynamicRegistryProvider::new);
         pack.addProvider((o, r) -> new HaemaItemTagsProvider(o, r, null));
         pack.addProvider(HaemaDamageTypeTagsProvider::new);
+        pack.addProvider(HaemaLangProvider::new);
     }
 
     @Override
@@ -297,6 +300,35 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         @Override
         public String getName() {
             return "Dynamic Registry Objects";
+        }
+    }
+
+    public static class HaemaLangProvider extends FabricLanguageProvider {
+        protected HaemaLangProvider(FabricDataOutput dataOutput) {
+            super(dataOutput);
+        }
+
+        @Override
+        public void generateTranslations(TranslationBuilder translations) {
+            translations.add(HaemaCommand.NO_SUCH_VAMPIRISM_SOURCE_KEY, "No such vampirism source %s");
+            translations.add(HaemaCommand.NOT_VAMPIRABLE_KEY, "%s cannot be a vampire");
+            translations.add(HaemaCommand.CANNOT_HAVE_ABILITIES_KEY, "%s cannot have abilities");
+            translations.add(HaemaCommand.CONVERT_SUCCESS, "%s is now a vampire");
+            translations.add(HaemaCommand.CONVERT_FAILURE, "Could not convert %s");
+            translations.add(HaemaCommand.DECONVERT_SUCCESS, "%s is no longer a vampire");
+            translations.add(HaemaCommand.DECONVERT_FAILURE, "Could not deconvert %s");
+            translations.add(HaemaCommand.QUERY_YES, "YES");
+            translations.add(HaemaCommand.QUERY_NO, "NO");
+            translations.add(HaemaCommand.QUERY_VAMPIRISM_SOURCE, "(Vampirism Source: %1$s)");
+            translations.add(HaemaCommand.QUERY_NO_ABILITIES_LINE, "%1$s has no abilities.");
+            translations.add(HaemaCommand.QUERY_ABILITIES_LINE, "%1$s has %2$s abilities:");
+            translations.add(HaemaCommand.QUERY_FIRST_LINE, "Vampire information for %1$s:");
+            translations.add(HaemaCommand.QUERY_IS_VAMPIRE_LINE, "Is %1$s a vampire: %2$s %3$s");
+            translations.add(HaemaCommand.QUERY_BLOOD_LINE, "%1$s has %2$s blood");
+            translations.add(HaemaCommand.QUERY_ABILITY_LINE, " - %1$s");
+            translations.add(HaemaCommand.BLOOD_SET_SUCCESS, "%1$s now has %2$s blood");
+            translations.add(HaemaCommand.ABILITY_ADDED, "Given %1$s ability %2$s");
+            translations.add(HaemaCommand.ABILITY_REMOVED, "Removed ability %2$s from %1$s");
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.williambl.haema;
 
-import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
@@ -20,9 +19,13 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -31,8 +34,12 @@ import static net.minecraft.commands.Commands.argument;
 import static net.minecraft.commands.Commands.literal;
 
 public final class HaemaCommand {
-    private static final DynamicCommandExceptionType NO_SUCH_VAMPIRISM_SOURCE = new DynamicCommandExceptionType((source) -> Component.translatable("command.haema.error.no_such_vampirism_source", source));
-    private static final DynamicCommandExceptionType NOT_VAMPIRABLE = new DynamicCommandExceptionType((source) -> Component.translatable("command.haema.error.not_vampirable", source));
+    public static final String NO_SUCH_VAMPIRISM_SOURCE_KEY = "command.haema.error.no_such_vampirism_source";
+    private static final DynamicCommandExceptionType NO_SUCH_VAMPIRISM_SOURCE = new DynamicCommandExceptionType((source) -> Component.translatable(NO_SUCH_VAMPIRISM_SOURCE_KEY, source));
+    public static final String NOT_VAMPIRABLE_KEY = "command.haema.error.not_vampirable";
+    private static final DynamicCommandExceptionType NOT_VAMPIRABLE = new DynamicCommandExceptionType((source) -> Component.translatable(NOT_VAMPIRABLE_KEY, source));
+    public static final String CANNOT_HAVE_ABILITIES_KEY = "command.haema.error.cannot_have_abilities";
+    private static final DynamicCommandExceptionType CANNOT_HAVE_ABILITIES = new DynamicCommandExceptionType((source) -> Component.translatable(CANNOT_HAVE_ABILITIES_KEY, source));
 
     //todo permissions
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext registryAccess, Commands.CommandSelection environment) {
@@ -54,8 +61,8 @@ public final class HaemaCommand {
     private static ArgumentBuilder<CommandSourceStack, ?> bloodTree() {
         //@formatter:off
         return literal("blood").then(
-                literal("get").then(
-                        argument("targets", EntityArgument.entities()).executes(HaemaCommand::getBlood))).then(
+                literal("query").then(
+                        argument("targets", EntityArgument.entities()).executes(HaemaCommand::queryBlood))).then(
                 literal("set").then(
                         argument("targets", EntityArgument.entities()).then(
                         argument("amount", DoubleArgumentType.doubleArg()).executes(HaemaCommand::setBlood)))).then(
@@ -72,8 +79,8 @@ public final class HaemaCommand {
     private static ArgumentBuilder<CommandSourceStack, ?> abilitiesTree() {
         //@formatter:off
         return literal("abilities").then(
-                literal("get").then(
-                        argument("targets", EntityArgument.entities()).executes(HaemaCommand::getAbilities))).then(
+                literal("query").then(
+                        argument("targets", EntityArgument.entities()).executes(HaemaCommand::queryAbilities))).then(
                 literal("set").then(
                         argument("targets", EntityArgument.entities()).then(
                         argument("ability", ResourceLocationArgument.id()).then(
@@ -89,6 +96,9 @@ public final class HaemaCommand {
     private static int convertWithArgSource(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         return convert(ctx, () -> ResourceLocationArgument.getId(ctx, "source"));
     }
+
+    public static final String CONVERT_SUCCESS = "command.haema.convert.success";
+    public static final String CONVERT_FAILURE = "command.haema.convert.failure";
 
     private static int convert(CommandContext<CommandSourceStack> ctx, Supplier<ResourceLocation> sourceSupplier) throws CommandSyntaxException {
         var entities = EntityArgument.getEntities(ctx, "targets");
@@ -107,10 +117,10 @@ public final class HaemaCommand {
             }
 
             if (component.tryConvert(source)) {
-                ctx.getSource().sendSuccess(Component.translatable("command.haema.convert.success", entity.getDisplayName()), true);
+                ctx.getSource().sendSuccess(Component.translatable(CONVERT_SUCCESS, entity.getDisplayName()), true);
                 i++;
             } else {
-                ctx.getSource().sendFailure(Component.translatable("command.haema.convert.failure", entity.getDisplayName()));
+                ctx.getSource().sendFailure(Component.translatable(CONVERT_FAILURE, entity.getDisplayName()));
             }
         }
 
@@ -125,6 +135,9 @@ public final class HaemaCommand {
         int source = deconvert(ctx, () -> ResourceLocationArgument.getId(ctx, "source"));
         return source;
     }
+
+    public static final String DECONVERT_SUCCESS = "command.haema.deconvert.success";
+    public static final String DECONVERT_FAILURE = "command.haema.deconvert.failure";
 
     private static int deconvert(CommandContext<CommandSourceStack> ctx, Supplier<ResourceLocation> sourceSupplier) throws CommandSyntaxException {
         var entities = EntityArgument.getEntities(ctx, "targets");
@@ -143,15 +156,25 @@ public final class HaemaCommand {
             }
 
             if (component.tryCure(source)) {
-                ctx.getSource().sendSuccess(Component.translatable("command.haema.deconvert.success", entity.getDisplayName()), true);
+                ctx.getSource().sendSuccess(Component.translatable(DECONVERT_SUCCESS, entity.getDisplayName()), true);
                 i++;
             } else {
-                ctx.getSource().sendFailure(Component.translatable("command.haema.deconvert.failure", entity.getDisplayName()));
+                ctx.getSource().sendFailure(Component.translatable(DECONVERT_FAILURE, entity.getDisplayName()));
             }
         }
 
         return i;
     }
+
+    public static final String QUERY_FIRST_LINE = "command.haema.query.first_line";
+    public static final String QUERY_IS_VAMPIRE_LINE = "command.haema.query.is_vampire_line";
+    public static final String QUERY_BLOOD_LINE = "command.haema.query.blood_line";
+    public static final String QUERY_YES = "command.haema.query.yes";
+    public static final String QUERY_NO = "command.haema.query.no";
+    public static final String QUERY_VAMPIRISM_SOURCE = "command.haema.query.vampirism_source";
+    public static final String QUERY_NO_ABILITIES_LINE = "command.haema.query.no_abilities_line";
+    public static final String QUERY_ABILITIES_LINE = "command.haema.query.abilities_line";
+    public static final String QUERY_ABILITY_LINE = "command.haema.query.ability_line";
 
     private static int query(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         var entities = EntityArgument.getEntities(ctx, "targets");
@@ -165,31 +188,57 @@ public final class HaemaCommand {
             Registry<VampireAbility> abilityRegistry = ctx.getSource().registryAccess().registryOrThrow(VampireAbility.REGISTRY_KEY);
 
             Component isVampireText = component.isVampire()
-                    ? Component.translatable("command.haema.query.yes").withStyle(ChatFormatting.GREEN)
-                    : Component.translatable("command.haema.query.no").withStyle(ChatFormatting.RED);
+                    ? Component.translatable(QUERY_YES).withStyle(ChatFormatting.GREEN)
+                    : Component.translatable(QUERY_NO).withStyle(ChatFormatting.RED);
             VampirismSource source = component.getVampirismSource();
             Component vampirismSourceText = source == null
                     ? Component.empty()
-                    : Component.translatable("command.haema.query.vampirism_source", Component.literal(Objects.requireNonNull(sourceRegistry.getKey(source)).toString()).withStyle(ChatFormatting.GOLD)).withStyle(ChatFormatting.GRAY);
-            Set<VampireAbility> abilities = VampireAbilitiesComponent.KEY.maybeGet(entity).map(VampireAbilitiesComponent::getAbilities).orElseGet(Set::of);
-            Component abilityCountText = (abilities.isEmpty() ? Component.translatable("command.haema.query.no_abilities_line", entity.getDisplayName()) : Component.translatable("command.haema.query.abilities_line", entity.getDisplayName(), abilities.size())).withStyle(ChatFormatting.GRAY);
+                    : feedback(QUERY_VAMPIRISM_SOURCE, ability(sourceRegistry.getKey(source)));
 
-            ctx.getSource().sendSuccess(Component.translatable("command.haema.query.first_line", entity.getDisplayName()).withStyle(ChatFormatting.WHITE), false);
-            ctx.getSource().sendSuccess(Component.translatable("command.haema.query.is_vampire_line", entity.getDisplayName(), isVampireText, vampirismSourceText).withStyle(ChatFormatting.GRAY), false);
-            ctx.getSource().sendSuccess(Component.translatable("command.haema.query.blood_line", entity.getDisplayName(), Component.literal(String.valueOf(component.getBlood())).withStyle(ChatFormatting.DARK_RED)).withStyle(ChatFormatting.GRAY), false);
-            ctx.getSource().sendSuccess(abilityCountText, false);
-            for (var ability : abilities) {
-                ctx.getSource().sendSuccess(Component.translatable("command.haema.query.ability_line", Component.literal(Objects.requireNonNull(abilityRegistry.getKey(ability)).toString()).withStyle(ChatFormatting.GOLD)).withStyle(ChatFormatting.GRAY), false);
+            ctx.getSource().sendSuccess(Component.translatable(QUERY_FIRST_LINE, entity.getDisplayName()).withStyle(ChatFormatting.WHITE), false);
+            ctx.getSource().sendSuccess(feedback(QUERY_IS_VAMPIRE_LINE, entity.getDisplayName(), isVampireText, vampirismSourceText), false);
+            ctx.getSource().sendSuccess(bloodQueryMessage(entity, component), false);
+            for (var text : abilityQueryMessage(entity, abilityRegistry)) {
+                ctx.getSource().sendSuccess(text, false);
             }
         }
 
         return entities.size();
     }
 
-    private static int getBlood(CommandContext<CommandSourceStack> ctx) {
-        //TODO
-        return Command.SINGLE_SUCCESS;
+    private static Component bloodQueryMessage(Entity entity, VampireComponent component) {
+        return feedback(QUERY_BLOOD_LINE, entity.getDisplayName(), blood(component.getBlood()));
     }
+
+    private static List<Component> abilityQueryMessage(Entity entity, Registry<VampireAbility> abilityRegistry) {
+        List<Component> components = new ArrayList<>();
+        Set<VampireAbility> abilities = VampireAbilitiesComponent.KEY.maybeGet(entity).map(VampireAbilitiesComponent::getAbilities).orElseGet(Set::of);
+        Component abilityCountText = (abilities.isEmpty() ? feedback(QUERY_NO_ABILITIES_LINE, entity.getDisplayName())
+                : feedback(QUERY_ABILITIES_LINE, entity.getDisplayName(), abilities.size()));
+        components.add(abilityCountText);
+        for (var ability : abilities) {
+            components.add(feedback(QUERY_ABILITY_LINE, ability(abilityRegistry.getKey(ability))));
+        }
+
+        return components;
+    }
+
+
+    private static int queryBlood(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        var entities = EntityArgument.getEntities(ctx, "targets");
+
+        for (var entity : entities) {
+            var component = VampireComponent.KEY.getNullable(entity);
+            if (component == null) {
+                throw NOT_VAMPIRABLE.create(entity.getDisplayName());
+            }
+            ctx.getSource().sendSuccess(bloodQueryMessage(entity, component), false);
+        }
+
+        return entities.size();
+    }
+
+    public static final String BLOOD_SET_SUCCESS = "command.haema.blood.set.success";
 
     private static int setBlood(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         var entities = EntityArgument.getEntities(ctx, "targets");
@@ -202,29 +251,102 @@ public final class HaemaCommand {
             }
 
             component.setBlood(amount);
-            ctx.getSource().sendSuccess(Component.translatable("command.haema.blood.set.success", entity.getDisplayName(), component.getBlood()), true);
+            ctx.getSource().sendSuccess(feedback(BLOOD_SET_SUCCESS, entity.getDisplayName(), blood(component.getBlood())), true);
         }
 
         return entities.size();
     }
 
-    private static int addBlood(CommandContext<CommandSourceStack> ctx) {
-        //TODO
-        return Command.SINGLE_SUCCESS;
+
+    private static int addBlood(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        var entities = EntityArgument.getEntities(ctx, "targets");
+        double amount = DoubleArgumentType.getDouble(ctx, "amount");
+
+        for (var entity : entities) {
+            var component = VampireComponent.KEY.getNullable(entity);
+            if (component == null) {
+                throw NOT_VAMPIRABLE.create(entity.getDisplayName());
+            }
+
+            component.setBlood(component.getBlood()+amount);
+            ctx.getSource().sendSuccess(feedback(BLOOD_SET_SUCCESS, entity.getDisplayName(), blood(component.getBlood())), true);
+        }
+
+        return entities.size();
     }
 
-    private static int removeBlood(CommandContext<CommandSourceStack> ctx) {
-        //TODO
-        return Command.SINGLE_SUCCESS;
+
+    private static int removeBlood(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        var entities = EntityArgument.getEntities(ctx, "targets");
+        double amount = DoubleArgumentType.getDouble(ctx, "amount");
+
+        for (var entity : entities) {
+            var component = VampireComponent.KEY.getNullable(entity);
+            if (component == null) {
+                throw NOT_VAMPIRABLE.create(entity.getDisplayName());
+            }
+
+            component.setBlood(component.getBlood()-amount);
+            ctx.getSource().sendSuccess(feedback(BLOOD_SET_SUCCESS, entity.getDisplayName(), blood(component.getBlood())), true);
+        }
+
+        return entities.size();
     }
 
-    private static int getAbilities(CommandContext<CommandSourceStack> ctx) {
-        //TODO
-        return Command.SINGLE_SUCCESS;
+    private static int queryAbilities(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        var entities = EntityArgument.getEntities(ctx, "targets");
+        var registry = ctx.getSource().registryAccess().registryOrThrow(VampireAbility.REGISTRY_KEY);
+
+        for (var entity : entities) {
+            var component = VampireComponent.KEY.getNullable(entity);
+            if (component == null) {
+                throw NOT_VAMPIRABLE.create(entity.getDisplayName());
+            }
+            for (var text : abilityQueryMessage(entity, registry)) {
+                ctx.getSource().sendSuccess(text, false);
+            }
+        }
+
+        return entities.size();
     }
 
-    private static int setAbility(CommandContext<CommandSourceStack> ctx) {
-        //TODO
-        return Command.SINGLE_SUCCESS;
+    public static final String ABILITY_ADDED = "command.haema.ability.set.added";
+    public static final String ABILITY_REMOVED = "command.haema.ability.set.removed";
+
+    private static int setAbility(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        var entities = EntityArgument.getEntities(ctx, "targets");
+        var abilityId = ResourceLocationArgument.getId(ctx, "ability");
+        boolean enabled = BoolArgumentType.getBool(ctx, "value");
+        var registry = ctx.getSource().registryAccess().registryOrThrow(VampireAbility.REGISTRY_KEY);
+        var ability = registry.get(abilityId);
+
+        for (var entity : entities) {
+            var component = VampireAbilitiesComponent.KEY.getNullable(entity);
+            if (component == null) {
+                throw CANNOT_HAVE_ABILITIES.create(entity.getDisplayName());
+            }
+
+            if (enabled) {
+                component.addAbility(ability);
+                ctx.getSource().sendSuccess(feedback(ABILITY_ADDED, entity.getDisplayName(), ability(abilityId)), true);
+            } else {
+                component.removeAbility(ability);
+                ctx.getSource().sendSuccess(feedback(ABILITY_REMOVED, entity.getDisplayName(), ability(abilityId)), true);
+            }
+        }
+
+        return entities.size();
+    }
+
+    private static MutableComponent feedback(String key, Object... params) {
+        return Component.translatable(key, params).withStyle(ChatFormatting.GRAY);
+    }
+
+    private static MutableComponent ability(@Nullable ResourceLocation key) {
+        return Component.literal(key == null ? "unknown" : key.toString()).withStyle(ChatFormatting.GOLD);
+    }
+
+    private static MutableComponent blood(double amount) {
+        return Component.literal("%.2f".formatted(amount)).withStyle(ChatFormatting.DARK_RED);
     }
 }
