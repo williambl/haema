@@ -1,18 +1,24 @@
 package com.williambl.haema.content;
 
 import com.williambl.haema.api.vampire.VampirismSource;
+import com.williambl.haema.content.blood.BloodBucketItem;
+import com.williambl.haema.content.blood.BloodFluid;
+import com.williambl.haema.content.blood.BloodLiquidBlock;
+import com.williambl.haema.content.blood.BloodQuality;
 import com.williambl.haema.content.injector.EmptyInjectorItem;
+import com.williambl.haema.content.injector.IncompatibleBloodEffect;
 import com.williambl.haema.content.injector.InjectorItem;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -29,13 +35,19 @@ public class HaemaContent {
     }
 
     public static class Fluids {
-        public static final BloodFluid.Flowing FLOWING_BLOOD = Registry.register(BuiltInRegistries.FLUID, id("flowing_blood"), new BloodFluid.Flowing());
-        public static final BloodFluid.Source BLOOD = Registry.register(BuiltInRegistries.FLUID, id("blood"), new BloodFluid.Source());
-        public static final Block BLOOD_BLOCK = Registry.register(
-                BuiltInRegistries.BLOCK,
-                id("blood"),
-                new LiquidBlock(
-                        Fluids.BLOOD, BlockBehaviour.Properties.of(Material.LAVA).noCollission().randomTicks().strength(100.0F).noLootTable()));
+        public static final Map<BloodQuality, BloodFluid.Flowing> FLOWING_BLOOD = new EnumMap<>(Arrays.stream(BloodQuality.values())
+                .collect(Collectors.toMap(
+                        Function.identity(),
+                        quality -> Registry.register(BuiltInRegistries.FLUID, id("flowing_%s_blood".formatted(quality.getSerializedName())), new BloodFluid.Flowing(quality)))));
+        public static final Map<BloodQuality, BloodFluid.Source> BLOOD = new EnumMap<>(Arrays.stream(BloodQuality.values())
+                .collect(Collectors.toMap(
+                        Function.identity(),
+                        quality -> Registry.register(BuiltInRegistries.FLUID, id("%s_blood".formatted(quality.getSerializedName())), new BloodFluid.Source(quality)))));
+        public static final Map<BloodQuality, Block> BLOOD_BLOCK = new EnumMap<>(Arrays.stream(BloodQuality.values())
+                .collect(Collectors.toMap(
+                        Function.identity(),
+                        quality -> Registry.register(BuiltInRegistries.BLOCK, id("%s_blood".formatted(quality.getSerializedName())), new BloodLiquidBlock(
+                                BLOOD.get(quality), quality, BlockBehaviour.Properties.of(Material.LAVA).noCollission().randomTicks().strength(100.0F).noLootTable())))));
 
         public static void init() {}
     }
@@ -46,13 +58,20 @@ public class HaemaContent {
                 id("empty_injector"),
                 new EmptyInjectorItem(new Item.Properties().stacksTo(1)));
 
-        public static final Map<BloodQuality, InjectorItem> INJECTORS = Arrays.stream(BloodQuality.values())
+        public static final Map<BloodQuality, InjectorItem> INJECTORS = new EnumMap<>(Arrays.stream(BloodQuality.values())
                 .collect(Collectors.toMap(
                         Function.identity(),
                         quality -> Registry.register(
                                 BuiltInRegistries.ITEM,
-                                id(quality.name().toLowerCase() + "_injector"),
-                                new InjectorItem(new Item.Properties().stacksTo(1), quality))));
+                                id(quality.getSerializedName() + "_injector"),
+                                new InjectorItem(new Item.Properties().stacksTo(1), quality)))));
+        public static final Map<BloodQuality, BucketItem> BUCKETS = new EnumMap<>(Arrays.stream(BloodQuality.values())
+                .collect(Collectors.toMap(
+                        Function.identity(),
+                        quality -> Registry.register(
+                                BuiltInRegistries.ITEM,
+                                id(quality.getSerializedName() + "_blood_bucket"),
+                                new BloodBucketItem(Fluids.BLOOD.get(quality), quality, new Item.Properties().stacksTo(1))))));
 
         public static void init() {}
     }

@@ -1,4 +1,4 @@
-package com.williambl.haema.content;
+package com.williambl.haema.content.blood;
 
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;

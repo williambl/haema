@@ -1,5 +1,6 @@
-package com.williambl.haema.content;
+package com.williambl.haema.content.blood;
 
+import com.williambl.haema.content.HaemaContent;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -10,7 +11,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -31,19 +31,25 @@ import java.util.Optional;
 public abstract class BloodFluid extends FlowingFluid {
 	public static final float MIN_LEVEL_CUTOFF = 0.44444445F;
 
+	private final BloodQuality quality;
+
+	protected BloodFluid(BloodQuality quality) {
+		this.quality = quality;
+	}
+
 	@Override
 	public Fluid getFlowing() {
-		return HaemaContent.Fluids.FLOWING_BLOOD;
+		return HaemaContent.Fluids.FLOWING_BLOOD.get(this.quality);
 	}
 
 	@Override
 	public Fluid getSource() {
-		return HaemaContent.Fluids.BLOOD;
+		return HaemaContent.Fluids.BLOOD.get(this.quality);
 	}
 
 	@Override
 	public Item getBucket() {
-		return Items.AIR;
+		return HaemaContent.Items.BUCKETS.get(this.quality);
 	}
 
 	@Override
@@ -68,27 +74,27 @@ public abstract class BloodFluid extends FlowingFluid {
 
 	@Override
 	public int getSlopeFindDistance(LevelReader levelReader) {
-		return 2;
+		return 4;
 	}
 
 	@Override
 	public BlockState createLegacyBlock(FluidState fluidState) {
-		return HaemaContent.Fluids.BLOOD_BLOCK.defaultBlockState().setValue(LiquidBlock.LEVEL, getLegacyLevel(fluidState));
+		return HaemaContent.Fluids.BLOOD_BLOCK.get(this.quality).defaultBlockState().setValue(LiquidBlock.LEVEL, getLegacyLevel(fluidState));
 	}
 
 	@Override
 	public boolean isSame(Fluid fluid) {
-		return fluid == HaemaContent.Fluids.BLOOD || fluid == HaemaContent.Fluids.FLOWING_BLOOD;
+		return fluid == HaemaContent.Fluids.BLOOD.get(this.quality) || fluid == HaemaContent.Fluids.FLOWING_BLOOD.get(this.quality);
 	}
 
 	@Override
 	public int getDropOff(LevelReader levelReader) {
-		return 2;
+		return 1;
 	}
 
 	@Override
 	public boolean canBeReplacedWith(FluidState fluidState, BlockGetter blockGetter, BlockPos blockPos, Fluid fluid, Direction direction) {
-		return fluidState.getHeight(blockGetter, blockPos) >= 0.44444445F && fluid.is(FluidTags.WATER);
+		return fluidState.getHeight(blockGetter, blockPos) >= MIN_LEVEL_CUTOFF && fluid.is(FluidTags.WATER);
 	}
 
 	@Override
@@ -132,6 +138,10 @@ public abstract class BloodFluid extends FlowingFluid {
 	}
 
 	public static class Flowing extends BloodFluid {
+		public Flowing(BloodQuality quality) {
+			super(quality);
+		}
+
 		@Override
 		protected void createFluidStateDefinition(StateDefinition.Builder<Fluid, FluidState> builder) {
 			super.createFluidStateDefinition(builder);
@@ -150,6 +160,10 @@ public abstract class BloodFluid extends FlowingFluid {
 	}
 
 	public static class Source extends BloodFluid {
+		public Source(BloodQuality quality) {
+			super(quality);
+		}
+
 		@Override
 		public int getAmount(FluidState fluidState) {
 			return 8;

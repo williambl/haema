@@ -2,8 +2,8 @@ package com.williambl.haema.content.injector;
 
 import com.williambl.haema.api.vampire.VampireComponent;
 import com.williambl.haema.api.vampire.VampirismSource;
-import com.williambl.haema.content.BloodQuality;
 import com.williambl.haema.content.HaemaContent;
+import com.williambl.haema.content.blood.BloodQuality;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;

@@ -1,4 +1,4 @@
-package com.williambl.haema.content;
+package com.williambl.haema.content.injector;
 
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;

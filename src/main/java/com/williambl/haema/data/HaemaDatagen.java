@@ -10,8 +10,8 @@ import com.williambl.haema.HaemaCommand;
 import com.williambl.haema.HaemaDFunctions;
 import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
-import com.williambl.haema.content.BloodQuality;
 import com.williambl.haema.content.HaemaContent;
+import com.williambl.haema.content.blood.BloodQuality;
 import com.williambl.haema.content.injector.InjectorItem;
 import com.williambl.haema.vampire.HaemaVampires;
 import com.williambl.haema.vampire.ability.powers.AttributeVampireAbilityPower;
@@ -86,6 +86,9 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             models.generateFlatItem(HaemaContent.Items.EMPTY_INJECTOR, ModelTemplates.FLAT_ITEM);
             for (var item : HaemaContent.Items.INJECTORS.values()) {
                 models.generateFlatItem(item, ModelTemplates.FLAT_ITEM);
+            }
+            for (var item : HaemaContent.Items.BUCKETS.values()) {
+                models.generateFlatItem(item, Items.WATER_BUCKET, ModelTemplates.FLAT_ITEM); //TODO use own texture
             }
         }
     }
@@ -357,10 +360,15 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             translations.add(HaemaCommand.BLOOD_SET_SUCCESS, "%1$s now has %2$s blood");
             translations.add(HaemaCommand.ABILITY_ADDED, "Given %1$s ability %2$s");
             translations.add(HaemaCommand.ABILITY_REMOVED, "Removed ability %2$s from %1$s");
-            translations.add(HaemaContent.Fluids.BLOOD_BLOCK, "Blood");
+            for (var block : HaemaContent.Fluids.BLOOD_BLOCK.values()) {
+                translations.add(block, "%1$s Blood");
+            }
             translations.add(HaemaContent.Items.EMPTY_INJECTOR, "Empty Blood Injector");
             for (var item : HaemaContent.Items.INJECTORS.values()) {
                 translations.add(item, "Blood Injector");
+            }
+            for (var item : HaemaContent.Items.BUCKETS.values()) {
+                translations.add(item, "%1$s Blood Bucket");
             }
             for (var quality : BloodQuality.values()) {
                 translations.add(quality.translationKey, quality.getSerializedName().substring(0, 1).toUpperCase(Locale.ROOT) + quality.getSerializedName().substring(1));
