@@ -11,6 +11,7 @@ import com.williambl.haema.HaemaDFunctions;
 import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.content.HaemaContent;
+import com.williambl.haema.content.blood.BloodBottleItem;
 import com.williambl.haema.content.blood.BloodQuality;
 import com.williambl.haema.content.injector.InjectorItem;
 import com.williambl.haema.vampire.HaemaVampires;
@@ -94,6 +95,9 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             }
             for (var item : HaemaContent.Items.BUCKETS.values()) {
                 models.generateFlatItem(item, Items.WATER_BUCKET, ModelTemplates.FLAT_ITEM); //TODO use own texture
+            }
+            for (var item : HaemaContent.Items.BOTTLES.values()) {
+                generateFlatItem(item, id("item/blood_bottle"), ModelTemplates.FLAT_ITEM, models);
             }
         }
 
@@ -369,6 +373,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             translations.add(HaemaCommand.BLOOD_SET_SUCCESS, "%1$s now has %2$s blood");
             translations.add(HaemaCommand.ABILITY_ADDED, "Given %1$s ability %2$s");
             translations.add(HaemaCommand.ABILITY_REMOVED, "Removed ability %2$s from %1$s");
+            translations.add(Haema.TAB, "Haema");
             for (var block : HaemaContent.Fluids.BLOOD_BLOCK.values()) {
                 translations.add(block, "%1$s Blood");
             }
@@ -376,13 +381,17 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             for (var item : HaemaContent.Items.INJECTORS.values()) {
                 translations.add(item, "Blood Injector");
             }
+            translations.add(InjectorItem.DESCRIPTION_TRANSLATION_KEY, "Contains %1$s blood");
             for (var item : HaemaContent.Items.BUCKETS.values()) {
                 translations.add(item, "%1$s Blood Bucket");
             }
+            for (var item : HaemaContent.Items.BOTTLES.values()) {
+                translations.add(item, "Blood Bottle");
+            }
+            translations.add(BloodBottleItem.DESCRIPTION_TRANSLATION_KEY, "Contains %1$s blood");
             for (var quality : BloodQuality.values()) {
                 translations.add(quality.translationKey, quality.getSerializedName().substring(0, 1).toUpperCase(Locale.ROOT) + quality.getSerializedName().substring(1));
             }
-            translations.add(InjectorItem.DESCRIPTION_TRANSLATION_KEY, "Contains %1$s blood");
         }
     }
 }

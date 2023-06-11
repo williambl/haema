@@ -1,7 +1,5 @@
-package com.williambl.haema.content.injector;
+package com.williambl.haema.content.blood;
 
-import com.williambl.haema.content.HaemaContent;
-import com.williambl.haema.content.blood.BloodFluid;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -14,35 +12,42 @@ import net.minecraft.world.item.Item;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Based on {@link net.fabricmc.fabric.impl.transfer.fluid.EmptyBucketStorage}
  */
 @SuppressWarnings("UnstableApiUsage")
-public class EmptyInjectorStorage implements InsertionOnlyStorage<FluidVariant> {
+public class EmptyBloodStorage implements InsertionOnlyStorage<FluidVariant> {
 	private final ContainerItemContext context;
-	private final List<StorageView<FluidVariant>> blankView = List.of(new BlankVariantView<>(FluidVariant.blank(), HaemaContent.Config.INJECTOR_CAPACITY_DROPLETS));
+	private final long capacity;
+	private final Item empty;
+	private final Function<BloodQuality, Item> full;
+	private final List<StorageView<FluidVariant>> blankView;
 
-	public EmptyInjectorStorage(ContainerItemContext context) {
+	public EmptyBloodStorage(ContainerItemContext context, long capacity, Item empty, Function<BloodQuality, Item> full) {
 		this.context = context;
+		this.capacity = capacity;
+		this.empty = empty;
+		this.full = full;
+		this.blankView = List.of(new BlankVariantView<>(FluidVariant.blank(), capacity));
 	}
 
 	@Override
 	public long insert(FluidVariant resource, long maxAmount, TransactionContext transaction) {
 		StoragePreconditions.notBlankNotNegative(resource, maxAmount);
 
-		if (!context.getItemVariant().isOf(HaemaContent.Items.EMPTY_INJECTOR) || !(resource.getFluid() instanceof BloodFluid blood)) {
+		if (!context.getItemVariant().isOf(this.empty) || !(resource.getFluid() instanceof BloodFluid blood)) {
 			return 0;
 		}
 
-		Item fullInjector = HaemaContent.Items.INJECTORS.get(blood.getQuality());
+		Item fullItem = this.full.apply(blood.getQuality());
 
-		// Make sure the resource is a correct fluid mapping: the fluid <-> bucket mapping must be bidirectional.
-		if (maxAmount >= HaemaContent.Config.INJECTOR_CAPACITY_DROPLETS) {
-			ItemVariant newVariant = ItemVariant.of(fullInjector, context.getItemVariant().getNbt());
+		if (maxAmount >= this.capacity) {
+			ItemVariant newVariant = ItemVariant.of(fullItem, context.getItemVariant().getNbt());
 
 			if (context.exchange(newVariant, 1, transaction) == 1) {
-				return HaemaContent.Config.INJECTOR_CAPACITY_DROPLETS;
+				return this.capacity;
 			}
 		}
 

@@ -1,12 +1,8 @@
 package com.williambl.haema.content;
 
 import com.williambl.haema.api.vampire.VampirismSource;
-import com.williambl.haema.content.blood.BloodBucketItem;
-import com.williambl.haema.content.blood.BloodFluid;
-import com.williambl.haema.content.blood.BloodLiquidBlock;
-import com.williambl.haema.content.blood.BloodQuality;
+import com.williambl.haema.content.blood.*;
 import com.williambl.haema.content.injector.EmptyInjectorItem;
-import com.williambl.haema.content.injector.EmptyInjectorStorage;
 import com.williambl.haema.content.injector.IncompatibleBloodEffect;
 import com.williambl.haema.content.injector.InjectorItem;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
@@ -77,13 +73,27 @@ public class HaemaContent {
                                 BuiltInRegistries.ITEM,
                                 id(quality.getSerializedName() + "_blood_bucket"),
                                 new BloodBucketItem(Fluids.BLOOD.get(quality), quality, new Item.Properties().stacksTo(1))))));
+        public static final Map<BloodQuality, BloodBottleItem> BOTTLES = new EnumMap<>(Arrays.stream(BloodQuality.values())
+                .collect(Collectors.toMap(
+                        Function.identity(),
+                        quality -> Registry.register(
+                                BuiltInRegistries.ITEM,
+                                id(quality.getSerializedName() + "_blood_bottle"),
+                                new BloodBottleItem(new Item.Properties().stacksTo(1), quality)))));
+
+        //TODO recipe to fill empty injectors with blood
 
         @SuppressWarnings("UnstableApiUsage")
         public static void init() {
             for (var quality : BloodQuality.values()) {
                 FluidStorage.combinedItemApiProvider(INJECTORS.get(quality)).register(ctx -> new FullItemFluidStorage(ctx, EMPTY_INJECTOR, FluidVariant.of(Fluids.BLOOD.get(quality)), Config.INJECTOR_CAPACITY_DROPLETS));
             }
-            FluidStorage.combinedItemApiProvider(EMPTY_INJECTOR).register(EmptyInjectorStorage::new);
+            FluidStorage.combinedItemApiProvider(EMPTY_INJECTOR).register(ctx -> new EmptyBloodStorage(ctx, Config.INJECTOR_CAPACITY_DROPLETS, EMPTY_INJECTOR, INJECTORS::get));
+
+            for (var quality : BloodQuality.values()) {
+                FluidStorage.combinedItemApiProvider(BOTTLES.get(quality)).register(ctx -> new FullItemFluidStorage(ctx, net.minecraft.world.item.Items.GLASS_BOTTLE, FluidVariant.of(Fluids.BLOOD.get(quality)), Config.INJECTOR_CAPACITY_DROPLETS));
+            }
+            FluidStorage.combinedItemApiProvider(net.minecraft.world.item.Items.GLASS_BOTTLE).register(ctx -> new EmptyBloodStorage(ctx, Config.INJECTOR_CAPACITY_DROPLETS, net.minecraft.world.item.Items.GLASS_BOTTLE, BOTTLES::get));
         }
     }
 
