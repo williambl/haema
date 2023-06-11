@@ -50,6 +50,18 @@ public interface VampireComponent extends Component, AutoSyncedComponent {
      */
     void setBlood(double blood);
 
+    /**
+     * Add to the entity's blood level.
+     * @param blood the amount of blood to add
+     */
+    void addBlood(double blood);
+
+    /**
+     * Remove from the entity's blood level.
+     * @param blood the amount of blood to remove
+     */
+    void removeBlood(double blood);
+
     ComponentKey<VampireComponent> KEY = ComponentRegistry.getOrCreate(id("vampire"), VampireComponent.class);
     double MAX_BLOOD = 20;
 }

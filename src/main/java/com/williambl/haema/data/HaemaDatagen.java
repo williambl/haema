@@ -12,7 +12,7 @@ import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.content.BloodQuality;
 import com.williambl.haema.content.HaemaContent;
-import com.williambl.haema.content.InjectorItem;
+import com.williambl.haema.content.injector.InjectorItem;
 import com.williambl.haema.vampire.HaemaVampires;
 import com.williambl.haema.vampire.ability.powers.AttributeVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.EffectVampireAbilityPower;
@@ -150,8 +150,8 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             defaultAbilties.addAll(vampiricStrengthAbilities);
 
 
-            entries.add(HaemaVampires.VampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaVampires.VampirismSources.BLOOD_INJECTOR), defaultAbilties));
-            entries.add(HaemaVampires.VampirismSources.COMMAND, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of()));
+            entries.add(HaemaContent.VampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaContent.VampirismSources.BLOOD_INJECTOR, HaemaVampires.VampirismSources.COMMAND), defaultAbilties, DPredicates.CONSTANT.factory().apply(false), DPredicates.CONSTANT.factory().apply(false))); //TODO
+            entries.add(HaemaVampires.VampirismSources.COMMAND, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of(), DPredicates.CONSTANT.factory().apply(true), DPredicates.CONSTANT.factory().apply(true)));
         }
 
         private ResourceKey<VampireAbility> createHealingAbility(Entries entries) {

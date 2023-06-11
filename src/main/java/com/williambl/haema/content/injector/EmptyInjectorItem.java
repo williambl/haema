@@ -1,4 +1,4 @@
-package com.williambl.haema.content;
+package com.williambl.haema.content.injector;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -20,6 +20,7 @@ public class EmptyInjectorItem extends Item {
     public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> tooltip, TooltipFlag tooltipFlag) {
         super.appendHoverText(itemStack, level, tooltip, tooltipFlag);
         tooltip.add(Component.translatable(DESCRIPTION_TRANSLATION_KEY).withStyle(ChatFormatting.GRAY));
-
     }
+
+    //TODO
 }

@@ -1,7 +1,11 @@
 package com.williambl.haema.content;
 
+import com.williambl.haema.api.vampire.VampirismSource;
+import com.williambl.haema.content.injector.EmptyInjectorItem;
+import com.williambl.haema.content.injector.InjectorItem;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
@@ -19,6 +23,9 @@ public class HaemaContent {
     public static void init() {
         Fluids.init();
         Items.init();
+        VampirismSources.init();
+        MobEffects.init();
+        Config.init();
     }
 
     public static class Fluids {
@@ -47,6 +54,27 @@ public class HaemaContent {
                                 id(quality.name().toLowerCase() + "_injector"),
                                 new InjectorItem(new Item.Properties().stacksTo(1), quality))));
 
+        public static void init() {}
+    }
+
+    public static class VampirismSources {
+
+        public static final ResourceKey<VampirismSource> BLOOD_INJECTOR = ResourceKey.create(VampirismSource.REGISTRY_KEY, id("blood_injector"));
+
+        public static void init() {}
+    }
+
+    public static class MobEffects {
+        public static final IncompatibleBloodEffect INCOMPATIBLE_BLOOD = Registry.register(
+                BuiltInRegistries.MOB_EFFECT,
+                id("incompatible_blood"),
+                new IncompatibleBloodEffect());
+
+        public static void init() {}
+    }
+
+    public static class Config {
+        public static final double INJECTOR_CAPACITY = 6.0;
         public static void init() {}
     }
 }

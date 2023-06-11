@@ -268,7 +268,7 @@ public final class HaemaCommand {
                 throw NOT_VAMPIRABLE.create(entity.getDisplayName());
             }
 
-            component.setBlood(component.getBlood()+amount);
+            component.addBlood(amount);
             ctx.getSource().sendSuccess(feedback(BLOOD_SET_SUCCESS, entity.getDisplayName(), blood(component.getBlood())), true);
         }
 
@@ -286,7 +286,7 @@ public final class HaemaCommand {
                 throw NOT_VAMPIRABLE.create(entity.getDisplayName());
             }
 
-            component.setBlood(component.getBlood()-amount);
+            component.removeBlood(amount);
             ctx.getSource().sendSuccess(feedback(BLOOD_SET_SUCCESS, entity.getDisplayName(), blood(component.getBlood())), true);
         }
 

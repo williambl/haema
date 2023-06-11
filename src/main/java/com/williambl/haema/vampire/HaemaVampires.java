@@ -71,7 +71,6 @@ public class HaemaVampires {
     }
 
     public static class VampirismSources {
-        public static final ResourceKey<VampirismSource> BLOOD_INJECTOR = ResourceKey.create(VampirismSource.REGISTRY_KEY, id("blood_injector"));
         public static final ResourceKey<VampirismSource> COMMAND = ResourceKey.create(VampirismSource.REGISTRY_KEY, id("command"));
 
         private static void init() {}

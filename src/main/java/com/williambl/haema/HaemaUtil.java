@@ -39,4 +39,22 @@ public class HaemaUtil {
     public static <T extends DFunction<?>> Function<T, DataResult<T>> verifyDFunction(DFContextSpec spec) {
         return t -> spec.satisfies(t.getSpec()) ? DataResult.success(t) : DataResult.error(() -> "DFunction spec %s is not satisfied by %s".formatted(spec, t.getSpec()));
     }
+
+    public static boolean isInteger(String s) {
+        try {
+            Integer.parseInt(s);
+            return true;
+        } catch (NumberFormatException ignored) {
+            return false;
+        }
+    }
+
+    public static boolean isInteger(String s, int radix) {
+        try {
+            Integer.parseInt(s, radix);
+            return true;
+        } catch (NumberFormatException ignored) {
+            return false;
+        }
+    }
 }

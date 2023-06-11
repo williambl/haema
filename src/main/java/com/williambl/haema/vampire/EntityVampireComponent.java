@@ -1,5 +1,6 @@
 package com.williambl.haema.vampire;
 
+import com.williambl.dfunc.api.context.DFContext;
 import com.williambl.haema.Haema;
 import com.williambl.haema.api.vampire.VampireComponent;
 import com.williambl.haema.api.vampire.VampirismSource;
@@ -45,6 +46,10 @@ public class EntityVampireComponent implements VampireComponent {
             return false;
         }
 
+        if (!source.canConvert().apply(DFContext.entity(this.entity))) {
+            return false;
+        }
+
         this.vampirismSource = source;
         var abilityComponent = VampireAbilitiesComponent.KEY.getNullable(this.entity);
         if (abilityComponent != null) {
@@ -66,6 +71,10 @@ public class EntityVampireComponent implements VampireComponent {
             return false;
         }
 
+        if (!source.canCure().apply(DFContext.entity(this.entity))) {
+            return false;
+        }
+
         this.vampirismSource = null;
         VampireAbilitiesComponent.KEY.maybeGet(this.entity).ifPresent(abilityComponent ->
                 abilityComponent.getAbilities().forEach(abilityComponent::removeAbility));
@@ -83,6 +92,16 @@ public class EntityVampireComponent implements VampireComponent {
     public void setBlood(double blood) {
         this.blood = Mth.clamp(blood, 0,  MAX_BLOOD);
         VampireComponent.KEY.sync(this.entity);
+    }
+
+    @Override
+    public void addBlood(double blood) {
+        this.setBlood(this.blood + blood);
+    }
+
+    @Override
+    public void removeBlood(double blood) {
+        this.setBlood(this.blood - blood);
     }
 
     @Override
