@@ -10,7 +10,9 @@ import com.williambl.haema.HaemaCommand;
 import com.williambl.haema.HaemaDFunctions;
 import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
+import com.williambl.haema.content.BloodQuality;
 import com.williambl.haema.content.HaemaContent;
+import com.williambl.haema.content.InjectorItem;
 import com.williambl.haema.vampire.HaemaVampires;
 import com.williambl.haema.vampire.ability.powers.AttributeVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.EffectVampireAbilityPower;
@@ -22,11 +24,15 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.models.BlockModelGenerators;
+import net.minecraft.data.models.ItemModelGenerators;
+import net.minecraft.data.models.model.ModelTemplates;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageType;
@@ -50,6 +56,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         pack.addProvider((o, r) -> new HaemaItemTagsProvider(o, r, null));
         pack.addProvider(HaemaDamageTypeTagsProvider::new);
         pack.addProvider(HaemaLangProvider::new);
+        pack.addProvider(HaemaModelProvider::new);
     }
 
     @Override
@@ -61,6 +68,26 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
     public void buildRegistry(RegistrySetBuilder registryBuilder) {
         registryBuilder.add(VampirismSource.REGISTRY_KEY, $ -> {});
         registryBuilder.add(VampireAbility.REGISTRY_KEY, $ -> {});
+    }
+
+    private static class HaemaModelProvider extends FabricModelProvider {
+
+        public HaemaModelProvider(FabricDataOutput output) {
+            super(output);
+        }
+
+        @Override
+        public void generateBlockStateModels(BlockModelGenerators models) {
+
+        }
+
+        @Override
+        public void generateItemModels(ItemModelGenerators models) {
+            models.generateFlatItem(HaemaContent.Items.EMPTY_INJECTOR, ModelTemplates.FLAT_ITEM);
+            for (var item : HaemaContent.Items.INJECTORS.values()) {
+                models.generateFlatItem(item, ModelTemplates.FLAT_ITEM);
+            }
+        }
     }
 
     private static class HaemaItemTagsProvider extends FabricTagProvider.ItemTagProvider {
@@ -331,6 +358,14 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             translations.add(HaemaCommand.ABILITY_ADDED, "Given %1$s ability %2$s");
             translations.add(HaemaCommand.ABILITY_REMOVED, "Removed ability %2$s from %1$s");
             translations.add(HaemaContent.Fluids.BLOOD_BLOCK, "Blood");
+            translations.add(HaemaContent.Items.EMPTY_INJECTOR, "Empty Blood Injector");
+            for (var item : HaemaContent.Items.INJECTORS.values()) {
+                translations.add(item, "Blood Injector");
+            }
+            for (var quality : BloodQuality.values()) {
+                translations.add(quality.translationKey, quality.getSerializedName().substring(0, 1).toUpperCase(Locale.ROOT) + quality.getSerializedName().substring(1));
+            }
+            translations.add(InjectorItem.DESCRIPTION_TRANSLATION_KEY, "Contains %1$s blood");
         }
     }
 }
