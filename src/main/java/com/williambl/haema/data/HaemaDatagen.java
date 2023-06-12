@@ -31,6 +31,10 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.models.BlockModelGenerators;
 import net.minecraft.data.models.ItemModelGenerators;
+import net.minecraft.data.models.blockstates.MultiVariantGenerator;
+import net.minecraft.data.models.blockstates.PropertyDispatch;
+import net.minecraft.data.models.blockstates.Variant;
+import net.minecraft.data.models.blockstates.VariantProperties;
 import net.minecraft.data.models.model.ModelLocationUtils;
 import net.minecraft.data.models.model.ModelTemplate;
 import net.minecraft.data.models.model.ModelTemplates;
@@ -38,6 +42,7 @@ import net.minecraft.data.models.model.TextureMapping;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -47,6 +52,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LayeredCauldronBlock;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -60,6 +67,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
     public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
         var pack = fabricDataGenerator.createPack();
         pack.addProvider(HaemaDynamicRegistryProvider::new);
+        pack.addProvider(HaemaBlockTagsProvider::new);
         pack.addProvider((o, r) -> new HaemaItemTagsProvider(o, r, null));
         pack.addProvider(HaemaDamageTypeTagsProvider::new);
         pack.addProvider(HaemaLangProvider::new);
@@ -86,7 +94,32 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
 
         @Override
         public void generateBlockStateModels(BlockModelGenerators models) {
-
+            for (var entry : HaemaContent.Fluids.BLOOD_CAULDRON.entrySet()) {
+                var cauldron = entry.getValue();
+                models.blockStateOutput.accept(
+                        MultiVariantGenerator.multiVariant(cauldron).with(
+                                PropertyDispatch.property(LayeredCauldronBlock.LEVEL).select(
+                                                1,
+                                                Variant.variant().with(
+                                                        VariantProperties.MODEL,
+                                                        ModelTemplates.CAULDRON_LEVEL1.createWithSuffix(
+                                                                cauldron, "_level1", TextureMapping.cauldron(TextureMapping.getBlockTexture(Blocks.WATER, "_still")), models.modelOutput)))
+                                        .select(
+                                                2,
+                                                Variant.variant()
+                                                        .with(
+                                                                VariantProperties.MODEL,
+                                                                ModelTemplates.CAULDRON_LEVEL2
+                                                                        .createWithSuffix(
+                                                                                cauldron, "_level2", TextureMapping.cauldron(TextureMapping.getBlockTexture(Blocks.WATER, "_still")), models.modelOutput)))
+                                        .select(
+                                                3,
+                                                Variant.variant()
+                                                        .with(
+                                                                VariantProperties.MODEL,
+                                                                ModelTemplates.CAULDRON_FULL
+                                                                        .createWithSuffix(cauldron, "_full", TextureMapping.cauldron(TextureMapping.getBlockTexture(Blocks.WATER, "_still")), models.modelOutput)))));
+            }
         }
 
         @Override
@@ -116,6 +149,21 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         @Override
         protected void addTags(HolderLookup.Provider arg) {
             this.tag(HaemaVampires.VampireTags.VAMPIRE_EFFECTIVE_WEAPONS).add(BuiltInRegistries.ITEM.getResourceKey(Items.WOODEN_SWORD).orElseThrow());
+        }
+    }
+
+    private static class HaemaBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
+
+        public HaemaBlockTagsProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+            super(output, registriesFuture);
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider arg) {
+            var cauldrons = this.getOrCreateTagBuilder(BlockTags.CAULDRONS);
+            for (var cauldron : HaemaContent.Fluids.BLOOD_CAULDRON.values()) {
+                cauldrons.add(cauldron);
+            }
         }
     }
 
@@ -378,6 +426,9 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             translations.add(Haema.TAB, "Haema");
             for (var block : HaemaContent.Fluids.BLOOD_BLOCK.values()) {
                 translations.add(block, "%1$s Blood");
+            }
+            for (var cauldron : HaemaContent.Fluids.BLOOD_CAULDRON.values()) {
+                translations.add(cauldron, "Blood Cauldron");
             }
             translations.add(HaemaContent.Items.EMPTY_INJECTOR, "Empty Blood Injector");
             for (var item : HaemaContent.Items.INJECTORS.values()) {
