@@ -27,6 +27,14 @@ public class BloodApi {
         return ENTITY_BLOOD_QUALITY_TAGS.get(quality);
     }
 
+    public static double dropletsToBloodUnits(long droplets) {
+        return droplets * HaemaContent.Config.BLOOD_UNITS_PER_DROPLET;
+    }
+
+    public static long bloodUnitsToDroplets(double bloodUnits) {
+        return (long) Math.ceil(bloodUnits / HaemaContent.Config.BLOOD_UNITS_PER_DROPLET);
+    }
+
     public static Fluid getFluid(BloodQuality quality) {
         return HaemaContent.Fluids.BLOOD.get(quality);
     }

@@ -1,6 +1,7 @@
 package com.williambl.haema.content;
 
 import com.williambl.haema.HaemaUtil;
+import com.williambl.haema.api.content.blood.BloodApi;
 import com.williambl.haema.api.content.blood.BloodQuality;
 import com.williambl.haema.api.content.blood.EntityBloodExtractionCallback;
 import com.williambl.haema.api.content.blood.EntityBloodQualityCallback;
@@ -145,8 +146,8 @@ public class HaemaContent {
             }
             EntityBloodExtractionCallback.EVENT.register(EntityBloodExtractionCallback.DEFAULT_TAKE_DAMAGE, (entity, quality, amount) -> {
                 if (entity instanceof LivingEntity living) {
-                    if (living.getHealth() > amount * Config.BLOOD_UNITS_PER_DROPLET) {
-                        living.hurt(living.damageSources().magic(), (float) (amount * Config.BLOOD_UNITS_PER_DROPLET)); //TODO custom damage source
+                    if (living.getHealth() > BloodApi.dropletsToBloodUnits(amount)) {
+                        living.hurt(living.damageSources().magic(), (float) BloodApi.dropletsToBloodUnits(amount)); //TODO custom damage source
                         return true;
                     }
                 }
@@ -155,9 +156,9 @@ public class HaemaContent {
             });
             EntityBloodExtractionCallback.EVENT.register(EntityBloodExtractionCallback.VAMPIRE_REMOVE_BLOOD, (entity, quality, amount) -> VampireComponent.KEY.maybeGet(entity)
                     .filter(VampireComponent::isVampire)
-                    .filter(c -> c.getBlood() >= amount * Config.BLOOD_UNITS_PER_DROPLET)
+                    .filter(c -> c.getBlood() >= BloodApi.dropletsToBloodUnits(amount))
                     .map(c -> {
-                        c.removeBlood(amount * Config.BLOOD_UNITS_PER_DROPLET);
+                        c.removeBlood(BloodApi.dropletsToBloodUnits(amount));
                         return true;
                     }).orElse(false));
             EntityBloodQualityCallback.EVENT.register((entity, original) -> {
@@ -197,8 +198,6 @@ public class HaemaContent {
                                 BuiltInRegistries.ITEM,
                                 id(quality.getSerializedName() + "_blood_bottle"),
                                 new BloodBottleItem(new Item.Properties().stacksTo(1), quality)))));
-
-        //TODO recipe to fill empty injectors with blood
 
         @SuppressWarnings("UnstableApiUsage")
         public static void init() {

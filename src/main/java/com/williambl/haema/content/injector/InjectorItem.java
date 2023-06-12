@@ -1,5 +1,6 @@
 package com.williambl.haema.content.injector;
 
+import com.williambl.haema.api.content.blood.BloodApi;
 import com.williambl.haema.api.content.blood.BloodQuality;
 import com.williambl.haema.api.vampire.VampireComponent;
 import com.williambl.haema.api.vampire.VampirismSource;
@@ -58,7 +59,7 @@ public class InjectorItem extends Item {
         }
 
         if (component.isVampire()) {
-            component.addBlood(HaemaContent.Config.BLOOD_UNITS_PER_DROPLET * this.quality.multiplier * HaemaContent.Config.INJECTOR_CAPACITY_DROPLETS);
+            component.addBlood(this.quality.multiplier * BloodApi.dropletsToBloodUnits(HaemaContent.Config.INJECTOR_CAPACITY_DROPLETS));
             return InjectionResult.INJECTED;
         }
 
