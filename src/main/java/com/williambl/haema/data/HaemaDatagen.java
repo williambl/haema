@@ -8,11 +8,12 @@ import com.williambl.dfunc.api.functions.*;
 import com.williambl.haema.Haema;
 import com.williambl.haema.HaemaCommand;
 import com.williambl.haema.HaemaDFunctions;
+import com.williambl.haema.api.content.blood.BloodApi;
+import com.williambl.haema.api.content.blood.BloodQuality;
 import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.content.HaemaContent;
 import com.williambl.haema.content.blood.BloodBottleItem;
-import com.williambl.haema.content.blood.BloodQuality;
 import com.williambl.haema.content.injector.BloodFillingRecipe;
 import com.williambl.haema.content.injector.InjectorItem;
 import com.williambl.haema.vampire.HaemaVampires;
@@ -46,6 +47,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
@@ -69,6 +71,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         pack.addProvider(HaemaDynamicRegistryProvider::new);
         pack.addProvider(HaemaBlockTagsProvider::new);
         pack.addProvider((o, r) -> new HaemaItemTagsProvider(o, r, null));
+        pack.addProvider(HaemaEntityTagsProvider::new);
         pack.addProvider(HaemaDamageTypeTagsProvider::new);
         pack.addProvider(HaemaLangProvider::new);
         pack.addProvider(HaemaModelProvider::new);
@@ -164,6 +167,19 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             for (var cauldron : HaemaContent.Fluids.BLOOD_CAULDRON.values()) {
                 cauldrons.add(cauldron);
             }
+        }
+    }
+
+    private static class HaemaEntityTagsProvider extends FabricTagProvider.EntityTypeTagProvider {
+
+        public HaemaEntityTagsProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> completableFuture) {
+            super(output, completableFuture);
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider arg) {
+            this.getOrCreateTagBuilder(BloodApi.getEntityTag(BloodQuality.GOOD))
+                    .add(EntityType.PLAYER);
         }
     }
 

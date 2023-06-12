@@ -1,6 +1,10 @@
 package com.williambl.haema.content;
 
 import com.williambl.haema.HaemaUtil;
+import com.williambl.haema.api.content.blood.BloodQuality;
+import com.williambl.haema.api.content.blood.EntityBloodExtractionCallback;
+import com.williambl.haema.api.content.blood.EntityBloodQualityCallback;
+import com.williambl.haema.api.vampire.VampireComponent;
 import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.content.blood.*;
 import com.williambl.haema.content.injector.BloodFillingRecipe;
@@ -18,6 +22,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -31,6 +37,7 @@ import net.minecraft.world.level.material.Material;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -136,6 +143,30 @@ public class HaemaContent {
                         SoundEvents.BUCKET_FILL
                 ));
             }
+            EntityBloodExtractionCallback.EVENT.register(EntityBloodExtractionCallback.DEFAULT_TAKE_DAMAGE, (entity, quality, amount) -> {
+                if (entity instanceof LivingEntity living) {
+                    if (living.getHealth() > amount * Config.BLOOD_UNITS_PER_DROPLET) {
+                        living.hurt(living.damageSources().magic(), (float) (amount * Config.BLOOD_UNITS_PER_DROPLET)); //TODO custom damage source
+                        return true;
+                    }
+                }
+
+                return false;
+            });
+            EntityBloodExtractionCallback.EVENT.register(EntityBloodExtractionCallback.VAMPIRE_REMOVE_BLOOD, (entity, quality, amount) -> VampireComponent.KEY.maybeGet(entity)
+                    .filter(VampireComponent::isVampire)
+                    .filter(c -> c.getBlood() >= amount * Config.BLOOD_UNITS_PER_DROPLET)
+                    .map(c -> {
+                        c.removeBlood(amount * Config.BLOOD_UNITS_PER_DROPLET);
+                        return true;
+                    }).orElse(false));
+            EntityBloodQualityCallback.EVENT.register((entity, original) -> {
+                if (VampireComponent.KEY.maybeGet(entity).filter(VampireComponent::isVampire).isPresent()) {
+                    return InteractionResultHolder.success(Optional.of(BloodQuality.EXCELLENT));
+                }
+
+                return InteractionResultHolder.pass(original);
+            });
         }
     }
 
@@ -210,7 +241,7 @@ public class HaemaContent {
     @SuppressWarnings("UnstableApiUsage")
     public static class Config {
         public static final long INJECTOR_CAPACITY_DROPLETS = FluidConstants.BOTTLE;
-        public static final double INJECTOR_CAPACITY_BLOOD_UNITS = 6.0;
+        public static final double BLOOD_UNITS_PER_DROPLET = (double) 20 /*blood units per person*/ / FluidConstants.BUCKET /*blood droplets per person*/;
         public static void init() {}
     }
 }

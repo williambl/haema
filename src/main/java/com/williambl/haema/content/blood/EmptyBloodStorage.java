@@ -1,5 +1,6 @@
 package com.williambl.haema.content.blood;
 
+import com.williambl.haema.api.content.blood.BloodQuality;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;

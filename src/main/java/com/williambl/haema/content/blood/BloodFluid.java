@@ -1,5 +1,6 @@
 package com.williambl.haema.content.blood;
 
+import com.williambl.haema.api.content.blood.BloodQuality;
 import com.williambl.haema.content.HaemaContent;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;

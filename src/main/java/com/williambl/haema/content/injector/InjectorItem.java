@@ -1,9 +1,9 @@
 package com.williambl.haema.content.injector;
 
+import com.williambl.haema.api.content.blood.BloodQuality;
 import com.williambl.haema.api.vampire.VampireComponent;
 import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.content.HaemaContent;
-import com.williambl.haema.content.blood.BloodQuality;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -34,18 +34,11 @@ public class InjectorItem extends Item {
         var result = tryInject(player);
         return switch (result) {
             case NOTHING -> InteractionResultHolder.pass(stack);
-            case INJECTED, CONVERTED -> {
-                if (!player.isCreative()) {
-                    stack.shrink(1);
-                }
-                yield InteractionResultHolder.success(stack);
-            }
+            case INJECTED, CONVERTED ->
+                    InteractionResultHolder.success(HaemaContent.Items.EMPTY_INJECTOR.getDefaultInstance());
             case INCOMPATIBLE -> {
-                if (!player.isCreative()) {
-                    stack.shrink(1);
-                }
                 giveIncompatibleBloodEffects(player);
-                yield  InteractionResultHolder.success(stack);
+                yield  InteractionResultHolder.success(HaemaContent.Items.EMPTY_INJECTOR.getDefaultInstance());
             }
         };
     }
@@ -65,7 +58,7 @@ public class InjectorItem extends Item {
         }
 
         if (component.isVampire()) {
-            component.addBlood(HaemaContent.Config.INJECTOR_CAPACITY_BLOOD_UNITS * this.quality.multiplier);
+            component.addBlood(HaemaContent.Config.BLOOD_UNITS_PER_DROPLET * this.quality.multiplier * HaemaContent.Config.INJECTOR_CAPACITY_DROPLETS);
             return InjectionResult.INJECTED;
         }
 

@@ -1,5 +1,6 @@
 package com.williambl.haema.content.blood;
 
+import com.williambl.haema.api.content.blood.BloodQuality;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.block.LiquidBlock;

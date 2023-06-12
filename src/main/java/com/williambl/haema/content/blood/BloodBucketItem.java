@@ -1,5 +1,6 @@
 package com.williambl.haema.content.blood;
 
+import com.williambl.haema.api.content.blood.BloodQuality;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.ItemStack;
