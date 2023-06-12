@@ -13,6 +13,7 @@ import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.content.HaemaContent;
 import com.williambl.haema.content.blood.BloodBottleItem;
 import com.williambl.haema.content.blood.BloodQuality;
+import com.williambl.haema.content.injector.BloodFillingRecipe;
 import com.williambl.haema.content.injector.InjectorItem;
 import com.williambl.haema.vampire.HaemaVampires;
 import com.williambl.haema.vampire.ability.powers.AttributeVampireAbilityPower;
@@ -23,10 +24,7 @@ import com.williambl.haema.vampire.ability.powers.vision.VampireVisionVampireAbi
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+import net.fabricmc.fabric.api.datagen.v1.provider.*;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -37,6 +35,7 @@ import net.minecraft.data.models.model.ModelLocationUtils;
 import net.minecraft.data.models.model.ModelTemplate;
 import net.minecraft.data.models.model.ModelTemplates;
 import net.minecraft.data.models.model.TextureMapping;
+import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.DamageTypeTags;
@@ -46,11 +45,13 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantments;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 import static com.williambl.haema.Haema.id;
 
@@ -63,6 +64,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         pack.addProvider(HaemaDamageTypeTagsProvider::new);
         pack.addProvider(HaemaLangProvider::new);
         pack.addProvider(HaemaModelProvider::new);
+        pack.addProvider(HaemaRecipeProvider::new);
     }
 
     @Override
@@ -392,6 +394,23 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             for (var quality : BloodQuality.values()) {
                 translations.add(quality.translationKey, quality.getSerializedName().substring(0, 1).toUpperCase(Locale.ROOT) + quality.getSerializedName().substring(1));
             }
+        }
+    }
+
+    public static class HaemaRecipeProvider extends FabricRecipeProvider {
+
+        public HaemaRecipeProvider(FabricDataOutput output) {
+            super(output);
+        }
+
+        @Override
+        public void buildRecipes(Consumer<FinishedRecipe> exporter) {
+            BloodFillingRecipe.Builder.create()
+                    .empty(Ingredient.of(HaemaContent.Items.EMPTY_INJECTOR))
+                    .save(exporter, id("injector_filling"));
+            BloodFillingRecipe.Builder.create()
+                    .empty(Ingredient.of(Items.GLASS_BOTTLE))
+                    .save(exporter, id("bottle_filling"));
         }
     }
 }

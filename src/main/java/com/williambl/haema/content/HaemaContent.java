@@ -2,6 +2,7 @@ package com.williambl.haema.content;
 
 import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.content.blood.*;
+import com.williambl.haema.content.injector.BloodFillingRecipe;
 import com.williambl.haema.content.injector.EmptyInjectorItem;
 import com.williambl.haema.content.injector.IncompatibleBloodEffect;
 import com.williambl.haema.content.injector.InjectorItem;
@@ -14,6 +15,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
@@ -32,6 +34,7 @@ public class HaemaContent {
         Items.init();
         VampirismSources.init();
         MobEffects.init();
+        Recipes.init();
         Config.init();
     }
 
@@ -110,6 +113,14 @@ public class HaemaContent {
                 id("incompatible_blood"),
                 new IncompatibleBloodEffect());
 
+        public static void init() {}
+    }
+
+    public static class Recipes {
+        public static final RecipeSerializer<BloodFillingRecipe> BLOOD_FILLING_SERIALIZER = Registry.register(
+                BuiltInRegistries.RECIPE_SERIALIZER,
+                id("blood_filling"),
+                new BloodFillingRecipe.Serializer());
         public static void init() {}
     }
 
