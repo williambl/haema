@@ -7,6 +7,8 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
+import com.williambl.haema.api.content.blood.BloodApi;
+import com.williambl.haema.api.content.blood.BloodQuality;
 import com.williambl.haema.api.vampire.VampireComponent;
 import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.api.vampire.ability.VampireAbilitiesComponent;
@@ -26,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -71,7 +74,9 @@ public final class HaemaCommand {
                         argument("amount", DoubleArgumentType.doubleArg()).executes(HaemaCommand::addBlood)))).then(
                 literal("remove").then(
                         argument("targets", EntityArgument.entities()).then(
-                        argument("amount", DoubleArgumentType.doubleArg()).executes(HaemaCommand::removeBlood)))
+                        argument("amount", DoubleArgumentType.doubleArg()).executes(HaemaCommand::removeBlood)))).then(
+                literal("quality").then(
+                        argument("targets", EntityArgument.entities()).executes(HaemaCommand::queryBloodQuality))
         );
         //@formatter:on
     }
@@ -291,6 +296,24 @@ public final class HaemaCommand {
         }
 
         return entities.size();
+    }
+
+    private static int queryBloodQuality(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        var entities = EntityArgument.getEntities(ctx, "targets");
+
+        for (var entity : entities) {
+            var quality = BloodApi.getBloodQuality(entity);
+            ctx.getSource().sendSuccess(bloodQualityQueryMessage(entity, quality), false);
+        }
+
+        return entities.size();
+    }
+
+    public static final String BLOOD_QUALITY_QUERY_RESULT = "command.haema.blood.quality.query.result";
+    public static final String BLOOD_QUALITY_QUERY_NONE = "command.haema.blood.quality.query.none";
+    private static Component bloodQualityQueryMessage(Entity entity, Optional<BloodQuality> quality) {
+        return quality.map(q -> feedback(BLOOD_QUALITY_QUERY_RESULT, entity.getDisplayName(), q.text())).orElseGet(() ->
+                feedback(BLOOD_QUALITY_QUERY_NONE, entity.getDisplayName()));
     }
 
     private static int queryAbilities(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {

@@ -437,6 +437,8 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             translations.add(HaemaCommand.QUERY_BLOOD_LINE, "%1$s has %2$s blood");
             translations.add(HaemaCommand.QUERY_ABILITY_LINE, " - %1$s");
             translations.add(HaemaCommand.BLOOD_SET_SUCCESS, "%1$s now has %2$s blood");
+            translations.add(HaemaCommand.BLOOD_QUALITY_QUERY_NONE, "%1$s has no blood");
+            translations.add(HaemaCommand.BLOOD_QUALITY_QUERY_RESULT, "%1$s has %2$s blood");
             translations.add(HaemaCommand.ABILITY_ADDED, "Given %1$s ability %2$s");
             translations.add(HaemaCommand.ABILITY_REMOVED, "Removed ability %2$s from %1$s");
             translations.add(Haema.TAB, "Haema");
