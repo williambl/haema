@@ -1,5 +1,6 @@
 package com.williambl.haema.client.client.content;
 
+import com.williambl.haema.Haema;
 import com.williambl.haema.api.content.blood.BloodQuality;
 import com.williambl.haema.content.HaemaContent;
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
@@ -17,7 +18,7 @@ public class HaemaContentClient {
         @SuppressWarnings("UnstableApiUsage")
         public static void init() {
             for (var quality : BloodQuality.values()) {
-                FluidRenderHandlerRegistry.INSTANCE.register(HaemaContent.Fluids.BLOOD.get(quality), HaemaContent.Fluids.FLOWING_BLOOD.get(quality), SimpleFluidRenderHandler.coloredWater(0xcd050e));
+                FluidRenderHandlerRegistry.INSTANCE.register(HaemaContent.Fluids.BLOOD.get(quality), HaemaContent.Fluids.FLOWING_BLOOD.get(quality), SimpleFluidRenderHandler.coloredWater(Haema.HOMESTUCK_MODE ? quality.colour : 0xcd050e));
                 ColorProviderRegistry.BLOCK.register(
                         (blockState, blockAndTintGetter, blockPos, i) -> FluidVariantRendering.getColor(FluidVariant.of(HaemaContent.Fluids.BLOOD.get(quality))),
                         HaemaContent.Fluids.BLOOD_CAULDRON.get(quality)

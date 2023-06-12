@@ -8,6 +8,7 @@ import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -25,6 +26,8 @@ public class Haema implements ModInitializer, EntityComponentInitializer {
                 output.acceptAll(BuiltInRegistries.ITEM.holders().filter(r -> r.key().location().getNamespace().equals(MODID)).map(Holder.Reference::value).map(Item::getDefaultInstance).toList());
             })
             .build();
+
+    public static final boolean HOMESTUCK_MODE = FabricLoader.getInstance().isDevelopmentEnvironment();
 
     public static ResourceLocation id(String path) {
         return new ResourceLocation(MODID, path);
