@@ -1,5 +1,6 @@
-package com.williambl.haema.mixin.vampire.ability;
+package com.williambl.haema.mixin.registry;
 
+import com.williambl.haema.api.ritual.RitualArae;
 import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import net.minecraft.core.Registry;
@@ -25,5 +26,6 @@ public class RegistrySynchronizationMixin {
         NETWORKABLE_REGISTRIES = new HashMap<>(NETWORKABLE_REGISTRIES);
         NETWORKABLE_REGISTRIES.put(VampireAbility.REGISTRY_KEY, new RegistrySynchronization.NetworkedRegistryData<>(VampireAbility.REGISTRY_KEY, VampireAbility.CODEC));
         NETWORKABLE_REGISTRIES.put(VampirismSource.REGISTRY_KEY, new RegistrySynchronization.NetworkedRegistryData<>(VampirismSource.REGISTRY_KEY, VampirismSource.CODEC));
+        NETWORKABLE_REGISTRIES.put(RitualArae.REGISTRY_KEY, new RegistrySynchronization.NetworkedRegistryData<>(RitualArae.REGISTRY_KEY, RitualArae.CODEC));
     }
 }
