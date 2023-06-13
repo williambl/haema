@@ -2,6 +2,8 @@ package com.williambl.haema.ritual;
 
 import com.williambl.haema.HaemaUtil;
 import com.williambl.haema.api.ritual.module.AraeModule;
+import com.williambl.haema.ritual.altar.RitualAltarBlock;
+import com.williambl.haema.ritual.altar.RitualAltarBlockEntity;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;

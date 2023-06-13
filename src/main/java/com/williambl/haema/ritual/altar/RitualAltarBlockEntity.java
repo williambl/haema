@@ -1,8 +1,8 @@
-package com.williambl.haema.ritual;
+package com.williambl.haema.ritual.altar;
 
 import com.williambl.haema.HaemaDFunctions;
 import com.williambl.haema.api.ritual.RitualArae;
-import com.williambl.haema.ritual.altar.ChunkChangeProvider;
+import com.williambl.haema.ritual.HaemaRituals;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;

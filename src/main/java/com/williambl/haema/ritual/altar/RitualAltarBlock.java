@@ -1,5 +1,6 @@
-package com.williambl.haema.ritual;
+package com.williambl.haema.ritual.altar;
 
+import com.williambl.haema.ritual.HaemaRituals;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
@@ -12,7 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public class RitualAltarBlock extends BaseEntityBlock {
-    protected RitualAltarBlock(Properties properties) {
+    public RitualAltarBlock(Properties properties) {
         super(properties);
     }
 
