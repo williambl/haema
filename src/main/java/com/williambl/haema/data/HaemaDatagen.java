@@ -263,6 +263,56 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
                             'r', BlockInWorldDFunctions.BLOCK_PREDICATE.factory().apply(BlockPredicate.matchesBlocks(HaemaRituals.RitualBlocks.RITUAL_ALTAR), ContextArg.BLOCK.arg())),
                     DPredicates.CONSTANT.factory().apply(true)
             ), List.of()));
+
+            entries.add(ResourceKey.create(RitualArae.REGISTRY_KEY, id("test_2")), new RitualArae(new MultiblockFilter(
+                    new char[][][]{
+                            new char[][] {
+                                    "ccccc".toCharArray(),
+                                    "ccccc".toCharArray(),
+                                    "ccccc".toCharArray(),
+                                    "ccccc".toCharArray(),
+                                    "ccccc".toCharArray()
+                            },
+                            new char[][] {
+                                    " CCC ".toCharArray(),
+                                    "C   C".toCharArray(),
+                                    "C r C".toCharArray(),
+                                    "C   C".toCharArray(),
+                                    " CCC ".toCharArray()
+                            }
+                    },
+                    'r',
+                    Map.of(
+                            'c', BlockInWorldDFunctions.BLOCK_PREDICATE.factory().apply(BlockPredicate.matchesBlocks(Blocks.RED_CONCRETE), ContextArg.BLOCK.arg()),
+                            'C', BlockInWorldDFunctions.BLOCK_PREDICATE.factory().apply(BlockPredicate.matchesBlocks(Blocks.CANDLE), ContextArg.BLOCK.arg()),
+                            'r', BlockInWorldDFunctions.BLOCK_PREDICATE.factory().apply(BlockPredicate.matchesBlocks(HaemaRituals.RitualBlocks.RITUAL_ALTAR), ContextArg.BLOCK.arg())),
+                    DPredicates.CONSTANT.factory().apply(true)
+            ), List.of()));
+
+            entries.add(ResourceKey.create(RitualArae.REGISTRY_KEY, id("test_3")), new RitualArae(new MultiblockFilter(
+                    new char[][][]{
+                            new char[][] {
+                                    "ccccc".toCharArray(),
+                                    "ccccc".toCharArray(),
+                                    "ccccc".toCharArray(),
+                                    "ccccc".toCharArray(),
+                                    "ccccc".toCharArray()
+                            },
+                            new char[][] {
+                                    " CCC ".toCharArray(),
+                                    "C   C".toCharArray(),
+                                    "C r C".toCharArray(),
+                                    "C   C".toCharArray(),
+                                    " CCC ".toCharArray()
+                            }
+                    },
+                    'r',
+                    Map.of(
+                            'c', BlockInWorldDFunctions.BLOCK_PREDICATE.factory().apply(BlockPredicate.matchesBlocks(Blocks.RED_TERRACOTTA), ContextArg.BLOCK.arg()),
+                            'C', BlockInWorldDFunctions.BLOCK_PREDICATE.factory().apply(BlockPredicate.matchesBlocks(Blocks.CANDLE), ContextArg.BLOCK.arg()),
+                            'r', BlockInWorldDFunctions.BLOCK_PREDICATE.factory().apply(BlockPredicate.matchesBlocks(HaemaRituals.RitualBlocks.RITUAL_ALTAR), ContextArg.BLOCK.arg())),
+                    DPredicates.CONSTANT.factory().apply(true)
+            ), List.of()));
         }
 
         private ResourceKey<VampireAbility> createHealingAbility(Entries entries) {

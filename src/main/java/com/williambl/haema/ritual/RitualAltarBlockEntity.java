@@ -2,6 +2,7 @@ package com.williambl.haema.ritual;
 
 import com.williambl.haema.HaemaDFunctions;
 import com.williambl.haema.api.ritual.RitualArae;
+import com.williambl.haema.ritual.altar.ChunkChangeProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -25,6 +26,7 @@ public class RitualAltarBlockEntity extends BlockEntity {
     private static int overallMaxZFocusSpace;
 
     private @Nullable AraeCacheEntry arae;
+    private long lastCheckTime = Long.MIN_VALUE;
 
     public RitualAltarBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(HaemaRituals.RitualBlockEntities.RITUAL_ALTAR, blockPos, blockState);
@@ -71,17 +73,30 @@ public class RitualAltarBlockEntity extends BlockEntity {
         }
 
         level.getProfiler().push("ritual_altar_tick");
-        if (entity.arae == null) {
-            entity.arae = entity.checkArae(new ArrayList<>(araeCache)).orElse(null);
+        int chunkX = blockPos.getX() >> 4;
+        int chunkZ = blockPos.getZ() >> 4;
+        boolean shouldCheck = false;
+        for (int dX = -1; dX < 2; dX++) {
+            for (int dZ = -1; dZ < 2; dZ++) {
+                shouldCheck |= ((ChunkChangeProvider) level).lastChunkChange(chunkX + dX, chunkZ + dZ) > entity.lastCheckTime;
+            }
         }
 
-        if (entity.arae != null) {
-            if (entity.checkArae(List.of(entity.arae)).isEmpty()) {
-                entity.arae = null;
+        if (shouldCheck) {
+            entity.lastCheckTime = level.getGameTime();
+            if (entity.arae == null) {
+                entity.arae = entity.checkArae(new ArrayList<>(araeCache)).orElse(null);
+            } else {
+                if (entity.checkArae(List.of(entity.arae)).isEmpty()) {
+                    entity.arae = null;
+                }
             }
 
-            entity.arae.arae().modules().forEach(module -> module.onAraeTick(entity.arae.arae(), level, blockPos));
+            if (entity.arae != null) {
+                entity.arae.arae().modules().forEach(module -> module.onAraeTick(entity.arae.arae(), level, blockPos));
+            }
         }
+
         level.getProfiler().pop();
     }
 
