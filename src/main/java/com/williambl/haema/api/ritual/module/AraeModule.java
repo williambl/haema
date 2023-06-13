@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.Level;
 
@@ -33,7 +34,7 @@ public interface AraeModule {
      * @param level the level
      * @param pos   the altar pos
      */
-    void onAraeCreated(RitualArae arae, Level level, BlockPos pos);
+    void onAraeCreated(RitualArae arae, ServerLevel level, BlockPos pos);
 
     /**
      * Called every tick while the arae exists.
@@ -50,7 +51,7 @@ public interface AraeModule {
      * @param level the level
      * @param pos   the altar pos
      */
-    void onAraeDestroyed(RitualArae arae, Level level, BlockPos pos);
+    void onAraeDestroyed(RitualArae arae, ServerLevel level, BlockPos pos);
 
     /**
      * Get the codec for this module.

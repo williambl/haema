@@ -19,6 +19,7 @@ import com.williambl.haema.content.blood.BloodBottleItem;
 import com.williambl.haema.content.injector.BloodFillingRecipe;
 import com.williambl.haema.content.injector.InjectorItem;
 import com.williambl.haema.ritual.HaemaRituals;
+import com.williambl.haema.ritual.module.ParticlesToCentreAraeModule;
 import com.williambl.haema.vampire.HaemaVampires;
 import com.williambl.haema.vampire.ability.powers.AttributeVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.EffectVampireAbilityPower;
@@ -31,6 +32,7 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.*;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.models.BlockModelGenerators;
@@ -60,6 +62,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -262,7 +265,20 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
                             'C', BlockInWorldDFunctions.BLOCK_PREDICATE.factory().apply(BlockPredicate.matchesBlocks(Blocks.CANDLE), ContextArg.BLOCK.arg()),
                             'r', BlockInWorldDFunctions.BLOCK_PREDICATE.factory().apply(BlockPredicate.matchesBlocks(HaemaRituals.RitualBlocks.RITUAL_ALTAR), ContextArg.BLOCK.arg())),
                     DPredicates.CONSTANT.factory().apply(true)
-            ), List.of()));
+            ), List.of(new ParticlesToCentreAraeModule(20, ParticleTypes.FLAME, List.of(
+                    new Vec3(-1, 0.5, 2),
+                    new Vec3(0, 0.5, 2),
+                    new Vec3(1, 0.5, 2),
+                    new Vec3(-2, 0.5, 1),
+                    new Vec3(2, 0.5, 1),
+                    new Vec3(-2, 0.5, 0),
+                    new Vec3(2, 0.5, 0),
+                    new Vec3(-2, 0.5, -1),
+                    new Vec3(2, 0.5, -1),
+                    new Vec3(-1, 0.5, -2),
+                    new Vec3(0, 0.5, -2),
+                    new Vec3(1, 0.5, -2)
+            ), new Vec3(0, 0.5, 0), 0.05, 0.2))));
 
             entries.add(ResourceKey.create(RitualArae.REGISTRY_KEY, id("test_2")), new RitualArae(new MultiblockFilter(
                     new char[][][]{

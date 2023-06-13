@@ -2,7 +2,6 @@ package com.williambl.haema.ritual.altar;
 
 import com.williambl.haema.ritual.HaemaRituals;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
@@ -31,6 +30,6 @@ public class RitualAltarBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> blockEntityType) {
-        return level instanceof ServerLevel ? createTickerHelper(blockEntityType, HaemaRituals.RitualBlockEntities.RITUAL_ALTAR, RitualAltarBlockEntity::tick) : null;
+        return createTickerHelper(blockEntityType, HaemaRituals.RitualBlockEntities.RITUAL_ALTAR, RitualAltarBlockEntity::tick);
     }
 }

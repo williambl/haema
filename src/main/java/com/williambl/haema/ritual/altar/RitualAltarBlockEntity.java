@@ -3,13 +3,17 @@ package com.williambl.haema.ritual.altar;
 import com.williambl.haema.HaemaDFunctions;
 import com.williambl.haema.api.ritual.RitualArae;
 import com.williambl.haema.ritual.HaemaRituals;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -24,7 +28,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class RitualAltarBlockEntity extends BlockEntity {
+public class RitualAltarBlockEntity extends BlockEntity implements SyncedBlockEntity {
     private static final String ARAE_TAG_KEY = "arae";
     private static List<AraeCacheEntry> araeCache;
     private static Map<ResourceKey<RitualArae>, AraeCacheEntry> araeCacheByKey;
@@ -92,11 +96,7 @@ public class RitualAltarBlockEntity extends BlockEntity {
         return Optional.empty();
     }
 
-    public static void tick(Level level, BlockPos blockPos, BlockState blockState, RitualAltarBlockEntity entity) {
-        if (!(level instanceof ServerLevel)) {
-            return;
-        }
-
+    public static void tickServer(ServerLevel level, BlockPos blockPos, BlockState blockState, RitualAltarBlockEntity entity) {
         if (araeCache == null) {
             rebuildCache(level.registryAccess());
         }
@@ -115,9 +115,17 @@ public class RitualAltarBlockEntity extends BlockEntity {
             entity.lastCheckTime = level.getGameTime();
             if (entity.arae == null || !(araeCacheByKey.containsKey(entity.arae))) {
                 entity.arae = entity.checkArae(new ArrayList<>(araeCache)).map(AraeCacheEntry::key).orElse(null);
+                if (entity.arae != null) {
+                    var arae = araeCacheByKey.get(entity.arae);
+                    arae.arae().modules().forEach(module -> module.onAraeCreated(arae.arae(), level, blockPos));
+                    entity.sync();
+                }
             } else {
                 if (entity.checkArae(List.of(araeCacheByKey.get(entity.arae))).isEmpty()) {
+                    var arae = araeCacheByKey.get(entity.arae);
                     entity.arae = null;
+                    arae.arae().modules().forEach(module -> module.onAraeDestroyed(arae.arae(), level, blockPos));
+                    entity.sync();
                 }
             }
 
@@ -128,6 +136,24 @@ public class RitualAltarBlockEntity extends BlockEntity {
         }
 
         level.getProfiler().pop();
+    }
+
+    private static void tickClient(Level level, BlockPos blockPos, BlockState blockState, RitualAltarBlockEntity entity) {
+        if (araeCache == null) {
+            rebuildCache(level.registryAccess());
+        }
+        if (entity.arae != null) {
+            var arae = araeCacheByKey.get(entity.arae);
+            arae.arae().modules().forEach(module -> module.onAraeTick(arae.arae(), level, blockPos));
+        }
+    }
+
+    public static void tick(Level level, BlockPos blockPos, BlockState blockState, RitualAltarBlockEntity entity) {
+        if (level instanceof ServerLevel serverLevel) {
+            tickServer(serverLevel, blockPos, blockState, entity);
+        } else if (level.isClientSide()) {
+            tickClient(level, blockPos, blockState, entity);
+        }
     }
 
     public static void initReloadListener() {
@@ -150,6 +176,24 @@ public class RitualAltarBlockEntity extends BlockEntity {
         overallMaxXFocusSpace = araeCache.stream().mapToInt(AraeCacheEntry::maxXFocusSpace).max().orElse(0);
         overallMaxYFocusSpace = araeCache.stream().mapToInt(AraeCacheEntry::maxYFocusSpace).max().orElse(0);
         overallMaxZFocusSpace = araeCache.stream().mapToInt(AraeCacheEntry::maxZFocusSpace).max().orElse(0);
+    }
+
+    @Override
+    public void writeSyncPacket(FriendlyByteBuf buf, ServerPlayer recipient) {
+        buf.writeBoolean(arae != null);
+        if (arae != null) {
+            buf.writeResourceKey(arae);
+        }
+    }
+
+    @Environment(EnvType.CLIENT)
+    @Override
+    public void applySyncPacket(FriendlyByteBuf buf) {
+        if (buf.readBoolean()) {
+            arae = buf.readResourceKey(RitualArae.REGISTRY_KEY);
+        } else {
+            arae = null;
+        }
     }
 
     private record AraeCacheEntry(ResourceKey<RitualArae> key, RitualArae arae, int minXFocusSpace, int minYFocusSpace, int minZFocusSpace, int maxXFocusSpace, int maxYFocusSpace, int maxZFocusSpace) {
