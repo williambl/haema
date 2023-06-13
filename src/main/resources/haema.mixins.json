@@ -3,8 +3,8 @@
   "package": "com.williambl.haema.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
-    "vampire.ability.RegistryDataLoaderMixin",
-    "vampire.ability.RegistrySynchronizationMixin",
+    "registry.RegistryDataLoaderMixin",
+    "registry.RegistrySynchronizationMixin",
     "vampire.ability.powers.damage_modification.DamageSourceMixin",
     "vampire.ability.powers.damage_modification.LivingEntityMixin"
   ],
