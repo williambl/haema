@@ -3,6 +3,7 @@ package com.williambl.haema.ritual;
 import com.williambl.haema.api.ritual.RitualArae;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,6 +33,11 @@ public class RitualAltarBlockEntity extends BlockEntity {
     }
 
     public static void tick(Level level, BlockPos blockPos, BlockState blockState, RitualAltarBlockEntity entity) {
+        if (!(level instanceof ServerLevel)) {
+            return;
+        }
+
+        level.getProfiler().push("ritual_altar_tick");
         var registry = level.registryAccess().registryOrThrow(RitualArae.REGISTRY_KEY);
         if (entity.arae == null) {
             entity.arae = entity.checkArae().flatMap(registry::getResourceKey).orElse(null);
@@ -44,7 +50,7 @@ public class RitualAltarBlockEntity extends BlockEntity {
             }
 
             arae.modules().forEach(module -> module.onAraeTick(arae, level, blockPos));
-            System.out.printf("tick %s%n", entity.arae);
         }
+        level.getProfiler().pop();
     }
 }
