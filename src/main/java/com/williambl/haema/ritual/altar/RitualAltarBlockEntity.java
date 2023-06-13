@@ -121,7 +121,7 @@ public class RitualAltarBlockEntity extends BlockEntity implements SyncedBlockEn
                     entity.sync();
                 }
             } else {
-                if (entity.checkArae(List.of(araeCacheByKey.get(entity.arae))).isEmpty()) {
+                if (entity.checkArae(new ArrayList<>(List.of(araeCacheByKey.get(entity.arae)))).isEmpty()) {
                     var arae = araeCacheByKey.get(entity.arae);
                     entity.arae = null;
                     arae.arae().modules().forEach(module -> module.onAraeDestroyed(arae.arae(), level, blockPos));
