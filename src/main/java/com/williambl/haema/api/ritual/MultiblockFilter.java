@@ -1,4 +1,4 @@
-package com.williambl.haema.ritual;
+package com.williambl.haema.api.ritual;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
