@@ -115,6 +115,28 @@ public class HaemaUtil {
         return t -> spec.satisfies(t.getSpec()) ? DataResult.success(t) : DataResult.error(() -> "DFunction spec %s is not satisfied by %s".formatted(spec, t.getSpec()));
     }
 
+    public static DataResult<char[][][]> ensureIsCuboid(char[][][] toCheck) {
+        return isCuboid(toCheck) ? DataResult.success(toCheck) : DataResult.error(() -> "Array %s is jagged".formatted((Object) toCheck));
+    }
+
+    public static boolean isCuboid(char[][][] toCheck) {
+        int sizeB, sizeC;
+        sizeB = toCheck[0].length;
+        sizeC = toCheck[0][0].length;
+        for (char[][] charsB : toCheck) {
+            if (charsB.length != sizeB) {
+                return false;
+            }
+            for (char[] charsC : charsB) {
+                if (charsC.length != sizeC) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     public static boolean isInteger(String s) {
         try {
             Integer.parseInt(s);

@@ -16,6 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -43,6 +44,13 @@ public final class HaemaDFunctions {
                 .addArgument("block", block)
                 .addArgument("level", block.getLevel())
                 .build();
+    }
+
+    private static final TypeToken<BlockInWorld> BLOCK_TYPE = TypeToken.of(BlockInWorld.class);
+    private static final TypeToken<Level> LEVEL_TYPE = TypeToken.of(Level.class);
+
+    public static DFContext blockInWorldFast(BlockInWorld block) {
+        return new DFContext(Map.of("block", block, "level", block.getLevel()), Map.of(BLOCK_TYPE, List.of(block), LEVEL_TYPE, List.of(block.getLevel())));
     }
 
     public static final DFunctionType<Double, ? extends Function<ContextArg<Entity>, ? extends DFunction<Double>>> BLOOD = Registry.register(
