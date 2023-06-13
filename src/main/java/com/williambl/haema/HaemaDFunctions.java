@@ -14,6 +14,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 
 import java.util.Map;
 import java.util.Optional;
@@ -23,6 +24,7 @@ import static com.williambl.haema.Haema.id;
 
 public final class HaemaDFunctions {
     public static final DFContextSpec ENTITY_DAMAGE_WITH_WEAPON = new DFContextSpec(Map.of("entity", TypeToken.of(Entity.class), "level", TypeToken.of(Level.class), "damage_source", TypeToken.of(DamageSource.class), "damage_amount", TypeToken.of(Double.class), "attacker", new TypeToken<Optional<Entity>>() {}, "direct_attacker", new TypeToken<Optional<Entity>>() {}, "weapon", TypeToken.of(ItemStack.class)));
+    public static final DFContextSpec BLOCK_IN_WORLD = new DFContextSpec(Map.of("block", TypeToken.of(BlockInWorld.class), "level", TypeToken.of(Level.class)));
 
     public static DFContext entityDamageWithWeapon(Entity entity, DamageSource source, float amount, ItemStack weapon) {
         return DFContext.builder()
@@ -33,6 +35,13 @@ public final class HaemaDFunctions {
                 .addArgument("attacker", Optional.ofNullable(source.getEntity()), new TypeToken<>() {})
                 .addArgument("direct_attacker", Optional.ofNullable(source.getDirectEntity()), new TypeToken<>() {})
                 .addArgument("weapon", weapon)
+                .build();
+    }
+
+    public static DFContext blockInWorld(BlockInWorld block) {
+        return DFContext.builder()
+                .addArgument("block", block)
+                .addArgument("level", block.getLevel())
                 .build();
     }
 

@@ -42,6 +42,15 @@ public class HaemaUtil {
                     .orElse(DataResult.error(() -> "Unable to create MobEffectInstance from tag: "+tag)),
                     instance -> instance.save(new CompoundTag()));
 
+    public static final Codec<Character> CHARACTER_CODEC = Codec.STRING.comapFlatMap(
+            s -> {
+                if (s.length() != 1) {
+                    return DataResult.error(() -> "String must be one character long, got %d characters (%s)".formatted(s.length(), s));
+                }
+                return DataResult.success(s.charAt(0));
+            },
+            Object::toString);
+
     public static <T> Predicate<ResourceKey<T>> checkInRegistry(Registry<T> registry, String logMessage) {
         return (t) -> {
             if (!registry.containsKey(t)) {
