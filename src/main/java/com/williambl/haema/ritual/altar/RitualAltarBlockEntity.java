@@ -93,7 +93,7 @@ public class RitualAltarBlockEntity extends BlockEntity implements SyncedBlockEn
             }
         }
 
-        return Optional.empty();
+        return possibleAraes.stream().findFirst();
     }
 
     public static void tickServer(ServerLevel level, BlockPos blockPos, BlockState blockState, RitualAltarBlockEntity entity) {
