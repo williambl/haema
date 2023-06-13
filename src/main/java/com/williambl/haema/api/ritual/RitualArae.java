@@ -6,7 +6,13 @@ import com.williambl.haema.api.ritual.module.AraeModule;
 
 import java.util.List;
 
-// arae meaning 'of the altar'. this represents the structure that has the altar in it
+/**
+ * A ritual arae is a multiblock structure that can be used to perform rituals. These are defined in datapacks.
+ * One instance of {@code RitualArae} represents one type of Arae, like how one instance of {@code Block} represents
+ * one type of block.
+ * @param multiblock    the multiblock filter for this arae
+ * @param modules       the modules for this arae
+ */
 public record RitualArae(MultiblockFilter multiblock, List<AraeModule> modules) {
     public static final Codec<RitualArae> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             MultiblockFilter.CODEC.fieldOf("multiblock").forGetter(RitualArae::multiblock),
