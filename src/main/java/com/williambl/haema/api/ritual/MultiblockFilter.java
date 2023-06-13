@@ -18,6 +18,7 @@ import java.util.function.Predicate;
  * much like recipes.
  * <p>A multiblock filter's 'focus' is where checking starts from. For a {@link RitualArae}, this would be the altar
  * block.</p>
+ * <p>The pattern's innermost array is X, the middle array is Z, and the outermost array is Y.</p>
  * @param pattern           the block pattern
  * @param focusCharacter    the character in the pattern that represents the focus
  * @param predicates        the block predicates for each character in the pattern
@@ -40,10 +41,10 @@ public record MultiblockFilter(char[][][] pattern, char focusCharacter, Map<Char
         return focus -> {
             final var level = focus.getLevel();
             final BlockPos start = focus.getPos().offset(focusPos.multiply(-1));
-            for (int x = 0; x < pattern.length; x++) {
-                for (int y = 0; y < pattern[x].length; y++) {
-                    for (int z = 0; z < pattern[x][y].length; z++) {
-                        final char c = pattern[x][y][z];
+            for (int y = 0; y < pattern.length; y++) {
+                for (int z = 0; z < pattern[y].length; z++) {
+                    for (int x = 0; x < pattern[y][z].length; x++) {
+                        final char c = pattern[y][z][x];
                         if (c != ' ') {
                             final BlockPos pos = start.offset(x, y, z);
                             if (predicates.containsKey(c)) {
@@ -63,10 +64,10 @@ public record MultiblockFilter(char[][][] pattern, char focusCharacter, Map<Char
     }
 
     private BlockPos focusPos() {
-        for (int x = 0; x < pattern.length; x++) {
-            for (int y = 0; y < pattern[x].length; y++) {
-                for (int z = 0; z < pattern[x][y].length; z++) {
-                    if (pattern[x][y][z] == focusCharacter) {
+        for (int y = 0; y < pattern.length; y++) {
+            for (int z = 0; z < pattern[y].length; z++) {
+                for (int x = 0; x < pattern[y][z].length; x++) {
+                    if (pattern[y][z][x] == focusCharacter) {
                         return new BlockPos(x, y, z);
                     }
                 }
