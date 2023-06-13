@@ -2,6 +2,7 @@ package com.williambl.haema;
 
 import com.williambl.haema.api.content.blood.BloodQuality;
 import com.williambl.haema.content.HaemaContent;
+import com.williambl.haema.ritual.HaemaRituals;
 import com.williambl.haema.vampire.HaemaVampires;
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer;
@@ -37,6 +38,7 @@ public class Haema implements ModInitializer, EntityComponentInitializer {
     public void onInitialize() {
         HaemaVampires.init();
         HaemaContent.init();
+        HaemaRituals.init();
         CommandRegistrationCallback.EVENT.register(HaemaCommand::register);
         HaemaDFunctions.init();
     }
