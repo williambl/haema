@@ -28,6 +28,8 @@ public class HaemaRituals {
     public static class RitualBlockEntities {
         public static BlockEntityType<RitualAltarBlockEntity> RITUAL_ALTAR = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("ritual_altar"), FabricBlockEntityTypeBuilder.create(RitualAltarBlockEntity::new, RitualBlocks.RITUAL_ALTAR).build(null));
 
-        public static void init() {}
+        public static void init() {
+            RitualAltarBlockEntity.initReloadListener();
+        }
     }
 }

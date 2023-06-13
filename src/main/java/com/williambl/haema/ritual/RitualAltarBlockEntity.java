@@ -3,21 +3,31 @@ package com.williambl.haema.ritual;
 import com.williambl.haema.HaemaDFunctions;
 import com.williambl.haema.api.ritual.RitualArae;
 import com.williambl.haema.ritual.altar.ChunkChangeProvider;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class RitualAltarBlockEntity extends BlockEntity {
+    private static final String ARAE_TAG_KEY = "arae";
     private static List<AraeCacheEntry> araeCache;
+    private static Map<ResourceKey<RitualArae>, AraeCacheEntry> araeCacheByKey;
     private static int overallMinXFocusSpace;
     private static int overallMinYFocusSpace;
     private static int overallMinZFocusSpace;
@@ -25,14 +35,33 @@ public class RitualAltarBlockEntity extends BlockEntity {
     private static int overallMaxYFocusSpace;
     private static int overallMaxZFocusSpace;
 
-    private @Nullable AraeCacheEntry arae;
+    private @Nullable ResourceKey<RitualArae> arae;
     private long lastCheckTime = Long.MIN_VALUE;
 
     public RitualAltarBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(HaemaRituals.RitualBlockEntities.RITUAL_ALTAR, blockPos, blockState);
     }
 
-    // TODO skip over if a large arae gets removed & searchspace is shrunk. also invalidate cache on datapack reload.
+    @Override
+    protected void saveAdditional(@NotNull CompoundTag compoundTag) {
+        super.saveAdditional(compoundTag);
+        if (arae != null) {
+            compoundTag.putString(ARAE_TAG_KEY, arae.location().toString());
+        }
+    }
+
+    @Override
+    public void load(@NotNull CompoundTag compoundTag) {
+        super.load(compoundTag);
+        if (compoundTag.contains(ARAE_TAG_KEY)) {
+            String location = compoundTag.getString(ARAE_TAG_KEY);
+            if (ResourceLocation.isValidResourceLocation(location)) {
+                arae = ResourceKey.create(RitualArae.REGISTRY_KEY, new ResourceLocation(location));
+            }
+        }
+    }
+
+    // TODO skip over if a large arae gets removed & searchspace is shrunk.
     public Optional<AraeCacheEntry> checkArae(List<AraeCacheEntry> possibleAraes) {
         if (this.level == null) {
             return Optional.empty();
@@ -69,7 +98,7 @@ public class RitualAltarBlockEntity extends BlockEntity {
         }
 
         if (araeCache == null) {
-            rebuildCache(level);
+            rebuildCache(level.registryAccess());
         }
 
         level.getProfiler().push("ritual_altar_tick");
@@ -84,31 +113,37 @@ public class RitualAltarBlockEntity extends BlockEntity {
 
         if (shouldCheck) {
             entity.lastCheckTime = level.getGameTime();
-            if (entity.arae == null) {
-                entity.arae = entity.checkArae(new ArrayList<>(araeCache)).orElse(null);
+            if (entity.arae == null || !(araeCacheByKey.containsKey(entity.arae))) {
+                entity.arae = entity.checkArae(new ArrayList<>(araeCache)).map(AraeCacheEntry::key).orElse(null);
             } else {
-                if (entity.checkArae(List.of(entity.arae)).isEmpty()) {
+                if (entity.checkArae(List.of(araeCacheByKey.get(entity.arae))).isEmpty()) {
                     entity.arae = null;
                 }
             }
 
             if (entity.arae != null) {
-                entity.arae.arae().modules().forEach(module -> module.onAraeTick(entity.arae.arae(), level, blockPos));
+                var arae = araeCacheByKey.get(entity.arae);
+                arae.arae().modules().forEach(module -> module.onAraeTick(arae.arae(), level, blockPos));
             }
         }
 
         level.getProfiler().pop();
     }
 
-    //TODO also replace the arae field on BE instances
-    //TODO do this on datapack reload
-    private static void rebuildCache(Level level) {
-        var registry = level.registryAccess().registryOrThrow(RitualArae.REGISTRY_KEY);
+    public static void initReloadListener() {
+        ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, success) -> {
+            rebuildCache(server.registryAccess());
+        });
+    }
+
+    private static void rebuildCache(RegistryAccess registryAccess) {
+        var registry = registryAccess.registryOrThrow(RitualArae.REGISTRY_KEY);
         araeCache = registry.holders()
                 .map(ref -> AraeCacheEntry.create(
                         ref.key(),
                         ref.value()))
                 .toList();
+        araeCacheByKey = araeCache.stream().collect(Collectors.toMap(AraeCacheEntry::key, Function.identity()));
         overallMinXFocusSpace = araeCache.stream().mapToInt(AraeCacheEntry::minXFocusSpace).min().orElse(0);
         overallMinYFocusSpace = araeCache.stream().mapToInt(AraeCacheEntry::minYFocusSpace).min().orElse(0);
         overallMinZFocusSpace = araeCache.stream().mapToInt(AraeCacheEntry::minZFocusSpace).min().orElse(0);
