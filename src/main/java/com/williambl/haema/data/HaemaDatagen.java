@@ -10,12 +10,15 @@ import com.williambl.haema.HaemaCommand;
 import com.williambl.haema.HaemaDFunctions;
 import com.williambl.haema.api.content.blood.BloodApi;
 import com.williambl.haema.api.content.blood.BloodQuality;
+import com.williambl.haema.api.ritual.MultiblockFilter;
+import com.williambl.haema.api.ritual.RitualArae;
 import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.content.HaemaContent;
 import com.williambl.haema.content.blood.BloodBottleItem;
 import com.williambl.haema.content.injector.BloodFillingRecipe;
 import com.williambl.haema.content.injector.InjectorItem;
+import com.williambl.haema.ritual.HaemaRituals;
 import com.williambl.haema.vampire.HaemaVampires;
 import com.williambl.haema.vampire.ability.powers.AttributeVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.EffectVampireAbilityPower;
@@ -56,6 +59,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
+import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -87,6 +91,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
     public void buildRegistry(RegistrySetBuilder registryBuilder) {
         registryBuilder.add(VampirismSource.REGISTRY_KEY, $ -> {});
         registryBuilder.add(VampireAbility.REGISTRY_KEY, $ -> {});
+        registryBuilder.add(RitualArae.REGISTRY_KEY, $ -> {});
     }
 
     private static class HaemaModelProvider extends FabricModelProvider {
@@ -234,6 +239,30 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
 
             entries.add(HaemaContent.VampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaContent.VampirismSources.BLOOD_INJECTOR, HaemaVampires.VampirismSources.COMMAND), defaultAbilties, DPredicates.CONSTANT.factory().apply(false), DPredicates.CONSTANT.factory().apply(false))); //TODO
             entries.add(HaemaVampires.VampirismSources.COMMAND, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of(), DPredicates.CONSTANT.factory().apply(true), DPredicates.CONSTANT.factory().apply(true)));
+
+            entries.add(ResourceKey.create(RitualArae.REGISTRY_KEY, id("test")), new RitualArae(new MultiblockFilter(
+                    new char[][][]{
+                            new char[][] {
+                                    "ccccc".toCharArray(),
+                                    "ccccc".toCharArray(),
+                                    "ccccc".toCharArray(),
+                                    "ccccc".toCharArray()
+                            },
+                            new char[][] {
+                                    " CCC ".toCharArray(),
+                                    "C   C".toCharArray(),
+                                    "C r C".toCharArray(),
+                                    "C   C".toCharArray(),
+                                    " CCC ".toCharArray()
+                            }
+                    },
+                    'r',
+                    Map.of(
+                            'c', BlockInWorldDFunctions.BLOCK_PREDICATE.factory().apply(BlockPredicate.matchesBlocks(Blocks.CRIMSON_PLANKS), ContextArg.BLOCK.arg()),
+                            'C', BlockInWorldDFunctions.BLOCK_PREDICATE.factory().apply(BlockPredicate.matchesBlocks(Blocks.CANDLE), ContextArg.BLOCK.arg()),
+                            'r', BlockInWorldDFunctions.BLOCK_PREDICATE.factory().apply(BlockPredicate.matchesBlocks(HaemaRituals.RitualBlocks.RITUAL_ALTAR), ContextArg.BLOCK.arg())),
+                    DPredicates.CONSTANT.factory().apply(true)
+            ), List.of()));
         }
 
         private ResourceKey<VampireAbility> createHealingAbility(Entries entries) {
