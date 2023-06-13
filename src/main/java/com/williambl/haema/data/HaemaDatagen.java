@@ -249,6 +249,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
                                     "ccccc".toCharArray(),
                                     "ccccc".toCharArray(),
                                     "ccccc".toCharArray(),
+                                    "ccccc".toCharArray(),
                                     "ccccc".toCharArray()
                             },
                             new char[][] {
