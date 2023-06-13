@@ -1,5 +1,6 @@
 package com.williambl.haema;
 
+import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
@@ -19,17 +20,19 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Supplier;
 
 import static com.williambl.haema.Haema.id;
@@ -57,7 +60,11 @@ public final class HaemaCommand {
                         literal("query").then(
                                 argument("targets", EntityArgument.entities()).executes(HaemaCommand::query))).then(
                         bloodTree()).then(
-                        abilitiesTree())
+                        abilitiesTree()).then(
+                                literal("create_multiblock_pattern").then(
+                                        argument("corner1", BlockPosArgument.blockPos()).then(
+                                                argument("corner2", BlockPosArgument.blockPos()).executes(HaemaCommand::createMultiblockPattern)))
+                )
         );
     }
 
@@ -103,8 +110,8 @@ public final class HaemaCommand {
     }
 
     public static final String CONVERT_SUCCESS = "command.haema.convert.success";
-    public static final String CONVERT_FAILURE = "command.haema.convert.failure";
 
+    public static final String CONVERT_FAILURE = "command.haema.convert.failure";
     private static int convert(CommandContext<CommandSourceStack> ctx, Supplier<ResourceLocation> sourceSupplier) throws CommandSyntaxException {
         var entities = EntityArgument.getEntities(ctx, "targets");
         ResourceLocation sourceKey = sourceSupplier.get();
@@ -142,8 +149,8 @@ public final class HaemaCommand {
     }
 
     public static final String DECONVERT_SUCCESS = "command.haema.deconvert.success";
-    public static final String DECONVERT_FAILURE = "command.haema.deconvert.failure";
 
+    public static final String DECONVERT_FAILURE = "command.haema.deconvert.failure";
     private static int deconvert(CommandContext<CommandSourceStack> ctx, Supplier<ResourceLocation> sourceSupplier) throws CommandSyntaxException {
         var entities = EntityArgument.getEntities(ctx, "targets");
         ResourceLocation sourceKey = sourceSupplier.get();
@@ -172,6 +179,7 @@ public final class HaemaCommand {
     }
 
     public static final String QUERY_FIRST_LINE = "command.haema.query.first_line";
+
     public static final String QUERY_IS_VAMPIRE_LINE = "command.haema.query.is_vampire_line";
     public static final String QUERY_BLOOD_LINE = "command.haema.query.blood_line";
     public static final String QUERY_YES = "command.haema.query.yes";
@@ -180,7 +188,6 @@ public final class HaemaCommand {
     public static final String QUERY_NO_ABILITIES_LINE = "command.haema.query.no_abilities_line";
     public static final String QUERY_ABILITIES_LINE = "command.haema.query.abilities_line";
     public static final String QUERY_ABILITY_LINE = "command.haema.query.ability_line";
-
     private static int query(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         var entities = EntityArgument.getEntities(ctx, "targets");
         for (var entity : entities) {
@@ -310,12 +317,12 @@ public final class HaemaCommand {
     }
 
     public static final String BLOOD_QUALITY_QUERY_RESULT = "command.haema.blood.quality.query.result";
+
     public static final String BLOOD_QUALITY_QUERY_NONE = "command.haema.blood.quality.query.none";
     private static Component bloodQualityQueryMessage(Entity entity, Optional<BloodQuality> quality) {
         return quality.map(q -> feedback(BLOOD_QUALITY_QUERY_RESULT, entity.getDisplayName(), q.text())).orElseGet(() ->
                 feedback(BLOOD_QUALITY_QUERY_NONE, entity.getDisplayName()));
     }
-
     private static int queryAbilities(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         var entities = EntityArgument.getEntities(ctx, "targets");
         var registry = ctx.getSource().registryAccess().registryOrThrow(VampireAbility.REGISTRY_KEY);
@@ -334,8 +341,8 @@ public final class HaemaCommand {
     }
 
     public static final String ABILITY_ADDED = "command.haema.ability.set.added";
-    public static final String ABILITY_REMOVED = "command.haema.ability.set.removed";
 
+    public static final String ABILITY_REMOVED = "command.haema.ability.set.removed";
     private static int setAbility(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         var entities = EntityArgument.getEntities(ctx, "targets");
         var abilityId = ResourceLocationArgument.getId(ctx, "ability");
@@ -361,6 +368,85 @@ public final class HaemaCommand {
         return entities.size();
     }
 
+    public static final String CREATE_MULTIBLOCK_PATTERN_TOO_MANY_BLOCKSTATES = "command.haema.multiblock.create_pattern.too_many_blockstates";
+
+    private static int createMultiblockPattern(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        BlockPos corner1 = BlockPosArgument.getLoadedBlockPos(ctx, "corner1");
+        BlockPos corner2 = BlockPosArgument.getLoadedBlockPos(ctx, "corner2");
+
+        int minX = Math.min(corner1.getX(), corner2.getX());
+        int minY = Math.min(corner1.getY(), corner2.getY());
+        int minZ = Math.min(corner1.getZ(), corner2.getZ());
+        int maxX = Math.max(corner1.getX(), corner2.getX());
+        int maxY = Math.max(corner1.getY(), corner2.getY());
+        int maxZ = Math.max(corner1.getZ(), corner2.getZ());
+
+        int sizeX = maxX - minX + 1;
+        int sizeY = maxY - minY + 1;
+        int sizeZ = maxZ - minZ + 1;
+
+        // pattern is stored as [y][z][x] b/c it makes more sense when displayed as string arrays
+        char[][][] pattern = new char[sizeY][sizeZ][sizeX];
+        Map<BlockState, Character> stateCharacters = new HashMap<>();
+        stateCharacters.put(Blocks.STRUCTURE_VOID.defaultBlockState(), ' ');
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(minX, minY, minZ);
+        for (int y = 0; y < sizeY; y++) {
+            pos.setY(minY + y);
+            for (int z = 0; z < sizeZ; z++) {
+                pos.setZ(minZ + z);
+                for (int x = 0; x < sizeX; x++) {
+                    pos.setX(minX + x);
+                    BlockState state = ctx.getSource().getLevel().getBlockState(pos);
+                    Character c = stateCharacters.get(state);
+                    if (c == null) {
+                        c = getNonMappedChar(BuiltInRegistries.BLOCK.getKey(state.getBlock()).getPath(), stateCharacters, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!£$%^&*@".toCharArray());
+                        if (c == '?') {
+                            ctx.getSource().sendSuccess(warning(CREATE_MULTIBLOCK_PATTERN_TOO_MANY_BLOCKSTATES), false);
+                        }
+                        stateCharacters.put(state, c);
+                    }
+                    pattern[y][z][x] = c;
+                }
+            }
+        }
+
+        StringBuilder patternBuilder = new StringBuilder();
+        for (int y = 0; y < sizeY; y++) {
+            for (int z = 0; z < sizeZ; z++) {
+                patternBuilder.append('"');
+                for (int x = 0; x < sizeX; x++) {
+                    patternBuilder.append(pattern[y][z][x]);
+                }
+                patternBuilder.append('"');
+                patternBuilder.append('\n');
+            }
+            patternBuilder.append('\n');
+        }
+
+        for (var entry : stateCharacters.entrySet()) {
+            patternBuilder.append("%s = %s%n".formatted(entry.getValue(), entry.getKey()));
+        }
+
+        ctx.getSource().sendSuccess(Component.literal(patternBuilder.toString()), false);
+        Haema.LOGGER.info(patternBuilder.toString());
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static char getNonMappedChar(String name, Map<BlockState, Character> stateCharacters, char[] extras) {
+        char[] candidates = new char[extras.length + 2];
+        candidates[0] = name.charAt(0);
+        candidates[1] = Character.toUpperCase(candidates[0]);
+        System.arraycopy(extras, 0, candidates, 2, extras.length);
+        for (char c : candidates) {
+            if (!stateCharacters.containsValue(c)) {
+                return c;
+            }
+        }
+
+        return '?';
+    }
+
     private static MutableComponent feedback(String key, Object... params) {
         return Component.translatable(key, params).withStyle(ChatFormatting.GRAY);
     }
@@ -371,5 +457,9 @@ public final class HaemaCommand {
 
     private static MutableComponent blood(double amount) {
         return Component.literal("%.2f".formatted(amount)).withStyle(ChatFormatting.DARK_RED);
+    }
+
+    private static MutableComponent warning(String key, Object... params) {
+        return Component.translatable(key, params).withStyle(ChatFormatting.YELLOW);
     }
 }

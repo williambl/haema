@@ -441,6 +441,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             translations.add(HaemaCommand.BLOOD_QUALITY_QUERY_RESULT, "%1$s has %2$s blood");
             translations.add(HaemaCommand.ABILITY_ADDED, "Given %1$s ability %2$s");
             translations.add(HaemaCommand.ABILITY_REMOVED, "Removed ability %2$s from %1$s");
+            translations.add(HaemaCommand.CREATE_MULTIBLOCK_PATTERN_TOO_MANY_BLOCKSTATES, "⚠ Too many blockstates to represent. Extra blockstates are represented as '?'");
             translations.add(Haema.TAB, "Haema");
             for (var block : HaemaContent.Fluids.BLOOD_BLOCK.values()) {
                 translations.add(block, "%1$s Blood");
