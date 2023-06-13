@@ -1,9 +1,11 @@
 package com.williambl.haema.ritual;
 
+import com.mojang.serialization.Codec;
 import com.williambl.haema.HaemaUtil;
 import com.williambl.haema.api.ritual.module.AraeModule;
 import com.williambl.haema.ritual.altar.RitualAltarBlock;
 import com.williambl.haema.ritual.altar.RitualAltarBlockEntity;
+import com.williambl.haema.ritual.module.ParticlesToCentreAraeModule;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -18,7 +20,7 @@ public class HaemaRituals {
     public static void init() {
         RitualBlocks.init();
         RitualBlockEntities.init();
-        AraeModule.RESOURCE_KEY.location(); // force load
+        RitualAraeModules.init();
     }
 
     public static class RitualBlocks {
@@ -33,5 +35,11 @@ public class HaemaRituals {
         public static void init() {
             RitualAltarBlockEntity.initReloadListener();
         }
+    }
+
+    public static class RitualAraeModules {
+        public static Codec<? extends AraeModule> PARTICLES_TO_CENTRE = Registry.register(AraeModule.REGISTRY, id("particles_to_centre"), ParticlesToCentreAraeModule.CODEC.codec());
+
+        public static void init() {}
     }
 }

@@ -16,7 +16,7 @@ import java.util.List;
 
 //TODO create vec3 dfunctions?
 public record ParticlesToCentreAraeModule(int interval, ParticleOptions particle, List<Vec3> positions, Vec3 centre, double minSpeed, double maxSpeed) implements AraeModule {
-    private static final KeyDispatchDataCodec<ParticlesToCentreAraeModule> CODEC = new KeyDispatchDataCodec<>(RecordCodecBuilder.create(instance -> instance.group(
+    public static final KeyDispatchDataCodec<ParticlesToCentreAraeModule> CODEC = new KeyDispatchDataCodec<>(RecordCodecBuilder.create(instance -> instance.group(
             Codec.intRange(0, Integer.MAX_VALUE).fieldOf("interval").forGetter(ParticlesToCentreAraeModule::interval),
             ParticleTypes.CODEC.fieldOf("particle").forGetter(ParticlesToCentreAraeModule::particle),
             Vec3.CODEC.listOf().fieldOf("positions").forGetter(ParticlesToCentreAraeModule::positions),
