@@ -138,6 +138,13 @@ repositories {
         }
     }
     maven {
+        name = "Nucleoid"
+        url = "https://maven.nucleoid.xyz"
+        content {
+            includeGroup 'xyz.nucleoid'
+        }
+    }
+    maven {
         name = "CurseMaven"
         url "https://www.cursemaven.com"
         content {
@@ -194,6 +201,10 @@ dependencies {
 
     // Satin
     modImplementation include("io.github.ladysnake:satin:${project.satin_version}") {
+        exclude group: "net.fabricmc.fabric-api"
+    }
+
+    modImplementation include("xyz.nucleoid:more-codecs:${project.morecodecs_version}") {
         exclude group: "net.fabricmc.fabric-api"
     }
 }
