@@ -5,6 +5,7 @@ import com.mojang.serialization.DataResult;
 import com.williambl.dfunc.api.DFunction;
 import com.williambl.dfunc.api.context.DFContextSpec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -20,12 +21,14 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -153,5 +156,19 @@ public class HaemaUtil {
         } catch (NumberFormatException ignored) {
             return false;
         }
+    }
+
+    public static boolean allMatchOne(NonNullList<ItemStack> stacks, Collection<Ingredient> ingredients) {
+        outer: for (var ingredient : ingredients) {
+            for (var iter = stacks.iterator(); iter.hasNext();) {
+                if (ingredient.test(iter.next())) {
+                    iter.remove();
+                    continue outer;
+                }
+            }
+            return false;
+        }
+
+        return true;
     }
 }

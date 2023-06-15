@@ -6,10 +6,13 @@ import com.williambl.haema.api.ritual.module.AraeModule;
 import com.williambl.haema.ritual.altar.RitualAltarBlock;
 import com.williambl.haema.ritual.altar.RitualAltarBlockEntity;
 import com.williambl.haema.ritual.module.ParticlesToCentreAraeModule;
+import com.williambl.haema.ritual.ritual.RitualRecipe;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -39,6 +42,18 @@ public class HaemaRituals {
 
     public static class RitualAraeModules {
         public static Codec<? extends AraeModule> PARTICLES_TO_CENTRE = Registry.register(AraeModule.REGISTRY, id("particles_to_centre"), ParticlesToCentreAraeModule.CODEC.codec());
+
+        public static void init() {}
+    }
+
+    public static class RitualRecipeTypes {
+        public static RecipeType<RitualRecipe> RITUAL = RecipeType.register(id("ritual").toString());
+
+        public static void init() {}
+    }
+
+    public static class RitualRecipeSerializers {
+        public static RecipeSerializer<RitualRecipe> RITUAL = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("ritual"), new RitualRecipe.Serializer());
 
         public static void init() {}
     }
