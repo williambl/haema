@@ -1,4 +1,4 @@
-package com.williambl.haema.ritual.ritual;
+package com.williambl.haema.api.ritual.ritual;
 
 import com.mojang.serialization.Codec;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
@@ -20,6 +20,8 @@ public interface RitualAction {
             p -> p.codec().codec(),
             Function.identity()
     );
+
+    void run(RitualContainer container);
 
     KeyDispatchDataCodec<? extends RitualAction> codec();
 }

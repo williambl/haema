@@ -14,6 +14,8 @@ import com.williambl.dfunc.api.functions.DPredicates;
 import com.williambl.haema.Haema;
 import com.williambl.haema.HaemaUtil;
 import com.williambl.haema.api.ritual.RitualArae;
+import com.williambl.haema.api.ritual.ritual.RitualAction;
+import com.williambl.haema.api.ritual.ritual.RitualContainer;
 import com.williambl.haema.ritual.HaemaRituals;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
@@ -61,6 +63,8 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
 
     protected abstract boolean isAraeAcceptable(RitualArae arae, Registry<RitualArae> registryOrThrow);
 
+    protected abstract void runActions(RitualContainer container);
+
     @Override
     public @NotNull String getGroup() {
         return this.group;
@@ -79,6 +83,7 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
             return ItemStack.EMPTY;
         }
 
+        this.runActions(container);
         return ItemStack.EMPTY;
     }
 
@@ -129,6 +134,11 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
         protected boolean isAraeAcceptable(RitualArae toCheck, Registry<RitualArae> registry) {
             return this.data.acceptableAraes.contains(registry.wrapAsHolder(toCheck));
         }
+
+        @Override
+        protected void runActions(RitualContainer container) {
+            this.data.actions().forEach(r -> r.run(container));
+        }
     }
 
     private static final class Client extends RitualRecipe {
@@ -147,6 +157,10 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
         @Override
         protected boolean isAraeAcceptable(RitualArae arae, Registry<RitualArae> registryOrThrow) {
             return registryOrThrow.getResourceKey(arae).filter(this.data.acceptableAraes()::contains).isPresent();
+        }
+
+        @Override
+        protected void runActions(RitualContainer container) {
         }
     }
 

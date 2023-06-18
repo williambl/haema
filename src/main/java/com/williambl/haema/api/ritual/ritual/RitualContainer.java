@@ -1,4 +1,4 @@
-package com.williambl.haema.ritual.ritual;
+package com.williambl.haema.api.ritual.ritual;
 
 import com.williambl.haema.api.ritual.RitualArae;
 import net.minecraft.core.BlockPos;
