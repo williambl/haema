@@ -24,13 +24,14 @@ import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.advancements.RequirementsStrategy;
 import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.core.*;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
@@ -42,7 +43,6 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.codecs.MoreCodecs;
@@ -75,7 +75,7 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
     public boolean matches(RitualContainer container, Level level) {
         return this.isAraeAcceptable(container.arae(), level.registryAccess().registryOrThrow(RitualArae.REGISTRY_KEY))
                 && HaemaUtil.allMatchOne(container.items, this.data().ingredients())
-                && this.data().fluid().isSame(container.fluid());
+                && container.fluid().is(this.data().fluid());
     }
 
     @Override
@@ -166,13 +166,13 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
     }
 
     private sealed interface Data {
-        Fluid fluid();
+        TagKey<Fluid> fluid();
         List<Ingredient> ingredients();
         List<ResourceKey<RitualArae>> araeKeys();
         @Nullable RitualTrigger trigger();
 
         default void toNetwork(FriendlyByteBuf buf) {
-            buf.writeVarInt(BuiltInRegistries.FLUID.getId(this.fluid()));
+            buf.writeResourceLocation(this.fluid().location());
             buf.writeVarInt(this.ingredients().size());
             for (var ingredient : this.ingredients()) {
                 ingredient.toNetwork(buf);
@@ -185,7 +185,7 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
         }
 
         record ServerData(
-                Fluid fluid,
+                TagKey<Fluid> fluid,
                 List<Ingredient> ingredients,
                 HolderSet<RitualArae> acceptableAraes,
                 DFunction<Boolean> canPlayerUse,
@@ -194,7 +194,7 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
         ) implements Data {
 
             private static final Codec<ServerData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    BuiltInRegistries.FLUID.byNameCodec().fieldOf("fluid").forGetter(ServerData::fluid),
+                    TagKey.codec(Registries.FLUID).fieldOf("fluid").forGetter(ServerData::fluid),
                     MoreCodecs.INGREDIENT.listOf().fieldOf("ingredients").forGetter(ServerData::ingredients),
                     RegistryCodecs.homogeneousList(RitualArae.REGISTRY_KEY).fieldOf("acceptable_araes").forGetter(ServerData::acceptableAraes),
                     DFunction.PREDICATE.codec().comapFlatMap(HaemaUtil.verifyDFunction(DFContextSpec.ENTITY), Function.identity()).fieldOf("can_player_use").forGetter(ServerData::canPlayerUse),
@@ -209,12 +209,12 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
         }
 
         record ClientData(
-                Fluid fluid,
+                TagKey<Fluid> fluid,
                 List<Ingredient> ingredients,
                 Set<ResourceKey<RitualArae>> acceptableAraes
         ) implements Data {
             private static ClientData fromNetwork(FriendlyByteBuf buf) {
-                Fluid fluid = BuiltInRegistries.FLUID.getHolder(buf.readVarInt()).map(Holder.Reference::unwrap).flatMap(e -> e.right()).orElse(Fluids.EMPTY);
+                TagKey<Fluid> fluid = new TagKey<>(Registries.FLUID, buf.readResourceLocation());
                 int ingredientCount = buf.readVarInt();
                 List<Ingredient> ingredients = new ArrayList<>();
                 for (int i = 0; i < ingredientCount; i++) {
@@ -269,7 +269,7 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
         private final List<RitualAction> actions = new ArrayList<>();
         private final Advancement.Builder advancement = Advancement.Builder.advancement();
         private DFunction<Boolean> canPlayerUse = DPredicates.CONSTANT.factory().apply(true);
-        private Fluid fluid = Fluids.EMPTY;
+        private TagKey<Fluid> fluid = FluidTags.WATER;
         private Either<TagKey<RitualArae>, List<ResourceKey<RitualArae>>> acceptableAraes = null;
         private RitualTrigger trigger = null;
         private String group;
@@ -294,7 +294,7 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
             return this;
         }
 
-        public Builder fluid(Fluid fluid) {
+        public Builder fluid(TagKey<Fluid> fluid) {
             this.fluid = fluid;
             return this;
         }
