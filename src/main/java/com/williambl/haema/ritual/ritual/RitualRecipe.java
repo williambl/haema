@@ -16,6 +16,7 @@ import com.williambl.haema.HaemaUtil;
 import com.williambl.haema.api.ritual.RitualArae;
 import com.williambl.haema.api.ritual.ritual.RitualAction;
 import com.williambl.haema.api.ritual.ritual.RitualContainer;
+import com.williambl.haema.api.ritual.ritual.RitualTrigger;
 import com.williambl.haema.ritual.HaemaRituals;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
@@ -168,6 +169,7 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
         Fluid fluid();
         List<Ingredient> ingredients();
         List<ResourceKey<RitualArae>> araeKeys();
+        @Nullable RitualTrigger trigger();
 
         default void toNetwork(FriendlyByteBuf buf) {
             buf.writeVarInt(BuiltInRegistries.FLUID.getId(this.fluid()));
@@ -187,7 +189,8 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
                 List<Ingredient> ingredients,
                 HolderSet<RitualArae> acceptableAraes,
                 DFunction<Boolean> canPlayerUse,
-                List<RitualAction> actions
+                List<RitualAction> actions,
+                RitualTrigger trigger
         ) implements Data {
 
             private static final Codec<ServerData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -195,7 +198,8 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
                     MoreCodecs.INGREDIENT.listOf().fieldOf("ingredients").forGetter(ServerData::ingredients),
                     RegistryCodecs.homogeneousList(RitualArae.REGISTRY_KEY).fieldOf("acceptable_araes").forGetter(ServerData::acceptableAraes),
                     DFunction.PREDICATE.codec().comapFlatMap(HaemaUtil.verifyDFunction(DFContextSpec.ENTITY), Function.identity()).fieldOf("can_player_use").forGetter(ServerData::canPlayerUse),
-                    RitualAction.ACTION_CODEC.listOf().fieldOf("actions").forGetter(ServerData::actions)
+                    RitualAction.ACTION_CODEC.listOf().fieldOf("actions").forGetter(ServerData::actions),
+                    RitualTrigger.TRIGGER_CODEC.fieldOf("trigger").forGetter(ServerData::trigger)
             ).apply(instance, ServerData::new));
 
             @Override
@@ -227,6 +231,11 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
             @Override
             public List<ResourceKey<RitualArae>> araeKeys() {
                 return List.copyOf(this.acceptableAraes);
+            }
+
+            @Override
+            public @Nullable RitualTrigger trigger() {
+                return null;
             }
         }
     }
@@ -262,6 +271,7 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
         private DFunction<Boolean> canPlayerUse = DPredicates.CONSTANT.factory().apply(true);
         private Fluid fluid = Fluids.EMPTY;
         private Either<TagKey<RitualArae>, List<ResourceKey<RitualArae>>> acceptableAraes = null;
+        private RitualTrigger trigger = null;
         private String group;
 
         public static Builder ritual(RegistryAccess registries) {
@@ -310,6 +320,11 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
             return this;
         }
 
+        public Builder trigger(RitualTrigger trigger) {
+            this.trigger = trigger;
+            return this;
+        }
+
         @Override
         public Item getResult() {
             return Items.AIR;
@@ -318,6 +333,9 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
         private void ensureValid(ResourceLocation resourceLocation) {
             if (this.acceptableAraes == null) {
                 throw new IllegalStateException("No acceptable araes are set for ritual "+resourceLocation);
+            }
+            if (this.trigger == null) {
+                throw new IllegalStateException("No trigger is set for ritual "+resourceLocation);
             }
         }
 
@@ -341,7 +359,8 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
                                     this.ingredients,
                                     this.acceptableAraes.map(araeRegistry::getOrCreateTag, l -> HolderSet.direct(l.stream().map(araeRegistry::getHolderOrThrow).toList())),
                                     this.canPlayerUse,
-                                    this.actions
+                                    this.actions,
+                                    this.trigger
                             ),
                             this.registries));
 
