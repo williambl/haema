@@ -7,6 +7,7 @@ import com.williambl.dfunc.api.context.DFContext;
 import com.williambl.haema.HaemaDFunctions;
 import com.williambl.haema.HaemaUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.AABB;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -51,6 +52,17 @@ public record MultiblockFilter(char[][][] pattern, char focusCharacter, Map<Char
         }
 
         throw new IllegalStateException("No focus character found in pattern");
+    }
+
+    public AABB getAABB(BlockPos focusPosWorldSpace) {
+        return new AABB(
+                focusPosWorldSpace.getX() - this.focusPosFilterSpace.getX(),
+                focusPosWorldSpace.getY() - this.focusPosFilterSpace.getY(),
+                focusPosWorldSpace.getZ() - this.focusPosFilterSpace.getZ(),
+                focusPosWorldSpace.getX() + this.pattern[0][0].length - this.focusPosFilterSpace.getX(),
+                focusPosWorldSpace.getY() + this.pattern[0].length - this.focusPosFilterSpace.getY(),
+                focusPosWorldSpace.getZ() + this.pattern.length - this.focusPosFilterSpace.getZ()
+        );
     }
 
     public boolean matches(int checkXFocusSpace, int checkYFocusSpace, int checkZFocusSpace, DFContext blockInWorldDFContext) {

@@ -60,7 +60,7 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
         this.group = group;
     }
 
-    protected abstract Data data();
+    public abstract Data data();
 
     protected abstract boolean isAraeAcceptable(RitualArae arae, Registry<RitualArae> registryOrThrow);
 
@@ -122,7 +122,7 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
         }
 
         @Override
-        protected Data data() {
+        public Data data() {
             return this.data;
         }
 
@@ -151,7 +151,7 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
         }
 
         @Override
-        protected Data data() {
+        public Data data() {
             return this.data;
         }
 
@@ -165,7 +165,7 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
         }
     }
 
-    private sealed interface Data {
+    public sealed interface Data {
         TagKey<Fluid> fluid();
         List<Ingredient> ingredients();
         List<ResourceKey<RitualArae>> araeKeys();

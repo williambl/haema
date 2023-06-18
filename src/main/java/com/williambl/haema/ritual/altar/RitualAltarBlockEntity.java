@@ -40,10 +40,14 @@ public class RitualAltarBlockEntity extends BlockEntity implements SyncedBlockEn
     private static int overallMaxZFocusSpace;
 
     private @Nullable ResourceKey<RitualArae> arae;
-    private long lastCheckTime = Long.MIN_VALUE;
 
+    private long lastCheckTime = Long.MIN_VALUE;
     public RitualAltarBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(HaemaRituals.RitualBlockEntities.RITUAL_ALTAR, blockPos, blockState);
+    }
+
+    public Optional<ResourceKey<RitualArae>> arae() {
+        return Optional.ofNullable(this.arae);
     }
 
     @Override

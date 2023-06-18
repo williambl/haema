@@ -26,6 +26,7 @@ import static com.williambl.haema.Haema.id;
 public final class HaemaDFunctions {
     public static final DFContextSpec ENTITY_DAMAGE_WITH_WEAPON = new DFContextSpec(Map.of("entity", TypeToken.of(Entity.class), "level", TypeToken.of(Level.class), "damage_source", TypeToken.of(DamageSource.class), "damage_amount", TypeToken.of(Double.class), "attacker", new TypeToken<Optional<Entity>>() {}, "direct_attacker", new TypeToken<Optional<Entity>>() {}, "weapon", TypeToken.of(ItemStack.class)));
     public static final DFContextSpec BLOCK_IN_WORLD = new DFContextSpec(Map.of("block", TypeToken.of(BlockInWorld.class), "level", TypeToken.of(Level.class)));
+    public static final DFContextSpec ENTITY_INTERACT_WITH_BLOCK = new DFContextSpec(Map.of("entity", TypeToken.of(Entity.class), "level", TypeToken.of(Level.class), "item", TypeToken.of(ItemStack.class), "block", TypeToken.of(BlockInWorld.class)));
 
     public static DFContext entityDamageWithWeapon(Entity entity, DamageSource source, float amount, ItemStack weapon) {
         return DFContext.builder()
@@ -51,6 +52,15 @@ public final class HaemaDFunctions {
 
     public static DFContext blockInWorldFast(BlockInWorld block) {
         return new DFContext(Map.of("block", block, "level", block.getLevel()), Map.of(BLOCK_TYPE, List.of(block), LEVEL_TYPE, List.of(block.getLevel())));
+    }
+
+    public static DFContext entityInteractWithBlock(Entity entity, ItemStack item, BlockInWorld block) {
+        return DFContext.builder()
+                .addArgument("entity", entity)
+                .addArgument("level", entity.getLevel())
+                .addArgument("item", item)
+                .addArgument("block", block)
+                .build();
     }
 
     public static final DFunctionType<Double, ? extends Function<ContextArg<Entity>, ? extends DFunction<Double>>> BLOOD = Registry.register(
