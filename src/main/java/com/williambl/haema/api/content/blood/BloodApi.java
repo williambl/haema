@@ -27,6 +27,10 @@ public class BloodApi {
         return ENTITY_BLOOD_QUALITY_TAGS.get(quality);
     }
 
+    public static TagKey<Fluid> getFluidTag(BloodQuality quality) {
+        return HaemaContent.ContentTags.BLOOD_TAGS.get(quality);
+    }
+
     public static double dropletsToBloodUnits(long droplets) {
         return droplets * HaemaContent.Config.BLOOD_UNITS_PER_DROPLET;
     }

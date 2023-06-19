@@ -3,10 +3,14 @@ package com.williambl.haema.ritual;
 import com.mojang.serialization.Codec;
 import com.williambl.haema.HaemaUtil;
 import com.williambl.haema.api.ritual.module.AraeModule;
+import com.williambl.haema.api.ritual.ritual.RitualAction;
+import com.williambl.haema.api.ritual.ritual.RitualTrigger;
 import com.williambl.haema.ritual.altar.RitualAltarBlock;
 import com.williambl.haema.ritual.altar.RitualAltarBlockEntity;
 import com.williambl.haema.ritual.module.ParticlesToCentreAraeModule;
+import com.williambl.haema.ritual.ritual.RightClickRitualTrigger;
 import com.williambl.haema.ritual.ritual.RitualRecipe;
+import com.williambl.haema.ritual.ritual.SpawnEntityRitualAction;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -24,6 +28,10 @@ public class HaemaRituals {
         RitualBlocks.init();
         RitualBlockEntities.init();
         RitualAraeModules.init();
+        RitualRecipeTypes.init();
+        RitualRecipeSerializers.init();
+        RitualActions.init();
+        RitualTriggers.init();
     }
 
     public static class RitualBlocks {
@@ -54,6 +62,18 @@ public class HaemaRituals {
 
     public static class RitualRecipeSerializers {
         public static RecipeSerializer<RitualRecipe> RITUAL = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("ritual"), new RitualRecipe.Serializer());
+
+        public static void init() {}
+    }
+
+    public static class RitualActions {
+        public static final Codec<SpawnEntityRitualAction> SPAWN_ENTITY = Registry.register(RitualAction.REGISTRY, id("spawn_entity"), SpawnEntityRitualAction.CODEC.codec());
+
+        public static void init() {}
+    }
+
+    public static class RitualTriggers {
+        public static final Codec<RightClickRitualTrigger> RIGHT_CLICK = Registry.register(RitualTrigger.REGISTRY, id("right_click"), RightClickRitualTrigger.CODEC.codec());
 
         public static void init() {}
     }

@@ -2,6 +2,7 @@ package com.williambl.haema.api.ritual.ritual;
 
 import com.williambl.haema.api.ritual.RitualArae;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -38,5 +39,9 @@ public class RitualContainer extends SimpleContainer {
 
     public Player player() {
         return this.player;
+    }
+
+    public ServerLevel level() {
+        return (ServerLevel) this.player.level;
     }
 }

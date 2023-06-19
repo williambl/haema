@@ -20,8 +20,10 @@ import net.fabricmc.fabric.api.transfer.v1.fluid.base.FullItemFluidStorage;
 import net.minecraft.core.Registry;
 import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,6 +35,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Material;
 
 import java.util.Arrays;
@@ -52,6 +55,7 @@ public class HaemaContent {
         MobEffects.init();
         Recipes.init();
         Config.init();
+        ContentTags.init();
     }
 
     public static class Fluids {
@@ -234,6 +238,16 @@ public class HaemaContent {
                 BuiltInRegistries.RECIPE_SERIALIZER,
                 id("blood_filling"),
                 new BloodFillingRecipe.Serializer());
+        public static void init() {}
+    }
+
+    public static class ContentTags {
+        public static final Map<BloodQuality, TagKey<Fluid>> BLOOD_TAGS = new EnumMap<>(Arrays.stream(BloodQuality.values())
+                .collect(Collectors.toMap(
+                        Function.identity(),
+                        b -> TagKey.create(Registries.FLUID, id(b.getSerializedName()+"_blood"))
+                )));
+
         public static void init() {}
     }
 

@@ -20,6 +20,9 @@ import com.williambl.haema.content.injector.BloodFillingRecipe;
 import com.williambl.haema.content.injector.InjectorItem;
 import com.williambl.haema.ritual.HaemaRituals;
 import com.williambl.haema.ritual.module.ParticlesToCentreAraeModule;
+import com.williambl.haema.ritual.ritual.RightClickRitualTrigger;
+import com.williambl.haema.ritual.ritual.RitualRecipe;
+import com.williambl.haema.ritual.ritual.SpawnEntityRitualAction;
 import com.williambl.haema.vampire.HaemaVampires;
 import com.williambl.haema.vampire.ability.powers.AttributeVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.EffectVampireAbilityPower;
@@ -35,6 +38,7 @@ import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.models.BlockModelGenerators;
 import net.minecraft.data.models.ItemModelGenerators;
 import net.minecraft.data.models.blockstates.MultiVariantGenerator;
@@ -137,13 +141,13 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         public void generateItemModels(ItemModelGenerators models) {
             models.generateFlatItem(HaemaContent.Items.EMPTY_INJECTOR, ModelTemplates.FLAT_ITEM);
             for (var item : HaemaContent.Items.INJECTORS.values()) {
-                generateFlatItem(item, id("item/full_injector"), ModelTemplates.FLAT_ITEM, models);
+                this.generateFlatItem(item, id("item/full_injector"), ModelTemplates.FLAT_ITEM, models);
             }
             for (var item : HaemaContent.Items.BUCKETS.values()) {
                 models.generateFlatItem(item, Items.WATER_BUCKET, ModelTemplates.FLAT_ITEM); //TODO use own texture
             }
             for (var item : HaemaContent.Items.BOTTLES.values()) {
-                generateFlatItem(item, id("item/blood_bottle"), ModelTemplates.FLAT_ITEM, models);
+                this.generateFlatItem(item, id("item/blood_bottle"), ModelTemplates.FLAT_ITEM, models);
             }
         }
 
@@ -258,6 +262,13 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
                                     "C r C".toCharArray(),
                                     "C   C".toCharArray(),
                                     " CCC ".toCharArray()
+                            },
+                            new char[][] {
+                                    "     ".toCharArray(),
+                                    "     ".toCharArray(),
+                                    "     ".toCharArray(),
+                                    "     ".toCharArray(),
+                                    "     ".toCharArray()
                             }
                     },
                     'r',
@@ -266,70 +277,91 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
                             'C', BlockInWorldDFunctions.BLOCK_PREDICATE.factory().apply(BlockPredicate.matchesBlocks(Blocks.CANDLE), ContextArg.BLOCK.arg()),
                             'r', BlockInWorldDFunctions.BLOCK_PREDICATE.factory().apply(BlockPredicate.matchesBlocks(HaemaRituals.RitualBlocks.RITUAL_ALTAR), ContextArg.BLOCK.arg())),
                     DPredicates.CONSTANT.factory().apply(true)
-            ), List.of(new ParticlesToCentreAraeModule(20, ParticleTypes.FLAME, List.of(
-                    new Vec3(-1, 0.5, 2),
-                    new Vec3(0, 0.5, 2),
-                    new Vec3(1, 0.5, 2),
-                    new Vec3(-2, 0.5, 1),
-                    new Vec3(2, 0.5, 1),
-                    new Vec3(-2, 0.5, 0),
-                    new Vec3(2, 0.5, 0),
-                    new Vec3(-2, 0.5, -1),
-                    new Vec3(2, 0.5, -1),
-                    new Vec3(-1, 0.5, -2),
-                    new Vec3(0, 0.5, -2),
-                    new Vec3(1, 0.5, -2)
-            ), new Vec3(0, 0.5, 0), 0.05, 0.2))));
+            ),
+                    Set.of(' '),
+                    List.of(new ParticlesToCentreAraeModule(20, ParticleTypes.FLAME, List.of(
+                    new Vec3(-0.5, 0.5, 2.5),
+                    new Vec3(0.5, 0.5, 2.5),
+                    new Vec3(1.5, 0.5, 2.5),
+                    new Vec3(-1.5, 0.5, 1.5),
+                    new Vec3(2.5, 0.5, 1.5),
+                    new Vec3(-1.5, 0.5, 0.5),
+                    new Vec3(2.5, 0.5, 0.5),
+                    new Vec3(-1.5, 0.5, -0.5),
+                    new Vec3(2.5, 0.5, -0.5),
+                    new Vec3(-1.5, 0.5, -1.5),
+                    new Vec3(0.5, 0.5, -1.5),
+                    new Vec3(1.5, 0.5, -1.5)),
+                            new Vec3(0, 0.5, 0), 0.05, 0.2))));
 
-            entries.add(ResourceKey.create(RitualArae.REGISTRY_KEY, id("test_2")), new RitualArae(new MultiblockFilter(
+            entries.add(ResourceKey.create(RitualArae.REGISTRY_KEY, id("blood")), new RitualArae(new MultiblockFilter(
                     new char[][][]{
                             new char[][] {
-                                    "ccccc".toCharArray(),
-                                    "ccccc".toCharArray(),
-                                    "ccccc".toCharArray(),
-                                    "ccccc".toCharArray(),
-                                    "ccccc".toCharArray()
+                                    "ccccccc".toCharArray(),
+                                    "c_____c".toCharArray(),
+                                    "c_ccc_c".toCharArray(),
+                                    "c_crc_c".toCharArray(),
+                                    "c_ccc_c".toCharArray(),
+                                    "c_____c".toCharArray(),
+                                    "ccccccc".toCharArray()
                             },
                             new char[][] {
-                                    " CCC ".toCharArray(),
-                                    "C   C".toCharArray(),
-                                    "C r C".toCharArray(),
-                                    "C   C".toCharArray(),
-                                    " CCC ".toCharArray()
-                            }
+                                    "C     C".toCharArray(),
+                                    "       ".toCharArray(),
+                                    "       ".toCharArray(),
+                                    "       ".toCharArray(),
+                                    "       ".toCharArray(),
+                                    "       ".toCharArray(),
+                                    "C     C".toCharArray()
+                            },
+                            new char[][] {
+                                    "C     C".toCharArray(),
+                                    "       ".toCharArray(),
+                                    "       ".toCharArray(),
+                                    "       ".toCharArray(),
+                                    "       ".toCharArray(),
+                                    "       ".toCharArray(),
+                                    "C     C".toCharArray()
+                            },
+                            new char[][] {
+                                    "C     C".toCharArray(),
+                                    "       ".toCharArray(),
+                                    "       ".toCharArray(),
+                                    "       ".toCharArray(),
+                                    "       ".toCharArray(),
+                                    "       ".toCharArray(),
+                                    "C     C".toCharArray()
+                            },
+                            new char[][] {
+                                    "F     F".toCharArray(),
+                                    "       ".toCharArray(),
+                                    "       ".toCharArray(),
+                                    "       ".toCharArray(),
+                                    "       ".toCharArray(),
+                                    "       ".toCharArray(),
+                                    "F     F".toCharArray()
+                            },
                     },
                     'r',
                     Map.of(
-                            'c', BlockInWorldDFunctions.BLOCK_PREDICATE.factory().apply(BlockPredicate.matchesBlocks(Blocks.RED_CONCRETE), ContextArg.BLOCK.arg()),
-                            'C', BlockInWorldDFunctions.BLOCK_PREDICATE.factory().apply(BlockPredicate.matchesBlocks(Blocks.CANDLE), ContextArg.BLOCK.arg()),
-                            'r', BlockInWorldDFunctions.BLOCK_PREDICATE.factory().apply(BlockPredicate.matchesBlocks(HaemaRituals.RitualBlocks.RITUAL_ALTAR), ContextArg.BLOCK.arg())),
+                            'c', BlockInWorldDFunctions.BLOCK_PREDICATE.factory().apply(BlockPredicate.matchesBlocks(Blocks.CRIMSON_NYLIUM), ContextArg.BLOCK.arg()),
+                            'C', BlockInWorldDFunctions.BLOCK_PREDICATE.factory().apply(BlockPredicate.matchesBlocks(Blocks.CRIMSON_STEM), ContextArg.BLOCK.arg()),
+                            //TODO this doesn't work due to a null-handling bug in jsonops i think? hmmm
+                            //'C', BlockInWorldDFunctions.ADVANCEMENT_PREDICATE.factory().apply(net.minecraft.advancements.critereon.BlockPredicate.Builder.block().of(Blocks.CRIMSON_STEM).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(BlockStateProperties.AXIS, Direction.Axis.Y).build()).build(), ContextArg.BLOCK.arg()),
+                            'r', BlockInWorldDFunctions.BLOCK_PREDICATE.factory().apply(BlockPredicate.matchesBlocks(HaemaRituals.RitualBlocks.RITUAL_ALTAR), ContextArg.BLOCK.arg()),
+                            'F', BlockInWorldDFunctions.BLOCK_PREDICATE.factory().apply(BlockPredicate.matchesBlocks(Blocks.SOUL_CAMPFIRE), ContextArg.BLOCK.arg()),
+                            //'F', BlockInWorldDFunctions.ADVANCEMENT_PREDICATE.factory().apply(net.minecraft.advancements.critereon.BlockPredicate.Builder.block().of(Blocks.SOUL_CAMPFIRE).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(BlockStateProperties.LIT, true).build()).build(), ContextArg.BLOCK.arg()),
+                            '_', DPredicates.CONSTANT.factory().apply(true)
+                            ),
                     DPredicates.CONSTANT.factory().apply(true)
-            ), List.of()));
-
-            entries.add(ResourceKey.create(RitualArae.REGISTRY_KEY, id("test_3")), new RitualArae(new MultiblockFilter(
-                    new char[][][]{
-                            new char[][] {
-                                    "ccccc".toCharArray(),
-                                    "ccccc".toCharArray(),
-                                    "ccccc".toCharArray(),
-                                    "ccccc".toCharArray(),
-                                    "ccccc".toCharArray()
-                            },
-                            new char[][] {
-                                    " CCC ".toCharArray(),
-                                    "C   C".toCharArray(),
-                                    "C r C".toCharArray(),
-                                    "C   C".toCharArray(),
-                                    " CCC ".toCharArray()
-                            }
-                    },
-                    'r',
-                    Map.of(
-                            'c', BlockInWorldDFunctions.BLOCK_PREDICATE.factory().apply(BlockPredicate.matchesBlocks(Blocks.RED_TERRACOTTA), ContextArg.BLOCK.arg()),
-                            'C', BlockInWorldDFunctions.BLOCK_PREDICATE.factory().apply(BlockPredicate.matchesBlocks(Blocks.CANDLE), ContextArg.BLOCK.arg()),
-                            'r', BlockInWorldDFunctions.BLOCK_PREDICATE.factory().apply(BlockPredicate.matchesBlocks(HaemaRituals.RitualBlocks.RITUAL_ALTAR), ContextArg.BLOCK.arg())),
-                    DPredicates.CONSTANT.factory().apply(true)
-            ), List.of()));
+            ),
+                    Set.of(' '),
+                    List.of(new ParticlesToCentreAraeModule(60, ParticleTypes.SOUL_FIRE_FLAME, List.of(
+                            new Vec3(3.5, 4.25, 3.5),
+                            new Vec3(-2.5, 4.25, 3.5),
+                            new Vec3(-2.5, 4.25, -2.5),
+                            new Vec3(3.5, 4.25, -2.5)),
+                            new Vec3(0.5, 0.5, 0.5), 0.05, 0.2))));
         }
 
         private ResourceKey<VampireAbility> createHealingAbility(Entries entries) {
@@ -564,9 +596,25 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
     }
 
     public static class HaemaRecipeProvider extends FabricRecipeProvider {
+        private final CompletableFuture<HolderLookup.Provider> registries;
 
-        public HaemaRecipeProvider(FabricDataOutput output) {
+        public HaemaRecipeProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registries) {
             super(output);
+            this.registries = registries;
+        }
+
+        private HolderLookup.Provider getRegistries() {
+            var value = this.registries.getNow(null);
+            if (value == null) {
+                throw new IllegalStateException("Registries were not yet provided for recipe provider!");
+            }
+
+            return value;
+        }
+
+        @Override
+        public CompletableFuture<?> run(CachedOutput writer) {
+            return this.registries.thenApply(p -> super.run(writer));
         }
 
         @Override
@@ -577,6 +625,17 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             BloodFillingRecipe.Builder.create()
                     .empty(Ingredient.of(Items.GLASS_BOTTLE))
                     .save(exporter, id("bottle_filling"));
+            RitualRecipe.Builder.ritual(this.getRegistries())
+                    .fluid(BloodApi.getFluidTag(BloodQuality.MIDDLING))
+                    .acceptableAraes(ResourceKey.create(RitualArae.REGISTRY_KEY, id("blood")))
+                    .trigger(new RightClickRitualTrigger(DPredicates.CONSTANT.factory().apply(true)))
+                    .ingredient(Ingredient.of(Items.PORKCHOP))
+                    .ingredient(Ingredient.of(Items.PORKCHOP))
+                    .ingredient(Ingredient.of(Items.PORKCHOP))
+                    .ingredient(Ingredient.of(Items.PORKCHOP))
+                    .ingredient(Ingredient.of(Items.PORKCHOP))
+                    .action(new SpawnEntityRitualAction(EntityType.PIG))
+                    .save(exporter, id("reanimate_pig"));
         }
     }
 }

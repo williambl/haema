@@ -243,7 +243,7 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
     public static class Serializer implements RecipeSerializer<RitualRecipe> {
         @Override
         public RitualRecipe fromJson(ResourceLocation id, JsonObject jsonObject) {
-            var partial = Data.ServerData.CODEC.decode(JsonOps.INSTANCE, jsonObject)
+            var partial = Data.ServerData.CODEC.decode(JsonOps.INSTANCE, jsonObject) //TODO registry aware. maybe just get rid of the holderset stuff. or even make these things not be recipes ???
                     .map(Pair::getFirst)
                     .getOrThrow(false, e -> Haema.LOGGER.error("Error deserialising ritual {}: {}", id, e));
             String group = GsonHelper.getAsString(jsonObject, "group", "");
@@ -264,7 +264,7 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
     }
 
     public static class Builder implements RecipeBuilder {
-        private final RegistryAccess registries;
+        private final HolderLookup.Provider registries;
         private final List<Ingredient> ingredients = new ArrayList<>();
         private final List<RitualAction> actions = new ArrayList<>();
         private final Advancement.Builder advancement = Advancement.Builder.advancement();
@@ -274,11 +274,11 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
         private RitualTrigger trigger = null;
         private String group;
 
-        public static Builder ritual(RegistryAccess registries) {
+        public static Builder ritual(HolderLookup.Provider registries) {
             return new Builder(registries);
         }
 
-        private Builder(RegistryAccess registries) {
+        private Builder(HolderLookup.Provider registries) {
             this.registries = registries;
         }
 
@@ -325,6 +325,16 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
             return this;
         }
 
+        public Builder ingredient(Ingredient ingredient) {
+            this.ingredients.add(ingredient);
+            return this;
+        }
+
+        public Builder action(RitualAction action) {
+            this.actions.add(action);
+            return this;
+        }
+
         @Override
         public Item getResult() {
             return Items.AIR;
@@ -339,6 +349,7 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
             }
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         public void save(Consumer<FinishedRecipe> consumer, ResourceLocation resourceLocation) {
             this.ensureValid(resourceLocation);
@@ -347,7 +358,7 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
                     .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(resourceLocation))
                     .rewards(AdvancementRewards.Builder.recipe(resourceLocation))
                     .requirements(RequirementsStrategy.OR);
-            var araeRegistry = this.registries.registryOrThrow(RitualArae.REGISTRY_KEY);
+            var araeRegistry = this.registries.lookupOrThrow(RitualArae.REGISTRY_KEY);
             consumer.accept(
                     new Result(
                             resourceLocation,
@@ -357,7 +368,8 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
                             new Data.ServerData(
                                     this.fluid,
                                     this.ingredients,
-                                    this.acceptableAraes.map(araeRegistry::getOrCreateTag, l -> HolderSet.direct(l.stream().map(araeRegistry::getHolderOrThrow).toList())),
+                                    // note: emptyNamed is deprecated + marked only visible for testing
+                                    this.acceptableAraes.map(t -> HolderSet.emptyNamed(araeRegistry, t), l -> HolderSet.direct(l.stream().map(k -> Holder.Reference.createStandAlone(araeRegistry, k)).toList())),
                                     this.canPlayerUse,
                                     this.actions,
                                     this.trigger
@@ -374,7 +386,7 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
             private final Data.ServerData data;
             private final RegistryOps<JsonElement> ops;
 
-            public Result(ResourceLocation id, String group, Advancement.Builder advancement, ResourceLocation advancementId, Data.ServerData data, RegistryAccess registries) {
+            public Result(ResourceLocation id, String group, Advancement.Builder advancement, ResourceLocation advancementId, Data.ServerData data, HolderLookup.Provider registries) {
                 this.id = id;
                 this.group = group;
                 this.advancement = advancement;
@@ -386,7 +398,10 @@ public sealed abstract class RitualRecipe implements Recipe<RitualContainer> {
             @Override
             public void serializeRecipeData(JsonObject jsonObject) {
                 jsonObject.addProperty("group", this.group);
-                Data.ServerData.CODEC.encode(this.data, this.ops, jsonObject);
+                var added = Data.ServerData.CODEC.encode(this.data, this.ops, jsonObject);
+                for (var property : added.getOrThrow(false, e -> Haema.LOGGER.error("Error serialising Ritual: {}", e)).getAsJsonObject().entrySet()) {
+                    jsonObject.add(property.getKey(), property.getValue());
+                }
             }
 
             @Override
