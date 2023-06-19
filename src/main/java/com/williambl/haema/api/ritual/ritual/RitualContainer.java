@@ -3,26 +3,28 @@ package com.williambl.haema.api.ritual.ritual;
 import com.williambl.haema.api.ritual.RitualArae;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
-public class RitualContainer extends SimpleContainer {
+public class RitualContainer {
     private final Fluid fluid;
     private final BlockPos altarPos;
     private final RitualArae arae;
     private final Player player;
+    private final Collection<ItemEntity> itemEntities;
 
     public RitualContainer(Collection<ItemEntity> itemEntities, Fluid fluid, BlockPos altarPos, RitualArae arae, Player player) {
-        super(itemEntities.stream().map(ItemEntity::getItem).toArray(ItemStack[]::new));
         this.fluid = fluid;
         this.altarPos = altarPos;
         this.arae = arae;
         this.player = player;
+        this.itemEntities = itemEntities;
     }
 
     public Fluid fluid() {
@@ -39,6 +41,14 @@ public class RitualContainer extends SimpleContainer {
 
     public Player player() {
         return this.player;
+    }
+
+    public Collection<ItemEntity> itemEntities() {
+        return this.itemEntities;
+    }
+
+    public ArrayList<ItemStack> itemsCopy() {
+        return this.itemEntities().stream().map(ItemEntity::getItem).map(ItemStack::copy).collect(Collectors.toCollection(ArrayList::new));
     }
 
     public ServerLevel level() {

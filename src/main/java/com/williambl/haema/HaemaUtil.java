@@ -5,7 +5,6 @@ import com.mojang.serialization.DataResult;
 import com.williambl.dfunc.api.DFunction;
 import com.williambl.dfunc.api.context.DFContextSpec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -27,8 +26,11 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -158,17 +160,22 @@ public class HaemaUtil {
         }
     }
 
-    public static boolean allMatchOne(NonNullList<ItemStack> stacks, Collection<Ingredient> ingredients) {
+    public static @Nullable List<ItemStack> allMatchOne(Iterable<ItemStack> stacks, Collection<Ingredient> ingredients) {
+        List<ItemStack> removed = new ArrayList<>();
         outer: for (var ingredient : ingredients) {
             for (var iter = stacks.iterator(); iter.hasNext();) {
-                if (ingredient.test(iter.next())) {
-                    iter.remove();
+                var item = iter.next();
+                if (ingredient.test(item)) {
+                    removed.add(item.split(1));
+                    if (item.isEmpty()) {
+                        iter.remove();
+                    }
                     continue outer;
                 }
             }
-            return false;
+            return null;
         }
 
-        return true;
+        return removed;
     }
 }

@@ -248,6 +248,12 @@ public class HaemaContent {
                         b -> TagKey.create(Registries.FLUID, id(b.getSerializedName()+"_blood"))
                 )));
 
+        public static final Map<BloodQuality, TagKey<Fluid>> MINIMUM_QUALITY_BLOOD_TAGS = new EnumMap<>(Arrays.stream(BloodQuality.values())
+                .collect(Collectors.toMap(
+                        Function.identity(),
+                        b -> TagKey.create(Registries.FLUID, id("at_least_"+b.getSerializedName()+"_blood"))
+                )));
+
         public static void init() {}
     }
 

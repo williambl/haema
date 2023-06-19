@@ -12,6 +12,7 @@ import com.williambl.haema.api.content.blood.BloodApi;
 import com.williambl.haema.api.content.blood.BloodQuality;
 import com.williambl.haema.api.ritual.MultiblockFilter;
 import com.williambl.haema.api.ritual.RitualArae;
+import com.williambl.haema.api.ritual.ritual.Ritual;
 import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.content.HaemaContent;
@@ -21,7 +22,6 @@ import com.williambl.haema.content.injector.InjectorItem;
 import com.williambl.haema.ritual.HaemaRituals;
 import com.williambl.haema.ritual.module.ParticlesToCentreAraeModule;
 import com.williambl.haema.ritual.ritual.RightClickRitualTrigger;
-import com.williambl.haema.ritual.ritual.RitualRecipe;
 import com.williambl.haema.ritual.ritual.SpawnEntityRitualAction;
 import com.williambl.haema.vampire.HaemaVampires;
 import com.williambl.haema.vampire.ability.powers.AttributeVampireAbilityPower;
@@ -38,7 +38,6 @@ import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.CachedOutput;
 import net.minecraft.data.models.BlockModelGenerators;
 import net.minecraft.data.models.ItemModelGenerators;
 import net.minecraft.data.models.blockstates.MultiVariantGenerator;
@@ -81,6 +80,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         var pack = fabricDataGenerator.createPack();
         pack.addProvider(HaemaDynamicRegistryProvider::new);
         pack.addProvider(HaemaBlockTagsProvider::new);
+        pack.addProvider(HaemaFluidTagsProvider::new);
         pack.addProvider((o, r) -> new HaemaItemTagsProvider(o, r, null));
         pack.addProvider(HaemaEntityTagsProvider::new);
         pack.addProvider(HaemaDamageTypeTagsProvider::new);
@@ -99,6 +99,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         registryBuilder.add(VampirismSource.REGISTRY_KEY, $ -> {});
         registryBuilder.add(VampireAbility.REGISTRY_KEY, $ -> {});
         registryBuilder.add(RitualArae.REGISTRY_KEY, $ -> {});
+        registryBuilder.add(Ritual.REGISTRY_KEY, $ -> {});
     }
 
     private static class HaemaModelProvider extends FabricModelProvider {
@@ -178,6 +179,29 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             var cauldrons = this.getOrCreateTagBuilder(BlockTags.CAULDRONS);
             for (var cauldron : HaemaContent.Fluids.BLOOD_CAULDRON.values()) {
                 cauldrons.add(cauldron);
+            }
+        }
+    }
+
+    private static class HaemaFluidTagsProvider extends FabricTagProvider.FluidTagProvider {
+
+        public HaemaFluidTagsProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> completableFuture) {
+            super(output, completableFuture);
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider arg) {
+            for (var quality : HaemaContent.ContentTags.BLOOD_TAGS.entrySet()) {
+                this.getOrCreateTagBuilder(quality.getValue())
+                        .add(BloodApi.getFluid(quality.getKey()))
+                        .add(HaemaContent.Fluids.FLOWING_BLOOD.get(quality.getKey()));
+            }
+            BloodQuality[] qualities = BloodQuality.values();
+            for (int i = 0; i < qualities.length; i++) {
+                var tagBuilder = this.getOrCreateTagBuilder(HaemaContent.ContentTags.MINIMUM_QUALITY_BLOOD_TAGS.get(qualities[i]));
+                for (int j = qualities.length-1; j >= i; j--) {
+                    tagBuilder.addTag(BloodApi.getFluidTag(qualities[j]));
+                }
             }
         }
     }
@@ -294,16 +318,16 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
                     new Vec3(1.5, 0.5, -1.5)),
                             new Vec3(0, 0.5, 0), 0.05, 0.2))));
 
-            entries.add(ResourceKey.create(RitualArae.REGISTRY_KEY, id("blood")), new RitualArae(new MultiblockFilter(
+            var bloodAltar = entries.add(ResourceKey.create(RitualArae.REGISTRY_KEY, id("blood")), new RitualArae(new MultiblockFilter(
                     new char[][][]{
                             new char[][] {
-                                    "ccccccc".toCharArray(),
+                                    " ccccc ".toCharArray(),
                                     "c_____c".toCharArray(),
                                     "c_ccc_c".toCharArray(),
                                     "c_crc_c".toCharArray(),
                                     "c_ccc_c".toCharArray(),
                                     "c_____c".toCharArray(),
-                                    "ccccccc".toCharArray()
+                                    " ccccc ".toCharArray()
                             },
                             new char[][] {
                                     "C     C".toCharArray(),
@@ -355,13 +379,25 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
                             ),
                     DPredicates.CONSTANT.factory().apply(true)
             ),
-                    Set.of(' '),
+                    Set.of('_'),
                     List.of(new ParticlesToCentreAraeModule(60, ParticleTypes.SOUL_FIRE_FLAME, List.of(
                             new Vec3(3.5, 4.25, 3.5),
                             new Vec3(-2.5, 4.25, 3.5),
                             new Vec3(-2.5, 4.25, -2.5),
                             new Vec3(3.5, 4.25, -2.5)),
                             new Vec3(0.5, 0.5, 0.5), 0.05, 0.2))));
+
+            Ritual.Builder.ritual(registries)
+                    .fluid(BloodApi.getFluidTagMinimumQuality(BloodQuality.MIDDLING))
+                    .acceptableAraes(bloodAltar.unwrapKey().orElseThrow())
+                    .trigger(new RightClickRitualTrigger(DPredicates.CONSTANT.factory().apply(true)))
+                    .ingredient(Ingredient.of(Items.PORKCHOP))
+                    .ingredient(Ingredient.of(Items.PORKCHOP))
+                    .ingredient(Ingredient.of(Items.PORKCHOP))
+                    .ingredient(Ingredient.of(Items.PORKCHOP))
+                    .ingredient(Ingredient.of(Items.PORKCHOP))
+                    .action(new SpawnEntityRitualAction(EntityType.PIG))
+                    .build(entries::add, id("reanimate_pig"));
         }
 
         private ResourceKey<VampireAbility> createHealingAbility(Entries entries) {
@@ -596,25 +632,8 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
     }
 
     public static class HaemaRecipeProvider extends FabricRecipeProvider {
-        private final CompletableFuture<HolderLookup.Provider> registries;
-
-        public HaemaRecipeProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+        public HaemaRecipeProvider(FabricDataOutput output) {
             super(output);
-            this.registries = registries;
-        }
-
-        private HolderLookup.Provider getRegistries() {
-            var value = this.registries.getNow(null);
-            if (value == null) {
-                throw new IllegalStateException("Registries were not yet provided for recipe provider!");
-            }
-
-            return value;
-        }
-
-        @Override
-        public CompletableFuture<?> run(CachedOutput writer) {
-            return this.registries.thenApply(p -> super.run(writer));
         }
 
         @Override
@@ -625,17 +644,6 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             BloodFillingRecipe.Builder.create()
                     .empty(Ingredient.of(Items.GLASS_BOTTLE))
                     .save(exporter, id("bottle_filling"));
-            RitualRecipe.Builder.ritual(this.getRegistries())
-                    .fluid(BloodApi.getFluidTag(BloodQuality.MIDDLING))
-                    .acceptableAraes(ResourceKey.create(RitualArae.REGISTRY_KEY, id("blood")))
-                    .trigger(new RightClickRitualTrigger(DPredicates.CONSTANT.factory().apply(true)))
-                    .ingredient(Ingredient.of(Items.PORKCHOP))
-                    .ingredient(Ingredient.of(Items.PORKCHOP))
-                    .ingredient(Ingredient.of(Items.PORKCHOP))
-                    .ingredient(Ingredient.of(Items.PORKCHOP))
-                    .ingredient(Ingredient.of(Items.PORKCHOP))
-                    .action(new SpawnEntityRitualAction(EntityType.PIG))
-                    .save(exporter, id("reanimate_pig"));
         }
     }
 }

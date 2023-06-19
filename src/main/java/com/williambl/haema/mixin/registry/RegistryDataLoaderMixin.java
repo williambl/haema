@@ -1,6 +1,7 @@
 package com.williambl.haema.mixin.registry;
 
 import com.williambl.haema.api.ritual.RitualArae;
+import com.williambl.haema.api.ritual.ritual.Ritual;
 import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import net.minecraft.resources.RegistryDataLoader;
@@ -26,5 +27,6 @@ public class RegistryDataLoaderMixin {
         WORLDGEN_REGISTRIES.add(new RegistryDataLoader.RegistryData<>(VampireAbility.REGISTRY_KEY, VampireAbility.CODEC));
         WORLDGEN_REGISTRIES.add(new RegistryDataLoader.RegistryData<>(VampirismSource.REGISTRY_KEY, VampirismSource.CODEC));
         WORLDGEN_REGISTRIES.add(new RegistryDataLoader.RegistryData<>(RitualArae.REGISTRY_KEY, RitualArae.CODEC));
+        WORLDGEN_REGISTRIES.add(new RegistryDataLoader.RegistryData<>(Ritual.REGISTRY_KEY, Ritual.CODEC));
     }
 }
