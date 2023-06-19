@@ -21,7 +21,7 @@ public interface RitualAction {
             Function.identity()
     );
 
-    void run(RitualContainer container);
+    void run(Ritual ritual, RitualContainer container);
 
     KeyDispatchDataCodec<? extends RitualAction> codec();
 }

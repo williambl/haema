@@ -12,10 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.williambl.haema.Haema.id;
 
@@ -35,6 +32,50 @@ public record RitualArae(MultiblockFilter multiblock, Set<Character> fluidSpaces
             HaemaUtil.CHARACTER_CODEC.listOf().<Set<Character>>xmap(HashSet::new, ArrayList::new).fieldOf("fluid_spaces").forGetter(RitualArae::fluidSpaces),
             AraeModule.MODULE_CODEC.listOf().fieldOf("modules").forGetter(RitualArae::modules)
     ).apply(instance, RitualArae::new));
+
+    public Iterable<BlockPos> getFluidSpaces(BlockPos focusPosWorldSpace) {
+        return () -> new Iterator<BlockPos>() {
+            final BlockPos initialPos = focusPosWorldSpace.subtract(RitualArae.this.multiblock().focusPosFilterSpace());
+            final BlockPos.MutableBlockPos pos = this.initialPos.mutable();
+            int currentYFilterSpace = 0;
+            int currentZFilterSpace = 0;
+            int currentXFilterSpace = -1;
+            @Override
+            public boolean hasNext() {
+                return this.nextFilterSpacePos() != null;
+            }
+
+            @Override
+            public BlockPos next() {
+                var nextFilterSpace = this.nextFilterSpacePos();
+                if (nextFilterSpace == null) {
+                    throw new NoSuchElementException();
+                }
+                this.currentXFilterSpace = nextFilterSpace.getX();
+                this.currentYFilterSpace = nextFilterSpace.getY();
+                this.currentZFilterSpace = nextFilterSpace.getZ();
+                return this.pos.set(this.initialPos).move(this.currentXFilterSpace, this.currentYFilterSpace, this.currentZFilterSpace);
+            }
+
+            @Nullable BlockPos nextFilterSpacePos() {
+                int startZ = this.currentZFilterSpace;
+                int startX = this.currentXFilterSpace+1;
+                for (int yFilterSpace = this.currentYFilterSpace; yFilterSpace < RitualArae.this.multiblock.pattern().length; yFilterSpace++) {
+                    for (int zFilterSpace = startZ; zFilterSpace < RitualArae.this.multiblock.pattern()[0].length; zFilterSpace++) {
+                        for (int xFilterSpace = startX; xFilterSpace < RitualArae.this.multiblock.pattern()[1].length; xFilterSpace++) {
+                            if (RitualArae.this.fluidSpaces.contains(RitualArae.this.multiblock().pattern()[yFilterSpace][zFilterSpace][xFilterSpace])) {
+                                return new BlockPos(xFilterSpace, yFilterSpace, zFilterSpace);
+                            }
+                        }
+                        startX = 0;
+                    }
+                    startZ = 0;
+                }
+
+                return null;
+            }
+        };
+    }
 
     public @Nullable Fluid getFluid(Level level, BlockPos focusPosWorldSpace) {
         Fluid currentFluid = null;

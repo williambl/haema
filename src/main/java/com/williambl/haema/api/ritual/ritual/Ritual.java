@@ -62,7 +62,7 @@ public record Ritual(
     }
 
     public void runActions(RitualContainer container) {
-        this.actions().forEach(r -> r.run(container));
+        this.actions().forEach(r -> r.run(this, container));
     }
 
     public static Iterable<Ritual> getRituals(RegistryAccess registries) {

@@ -1,6 +1,7 @@
 package com.williambl.haema.ritual.ritual;
 
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.williambl.haema.api.ritual.ritual.Ritual;
 import com.williambl.haema.api.ritual.ritual.RitualAction;
 import com.williambl.haema.api.ritual.ritual.RitualContainer;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -15,7 +16,7 @@ public record SpawnEntityRitualAction(EntityType<?> entityType) implements Ritua
     ).apply(instance, SpawnEntityRitualAction::new)));
 
     @Override
-    public void run(RitualContainer container) {
+    public void run(Ritual ritual, RitualContainer container) {
         var entity = this.entityType().spawn(container.level(), container.altarPos().above(), MobSpawnType.MOB_SUMMONED);
         if (entity != null) {
             container.level().broadcastEntityEvent(entity, EntityEvent.POOF);

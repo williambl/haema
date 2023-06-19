@@ -21,7 +21,9 @@ import com.williambl.haema.content.injector.BloodFillingRecipe;
 import com.williambl.haema.content.injector.InjectorItem;
 import com.williambl.haema.ritual.HaemaRituals;
 import com.williambl.haema.ritual.module.ParticlesToCentreAraeModule;
+import com.williambl.haema.ritual.ritual.RemoveUsedItemsRitualAction;
 import com.williambl.haema.ritual.ritual.RightClickRitualTrigger;
+import com.williambl.haema.ritual.ritual.SetFluidRitualAction;
 import com.williambl.haema.ritual.ritual.SpawnEntityRitualAction;
 import com.williambl.haema.vampire.HaemaVampires;
 import com.williambl.haema.vampire.ability.powers.AttributeVampireAbilityPower;
@@ -65,6 +67,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -397,6 +400,8 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
                     .ingredient(Ingredient.of(Items.PORKCHOP))
                     .ingredient(Ingredient.of(Items.PORKCHOP))
                     .action(new SpawnEntityRitualAction(EntityType.PIG))
+                    .action(new RemoveUsedItemsRitualAction())
+                    .action(new SetFluidRitualAction(Fluids.EMPTY))
                     .build(entries::add, id("reanimate_pig"));
         }
 

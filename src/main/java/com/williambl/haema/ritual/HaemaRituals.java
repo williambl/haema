@@ -8,7 +8,9 @@ import com.williambl.haema.api.ritual.ritual.RitualTrigger;
 import com.williambl.haema.ritual.altar.RitualAltarBlock;
 import com.williambl.haema.ritual.altar.RitualAltarBlockEntity;
 import com.williambl.haema.ritual.module.ParticlesToCentreAraeModule;
+import com.williambl.haema.ritual.ritual.RemoveUsedItemsRitualAction;
 import com.williambl.haema.ritual.ritual.RightClickRitualTrigger;
+import com.williambl.haema.ritual.ritual.SetFluidRitualAction;
 import com.williambl.haema.ritual.ritual.SpawnEntityRitualAction;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.core.Registry;
@@ -51,6 +53,8 @@ public class HaemaRituals {
 
     public static class RitualActions {
         public static final Codec<SpawnEntityRitualAction> SPAWN_ENTITY = Registry.register(RitualAction.REGISTRY, id("spawn_entity"), SpawnEntityRitualAction.CODEC.codec());
+        public static final Codec<RemoveUsedItemsRitualAction> REMOVE_USED_ITEMS = Registry.register(RitualAction.REGISTRY, id("remove_used_items"), RemoveUsedItemsRitualAction.CODEC.codec());
+        public static final Codec<SetFluidRitualAction> SET_FLUID = Registry.register(RitualAction.REGISTRY, id("set_fluid"), SetFluidRitualAction.CODEC.codec());
 
         public static void init() {}
     }
