@@ -46,6 +46,8 @@ public final class HaemaCommand {
     private static final DynamicCommandExceptionType NOT_VAMPIRABLE = new DynamicCommandExceptionType((source) -> Component.translatable(NOT_VAMPIRABLE_KEY, source));
     public static final String CANNOT_HAVE_ABILITIES_KEY = "command.haema.error.cannot_have_abilities";
     private static final DynamicCommandExceptionType CANNOT_HAVE_ABILITIES = new DynamicCommandExceptionType((source) -> Component.translatable(CANNOT_HAVE_ABILITIES_KEY, source));
+    public static final String NO_SUCH_ABILITY_KEY = "command.haema.error.no_such_ability";
+    private static final DynamicCommandExceptionType NO_SUCH_ABILITY = new DynamicCommandExceptionType((source) -> Component.translatable(NO_SUCH_ABILITY_KEY, source));
 
     //todo permissions
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext registryAccess, Commands.CommandSelection environment) {
@@ -349,6 +351,9 @@ public final class HaemaCommand {
         boolean enabled = BoolArgumentType.getBool(ctx, "value");
         var registry = ctx.getSource().registryAccess().registryOrThrow(VampireAbility.REGISTRY_KEY);
         var ability = registry.get(abilityId);
+        if (ability == null) {
+            throw NO_SUCH_ABILITY.create(abilityId);
+        }
 
         for (var entity : entities) {
             var component = VampireAbilitiesComponent.KEY.getNullable(entity);

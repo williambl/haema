@@ -274,7 +274,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             entries.add(HaemaContent.VampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaContent.VampirismSources.BLOOD_INJECTOR, HaemaVampires.VampirismSources.COMMAND), defaultAbilties, DPredicates.CONSTANT.factory().apply(false), DPredicates.CONSTANT.factory().apply(false))); //TODO
             entries.add(HaemaVampires.VampirismSources.COMMAND, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of(), DPredicates.CONSTANT.factory().apply(true), DPredicates.CONSTANT.factory().apply(true)));
 
-            entries.add(ResourceKey.create(RitualArae.REGISTRY_KEY, id("test")), new RitualArae(new MultiblockFilter(
+            entries.add(ResourceKey.create(RitualArae.REGISTRY_KEY, id("basic")), new RitualArae(new MultiblockFilter(
                     new char[][][]{
                             new char[][] {
                                     "ccccc".toCharArray(),
@@ -319,7 +319,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
                     new Vec3(-1.5, 0.5, -1.5),
                     new Vec3(0.5, 0.5, -1.5),
                     new Vec3(1.5, 0.5, -1.5)),
-                            new Vec3(0, 0.5, 0), 0.05, 0.2))));
+                            new Vec3(0.5, 0.5, 0.5), 0.05, 0.2))));
 
             var bloodAltar = entries.add(ResourceKey.create(RitualArae.REGISTRY_KEY, id("blood")), new RitualArae(new MultiblockFilter(
                     new char[][][]{
@@ -592,6 +592,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             translations.add(HaemaCommand.NO_SUCH_VAMPIRISM_SOURCE_KEY, "No such vampirism source %s");
             translations.add(HaemaCommand.NOT_VAMPIRABLE_KEY, "%s cannot be a vampire");
             translations.add(HaemaCommand.CANNOT_HAVE_ABILITIES_KEY, "%s cannot have abilities");
+            translations.add(HaemaCommand.NO_SUCH_ABILITY_KEY, "No such ability %s");
             translations.add(HaemaCommand.CONVERT_SUCCESS, "%s is now a vampire");
             translations.add(HaemaCommand.CONVERT_FAILURE, "Could not convert %s");
             translations.add(HaemaCommand.DECONVERT_SUCCESS, "%s is no longer a vampire");
