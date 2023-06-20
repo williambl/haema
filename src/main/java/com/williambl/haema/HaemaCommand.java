@@ -8,6 +8,7 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.williambl.haema.api.content.blood.BloodApi;
 import com.williambl.haema.api.content.blood.BloodQuality;
 import com.williambl.haema.api.vampire.VampireComponent;
@@ -18,6 +19,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
@@ -26,6 +28,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Blocks;
@@ -49,16 +52,23 @@ public final class HaemaCommand {
     public static final String NO_SUCH_ABILITY_KEY = "command.haema.error.no_such_ability";
     private static final DynamicCommandExceptionType NO_SUCH_ABILITY = new DynamicCommandExceptionType((source) -> Component.translatable(NO_SUCH_ABILITY_KEY, source));
 
+    private static final SuggestionProvider<CommandSourceStack> SUGGEST_VAMPIRISM_SOURCES = suggestFromRegistry(VampirismSource.REGISTRY_KEY);
+    private static final SuggestionProvider<CommandSourceStack> SUGGEST_ABILITIES = suggestFromRegistry(VampireAbility.REGISTRY_KEY);
+
+    private static <T> SuggestionProvider<CommandSourceStack> suggestFromRegistry(ResourceKey<Registry<T>> registryKey) {
+        return (ctx, builder) -> SharedSuggestionProvider.suggestResource(ctx.getSource().registryAccess().registryOrThrow(registryKey).keySet(), builder);
+    }
+
     //todo permissions
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext registryAccess, Commands.CommandSelection environment) {
         dispatcher.register(
                 literal("haema").then(
                         literal("convert").then(
                                 argument("targets", EntityArgument.entities()).executes(HaemaCommand::convert).then(
-                                        argument("source", ResourceLocationArgument.id()).executes(HaemaCommand::convertWithArgSource)))).then(
+                                        argument("source", ResourceLocationArgument.id()).suggests(SUGGEST_VAMPIRISM_SOURCES).executes(HaemaCommand::convertWithArgSource)))).then(
                         literal("deconvert").then(
                                 argument("targets", EntityArgument.entities()).executes(HaemaCommand::deconvert).then(
-                                        argument("source", ResourceLocationArgument.id()).executes(HaemaCommand::deconvertWithArgSource)))).then(
+                                        argument("source", ResourceLocationArgument.id()).suggests(SUGGEST_VAMPIRISM_SOURCES).executes(HaemaCommand::deconvertWithArgSource)))).then(
                         literal("query").then(
                                 argument("targets", EntityArgument.entities()).executes(HaemaCommand::query))).then(
                         bloodTree()).then(
@@ -97,7 +107,7 @@ public final class HaemaCommand {
                         argument("targets", EntityArgument.entities()).executes(HaemaCommand::queryAbilities))).then(
                 literal("set").then(
                         argument("targets", EntityArgument.entities()).then(
-                        argument("ability", ResourceLocationArgument.id()).then(
+                        argument("ability", ResourceLocationArgument.id()).suggests(SUGGEST_ABILITIES).then(
                         argument("value", BoolArgumentType.bool()).executes(HaemaCommand::setAbility))))
         );
         //@formatter:on
