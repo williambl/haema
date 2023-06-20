@@ -113,7 +113,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
 
         @Override
         public void generateBlockStateModels(BlockModelGenerators models) {
-            for (var entry : HaemaContent.Fluids.BLOOD_CAULDRON.entrySet()) {
+            for (var entry : HaemaContent.ContentBlocks.BLOOD_CAULDRON.entrySet()) {
                 var cauldron = entry.getValue();
                 models.blockStateOutput.accept(
                         MultiVariantGenerator.multiVariant(cauldron).with(
@@ -143,14 +143,14 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
 
         @Override
         public void generateItemModels(ItemModelGenerators models) {
-            models.generateFlatItem(HaemaContent.Items.EMPTY_INJECTOR, ModelTemplates.FLAT_ITEM);
-            for (var item : HaemaContent.Items.INJECTORS.values()) {
+            models.generateFlatItem(HaemaContent.ContentItems.EMPTY_INJECTOR, ModelTemplates.FLAT_ITEM);
+            for (var item : HaemaContent.ContentItems.INJECTORS.values()) {
                 this.generateFlatItem(item, id("item/full_injector"), ModelTemplates.FLAT_ITEM, models);
             }
-            for (var item : HaemaContent.Items.BUCKETS.values()) {
+            for (var item : HaemaContent.ContentItems.BUCKETS.values()) {
                 models.generateFlatItem(item, Items.WATER_BUCKET, ModelTemplates.FLAT_ITEM); //TODO use own texture
             }
-            for (var item : HaemaContent.Items.BOTTLES.values()) {
+            for (var item : HaemaContent.ContentItems.BOTTLES.values()) {
                 this.generateFlatItem(item, id("item/blood_bottle"), ModelTemplates.FLAT_ITEM, models);
             }
         }
@@ -180,7 +180,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         @Override
         protected void addTags(HolderLookup.Provider arg) {
             var cauldrons = this.getOrCreateTagBuilder(BlockTags.CAULDRONS);
-            for (var cauldron : HaemaContent.Fluids.BLOOD_CAULDRON.values()) {
+            for (var cauldron : HaemaContent.ContentBlocks.BLOOD_CAULDRON.values()) {
                 cauldrons.add(cauldron);
             }
         }
@@ -197,7 +197,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             for (var quality : HaemaContent.ContentTags.BLOOD_TAGS.entrySet()) {
                 this.getOrCreateTagBuilder(quality.getValue())
                         .add(BloodApi.getFluid(quality.getKey()))
-                        .add(HaemaContent.Fluids.FLOWING_BLOOD.get(quality.getKey()));
+                        .add(HaemaContent.ContentFluids.FLOWING_BLOOD.get(quality.getKey()));
             }
             BloodQuality[] qualities = BloodQuality.values();
             for (int i = 0; i < qualities.length; i++) {
@@ -271,7 +271,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             defaultAbilties.addAll(vampiricStrengthAbilities);
 
 
-            entries.add(HaemaContent.VampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaContent.VampirismSources.BLOOD_INJECTOR, HaemaVampires.VampirismSources.COMMAND), defaultAbilties, DPredicates.CONSTANT.factory().apply(false), DPredicates.CONSTANT.factory().apply(false))); //TODO
+            entries.add(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR, HaemaVampires.VampirismSources.COMMAND), defaultAbilties, DPredicates.CONSTANT.factory().apply(false), DPredicates.CONSTANT.factory().apply(false))); //TODO
             entries.add(HaemaVampires.VampirismSources.COMMAND, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of(), DPredicates.CONSTANT.factory().apply(true), DPredicates.CONSTANT.factory().apply(true)));
 
             entries.add(ResourceKey.create(RitualArae.REGISTRY_KEY, id("basic")), new RitualArae(new MultiblockFilter(
@@ -613,21 +613,21 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             translations.add(HaemaCommand.ABILITY_REMOVED, "Removed ability %2$s from %1$s");
             translations.add(HaemaCommand.CREATE_MULTIBLOCK_PATTERN_TOO_MANY_BLOCKSTATES, "⚠ Too many blockstates to represent. Extra blockstates are represented as '?'");
             translations.add(Haema.TAB, "Haema");
-            for (var block : HaemaContent.Fluids.BLOOD_BLOCK.values()) {
+            for (var block : HaemaContent.ContentBlocks.BLOOD_BLOCK.values()) {
                 translations.add(block, "%1$s Blood");
             }
-            for (var cauldron : HaemaContent.Fluids.BLOOD_CAULDRON.values()) {
+            for (var cauldron : HaemaContent.ContentBlocks.BLOOD_CAULDRON.values()) {
                 translations.add(cauldron, "Blood Cauldron");
             }
-            translations.add(HaemaContent.Items.EMPTY_INJECTOR, "Empty Blood Injector");
-            for (var item : HaemaContent.Items.INJECTORS.values()) {
+            translations.add(HaemaContent.ContentItems.EMPTY_INJECTOR, "Empty Blood Injector");
+            for (var item : HaemaContent.ContentItems.INJECTORS.values()) {
                 translations.add(item, "Blood Injector");
             }
             translations.add(InjectorItem.DESCRIPTION_TRANSLATION_KEY, "Contains %1$s blood");
-            for (var item : HaemaContent.Items.BUCKETS.values()) {
+            for (var item : HaemaContent.ContentItems.BUCKETS.values()) {
                 translations.add(item, "%1$s Blood Bucket");
             }
-            for (var item : HaemaContent.Items.BOTTLES.values()) {
+            for (var item : HaemaContent.ContentItems.BOTTLES.values()) {
                 translations.add(item, "Blood Bottle");
             }
             translations.add(BloodBottleItem.DESCRIPTION_TRANSLATION_KEY, "Contains %1$s blood");
@@ -645,7 +645,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         @Override
         public void buildRecipes(Consumer<FinishedRecipe> exporter) {
             BloodFillingRecipe.Builder.create()
-                    .empty(Ingredient.of(HaemaContent.Items.EMPTY_INJECTOR))
+                    .empty(Ingredient.of(HaemaContent.ContentItems.EMPTY_INJECTOR))
                     .save(exporter, id("injector_filling"));
             BloodFillingRecipe.Builder.create()
                     .empty(Ingredient.of(Items.GLASS_BOTTLE))

@@ -26,6 +26,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
@@ -49,16 +50,17 @@ import static com.williambl.haema.Haema.id;
 
 public class HaemaContent {
     public static void init() {
-        Fluids.init();
-        Items.init();
-        VampirismSources.init();
-        MobEffects.init();
-        Recipes.init();
-        Config.init();
+        ContentFluids.init();
+        ContentBlocks.init();
+        ContentItems.init();
+        ContentVampirismSources.init();
+        ContentMobEffects.init();
+        ContentRecipes.init();
+        ContentConstants.init();
         ContentTags.init();
     }
 
-    public static class Fluids {
+    public static class ContentFluids {
         public static final Map<BloodQuality, BloodFluid.Flowing> FLOWING_BLOOD = new EnumMap<>(Arrays.stream(BloodQuality.values())
                 .collect(Collectors.toMap(
                         Function.identity(),
@@ -67,87 +69,8 @@ public class HaemaContent {
                 .collect(Collectors.toMap(
                         Function.identity(),
                         quality -> Registry.register(BuiltInRegistries.FLUID, id("%s_blood".formatted(quality.getSerializedName())), new BloodFluid.Source(quality)))));
-        public static final Map<BloodQuality, Block> BLOOD_BLOCK = new EnumMap<>(Arrays.stream(BloodQuality.values())
-                .collect(Collectors.toMap(
-                        Function.identity(),
-                        quality -> Registry.register(BuiltInRegistries.BLOCK, id("%s_blood".formatted(quality.getSerializedName())), new BloodLiquidBlock(
-                                BLOOD.get(quality), quality, BlockBehaviour.Properties.of(Material.LAVA).noCollission().randomTicks().strength(100.0F).noLootTable())))));
 
-        public static final Map<BloodQuality, Map<Item, CauldronInteraction>> BLOOD_CAULDRON_INTERACTIONS = new EnumMap<>(Arrays.stream(BloodQuality.values())
-                .collect(Collectors.toMap(
-                        Function.identity(),
-                        $ -> CauldronInteraction.newInteractionMap())));
-        public static final Map<BloodQuality, LayeredCauldronBlock> BLOOD_CAULDRON = new EnumMap<>(Arrays.stream(BloodQuality.values())
-                .collect(Collectors.toMap(
-                        Function.identity(),
-                        quality -> Registry.register(BuiltInRegistries.BLOCK, id("%s_blood_cauldron".formatted(quality.getSerializedName())),
-                                new LayeredCauldronBlock(BlockBehaviour.Properties.copy(Blocks.CAULDRON), $ -> false, BLOOD_CAULDRON_INTERACTIONS.get(quality))))));
-
-        @SuppressWarnings("UnstableApiUsage")
         public static void init() {
-            for (var entry : BLOOD_CAULDRON.entrySet()) {
-                CauldronFluidContent.registerCauldron(entry.getValue(), BLOOD.get(entry.getKey()), FluidConstants.BOTTLE, LayeredCauldronBlock.LEVEL);
-                CauldronInteraction.EMPTY.put(Items.BUCKETS.get(entry.getKey()), (blockState, level, blockPos, player, interactionHand, itemStack) -> CauldronInteraction.emptyBucket(
-                        level,
-                        blockPos,
-                        player,
-                        interactionHand,
-                        itemStack,
-                        entry.getValue().defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3),
-                        SoundEvents.BUCKET_EMPTY
-                ));
-                CauldronInteraction.EMPTY.put(Items.BOTTLES.get(entry.getKey()), (blockState, level, blockPos, player, interactionHand, itemStack) -> HaemaUtil.emptyBottle(
-                        level,
-                        blockPos,
-                        player,
-                        interactionHand,
-                        itemStack,
-                        entry.getValue().defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 1),
-                        SoundEvents.BUCKET_EMPTY
-                ));
-                BLOOD_CAULDRON_INTERACTIONS.values().forEach(map -> map.put(Items.BOTTLES.get(entry.getKey()), (blockState, level, blockPos, player, interactionHand, itemStack) -> CauldronInteraction.emptyBucket(
-                        level,
-                        blockPos,
-                        player,
-                        interactionHand,
-                        itemStack,
-                        entry.getValue().defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 1),
-                        SoundEvents.BUCKET_EMPTY
-                )));
-                BLOOD_CAULDRON_INTERACTIONS.get(entry.getKey()).put(Items.BOTTLES.get(entry.getKey()), (blockState, level, blockPos, player, interactionHand, itemStack) ->
-                        blockState.getValue(LayeredCauldronBlock.LEVEL) >= 3 ? InteractionResult.PASS : CauldronInteraction.emptyBucket(
-                                level,
-                                blockPos,
-                                player,
-                                interactionHand,
-                                itemStack,
-                                blockState.setValue(LayeredCauldronBlock.LEVEL, blockState.getValue(LayeredCauldronBlock.LEVEL) + 1),
-                                SoundEvents.BUCKET_EMPTY
-                        ));
-                BLOOD_CAULDRON_INTERACTIONS.get(entry.getKey()).put(net.minecraft.world.item.Items.GLASS_BOTTLE, (blockState, level, blockPos, player, interactionHand, itemStack) ->
-                        HaemaUtil.fillBottle(
-                                blockState,
-                                level,
-                                blockPos,
-                                player,
-                                interactionHand,
-                                itemStack,
-                                new ItemStack(Items.BOTTLES.get(entry.getKey())),
-                                blockStatex -> true,
-                                SoundEvents.BUCKET_EMPTY
-                        ));
-                BLOOD_CAULDRON_INTERACTIONS.get(entry.getKey()).put(net.minecraft.world.item.Items.BUCKET, (blockState, level, blockPos, player, interactionHand, itemStack) -> CauldronInteraction.fillBucket(
-                        blockState,
-                        level,
-                        blockPos,
-                        player,
-                        interactionHand,
-                        itemStack,
-                        new ItemStack(Items.BUCKETS.get(entry.getKey())),
-                        blockStatex -> blockStatex.getValue(LayeredCauldronBlock.LEVEL) == 3,
-                        SoundEvents.BUCKET_FILL
-                ));
-            }
             EntityBloodExtractionCallback.EVENT.register(EntityBloodExtractionCallback.DEFAULT_TAKE_DAMAGE, (entity, quality, amount) -> {
                 if (entity instanceof LivingEntity living) {
                     if (living.getHealth() > BloodApi.dropletsToBloodUnits(amount)) {
@@ -175,7 +98,92 @@ public class HaemaContent {
         }
     }
 
-    public static class Items {
+    public static class ContentBlocks {
+
+        public static final Map<BloodQuality, Block> BLOOD_BLOCK = new EnumMap<>(Arrays.stream(BloodQuality.values())
+                .collect(Collectors.toMap(
+                        Function.identity(),
+                        quality -> Registry.register(BuiltInRegistries.BLOCK, id("%s_blood".formatted(quality.getSerializedName())), new BloodLiquidBlock(
+                                ContentFluids.BLOOD.get(quality), quality, BlockBehaviour.Properties.of(Material.LAVA).noCollission().randomTicks().strength(100.0F).noLootTable())))));
+        public static final Map<BloodQuality, Map<Item, CauldronInteraction>> BLOOD_CAULDRON_INTERACTIONS = new EnumMap<>(Arrays.stream(BloodQuality.values())
+                .collect(Collectors.toMap(
+                        Function.identity(),
+                        $ -> CauldronInteraction.newInteractionMap())));
+        public static final Map<BloodQuality, LayeredCauldronBlock> BLOOD_CAULDRON = new EnumMap<>(Arrays.stream(BloodQuality.values())
+                .collect(Collectors.toMap(
+                        Function.identity(),
+                        quality -> Registry.register(BuiltInRegistries.BLOCK, id("%s_blood_cauldron".formatted(quality.getSerializedName())),
+                                new LayeredCauldronBlock(BlockBehaviour.Properties.copy(Blocks.CAULDRON), $ -> false, BLOOD_CAULDRON_INTERACTIONS.get(quality))))));
+
+        @SuppressWarnings("UnstableApiUsage")
+        public static void init() {
+            for (var entry : ContentBlocks.BLOOD_CAULDRON.entrySet()) {
+                CauldronFluidContent.registerCauldron(entry.getValue(), ContentFluids.BLOOD.get(entry.getKey()), FluidConstants.BOTTLE, LayeredCauldronBlock.LEVEL);
+                CauldronInteraction.EMPTY.put(ContentItems.BUCKETS.get(entry.getKey()), (blockState, level, blockPos, player, interactionHand, itemStack) -> CauldronInteraction.emptyBucket(
+                        level,
+                        blockPos,
+                        player,
+                        interactionHand,
+                        itemStack,
+                        entry.getValue().defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3),
+                        SoundEvents.BUCKET_EMPTY
+                ));
+                CauldronInteraction.EMPTY.put(ContentItems.BOTTLES.get(entry.getKey()), (blockState, level, blockPos, player, interactionHand, itemStack) -> HaemaUtil.emptyBottle(
+                        level,
+                        blockPos,
+                        player,
+                        interactionHand,
+                        itemStack,
+                        entry.getValue().defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 1),
+                        SoundEvents.BUCKET_EMPTY
+                ));
+                ContentBlocks.BLOOD_CAULDRON_INTERACTIONS.values().forEach(map -> map.put(ContentItems.BOTTLES.get(entry.getKey()), (blockState, level, blockPos, player, interactionHand, itemStack) -> CauldronInteraction.emptyBucket(
+                        level,
+                        blockPos,
+                        player,
+                        interactionHand,
+                        itemStack,
+                        entry.getValue().defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 1),
+                        SoundEvents.BUCKET_EMPTY
+                )));
+                ContentBlocks.BLOOD_CAULDRON_INTERACTIONS.get(entry.getKey()).put(ContentItems.BOTTLES.get(entry.getKey()), (blockState, level, blockPos, player, interactionHand, itemStack) ->
+                        blockState.getValue(LayeredCauldronBlock.LEVEL) >= 3 ? InteractionResult.PASS : CauldronInteraction.emptyBucket(
+                                level,
+                                blockPos,
+                                player,
+                                interactionHand,
+                                itemStack,
+                                blockState.setValue(LayeredCauldronBlock.LEVEL, blockState.getValue(LayeredCauldronBlock.LEVEL) + 1),
+                                SoundEvents.BUCKET_EMPTY
+                        ));
+                ContentBlocks.BLOOD_CAULDRON_INTERACTIONS.get(entry.getKey()).put(net.minecraft.world.item.Items.GLASS_BOTTLE, (blockState, level, blockPos, player, interactionHand, itemStack) ->
+                        HaemaUtil.fillBottle(
+                                blockState,
+                                level,
+                                blockPos,
+                                player,
+                                interactionHand,
+                                itemStack,
+                                new ItemStack(ContentItems.BOTTLES.get(entry.getKey())),
+                                blockStatex -> true,
+                                SoundEvents.BUCKET_EMPTY
+                        ));
+                ContentBlocks.BLOOD_CAULDRON_INTERACTIONS.get(entry.getKey()).put(net.minecraft.world.item.Items.BUCKET, (blockState, level, blockPos, player, interactionHand, itemStack) -> CauldronInteraction.fillBucket(
+                        blockState,
+                        level,
+                        blockPos,
+                        player,
+                        interactionHand,
+                        itemStack,
+                        new ItemStack(ContentItems.BUCKETS.get(entry.getKey())),
+                        blockStatex -> blockStatex.getValue(LayeredCauldronBlock.LEVEL) == 3,
+                        SoundEvents.BUCKET_FILL
+                ));
+            }
+        }
+    }
+
+    public static class ContentItems {
         public static final EmptyInjectorItem EMPTY_INJECTOR = Registry.register(
                 BuiltInRegistries.ITEM,
                 id("empty_injector"),
@@ -194,7 +202,7 @@ public class HaemaContent {
                         quality -> Registry.register(
                                 BuiltInRegistries.ITEM,
                                 id(quality.getSerializedName() + "_blood_bucket"),
-                                new BloodBucketItem(Fluids.BLOOD.get(quality), quality, new Item.Properties().stacksTo(1))))));
+                                new BloodBucketItem(ContentFluids.BLOOD.get(quality), quality, new Item.Properties().stacksTo(1))))));
         public static final Map<BloodQuality, BloodBottleItem> BOTTLES = new EnumMap<>(Arrays.stream(BloodQuality.values())
                 .collect(Collectors.toMap(
                         Function.identity(),
@@ -206,25 +214,25 @@ public class HaemaContent {
         @SuppressWarnings("UnstableApiUsage")
         public static void init() {
             for (var quality : BloodQuality.values()) {
-                FluidStorage.combinedItemApiProvider(INJECTORS.get(quality)).register(ctx -> new FullItemFluidStorage(ctx, EMPTY_INJECTOR, FluidVariant.of(Fluids.BLOOD.get(quality)), Config.INJECTOR_CAPACITY_DROPLETS));
+                FluidStorage.combinedItemApiProvider(INJECTORS.get(quality)).register(ctx -> new FullItemFluidStorage(ctx, EMPTY_INJECTOR, FluidVariant.of(ContentFluids.BLOOD.get(quality)), ContentConstants.INJECTOR_CAPACITY_DROPLETS));
             }
-            FluidStorage.combinedItemApiProvider(EMPTY_INJECTOR).register(ctx -> new EmptyBloodStorage(ctx, Config.INJECTOR_CAPACITY_DROPLETS, EMPTY_INJECTOR, INJECTORS::get));
+            FluidStorage.combinedItemApiProvider(EMPTY_INJECTOR).register(ctx -> new EmptyBloodStorage(ctx, ContentConstants.INJECTOR_CAPACITY_DROPLETS, EMPTY_INJECTOR, INJECTORS::get));
 
             for (var quality : BloodQuality.values()) {
-                FluidStorage.combinedItemApiProvider(BOTTLES.get(quality)).register(ctx -> new FullItemFluidStorage(ctx, net.minecraft.world.item.Items.GLASS_BOTTLE, FluidVariant.of(Fluids.BLOOD.get(quality)), Config.INJECTOR_CAPACITY_DROPLETS));
+                FluidStorage.combinedItemApiProvider(BOTTLES.get(quality)).register(ctx -> new FullItemFluidStorage(ctx, net.minecraft.world.item.Items.GLASS_BOTTLE, FluidVariant.of(ContentFluids.BLOOD.get(quality)), ContentConstants.INJECTOR_CAPACITY_DROPLETS));
             }
-            FluidStorage.combinedItemApiProvider(net.minecraft.world.item.Items.GLASS_BOTTLE).register(ctx -> new EmptyBloodStorage(ctx, Config.INJECTOR_CAPACITY_DROPLETS, net.minecraft.world.item.Items.GLASS_BOTTLE, BOTTLES::get));
+            FluidStorage.combinedItemApiProvider(net.minecraft.world.item.Items.GLASS_BOTTLE).register(ctx -> new EmptyBloodStorage(ctx, ContentConstants.INJECTOR_CAPACITY_DROPLETS, net.minecraft.world.item.Items.GLASS_BOTTLE, BOTTLES::get));
         }
     }
 
-    public static class VampirismSources {
+    public static class ContentVampirismSources {
 
         public static final ResourceKey<VampirismSource> BLOOD_INJECTOR = ResourceKey.create(VampirismSource.REGISTRY_KEY, id("blood_injector"));
 
         public static void init() {}
     }
 
-    public static class MobEffects {
+    public static class ContentMobEffects {
         public static final IncompatibleBloodEffect INCOMPATIBLE_BLOOD = Registry.register(
                 BuiltInRegistries.MOB_EFFECT,
                 id("incompatible_blood"),
@@ -233,7 +241,7 @@ public class HaemaContent {
         public static void init() {}
     }
 
-    public static class Recipes {
+    public static class ContentRecipes {
         public static final RecipeSerializer<BloodFillingRecipe> BLOOD_FILLING_SERIALIZER = Registry.register(
                 BuiltInRegistries.RECIPE_SERIALIZER,
                 id("blood_filling"),
@@ -253,12 +261,15 @@ public class HaemaContent {
                         Function.identity(),
                         b -> TagKey.create(Registries.FLUID, id("at_least_"+b.getSerializedName()+"_blood"))
                 )));
+        public static final Map<BloodQuality, TagKey<EntityType<?>>> ENTITY_BLOOD_QUALITY_TAGS = new EnumMap<>(Arrays.stream(BloodQuality.values()).collect(Collectors.toMap(
+                        Function.identity(),
+                        quality -> TagKey.create(Registries.ENTITY_TYPE, id("blood_quality/" + quality.getSerializedName())))));
 
         public static void init() {}
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    public static class Config {
+    public static class ContentConstants {
         public static final long INJECTOR_CAPACITY_DROPLETS = FluidConstants.BOTTLE;
         public static final double BLOOD_UNITS_PER_DROPLET = (double) 20 /*blood units per person*/ / FluidConstants.BUCKET /*blood droplets per person*/;
         public static void init() {}

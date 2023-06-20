@@ -22,7 +22,7 @@ public class Haema implements ModInitializer, EntityComponentInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("Haema");
     public static final String MODID = "haema";
     public static final CreativeModeTab TAB = FabricItemGroup.builder(id("haema"))
-            .icon(() -> HaemaContent.Items.INJECTORS.get(BloodQuality.EXCELLENT).getDefaultInstance())
+            .icon(() -> HaemaContent.ContentItems.INJECTORS.get(BloodQuality.EXCELLENT).getDefaultInstance())
             .displayItems((itemDisplayParameters, output) -> {
                 output.acceptAll(BuiltInRegistries.ITEM.holders().filter(r -> r.key().location().getNamespace().equals(MODID)).map(Holder.Reference::value).map(Item::getDefaultInstance).toList());
             })

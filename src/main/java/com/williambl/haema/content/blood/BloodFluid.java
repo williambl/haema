@@ -40,17 +40,17 @@ public abstract class BloodFluid extends FlowingFluid {
 
 	@Override
 	public Fluid getFlowing() {
-		return HaemaContent.Fluids.FLOWING_BLOOD.get(this.quality);
+		return HaemaContent.ContentFluids.FLOWING_BLOOD.get(this.quality);
 	}
 
 	@Override
 	public Fluid getSource() {
-		return HaemaContent.Fluids.BLOOD.get(this.quality);
+		return HaemaContent.ContentFluids.BLOOD.get(this.quality);
 	}
 
 	@Override
 	public Item getBucket() {
-		return HaemaContent.Items.BUCKETS.get(this.quality);
+		return HaemaContent.ContentItems.BUCKETS.get(this.quality);
 	}
 
 	@Override
@@ -80,12 +80,12 @@ public abstract class BloodFluid extends FlowingFluid {
 
 	@Override
 	public BlockState createLegacyBlock(FluidState fluidState) {
-		return HaemaContent.Fluids.BLOOD_BLOCK.get(this.quality).defaultBlockState().setValue(LiquidBlock.LEVEL, getLegacyLevel(fluidState));
+		return HaemaContent.ContentBlocks.BLOOD_BLOCK.get(this.quality).defaultBlockState().setValue(LiquidBlock.LEVEL, getLegacyLevel(fluidState));
 	}
 
 	@Override
 	public boolean isSame(Fluid fluid) {
-		return fluid == HaemaContent.Fluids.BLOOD.get(this.quality) || fluid == HaemaContent.Fluids.FLOWING_BLOOD.get(this.quality);
+		return fluid == HaemaContent.ContentFluids.BLOOD.get(this.quality) || fluid == HaemaContent.ContentFluids.FLOWING_BLOOD.get(this.quality);
 	}
 
 	@Override

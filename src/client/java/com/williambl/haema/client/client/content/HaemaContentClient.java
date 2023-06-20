@@ -18,10 +18,10 @@ public class HaemaContentClient {
         @SuppressWarnings("UnstableApiUsage")
         public static void init() {
             for (var quality : BloodQuality.values()) {
-                FluidRenderHandlerRegistry.INSTANCE.register(HaemaContent.Fluids.BLOOD.get(quality), HaemaContent.Fluids.FLOWING_BLOOD.get(quality), SimpleFluidRenderHandler.coloredWater(Haema.HOMESTUCK_MODE ? quality.colour : 0xcd050e));
+                FluidRenderHandlerRegistry.INSTANCE.register(HaemaContent.ContentFluids.BLOOD.get(quality), HaemaContent.ContentFluids.FLOWING_BLOOD.get(quality), SimpleFluidRenderHandler.coloredWater(Haema.HOMESTUCK_MODE ? quality.colour : 0xcd050e));
                 ColorProviderRegistry.BLOCK.register(
-                        (blockState, blockAndTintGetter, blockPos, i) -> FluidVariantRendering.getColor(FluidVariant.of(HaemaContent.Fluids.BLOOD.get(quality))),
-                        HaemaContent.Fluids.BLOOD_CAULDRON.get(quality)
+                        (blockState, blockAndTintGetter, blockPos, i) -> FluidVariantRendering.getColor(FluidVariant.of(HaemaContent.ContentFluids.BLOOD.get(quality))),
+                        HaemaContent.ContentBlocks.BLOOD_CAULDRON.get(quality)
                 );
             }
         }

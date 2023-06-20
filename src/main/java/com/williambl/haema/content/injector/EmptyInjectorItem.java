@@ -45,7 +45,7 @@ public class EmptyInjectorItem extends Item {
         }
 
 
-        Fluid extracted = BloodApi.extractBlood(entity, HaemaContent.Config.INJECTOR_CAPACITY_DROPLETS);
+        Fluid extracted = BloodApi.extractBlood(entity, HaemaContent.ContentConstants.INJECTOR_CAPACITY_DROPLETS);
         var quality = BloodApi.getBloodQuality(extracted);
         if (quality.isEmpty()) {
             return Optional.empty();
@@ -53,11 +53,11 @@ public class EmptyInjectorItem extends Item {
 
         var component = VampireComponent.KEY.getNullable(entity);
         var source = entity.getLevel().registryAccess().registry(VampirismSource.REGISTRY_KEY)
-                .flatMap(r -> r.getOptional(HaemaContent.VampirismSources.BLOOD_INJECTOR));
+                .flatMap(r -> r.getOptional(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR));
         if (component != null && component.isVampire() && source.isPresent()) {
             component.tryCure(source.get());
         }
 
-        return Optional.of(new ItemStack(HaemaContent.Items.INJECTORS.get(quality.get())));
+        return Optional.of(new ItemStack(HaemaContent.ContentItems.INJECTORS.get(quality.get())));
     }
 }

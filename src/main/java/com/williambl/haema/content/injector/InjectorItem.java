@@ -36,16 +36,16 @@ public class InjectorItem extends Item {
         return switch (result) {
             case NOTHING -> InteractionResultHolder.pass(stack);
             case INJECTED, CONVERTED ->
-                    InteractionResultHolder.success(HaemaContent.Items.EMPTY_INJECTOR.getDefaultInstance());
+                    InteractionResultHolder.success(HaemaContent.ContentItems.EMPTY_INJECTOR.getDefaultInstance());
             case INCOMPATIBLE -> {
                 giveIncompatibleBloodEffects(player);
-                yield  InteractionResultHolder.success(HaemaContent.Items.EMPTY_INJECTOR.getDefaultInstance());
+                yield  InteractionResultHolder.success(HaemaContent.ContentItems.EMPTY_INJECTOR.getDefaultInstance());
             }
         };
     }
 
     private void giveIncompatibleBloodEffects(LivingEntity entity) {
-        entity.addEffect(new MobEffectInstance(HaemaContent.MobEffects.INCOMPATIBLE_BLOOD, 600));
+        entity.addEffect(new MobEffectInstance(HaemaContent.ContentMobEffects.INCOMPATIBLE_BLOOD, 600));
     }
 
     private InjectionResult tryInject(LivingEntity entity) {
@@ -59,7 +59,7 @@ public class InjectorItem extends Item {
         }
 
         if (component.isVampire()) {
-            component.addBlood(this.quality.multiplier * BloodApi.dropletsToBloodUnits(HaemaContent.Config.INJECTOR_CAPACITY_DROPLETS));
+            component.addBlood(this.quality.multiplier * BloodApi.dropletsToBloodUnits(HaemaContent.ContentConstants.INJECTOR_CAPACITY_DROPLETS));
             return InjectionResult.INJECTED;
         }
 
@@ -68,7 +68,7 @@ public class InjectorItem extends Item {
         }
 
         var source = entity.getLevel().registryAccess().registry(VampirismSource.REGISTRY_KEY)
-                .flatMap(r -> r.getOptional(HaemaContent.VampirismSources.BLOOD_INJECTOR));
+                .flatMap(r -> r.getOptional(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR));
         if (source.isEmpty()) {
             return InjectionResult.NOTHING;
         }

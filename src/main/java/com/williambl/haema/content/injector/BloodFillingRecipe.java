@@ -148,7 +148,7 @@ public class BloodFillingRecipe extends CustomRecipe {
     // why can't they use a codec for the JSON stuff :(
     public static class Builder extends CraftingRecipeBuilder {
         final RecipeSerializer<?> serializer;
-        long amountNeeded = HaemaContent.Config.INJECTOR_CAPACITY_DROPLETS;
+        long amountNeeded = HaemaContent.ContentConstants.INJECTOR_CAPACITY_DROPLETS;
         Ingredient empty = Ingredient.EMPTY;
 
         public Builder(RecipeSerializer<?> recipeSerializer) {
@@ -156,7 +156,7 @@ public class BloodFillingRecipe extends CustomRecipe {
         }
 
         public static Builder create() {
-            return new Builder(HaemaContent.Recipes.BLOOD_FILLING_SERIALIZER);
+            return new Builder(HaemaContent.ContentRecipes.BLOOD_FILLING_SERIALIZER);
         }
 
         public Builder amountNeeded(long amountNeeded) {
