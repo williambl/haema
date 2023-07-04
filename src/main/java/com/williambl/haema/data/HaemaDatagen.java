@@ -20,6 +20,7 @@ import com.williambl.haema.content.blood.BloodBottleItem;
 import com.williambl.haema.content.injector.BloodFillingRecipe;
 import com.williambl.haema.content.injector.InjectorItem;
 import com.williambl.haema.hunters.HaemaHunters;
+import com.williambl.haema.hunters.VampireHunter;
 import com.williambl.haema.hunters.VampireHunterContractItem;
 import com.williambl.haema.ritual.HaemaRituals;
 import com.williambl.haema.ritual.module.ParticlesToCentreAraeModule;
@@ -62,16 +63,29 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
+import net.minecraft.world.level.storage.loot.functions.EnchantRandomlyFunction;
+import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static com.williambl.haema.Haema.id;
@@ -89,6 +103,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         pack.addProvider(HaemaLangProvider::new);
         pack.addProvider(HaemaModelProvider::new);
         pack.addProvider(HaemaRecipeProvider::new);
+        pack.addProvider(HaemaBarterLootProvider::new);
     }
 
     @Override
@@ -659,6 +674,37 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             BloodFillingRecipe.Builder.create()
                     .empty(Ingredient.of(Items.GLASS_BOTTLE))
                     .save(exporter, id("bottle_filling"));
+        }
+    }
+
+    public static class HaemaBarterLootProvider extends SimpleFabricLootTableProvider {
+
+        public HaemaBarterLootProvider(FabricDataOutput output) {
+            super(output, LootContextParamSets.PIGLIN_BARTER);
+        }
+
+        @Override
+        public void accept(BiConsumer<ResourceLocation, LootTable.Builder> out) {
+            out.accept(VampireHunter.PAYMENT_LOOT_TABLE, new LootTable.Builder().withPool(
+                    new LootPool.Builder().add(
+                            createEntry(Items.GOLD_INGOT, 6, 20, 30)).add(
+                            createEntry(Items.EMERALD, 30, 40, 40)).add(
+                            createEntry(Items.CROSSBOW, 20, Enchantments.QUICK_CHARGE, Enchantments.PIERCING)).add(
+                            createEntry(Items.SPECTRAL_ARROW, 9, 20, 20)).add(
+                            createEntry(Items.DIAMOND, 5, 10, 5))));
+        }
+
+        private static LootPoolEntryContainer.Builder<?> createEntry(ItemLike item, int minCount, int maxCount, int weight) {
+            return LootItem.lootTableItem(item).apply(SetItemCountFunction.setCount(UniformGenerator.between(minCount, maxCount))).setWeight(weight);
+        }
+
+
+        private static LootPoolEntryContainer.Builder<?> createEntry(ItemLike item, int weight, Enchantment... enchantments) {
+            var enchantmentBuilder = new EnchantRandomlyFunction.Builder();
+            for (var enchant : enchantments) {
+                enchantmentBuilder = enchantmentBuilder.withEnchantment(enchant);
+            }
+            return LootItem.lootTableItem(item).apply(enchantmentBuilder).setWeight(weight);
         }
     }
 }

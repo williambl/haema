@@ -11,15 +11,18 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.behavior.InteractWith;
 import net.minecraft.world.entity.ai.behavior.LookAtTargetSink;
 import net.minecraft.world.entity.ai.behavior.SetWalkTargetFromAttackTargetIfTargetOutOfReach;
 import net.minecraft.world.entity.monster.CrossbowAttackMob;
@@ -43,6 +46,7 @@ import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.BowAttack;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.FloatToSurfaceOfFluid;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
@@ -64,6 +68,7 @@ import java.util.function.Predicate;
 import static com.williambl.haema.Haema.id;
 
 public class VampireHunter extends PatrollingMonster implements CrossbowAttackMob, SmartBrainOwner<VampireHunter> {
+    public static final ResourceLocation PAYMENT_LOOT_TABLE = id("gameplay/contract_payment");
     public static final String RIGHTEOUS_BANNER_TRANSLATION_KEY = Util.makeDescriptionId("block", id("righteous_banner"));
     private static final EntityDataAccessor<Boolean> CHARGING = SynchedEntityData.defineId(VampireHunter.class, EntityDataSerializers.BOOLEAN);
 
@@ -72,6 +77,8 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
     protected VampireHunter(EntityType<? extends PatrollingMonster> entityType, Level level) {
         super(entityType, level);
     }
+
+    ///setup/spawning stuff
 
     public static AttributeSupplier.Builder createHunterAttributes() {
         return createMobAttributes()
@@ -154,12 +161,21 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
         this.inventory.fromTag(compoundTag.getList("Inventory", Tag.TAG_COMPOUND));
     }
 
+    // inventory stuff
+
     @Override
     protected void customServerAiStep() {
        this.tickBrain(this);
-        if (this.isHolding(stack -> !(stack.getItem() instanceof TieredItem) && !(stack.getItem() instanceof CrossbowItem) && !(stack.isEmpty()))) {
-            this.moveHandStackToInventory();
-        }
+    }
+
+    @Override
+    public boolean canPickUpLoot() {
+        return true;
+    }
+
+    @Override
+    public boolean wantsToPickUp(ItemStack itemStack) {
+        return itemStack.getItem() instanceof VampireHunterContractItem;
     }
 
     @Override
@@ -176,18 +192,18 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
         }
     }
 
-    private boolean moveHandStackToInventory() {
-        return this.moveHandStackToInventory(false);
+    private boolean moveHandStackToInventory(InteractionHand hand) {
+        return this.moveHandStackToInventory(hand, false);
     }
 
-    private boolean moveHandStackToInventory(boolean simulate) {
-        if (this.getMainHandItem().isEmpty()) {
+    private boolean moveHandStackToInventory(InteractionHand hand, boolean simulate) {
+        if (this.getItemInHand(hand).isEmpty()) {
             return true;
         }
-        if (this.inventory.canAddItem(this.getMainHandItem())) {
+        if (this.inventory.canAddItem(this.getItemInHand(hand))) {
             if (!simulate) {
-                this.inventory.addItem(this.getMainHandItem());
-                this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+                this.inventory.addItem(this.getItemInHand(hand));
+                this.setItemSlot(hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND, ItemStack.EMPTY);
             }
             return true;
         }
@@ -206,7 +222,7 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
             for (int i = 0; i < this.inventory.getContainerSize(); i++) {
                 if (stackToHold.test(this.inventory.getItem(i)))  {
                     var removed = this.inventory.removeItem(i, this.inventory.getMaxStackSize());
-                    if (this.moveHandStackToInventory(simulate)) {
+                    if (this.moveHandStackToInventory(InteractionHand.MAIN_HAND, simulate)) {
                         if (simulate) {
                             this.inventory.addItem(removed);
                         } else {
@@ -221,6 +237,16 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
             }
 
             return false;
+        }
+    }
+
+    private void stopHolding(Predicate<ItemStack> stackToHold) {
+        if (stackToHold.test(this.getMainHandItem())) {
+            this.moveHandStackToInventory(InteractionHand.MAIN_HAND);
+        }
+
+        if (stackToHold.test(this.getOffhandItem())) {
+            this.moveHandStackToInventory(InteractionHand.OFF_HAND);
         }
     }
 
@@ -239,6 +265,8 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
     public boolean isHoldingChargedCrossbow() {
         return this.isHolding(i -> this.isCrossbow(i) && CrossbowItem.isCharged(i));
     }
+
+    // crossbow stuff
 
     public boolean isCharging() {
         return this.entityData.get(CHARGING);
@@ -268,6 +296,8 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
         CrossbowItem.setCharged(this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, Items.CROSSBOW)), false);
     }
 
+    // ai stuff
+
     @Override
     public boolean isAlliedTo(Entity other) {
         //TODO tag for friendly entity types ?
@@ -284,14 +314,14 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
         return ObjectArrayList.of(
                 new NearbyPlayersSensor<>(),
                 new NearbyLivingEntitySensor<VampireHunter>()
-                        .setPredicate((target, entity) -> target instanceof VampireHunter || target instanceof AbstractVillager || VampireApi.isVampire(target)));
+                        .setPredicate((target, entity) -> target != entity && (target instanceof VampireHunter || target instanceof AbstractVillager || VampireApi.isVampire(target))));
     }
 
     @Override
     public BrainActivityGroup<VampireHunter> getCoreTasks() {
         return BrainActivityGroup.coreTasks(
                 new FloatToSurfaceOfFluid<>(),
-                new LookAtTargetSink(40, 300),
+                new LookAtTarget<>(),
                 new MoveToWalkTarget<>());
     }
 
@@ -299,10 +329,12 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
     public BrainActivityGroup<VampireHunter> getIdleTasks() {
         return BrainActivityGroup.idleTasks(
                 new FirstApplicableBehaviour<>(
-                    new TargetOrRetaliate<>().attackablePredicate(VampireApi::isVampire),
-                    new SetPlayerLookTarget<>(),
-                    new SetEntityLookTarget<>().predicate(e -> e instanceof VampireHunter || e instanceof AbstractVillager),
-                    new SetRandomLookTarget<>()),
+                        new TargetOrRetaliate<>().attackablePredicate(VampireApi::isVampire),
+                        new StopHoldingWeapon<>(i -> this.isMeleeWeapon(i) || this.isCrossbow(i), this::stopHolding),
+                        new GiveContractRewards<>(20, PAYMENT_LOOT_TABLE),
+                        new SetPlayerLookTarget<>(),
+                        new SetEntityLookTarget<>().predicate(e -> e instanceof VampireHunter || e instanceof AbstractVillager),
+                        new SetRandomLookTarget<>()),
                 new Idle<>().runFor(e -> e.getRandom().nextInt(30, 60)));
     }
 
