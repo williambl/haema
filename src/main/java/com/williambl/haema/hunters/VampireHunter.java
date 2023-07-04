@@ -1,6 +1,5 @@
 package com.williambl.haema.hunters;
 
-import com.sun.jna.platform.win32.WinDef;
 import com.williambl.haema.api.vampire.VampireApi;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.ChatFormatting;
@@ -22,9 +21,6 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.behavior.InteractWith;
-import net.minecraft.world.entity.ai.behavior.LookAtTargetSink;
-import net.minecraft.world.entity.ai.behavior.SetWalkTargetFromAttackTargetIfTargetOutOfReach;
 import net.minecraft.world.entity.monster.CrossbowAttackMob;
 import net.minecraft.world.entity.monster.PatrollingMonster;
 import net.minecraft.world.entity.npc.AbstractVillager;
@@ -44,12 +40,14 @@ import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.BowAttack;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.FloatToSurfaceOfFluid;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.InvalidateAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetPlayerLookTarget;
@@ -332,9 +330,13 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
                         new TargetOrRetaliate<>().attackablePredicate(VampireApi::isVampire),
                         new StopHoldingWeapon<>(i -> this.isMeleeWeapon(i) || this.isCrossbow(i), this::stopHolding),
                         new GiveContractRewards<>(20, PAYMENT_LOOT_TABLE),
-                        new SetPlayerLookTarget<>(),
-                        new SetEntityLookTarget<>().predicate(e -> e instanceof VampireHunter || e instanceof AbstractVillager),
-                        new SetRandomLookTarget<>()),
+                        //TODO follow patrol leader
+                        new OneRandomBehaviour<>(
+                                new SetPlayerLookTarget<>(),
+                                new SetRandomLookTarget<>(),
+                                new InteractWithOthers<>(e -> e instanceof AbstractVillager || e instanceof VampireHunter).speedModifier(0.5f),
+                                new SetRandomWalkTarget<>().speedModifier(0.5f))
+                                .cooldownFor(l -> l.getRandom().nextInt(40, 600))),
                 new Idle<>().runFor(e -> e.getRandom().nextInt(30, 60)));
     }
 
