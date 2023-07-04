@@ -145,6 +145,13 @@ repositories {
         }
     }
     maven {
+        name = "SmartBrainLib (SBL) Maven Repo"
+        url = "https://dl.cloudsmith.io/public/tslat/sbl/maven/"
+        content {
+            includeGroup "net.tslat.smartbrainlib"
+        }
+    }
+    maven {
         name = "CurseMaven"
         url "https://www.cursemaven.com"
         content {
@@ -204,7 +211,16 @@ dependencies {
         exclude group: "net.fabricmc.fabric-api"
     }
 
+    // More codecs
     modImplementation include("xyz.nucleoid:more-codecs:${project.morecodecs_version}") {
+        exclude group: "net.fabricmc.fabric-api"
+    }
+
+    // Smart Brain Lib
+    modImplementation include("net.tslat.smartbrainlib:SmartBrainLib-fabric-${project.minecraft_version}:${project.sbl_version}") {
+        exclude group: "net.fabricmc.fabric-api"
+    }
+    modImplementation include("net.tslat.smartbrainlib:SmartBrainLib-common-${project.minecraft_version}:${project.sbl_version}") {
         exclude group: "net.fabricmc.fabric-api"
     }
 }

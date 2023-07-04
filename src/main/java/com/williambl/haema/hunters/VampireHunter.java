@@ -1,6 +1,8 @@
 package com.williambl.haema.hunters;
 
-import com.williambl.haema.api.vampire.VampireComponent;
+import com.sun.jna.platform.win32.WinDef;
+import com.williambl.haema.api.vampire.VampireApi;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
@@ -15,15 +17,13 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.Brain;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.behavior.LookAtTargetSink;
 import net.minecraft.world.entity.monster.CrossbowAttackMob;
 import net.minecraft.world.entity.monster.PatrollingMonster;
 import net.minecraft.world.entity.npc.AbstractVillager;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.*;
@@ -35,13 +35,29 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.block.entity.BannerPatterns;
+import net.tslat.smartbrainlib.api.SmartBrainOwner;
+import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
+import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
+import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.BowAttack;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.target.InvalidateAttackTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetPlayerLookTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetRandomLookTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.target.TargetOrRetaliate;
+import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
+import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
+import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import static com.williambl.haema.Haema.id;
 
-public class VampireHunter extends PatrollingMonster implements CrossbowAttackMob {
+public class VampireHunter extends PatrollingMonster implements CrossbowAttackMob, SmartBrainOwner<VampireHunter> {
     public static final String RIGHTEOUS_BANNER_TRANSLATION_KEY = Util.makeDescriptionId("block", id("righteous_banner"));
     private static final EntityDataAccessor<Boolean> CHARGING = SynchedEntityData.defineId(VampireHunter.class, EntityDataSerializers.BOOLEAN);
 
@@ -51,17 +67,16 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
         super(entityType, level);
     }
 
+    public static AttributeSupplier.Builder createHunterAttributes() {
+        return createMobAttributes()
+                .add(Attributes.MOVEMENT_SPEED, 0.35)
+                .add(Attributes.MAX_HEALTH, 20.0)
+                .add(Attributes.ATTACK_DAMAGE, 5.0)
+                .add(Attributes.FOLLOW_RANGE, 64.0);
+    }
+
     @Override
     protected void registerGoals() {
-        super.registerGoals();
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        //this.goalSelector.addGoal(1, );
-        this.goalSelector.addGoal(8, new RandomStrollGoal(this, 0.6));
-        this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 15, 1));
-        this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 15));
-
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this, AbstractVillager.class));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, l -> VampireComponent.KEY.maybeGet(l).filter(VampireComponent::isVampire).isPresent()));
     }
 
     @Override
@@ -126,6 +141,7 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
 
     @Override
     protected void customServerAiStep() {
+        this.tickBrain(this);
         if (this.isHolding(stack -> !(stack.getItem() instanceof TieredItem) && !(stack.getItem() instanceof CrossbowItem) && !(stack.isEmpty()))) {
             this.moveHandStackToInventory();
         }
@@ -145,11 +161,42 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
         }
     }
 
-    private void moveHandStackToInventory() {
+    private boolean moveHandStackToInventory() {
+        if (this.getMainHandItem().isEmpty()) {
+            return true;
+        }
         if (this.inventory.canAddItem(this.getMainHandItem())) {
             this.inventory.addItem(this.getMainHandItem());
             this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+            return true;
         }
+
+        return false;
+    }
+
+    private boolean startHolding(Predicate<ItemStack> stackToHold) {
+        if (stackToHold.test(this.getMainHandItem())) {
+            return true;
+        } else {
+            for (int i = 0; i < this.inventory.getContainerSize(); i++) {
+                if (stackToHold.test(this.inventory.getItem(i)))  {
+                    var removed = this.inventory.removeItem(i, this.inventory.getMaxStackSize());
+                    if (this.moveHandStackToInventory()) {
+                        this.setItemSlot(EquipmentSlot.MAINHAND, removed);
+                        return true;
+                    } else {
+                        this.inventory.addItem(removed);
+                        return false;
+                    }
+                }
+            }
+
+            return false;
+        }
+    }
+
+    public boolean isCharging() {
+        return this.entityData.get(CHARGING);
     }
 
     @Override
@@ -179,5 +226,42 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
     public boolean isAlliedTo(Entity other) {
         //TODO tag for friendly entity types ?
         return super.isAlliedTo(other) || ((other instanceof VampireHunter || other instanceof AbstractVillager) && this.getTeam() == null && other.getTeam() == null);
+    }
+
+    @Override
+    protected Brain.Provider<?> brainProvider() {
+        return new SmartBrainProvider<>(this);
+    }
+
+    @Override
+    public List<ExtendedSensor<VampireHunter>> getSensors() {
+        return ObjectArrayList.of(
+                new NearbyPlayersSensor<>(),
+                new NearbyLivingEntitySensor<VampireHunter>()
+                        .setPredicate((target, entity) -> target instanceof VampireHunter || target instanceof AbstractVillager || VampireApi.isVampire(target)));
+    }
+
+    @Override
+    public BrainActivityGroup<VampireHunter> getCoreTasks() {
+        return BrainActivityGroup.coreTasks(
+                new LookAtTargetSink(40, 300),
+                new MoveToWalkTarget<>());
+    }
+
+    @Override
+    public BrainActivityGroup<VampireHunter> getIdleTasks() {
+        return BrainActivityGroup.idleTasks(
+                new FirstApplicableBehaviour<>(
+                    new TargetOrRetaliate<>().attackablePredicate(VampireApi::isVampire),
+                    new SetPlayerLookTarget<>(),
+                    new SetEntityLookTarget<>().predicate(e -> e instanceof VampireHunter || e instanceof AbstractVillager),
+                    new SetRandomLookTarget<>()),
+                new Idle<>().runFor(e -> e.getRandom().nextInt(30, 60)));
+    }
+
+    @Override
+    public BrainActivityGroup<VampireHunter> getFightTasks() {
+        return BrainActivityGroup.fightTasks(
+                new InvalidateAttackTarget<>());
     }
 }
