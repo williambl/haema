@@ -21,6 +21,7 @@ import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.behavior.LookAtTargetSink;
+import net.minecraft.world.entity.ai.behavior.SetWalkTargetFromAttackTargetIfTargetOutOfReach;
 import net.minecraft.world.entity.monster.CrossbowAttackMob;
 import net.minecraft.world.entity.monster.PatrollingMonster;
 import net.minecraft.world.entity.npc.AbstractVillager;
@@ -33,15 +34,19 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.block.entity.BannerPatterns;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.BowAttack;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.move.FloatToSurfaceOfFluid;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.InvalidateAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetPlayerLookTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetRandomLookTarget;
@@ -49,6 +54,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.target.TargetOrRetaliat
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -85,6 +91,14 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
         this.entityData.define(CHARGING, false);
     }
 
+    @Nullable
+    @Override
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverLevelAccessor, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData, @Nullable CompoundTag compoundTag) {
+        var res = super.finalizeSpawn(serverLevelAccessor, difficultyInstance, mobSpawnType, spawnGroupData, compoundTag);
+        this.populateDefaultEquipmentSlots(this.random, difficultyInstance);
+        return res;
+    }
+
     @Override
     protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance difficultyInstance) {
         //todo configure this
@@ -105,6 +119,7 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
             banner.setHoverName(Component.translatable(RIGHTEOUS_BANNER_TRANSLATION_KEY).withStyle(ChatFormatting.GOLD));
             this.setItemSlot(EquipmentSlot.HEAD, banner);
         }
+        this.enchantSpawnedWeapon(randomSource, difficultyInstance.getSpecialMultiplier());
     }
 
     @Override
@@ -141,7 +156,7 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
 
     @Override
     protected void customServerAiStep() {
-        this.tickBrain(this);
+       this.tickBrain(this);
         if (this.isHolding(stack -> !(stack.getItem() instanceof TieredItem) && !(stack.getItem() instanceof CrossbowItem) && !(stack.isEmpty()))) {
             this.moveHandStackToInventory();
         }
@@ -162,12 +177,18 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
     }
 
     private boolean moveHandStackToInventory() {
+        return this.moveHandStackToInventory(false);
+    }
+
+    private boolean moveHandStackToInventory(boolean simulate) {
         if (this.getMainHandItem().isEmpty()) {
             return true;
         }
         if (this.inventory.canAddItem(this.getMainHandItem())) {
-            this.inventory.addItem(this.getMainHandItem());
-            this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+            if (!simulate) {
+                this.inventory.addItem(this.getMainHandItem());
+                this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+            }
             return true;
         }
 
@@ -175,14 +196,22 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
     }
 
     private boolean startHolding(Predicate<ItemStack> stackToHold) {
+        return this.startHolding(stackToHold, false);
+    }
+
+    private boolean startHolding(Predicate<ItemStack> stackToHold, boolean simulate) {
         if (stackToHold.test(this.getMainHandItem())) {
             return true;
         } else {
             for (int i = 0; i < this.inventory.getContainerSize(); i++) {
                 if (stackToHold.test(this.inventory.getItem(i)))  {
                     var removed = this.inventory.removeItem(i, this.inventory.getMaxStackSize());
-                    if (this.moveHandStackToInventory()) {
-                        this.setItemSlot(EquipmentSlot.MAINHAND, removed);
+                    if (this.moveHandStackToInventory(simulate)) {
+                        if (simulate) {
+                            this.inventory.addItem(removed);
+                        } else {
+                            this.setItemSlot(EquipmentSlot.MAINHAND, removed);
+                        }
                         return true;
                     } else {
                         this.inventory.addItem(removed);
@@ -193,6 +222,22 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
 
             return false;
         }
+    }
+
+    private boolean isMeleeWeapon(ItemStack stack) {
+        return stack.getItem() instanceof SwordItem;
+    }
+
+    private boolean isCrossbow(ItemStack stack) {
+        return stack.getItem() instanceof CrossbowItem;
+    }
+
+    public boolean isHoldingCrossbow() {
+        return this.isHolding(this::isCrossbow);
+    }
+
+    public boolean isHoldingChargedCrossbow() {
+        return this.isHolding(i -> this.isCrossbow(i) && CrossbowItem.isCharged(i));
     }
 
     public boolean isCharging() {
@@ -220,6 +265,7 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
     @Override
     public void performRangedAttack(LivingEntity livingEntity, float f) {
         this.performCrossbowAttack(this, 1.6f);
+        CrossbowItem.setCharged(this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, Items.CROSSBOW)), false);
     }
 
     @Override
@@ -244,6 +290,7 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
     @Override
     public BrainActivityGroup<VampireHunter> getCoreTasks() {
         return BrainActivityGroup.coreTasks(
+                new FloatToSurfaceOfFluid<>(),
                 new LookAtTargetSink(40, 300),
                 new MoveToWalkTarget<>());
     }
@@ -262,6 +309,17 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
     @Override
     public BrainActivityGroup<VampireHunter> getFightTasks() {
         return BrainActivityGroup.fightTasks(
-                new InvalidateAttackTarget<>());
+                new InvalidateAttackTarget<>(),
+                new SetWalkTargetToAttackTarget<>(),
+                new FirstApplicableBehaviour<>(
+                        new SwitchWeapons<>(
+                                (e, target) -> e.distanceToSqr(target) >= 25 && target.getHealth() > 4 ? this::isCrossbow : this::isMeleeWeapon,
+                                this::startHolding,
+                                p -> this.startHolding(p, true)
+                        ),
+                        new ChargeCrossbow<>(VampireHunter::setChargingCrossbow),
+                        new BowAttack<VampireHunter>(10).attackRadius(32f).startCondition(VampireHunter::isHoldingChargedCrossbow),
+                        new AnimatableMeleeAttack<VampireHunter>(0).startCondition(e -> !e.isHoldingCrossbow())
+                ));
     }
 }
