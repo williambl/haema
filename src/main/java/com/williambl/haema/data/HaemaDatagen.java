@@ -19,6 +19,8 @@ import com.williambl.haema.content.HaemaContent;
 import com.williambl.haema.content.blood.BloodBottleItem;
 import com.williambl.haema.content.injector.BloodFillingRecipe;
 import com.williambl.haema.content.injector.InjectorItem;
+import com.williambl.haema.hunters.HaemaHunters;
+import com.williambl.haema.hunters.VampireHunterContractItem;
 import com.williambl.haema.ritual.HaemaRituals;
 import com.williambl.haema.ritual.module.ParticlesToCentreAraeModule;
 import com.williambl.haema.ritual.ritual.RemoveUsedItemsRitualAction;
@@ -46,10 +48,7 @@ import net.minecraft.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.data.models.blockstates.PropertyDispatch;
 import net.minecraft.data.models.blockstates.Variant;
 import net.minecraft.data.models.blockstates.VariantProperties;
-import net.minecraft.data.models.model.ModelLocationUtils;
-import net.minecraft.data.models.model.ModelTemplate;
-import net.minecraft.data.models.model.ModelTemplates;
-import net.minecraft.data.models.model.TextureMapping;
+import net.minecraft.data.models.model.*;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -153,10 +152,15 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             for (var item : HaemaContent.ContentItems.BOTTLES.values()) {
                 this.generateFlatItem(item, id("item/blood_bottle"), ModelTemplates.FLAT_ITEM, models);
             }
+            this.generateOverlayedItem(HaemaHunters.HunterItems.VAMPIRE_HUNTER_CONTRACT, new ResourceLocation("item/mojang_banner_pattern"), id("item/contract_overlay"), ModelTemplates.TWO_LAYERED_ITEM, models);
         }
 
         public final void generateFlatItem(Item item, ResourceLocation texture, ModelTemplate modelTemplate, ItemModelGenerators models) {
             modelTemplate.create(ModelLocationUtils.getModelLocation(item), TextureMapping.layer0(texture), models.output);
+        }
+
+        public final void generateOverlayedItem(Item item, ResourceLocation baseTexture, ResourceLocation texture, ModelTemplate modelTemplate, ItemModelGenerators models) {
+            modelTemplate.create(ModelLocationUtils.getModelLocation(item), TextureMapping.layer0(baseTexture).put(TextureSlot.LAYER1, texture), models.output);
         }
     }
 
@@ -634,6 +638,11 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             for (var quality : BloodQuality.values()) {
                 translations.add(quality.translationKey, quality.getSerializedName().substring(0, 1).toUpperCase(Locale.ROOT) + quality.getSerializedName().substring(1));
             }
+            translations.add(HaemaHunters.HunterItems.VAMPIRE_HUNTER_CONTRACT, "Vampire Hunter Contract");
+            translations.add(VampireHunterContractItem.FULFILLED_TRANSLATION_KEY, "Fulfilled");
+            translations.add(VampireHunterContractItem.UNFULFILLED_TRANSLATION_KEY, "Unfulfilled");
+            translations.add(VampireHunterContractItem.NO_TARGET_TRANSLATION_KEY, "Kill a vampire.");
+            translations.add(VampireHunterContractItem.TARGET_TRANSLATION_KEY, "Kill the vampire %1$s.");
         }
     }
 
