@@ -1,5 +1,6 @@
 package com.williambl.haema.hunters;
 
+import com.williambl.haema.Haema;
 import com.williambl.haema.api.vampire.VampireApi;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -84,6 +85,7 @@ public class VampireHunterSpawner implements CustomSpawner {
             mutable.move(random.nextIntBetweenInclusive(-5, 5), 0, random.nextIntBetweenInclusive(-5, 5));
         }
 
+        Haema.LOGGER.info("Spawned {} at {}", amountSpawned, mutable.toShortString());
         return amountSpawned;
     }
 

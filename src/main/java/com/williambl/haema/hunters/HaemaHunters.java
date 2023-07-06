@@ -3,18 +3,21 @@ package com.williambl.haema.hunters;
 import com.williambl.haema.api.vampire.VampireApi;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.fabric.impl.object.builder.FabricEntityType;
 import net.minecraft.core.Registry;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import org.apache.logging.log4j.core.jmx.Server;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -28,7 +31,18 @@ public class HaemaHunters {
         HunterEntityTypes.init();
         HunterItems.init();
         HunterMemoryModuleTypes.init();
+
+        var spawner = new VampireHunterSpawner();
+        ServerTickEvents.END_SERVER_TICK.register(server ->
+                server.getAllLevels().forEach(level ->
+                        spawner.tick(
+                                level,
+                                server.getWorldData().getDifficulty() != Difficulty.PEACEFUL,
+                                server.isSpawningAnimals()
+                        ))
+        );
     }
+
 
     public static class HunterEntityTypes {
         public static final EntityType<VampireHunter> VAMPIRE_HUNTER = Registry.register(BuiltInRegistries.ENTITY_TYPE, id("vampire_hunter"), FabricEntityTypeBuilder.createMob().spawnGroup(MobCategory.CREATURE).entityFactory(VampireHunter::new).dimensions(EntityDimensions.fixed(0.6f, 1.95f)).trackRangeBlocks(128).trackedUpdateRate(3).spawnableFarFromPlayer().build());
