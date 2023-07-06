@@ -14,10 +14,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.Difficulty;
-import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.*;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.Brain;
@@ -27,6 +24,7 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.monster.CrossbowAttackMob;
 import net.minecraft.world.entity.monster.PatrollingMonster;
 import net.minecraft.world.entity.npc.AbstractVillager;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.*;
@@ -77,6 +75,7 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
     private static final EntityDataAccessor<Boolean> CHARGING = SynchedEntityData.defineId(VampireHunter.class, EntityDataSerializers.BOOLEAN);
 
     private final SimpleContainer inventory = new SimpleContainer(5);
+    private boolean canGiveContract = true;
 
     protected VampireHunter(EntityType<? extends PatrollingMonster> entityType, Level level) {
         super(entityType, level);
@@ -108,6 +107,9 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
         var res = super.finalizeSpawn(serverLevelAccessor, difficultyInstance, mobSpawnType, spawnGroupData, compoundTag);
         this.populateDefaultEquipmentSlots(this.random, difficultyInstance);
         this.initMemories(spawnGroupData instanceof VampireHunterGroupData data ? data.leader() : null);
+        if (this.isPatrolLeader()) {
+            this.canGiveContract = true;
+        }
         return res;
     }
 
@@ -158,12 +160,14 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
         super.addAdditionalSaveData(compoundTag);
         var inv = this.inventory.createTag();
         compoundTag.put("Inventory", inv);
+        compoundTag.putBoolean("CanGiveContract", this.canGiveContract);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag compoundTag) {
         super.readAdditionalSaveData(compoundTag);
         this.inventory.fromTag(compoundTag.getList("Inventory", Tag.TAG_COMPOUND));
+        this.canGiveContract = compoundTag.getBoolean("CanGiveContract");
     }
 
     // inventory stuff
@@ -190,6 +194,24 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
         if (this.random.nextFloat() < 0.1) {
             this.spawnAtLocation(this.getMainHandItem());
         }
+    }
+
+    @Override
+    protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+        if (!this.getLevel().isClientSide() && this.getMainHandItem().isEmpty() && !VampireApi.isVampire(player)) {
+            var stack = player.getMainHandItem();
+            if (stack.getItem() instanceof VampireHunterContractItem && VampireHunterContractItem.isFulfilled(stack)) {
+                var taken = stack.split(1);
+                this.setItemSlot(EquipmentSlot.MAINHAND, taken);
+                return InteractionResult.SUCCESS;
+            } else if (this.canGiveContract) {
+                player.addItem(VampireHunterContractItem.create(this.getLevel()));
+                this.canGiveContract = false;
+                return InteractionResult.SUCCESS;
+            }
+        }
+
+        return InteractionResult.PASS;
     }
 
     private boolean moveHandStackToInventory(InteractionHand hand) {
