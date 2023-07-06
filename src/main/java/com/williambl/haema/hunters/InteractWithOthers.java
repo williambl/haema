@@ -16,13 +16,22 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class InteractWithOthers<E extends LivingEntity> extends ExtendedBehaviour<E> {
-    private final Predicate<LivingEntity> interactWithPredicate;
+    private Predicate<LivingEntity> interactWithPredicate;
     private float speedModifier = 1f;
     private int closeEnoughDistance = 2;
     private LivingEntity target = null;
 
     public InteractWithOthers(Predicate<LivingEntity> interactWithPredicate) {
         this.interactWithPredicate = interactWithPredicate;
+    }
+
+    public InteractWithOthers() {
+        this.interactWithPredicate = $ -> true;
+    }
+
+    public InteractWithOthers<E> interactIf(Predicate<LivingEntity> predicate) {
+        this.interactWithPredicate = predicate;
+        return this;
     }
 
     public InteractWithOthers<E> closeEnoughDistance(int closeEnoughDistance) {

@@ -4,6 +4,7 @@ import com.williambl.haema.api.vampire.VampireApi;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -21,6 +22,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.monster.CrossbowAttackMob;
 import net.minecraft.world.entity.monster.PatrollingMonster;
 import net.minecraft.world.entity.npc.AbstractVillager;
@@ -56,11 +58,13 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.target.TargetOrRetaliat
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
+import net.tslat.smartbrainlib.util.BrainUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 import static com.williambl.haema.Haema.id;
@@ -101,6 +105,7 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverLevelAccessor, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData, @Nullable CompoundTag compoundTag) {
         var res = super.finalizeSpawn(serverLevelAccessor, difficultyInstance, mobSpawnType, spawnGroupData, compoundTag);
         this.populateDefaultEquipmentSlots(this.random, difficultyInstance);
+        this.initMemories(spawnGroupData instanceof VampireHunterGroupData data ? data.leader() : null);
         return res;
     }
 
@@ -160,11 +165,6 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
     }
 
     // inventory stuff
-
-    @Override
-    protected void customServerAiStep() {
-       this.tickBrain(this);
-    }
 
     @Override
     public boolean canPickUpLoot() {
@@ -296,6 +296,17 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
 
     // ai stuff
 
+    protected void initMemories(@Nullable UUID leader) {
+        GlobalPos home = GlobalPos.of(this.getLevel().dimension(), this.blockPosition());
+        BrainUtils.setMemory(this, MemoryModuleType.HOME, home);
+        BrainUtils.setMemory(this, HaemaHunters.HunterMemoryModuleTypes.LEADER, leader);
+    }
+
+    @Override
+    protected void customServerAiStep() {
+        this.tickBrain(this);
+    }
+
     @Override
     public boolean isAlliedTo(Entity other) {
         //TODO tag for friendly entity types ?
@@ -327,10 +338,10 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
     public BrainActivityGroup<VampireHunter> getIdleTasks() {
         return BrainActivityGroup.idleTasks(
                 new FirstApplicableBehaviour<>(
-                        new TargetOrRetaliate<>().attackablePredicate(VampireApi::isVampire),
+                        new TargetOrRetaliate<>().attackablePredicate(VampireApi::isVampire).alertAlliesWhen(($, $$) -> true),
                         new StopHoldingWeapon<>(i -> this.isMeleeWeapon(i) || this.isCrossbow(i), this::stopHolding),
                         new GiveContractRewards<>(20, PAYMENT_LOOT_TABLE),
-                        //TODO follow patrol leader
+                        new GoToLeaderIfFar<>(this).closeEnoughDistance(15),
                         new OneRandomBehaviour<>(
                                 new SetPlayerLookTarget<>(),
                                 new SetRandomLookTarget<>(),
@@ -355,5 +366,8 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
                         new BowAttack<VampireHunter>(10).attackRadius(32f).startCondition(VampireHunter::isHoldingChargedCrossbow),
                         new AnimatableMeleeAttack<VampireHunter>(0).startCondition(e -> !e.isHoldingCrossbow())
                 ));
+    }
+
+    private record VampireHunterGroupData(@Nullable UUID leader) implements SpawnGroupData {
     }
 }

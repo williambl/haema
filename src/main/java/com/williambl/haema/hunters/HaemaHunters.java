@@ -7,16 +7,17 @@ import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRe
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.fabric.impl.object.builder.FabricEntityType;
 import net.minecraft.core.Registry;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 
 import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 import static com.williambl.haema.Haema.id;
@@ -25,6 +26,7 @@ public class HaemaHunters {
     public static void init() {
         HunterEntityTypes.init();
         HunterItems.init();
+        HunterMemoryModuleTypes.init();
     }
 
     public static class HunterEntityTypes {
@@ -50,5 +52,11 @@ public class HaemaHunters {
                 }
             });
         }
+    }
+
+    public static class HunterMemoryModuleTypes {
+        public static final MemoryModuleType<UUID> LEADER = Registry.register(BuiltInRegistries.MEMORY_MODULE_TYPE, id("leader"), new MemoryModuleType<>(Optional.of(UUIDUtil.CODEC)));
+
+        public static void init() {}
     }
 }
