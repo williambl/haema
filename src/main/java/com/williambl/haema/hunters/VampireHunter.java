@@ -383,6 +383,6 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
                         new AnimatableMeleeAttack<VampireHunter>(0).startCondition(e -> !e.isHoldingCrossbow())));
     }
 
-    private record VampireHunterGroupData(@Nullable UUID leader) implements SpawnGroupData {
+    public record VampireHunterGroupData(@Nullable UUID leader) implements SpawnGroupData {
     }
 }

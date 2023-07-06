@@ -15,6 +15,7 @@ import com.williambl.haema.api.vampire.VampireComponent;
 import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.api.vampire.ability.VampireAbilitiesComponent;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
+import com.williambl.haema.hunters.VampireHunterSpawner;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -73,10 +74,10 @@ public final class HaemaCommand {
                                 argument("targets", EntityArgument.entities()).executes(HaemaCommand::query))).then(
                         bloodTree()).then(
                         abilitiesTree()).then(
-                                literal("create_multiblock_pattern").then(
-                                        argument("corner1", BlockPosArgument.blockPos()).then(
-                                                argument("corner2", BlockPosArgument.blockPos()).executes(HaemaCommand::createMultiblockPattern)))
-                )
+                        literal("create_multiblock_pattern").then(
+                                argument("corner1", BlockPosArgument.blockPos()).then(
+                                        argument("corner2", BlockPosArgument.blockPos()).executes(HaemaCommand::createMultiblockPattern)))).then(
+                        hunterTree())
         );
     }
 
@@ -110,6 +111,14 @@ public final class HaemaCommand {
                         argument("ability", ResourceLocationArgument.id()).suggests(SUGGEST_ABILITIES).then(
                         argument("value", BoolArgumentType.bool()).executes(HaemaCommand::setAbility))))
         );
+        //@formatter:on
+    }
+
+    private static ArgumentBuilder<CommandSourceStack, ?> hunterTree() {
+        //@formatter:off
+        return literal("hunter").then(
+                literal("spawn_patrol").then(
+                        argument("position", BlockPosArgument.blockPos()).executes(HaemaCommand::spawnPatrol)));
         //@formatter:on
     }
 
@@ -460,6 +469,22 @@ public final class HaemaCommand {
         }
 
         return '?';
+    }
+
+
+    public static final String SPAWN_PATROL_SUCCESS = "command.haema.hunter.spawn_patrol.success";
+    public static final String SPAWN_PATROL_FAILURE = "command.haema.hunter.spawn_patrol.failure";
+
+    private static int spawnPatrol(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        BlockPos pos = BlockPosArgument.getLoadedBlockPos(ctx, "position");
+        int amountSpawned = VampireHunterSpawner.trySpawnNear(ctx.getSource().getLevel(), ctx.getSource().getLevel().getRandom(), pos);
+        if (amountSpawned > 0) {
+            ctx.getSource().sendSuccess(feedback(SPAWN_PATROL_SUCCESS, amountSpawned, pos), true);
+            return amountSpawned;
+        } else {
+            ctx.getSource().sendFailure(Component.translatable(SPAWN_PATROL_FAILURE, pos));
+            return 0;
+        }
     }
 
     private static MutableComponent feedback(String key, Object... params) {

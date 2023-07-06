@@ -631,6 +631,8 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             translations.add(HaemaCommand.ABILITY_ADDED, "Given %1$s ability %2$s");
             translations.add(HaemaCommand.ABILITY_REMOVED, "Removed ability %2$s from %1$s");
             translations.add(HaemaCommand.CREATE_MULTIBLOCK_PATTERN_TOO_MANY_BLOCKSTATES, "⚠ Too many blockstates to represent. Extra blockstates are represented as '?'");
+            translations.add(HaemaCommand.SPAWN_PATROL_SUCCESS, "Spawned a patrol of %1$s hunters at %2$s");
+            translations.add(HaemaCommand.SPAWN_PATROL_FAILURE, "Failed to spawn a patrol at %1$s");
             translations.add(Haema.TAB, "Haema");
             for (var block : HaemaContent.ContentBlocks.BLOOD_BLOCK.values()) {
                 translations.add(block, "%1$s Blood");
