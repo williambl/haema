@@ -12,6 +12,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
@@ -38,6 +39,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.block.entity.BannerPatterns;
+import net.minecraft.world.phys.Vec3;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
@@ -302,6 +304,20 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
         BrainUtils.setMemory(this, HaemaHunters.HunterMemoryModuleTypes.LEADER, leader);
     }
 
+    protected double sqrDistanceToHome(Vec3 pos) {
+        @Nullable GlobalPos home = BrainUtils.getMemory(this, MemoryModuleType.HOME);
+        return home == null ? -1 : pos.distanceToSqr(Vec3.atCenterOf(home.pos()));
+    }
+
+    protected double sqrDistanceToLeader(Vec3 pos) {
+        @Nullable UUID leaderUUID = BrainUtils.getMemory(this, HaemaHunters.HunterMemoryModuleTypes.LEADER);
+        if (leaderUUID == null || !(this.getLevel() instanceof ServerLevel sLevel)) {
+            return -1;
+        }
+        @Nullable Entity leader = sLevel.getEntity(leaderUUID);
+        return leader == null ? -1 : leader.distanceToSqr(pos);
+    }
+
     @Override
     protected void customServerAiStep() {
         this.tickBrain(this);
@@ -346,7 +362,7 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
                                 new SetPlayerLookTarget<>(),
                                 new SetRandomLookTarget<>(),
                                 new InteractWithOthers<>(e -> e instanceof AbstractVillager || e instanceof VampireHunter).speedModifier(0.5f),
-                                new SetRandomWalkTarget<>().speedModifier(0.5f))
+                                new SetRandomWalkTarget<VampireHunter>().speedModifier(0.5f).walkTargetPredicate((e, p) -> e.sqrDistanceToHome(p) < 4096 && e.sqrDistanceToLeader(p) < 400))
                                 .cooldownFor(l -> l.getRandom().nextInt(40, 600))),
                 new Idle<>().runFor(e -> e.getRandom().nextInt(30, 60)));
     }
@@ -364,8 +380,7 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
                         ),
                         new ChargeCrossbow<>(VampireHunter::setChargingCrossbow),
                         new BowAttack<VampireHunter>(10).attackRadius(32f).startCondition(VampireHunter::isHoldingChargedCrossbow),
-                        new AnimatableMeleeAttack<VampireHunter>(0).startCondition(e -> !e.isHoldingCrossbow())
-                ));
+                        new AnimatableMeleeAttack<VampireHunter>(0).startCondition(e -> !e.isHoldingCrossbow())));
     }
 
     private record VampireHunterGroupData(@Nullable UUID leader) implements SpawnGroupData {
