@@ -315,7 +315,7 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
 
     @Override
     protected Brain.Provider<?> brainProvider() {
-        return new SmartBrainProvider<>(this);
+        return new SmartBrainProvider<>(this, true, false);
     }
 
     @Override
@@ -341,7 +341,7 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
                         new TargetOrRetaliate<>().attackablePredicate(VampireApi::isVampire).alertAlliesWhen(($, $$) -> true),
                         new StopHoldingWeapon<>(i -> this.isMeleeWeapon(i) || this.isCrossbow(i), this::stopHolding),
                         new GiveContractRewards<>(20, PAYMENT_LOOT_TABLE),
-                        new GoToLeaderIfFar<>(this).closeEnoughDistance(15),
+                        new GoToLeaderIfFar<>(),
                         new OneRandomBehaviour<>(
                                 new SetPlayerLookTarget<>(),
                                 new SetRandomLookTarget<>(),
