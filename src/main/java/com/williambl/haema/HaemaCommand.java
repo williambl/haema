@@ -1,5 +1,6 @@
 package com.williambl.haema;
 
+import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
@@ -15,6 +16,7 @@ import com.williambl.haema.api.vampire.VampireComponent;
 import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.api.vampire.ability.VampireAbilitiesComponent;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
+import com.williambl.haema.hunters.VampireHunterContractItem;
 import com.williambl.haema.hunters.VampireHunterSpawner;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
@@ -22,6 +24,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
@@ -32,6 +35,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -118,7 +122,9 @@ public final class HaemaCommand {
         //@formatter:off
         return literal("hunter").then(
                 literal("spawn_patrol").then(
-                        argument("position", BlockPosArgument.blockPos()).executes(HaemaCommand::spawnPatrol)));
+                        argument("position", BlockPosArgument.blockPos()).executes(HaemaCommand::spawnPatrol))).then(
+                literal("create_targeted_contract").executes(HaemaCommand::createContractWithRandomTarget).then(
+                        argument("target", EntityArgument.entity()).executes(HaemaCommand::createContractWithTarget)));
         //@formatter:on
     }
 
@@ -485,6 +491,27 @@ public final class HaemaCommand {
             ctx.getSource().sendFailure(Component.translatable(SPAWN_PATROL_FAILURE, pos));
             return 0;
         }
+    }
+
+    public static final String CREATE_CONTRACT_SUCCESS = "command.haema.hunter.create_contract.success";
+    public static final String CREATE_CONTRACT_NO_TARGET = "command.haema.hunter.create_contract.no_target";
+
+    private static int createContract(CommandContext<CommandSourceStack> ctx, @Nullable Player target) throws CommandSyntaxException {
+        var stack = target == null
+                ? VampireHunterContractItem.createWithRandomTarget(ctx.getSource().getLevel())
+                : VampireHunterContractItem.createWithTarget(target);
+        ctx.getSource().getPlayerOrException().addItem(stack);
+        var actualTarget = VampireHunterContractItem.getContractTarget(stack);
+        ctx.getSource().sendSuccess(actualTarget.map(p -> feedback(CREATE_CONTRACT_SUCCESS, p.getName())).orElseGet(() -> warning(CREATE_CONTRACT_NO_TARGET)), false);
+        return actualTarget.isPresent() ? Command.SINGLE_SUCCESS : 2;
+    }
+
+    private static int createContractWithRandomTarget(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        return createContract(ctx, null);
+    }
+
+    private static int createContractWithTarget(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        return createContract(ctx, EntityArgument.getPlayer(ctx, "target"));
     }
 
     private static MutableComponent feedback(String key, Object... params) {

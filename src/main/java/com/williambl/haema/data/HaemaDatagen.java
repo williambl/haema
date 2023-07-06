@@ -633,6 +633,8 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             translations.add(HaemaCommand.CREATE_MULTIBLOCK_PATTERN_TOO_MANY_BLOCKSTATES, "⚠ Too many blockstates to represent. Extra blockstates are represented as '?'");
             translations.add(HaemaCommand.SPAWN_PATROL_SUCCESS, "Spawned a patrol of %1$s hunters at %2$s");
             translations.add(HaemaCommand.SPAWN_PATROL_FAILURE, "Failed to spawn a patrol at %1$s");
+            translations.add(HaemaCommand.CREATE_CONTRACT_SUCCESS, "Created a contract with a target of %1$s");
+            translations.add(HaemaCommand.CREATE_CONTRACT_NO_TARGET, "⚠ Created a contract, but no targets wera available");
             translations.add(Haema.TAB, "Haema");
             for (var block : HaemaContent.ContentBlocks.BLOOD_BLOCK.values()) {
                 translations.add(block, "%1$s Blood");

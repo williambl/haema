@@ -1,7 +1,9 @@
 package com.williambl.haema.hunters;
 
 import com.mojang.authlib.GameProfile;
+import com.williambl.haema.api.vampire.VampireApi;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
@@ -10,6 +12,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -48,6 +51,30 @@ public class VampireHunterContractItem extends Item {
     @Override
     public boolean isFoil(ItemStack itemStack) {
         return super.isFoil(itemStack) || isFulfilled(itemStack);
+    }
+
+    public static ItemStack create(Level level) {
+        if (level.getRandom().nextDouble() < 0.3) {
+            return createWithRandomTarget(level);
+        }
+        return HaemaHunters.HunterItems.VAMPIRE_HUNTER_CONTRACT.getDefaultInstance();
+    }
+
+    public static ItemStack createWithRandomTarget(Level level) {
+        var stack = HaemaHunters.HunterItems.VAMPIRE_HUNTER_CONTRACT.getDefaultInstance();
+        var targets = level.players().stream().filter(VampireApi::isVampire).toList();
+        if (targets.size() > 1) {
+            var target = targets.get(level.getRandom().nextInt());
+            setContractTarget(stack, target);
+        }
+
+        return stack;
+    }
+
+    public static ItemStack createWithTarget(Player target) {
+        var stack = HaemaHunters.HunterItems.VAMPIRE_HUNTER_CONTRACT.getDefaultInstance();
+        setContractTarget(stack, target);
+        return stack;
     }
 
     public static boolean isFulfilled(ItemStack stack) {
