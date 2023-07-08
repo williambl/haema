@@ -60,6 +60,16 @@ public record DashAbilityPower(DFunction<Double> cooldown, DFunction<Boolean> ca
         entity.teleportTo(target.x, target.y, target.z);
     }
 
+    public void dashWithTarget(LivingEntity entity, Vec3 target) {
+        if (!this.canDash().apply(DFContext.entity(entity))) {
+            return;
+        }
+
+        //TODO effects
+
+        entity.teleportTo(target.x, target.y, target.z);
+    }
+
     private @Nullable Vec3 raytraceForDash(LivingEntity entity) {
         var eyes = entity.getEyePosition(0f);
         var dir = entity.getLookAngle();

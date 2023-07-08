@@ -78,7 +78,7 @@ public class Vampirager extends Monster implements SmartBrainOwner<Vampirager> {
                 new AvoidSun<>(),
                 new EscapeSun<>().cooldownFor($ -> 20),
                 new LookAtTarget<>(),
-                new DashToTarget<>(),
+                new DashToWalkTarget<>(),
                 new MoveToWalkTarget<>());
     }
 
