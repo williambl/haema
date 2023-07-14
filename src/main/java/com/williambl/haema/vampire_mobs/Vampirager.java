@@ -104,7 +104,7 @@ public class Vampirager extends Monster implements SmartBrainOwner<Vampirager> {
                 new InvalidateAttackTarget<>(),
                 new SetWalkTargetToAttackTarget<>(),
                 new FirstApplicableBehaviour<>(
-                        new DrinkBloodFromAttackTarget<>(),
+                        new DrinkFromAttackTarget<>(),
                         new SpawnReinforcements<>(),
                         new AnimatableMeleeAttack<>(0).whenStarting(entity -> this.setAggressive(true)).whenStarting(entity -> this.setAggressive(false))));
     }
