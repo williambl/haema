@@ -74,11 +74,11 @@ public record DashAbilityPower(DFunction<Double> cooldown, DFunction<Boolean> ca
         var eyes = entity.getEyePosition(0f);
         var dir = entity.getLookAngle();
         var rayEnd = eyes.add(dir.x * 16, dir.y * 16, dir.z * 16);
-        var result = entity.level.clip(new ClipContext(eyes, rayEnd, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, entity));
+        var result = entity.level().clip(new ClipContext(eyes, rayEnd, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, entity));
         var dashPos = Vec3.atBottomCenterOf(result.getDirection() == Direction.DOWN ? result.getBlockPos().below(2) : result.getBlockPos().relative(result.getDirection()));
         var width = entity.getBbWidth();
         var height = entity.getBbHeight();
-        var freePos = entity.getLevel().findFreePosition(
+        var freePos = entity.level().findFreePosition(
                 entity,
                 Shapes.create(AABB.ofSize(dashPos, width, 0, width).expandTowards(0.0, 1.0, 0.0).inflate(1.0E-6)),
                 dashPos,

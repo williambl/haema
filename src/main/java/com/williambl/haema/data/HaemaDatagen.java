@@ -651,7 +651,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             translations.add(HaemaCommand.SPAWN_PATROL_FAILURE, "Failed to spawn a patrol at %1$s");
             translations.add(HaemaCommand.CREATE_CONTRACT_SUCCESS, "Created a contract with a target of %1$s");
             translations.add(HaemaCommand.CREATE_CONTRACT_NO_TARGET, "⚠ Created a contract, but no targets wera available");
-            translations.add(Haema.TAB, "Haema");
+            translations.add(Haema.TAB.key(), "Haema");
             for (var block : HaemaContent.ContentBlocks.BLOOD_BLOCK.values()) {
                 translations.add(block, "%1$s Blood");
             }
@@ -704,7 +704,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         }
 
         @Override
-        public void accept(BiConsumer<ResourceLocation, LootTable.Builder> out) {
+        public void generate(BiConsumer<ResourceLocation, LootTable.Builder> out) {
             out.accept(VampireHunter.PAYMENT_LOOT_TABLE, new LootTable.Builder().withPool(
                     new LootPool.Builder().add(
                             createEntry(Items.GOLD_INGOT, 6, 20, 30)).add(

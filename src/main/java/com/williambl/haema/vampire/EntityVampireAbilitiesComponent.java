@@ -62,7 +62,7 @@ public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponen
 
     @Override
     public void readFromNbt(CompoundTag tag) {
-        var registries = this.entity.level.registryAccess();
+        var registries = this.entity.level().registryAccess();
         var sourceRegistry = registries.registryOrThrow(VampireAbility.REGISTRY_KEY);
         this.abilities.clear();
         this.powers.clear();
@@ -86,7 +86,7 @@ public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponen
 
     @Override
     public void writeToNbt(CompoundTag tag) {
-        var registries = this.entity.level.registryAccess();
+        var registries = this.entity.level().registryAccess();
         var sourceRegistry = registries.registryOrThrow(VampireAbility.REGISTRY_KEY);
         var abilityKeys = this.abilities.stream()
                 .map(sourceRegistry::getResourceKey)

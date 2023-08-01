@@ -53,7 +53,7 @@ public class EntityVampireComponent implements VampireComponent {
         this.vampirismSource = source;
         var abilityComponent = VampireAbilitiesComponent.KEY.getNullable(this.entity);
         if (abilityComponent != null) {
-            var abilityRegistry = this.entity.level.registryAccess().registryOrThrow(VampireAbility.REGISTRY_KEY);
+            var abilityRegistry = this.entity.level().registryAccess().registryOrThrow(VampireAbility.REGISTRY_KEY);
             source.grantedAbilities().stream()
                     .map(abilityRegistry::get)
                     .filter(Objects::nonNull)
@@ -67,7 +67,7 @@ public class EntityVampireComponent implements VampireComponent {
 
     @Override
     public boolean tryCure(VampirismSource source) {
-        if (this.vampirismSource == null || !(this.vampirismSource.canBeCuredBy(this.entity.level.registryAccess(), source))) {
+        if (this.vampirismSource == null || !(this.vampirismSource.canBeCuredBy(this.entity.level().registryAccess(), source))) {
             return false;
         }
 
@@ -106,7 +106,7 @@ public class EntityVampireComponent implements VampireComponent {
 
     @Override
     public void readFromNbt(CompoundTag tag) {
-        var registries = this.entity.level.registryAccess();
+        var registries = this.entity.level().registryAccess();
         var sourceRegistry = registries.registryOrThrow(VampirismSource.REGISTRY_KEY);
         if (tag.contains(VAMPIRISM_SOURCE_KEY, Tag.TAG_STRING)) {
             String keyString = tag.getString(VAMPIRISM_SOURCE_KEY);
@@ -130,7 +130,7 @@ public class EntityVampireComponent implements VampireComponent {
 
     @Override
     public void writeToNbt(CompoundTag tag) {
-        var registries = this.entity.level.registryAccess();
+        var registries = this.entity.level().registryAccess();
         var sourceRegistry = registries.registryOrThrow(VampirismSource.REGISTRY_KEY);
         if (this.vampirismSource != null) {
             var resourceLocation = sourceRegistry.getKey(vampirismSource);

@@ -156,7 +156,7 @@ public final class HaemaCommand {
             }
 
             if (component.tryConvert(source)) {
-                ctx.getSource().sendSuccess(Component.translatable(CONVERT_SUCCESS, entity.getDisplayName()), true);
+                ctx.getSource().sendSuccess(() -> Component.translatable(CONVERT_SUCCESS, entity.getDisplayName()), true);
                 i++;
             } else {
                 ctx.getSource().sendFailure(Component.translatable(CONVERT_FAILURE, entity.getDisplayName()));
@@ -195,7 +195,7 @@ public final class HaemaCommand {
             }
 
             if (component.tryCure(source)) {
-                ctx.getSource().sendSuccess(Component.translatable(DECONVERT_SUCCESS, entity.getDisplayName()), true);
+                ctx.getSource().sendSuccess(() -> Component.translatable(DECONVERT_SUCCESS, entity.getDisplayName()), true);
                 i++;
             } else {
                 ctx.getSource().sendFailure(Component.translatable(DECONVERT_FAILURE, entity.getDisplayName()));
@@ -234,11 +234,11 @@ public final class HaemaCommand {
                     ? Component.empty()
                     : feedback(QUERY_VAMPIRISM_SOURCE, ability(sourceRegistry.getKey(source)));
 
-            ctx.getSource().sendSuccess(Component.translatable(QUERY_FIRST_LINE, entity.getDisplayName()).withStyle(ChatFormatting.WHITE), false);
-            ctx.getSource().sendSuccess(feedback(QUERY_IS_VAMPIRE_LINE, entity.getDisplayName(), isVampireText, vampirismSourceText), false);
-            ctx.getSource().sendSuccess(bloodQueryMessage(entity, component), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable(QUERY_FIRST_LINE, entity.getDisplayName()).withStyle(ChatFormatting.WHITE), false);
+            ctx.getSource().sendSuccess(() -> feedback(QUERY_IS_VAMPIRE_LINE, entity.getDisplayName(), isVampireText, vampirismSourceText), false);
+            ctx.getSource().sendSuccess(() -> bloodQueryMessage(entity, component), false);
             for (var text : abilityQueryMessage(entity, abilityRegistry)) {
-                ctx.getSource().sendSuccess(text, false);
+                ctx.getSource().sendSuccess(() -> text, false);
             }
         }
 
@@ -271,7 +271,7 @@ public final class HaemaCommand {
             if (component == null) {
                 throw NOT_VAMPIRABLE.create(entity.getDisplayName());
             }
-            ctx.getSource().sendSuccess(bloodQueryMessage(entity, component), false);
+            ctx.getSource().sendSuccess(() -> bloodQueryMessage(entity, component), false);
         }
 
         return entities.size();
@@ -290,7 +290,7 @@ public final class HaemaCommand {
             }
 
             component.setBlood(amount);
-            ctx.getSource().sendSuccess(feedback(BLOOD_SET_SUCCESS, entity.getDisplayName(), blood(component.getBlood())), true);
+            ctx.getSource().sendSuccess(() -> feedback(BLOOD_SET_SUCCESS, entity.getDisplayName(), blood(component.getBlood())), true);
         }
 
         return entities.size();
@@ -308,7 +308,7 @@ public final class HaemaCommand {
             }
 
             component.addBlood(amount);
-            ctx.getSource().sendSuccess(feedback(BLOOD_SET_SUCCESS, entity.getDisplayName(), blood(component.getBlood())), true);
+            ctx.getSource().sendSuccess(() -> feedback(BLOOD_SET_SUCCESS, entity.getDisplayName(), blood(component.getBlood())), true);
         }
 
         return entities.size();
@@ -326,7 +326,7 @@ public final class HaemaCommand {
             }
 
             component.removeBlood(amount);
-            ctx.getSource().sendSuccess(feedback(BLOOD_SET_SUCCESS, entity.getDisplayName(), blood(component.getBlood())), true);
+            ctx.getSource().sendSuccess(() -> feedback(BLOOD_SET_SUCCESS, entity.getDisplayName(), blood(component.getBlood())), true);
         }
 
         return entities.size();
@@ -337,7 +337,7 @@ public final class HaemaCommand {
 
         for (var entity : entities) {
             var quality = BloodApi.getBloodQuality(entity);
-            ctx.getSource().sendSuccess(bloodQualityQueryMessage(entity, quality), false);
+            ctx.getSource().sendSuccess(() -> bloodQualityQueryMessage(entity, quality), false);
         }
 
         return entities.size();
@@ -360,7 +360,7 @@ public final class HaemaCommand {
                 throw NOT_VAMPIRABLE.create(entity.getDisplayName());
             }
             for (var text : abilityQueryMessage(entity, registry)) {
-                ctx.getSource().sendSuccess(text, false);
+                ctx.getSource().sendSuccess(() -> text, false);
             }
         }
 
@@ -388,10 +388,10 @@ public final class HaemaCommand {
 
             if (enabled) {
                 component.addAbility(ability);
-                ctx.getSource().sendSuccess(feedback(ABILITY_ADDED, entity.getDisplayName(), ability(abilityId)), true);
+                ctx.getSource().sendSuccess(() -> feedback(ABILITY_ADDED, entity.getDisplayName(), ability(abilityId)), true);
             } else {
                 component.removeAbility(ability);
-                ctx.getSource().sendSuccess(feedback(ABILITY_REMOVED, entity.getDisplayName(), ability(abilityId)), true);
+                ctx.getSource().sendSuccess(() -> feedback(ABILITY_REMOVED, entity.getDisplayName(), ability(abilityId)), true);
             }
         }
 
@@ -431,7 +431,7 @@ public final class HaemaCommand {
                     if (c == null) {
                         c = getNonMappedChar(BuiltInRegistries.BLOCK.getKey(state.getBlock()).getPath(), stateCharacters, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!£$%^&*@".toCharArray());
                         if (c == '?') {
-                            ctx.getSource().sendSuccess(warning(CREATE_MULTIBLOCK_PATTERN_TOO_MANY_BLOCKSTATES), false);
+                            ctx.getSource().sendSuccess(() -> warning(CREATE_MULTIBLOCK_PATTERN_TOO_MANY_BLOCKSTATES), false);
                         }
                         stateCharacters.put(state, c);
                     }
@@ -457,7 +457,7 @@ public final class HaemaCommand {
             patternBuilder.append("%s = %s%n".formatted(entry.getValue(), entry.getKey()));
         }
 
-        ctx.getSource().sendSuccess(Component.literal(patternBuilder.toString()), false);
+        ctx.getSource().sendSuccess(() -> Component.literal(patternBuilder.toString()), false);
         Haema.LOGGER.info(patternBuilder.toString());
 
         return Command.SINGLE_SUCCESS;
@@ -485,7 +485,7 @@ public final class HaemaCommand {
         BlockPos pos = BlockPosArgument.getLoadedBlockPos(ctx, "position");
         int amountSpawned = VampireHunterSpawner.trySpawnNear(ctx.getSource().getLevel(), ctx.getSource().getLevel().getRandom(), pos);
         if (amountSpawned > 0) {
-            ctx.getSource().sendSuccess(feedback(SPAWN_PATROL_SUCCESS, amountSpawned, pos), true);
+            ctx.getSource().sendSuccess(() -> feedback(SPAWN_PATROL_SUCCESS, amountSpawned, pos), true);
             return amountSpawned;
         } else {
             ctx.getSource().sendFailure(Component.translatable(SPAWN_PATROL_FAILURE, pos));
@@ -502,7 +502,7 @@ public final class HaemaCommand {
                 : VampireHunterContractItem.createWithTarget(target);
         ctx.getSource().getPlayerOrException().addItem(stack);
         var actualTarget = VampireHunterContractItem.getContractTarget(stack);
-        ctx.getSource().sendSuccess(actualTarget.map(p -> feedback(CREATE_CONTRACT_SUCCESS, p.getName())).orElseGet(() -> warning(CREATE_CONTRACT_NO_TARGET)), false);
+        ctx.getSource().sendSuccess(() -> actualTarget.map(p -> feedback(CREATE_CONTRACT_SUCCESS, p.getName())).orElseGet(() -> warning(CREATE_CONTRACT_NO_TARGET)), false);
         return actualTarget.isPresent() ? Command.SINGLE_SUCCESS : 2;
     }
 

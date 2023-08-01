@@ -31,7 +31,7 @@ public final class HaemaDFunctions {
     public static DFContext entityDamageWithWeapon(Entity entity, DamageSource source, float amount, ItemStack weapon) {
         return DFContext.builder()
                 .addArgument("entity", entity)
-                .addArgument("level", entity.getLevel())
+                .addArgument("level", entity.level())
                 .addArgument("damage_source", source)
                 .addArgument("damage_amount", (double) amount)
                 .addArgument("attacker", Optional.ofNullable(source.getEntity()), new TypeToken<>() {})
@@ -57,7 +57,7 @@ public final class HaemaDFunctions {
     public static DFContext entityInteractWithBlock(Entity entity, ItemStack item, BlockInWorld block) {
         return DFContext.builder()
                 .addArgument("entity", entity)
-                .addArgument("level", entity.getLevel())
+                .addArgument("level", entity.level())
                 .addArgument("item", item)
                 .addArgument("block", block)
                 .build();

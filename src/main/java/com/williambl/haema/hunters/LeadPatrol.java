@@ -61,7 +61,7 @@ public class LeadPatrol<E extends PatrollingMonster> extends ExtendedBehaviour<E
         vec3 = vec33.yRot(90.0F).scale(0.4).add(vec3);
         Vec3 vec34 = vec3.subtract(vec32).normalize().scale(10.0).add(vec32);
         BlockPos blockPos = BlockPos.containing(vec34);
-        this.target = entity.level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, blockPos);
+        this.target = entity.level().getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, blockPos);
         if (this.target.closerToCenterThan(entity.position(), this.closeEnoughDistance)) {
             entity.findPatrolTarget();
             return false;

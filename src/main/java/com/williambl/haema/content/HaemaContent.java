@@ -29,15 +29,17 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.PushReaction;
 
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -104,7 +106,7 @@ public class HaemaContent {
                 .collect(Collectors.toMap(
                         Function.identity(),
                         quality -> Registry.register(BuiltInRegistries.BLOCK, id("%s_blood".formatted(quality.getSerializedName())), new BloodLiquidBlock(
-                                ContentFluids.BLOOD.get(quality), quality, BlockBehaviour.Properties.of(Material.LAVA).noCollission().randomTicks().strength(100.0F).noLootTable())))));
+                                ContentFluids.BLOOD.get(quality), quality, BlockBehaviour.Properties.of().mapColor(DyeColor.RED).replaceable().noCollission().randomTicks().strength(100.0F).pushReaction(PushReaction.DESTROY).noLootTable().liquid().sound(SoundType.EMPTY))))));
         public static final Map<BloodQuality, Map<Item, CauldronInteraction>> BLOOD_CAULDRON_INTERACTIONS = new EnumMap<>(Arrays.stream(BloodQuality.values())
                 .collect(Collectors.toMap(
                         Function.identity(),

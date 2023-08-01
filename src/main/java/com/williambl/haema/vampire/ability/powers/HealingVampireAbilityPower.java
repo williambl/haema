@@ -27,7 +27,7 @@ public record HealingVampireAbilityPower(DFunction<Boolean> predicate, DFunction
 
     @Override
     public void tick(LivingEntity entity, VampireAbility source) {
-        if (entity.getLevel().isClientSide()) {
+        if (entity.level().isClientSide()) {
             return;
         }
 

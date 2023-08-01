@@ -28,7 +28,7 @@ public record AttributeVampireAbilityPower(Set<Data> modifiers) implements Vampi
 
     @Override
     public void tick(LivingEntity entity, VampireAbility source) {
-        if (entity.getLevel().isClientSide()) {
+        if (entity.level().isClientSide()) {
             return;
         }
 

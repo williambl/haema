@@ -14,7 +14,7 @@ public record ApoliVampireAbilityPower(ResourceLocation powerName) implements Va
 
     @Override
     public void apply(LivingEntity entity, VampireAbility source) {
-        var sourceKey = entity.level.registryAccess().registryOrThrow(VampireAbility.REGISTRY_KEY).getKey(source);
+        var sourceKey = entity.level().registryAccess().registryOrThrow(VampireAbility.REGISTRY_KEY).getKey(source);
         PowerHolderComponent.KEY.get(entity).addPower(PowerTypeRegistry.get(this.powerName), sourceKey);
     }
 
@@ -24,7 +24,7 @@ public record ApoliVampireAbilityPower(ResourceLocation powerName) implements Va
 
     @Override
     public void remove(LivingEntity entity, VampireAbility source) {
-        var sourceKey = entity.level.registryAccess().registryOrThrow(VampireAbility.REGISTRY_KEY).getKey(source);
+        var sourceKey = entity.level().registryAccess().registryOrThrow(VampireAbility.REGISTRY_KEY).getKey(source);
         PowerHolderComponent.KEY.get(entity).removePower(PowerTypeRegistry.get(this.powerName), sourceKey);
     }
 

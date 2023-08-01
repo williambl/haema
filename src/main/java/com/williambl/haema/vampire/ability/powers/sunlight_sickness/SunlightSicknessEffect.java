@@ -37,7 +37,7 @@ public class SunlightSicknessEffect extends MobEffect {
             if (component.isVampire()) {
                 component.setBlood(component.getBlood() - 0.25);
             }
-            if (entity.getLevel() instanceof ServerLevel level) {
+            if (entity.level() instanceof ServerLevel level) {
                 level.sendParticles(
                         ParticleTypes.FLAME,
                         entity.getX() - entity.getBbWidth() / 4.0,

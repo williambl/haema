@@ -40,7 +40,7 @@ public class EmptyInjectorItem extends Item {
     }
 
     private Optional<ItemStack> tryInject(LivingEntity entity) {
-        if (entity.getLevel().isClientSide()) {
+        if (entity.level().isClientSide()) {
             return Optional.empty();
         }
 
@@ -52,7 +52,7 @@ public class EmptyInjectorItem extends Item {
         }
 
         var component = VampireComponent.KEY.getNullable(entity);
-        var source = entity.getLevel().registryAccess().registry(VampirismSource.REGISTRY_KEY)
+        var source = entity.level().registryAccess().registry(VampirismSource.REGISTRY_KEY)
                 .flatMap(r -> r.getOptional(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR));
         if (component != null && component.isVampire() && source.isPresent()) {
             component.tryCure(source.get());

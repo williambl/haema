@@ -11,6 +11,7 @@ import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.tslat.smartbrainlib.api.core.behaviour.DelayedBehaviour;
@@ -27,15 +28,14 @@ public class GiveContractRewards<E extends LivingEntity> extends DelayedBehaviou
         this.whenActivating(e -> {
             var handHoldingContract = ProjectileUtil.getWeaponHoldingHand(e, HaemaHunters.HunterItems.VAMPIRE_HUNTER_CONTRACT);
             e.setItemInHand(handHoldingContract, ItemStack.EMPTY);
-            var server = e.getLevel().getServer();
+            var server = e.level().getServer();
             if (server == null) {
                 return;
             }
 
-            server.getLootTables().get(lootTable).getRandomItems(
-                new LootContext.Builder((ServerLevel) e.getLevel())
-                        .withParameter(LootContextParams.THIS_ENTITY, e).withRandom(e.getRandom())
-                        .create(LootContextParamSets.PIGLIN_BARTER))
+            server.getLootData().getLootTable(lootTable).getRandomItems(
+                new LootParams.Builder((ServerLevel) e.level())
+                        .withParameter(LootContextParams.THIS_ENTITY, e).create(LootContextParamSets.PIGLIN_BARTER))
                     .forEach(e::spawnAtLocation);
         });
         this.stopIf(e -> !this.isHoldingFulfilledContract(e));

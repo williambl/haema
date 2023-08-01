@@ -24,7 +24,7 @@ public class IncompatibleBloodEffect extends MobEffect {
             return;
         }
 
-        if (entity.getLevel().isClientSide()) {
+        if (entity.level().isClientSide()) {
             return;
         }
 

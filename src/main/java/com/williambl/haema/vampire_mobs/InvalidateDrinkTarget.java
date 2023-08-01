@@ -68,7 +68,7 @@ public class InvalidateDrinkTarget<E extends LivingEntity> extends ExtendedBehav
     }
 
     protected boolean isTargetInvalid(E entity, LivingEntity target) {
-        if (entity.level != target.level) {
+        if (entity.level() != target.level()) {
             return true;
         }
 
@@ -86,6 +86,6 @@ public class InvalidateDrinkTarget<E extends LivingEntity> extends ExtendedBehav
 
         Long time = BrainUtils.getMemory(entity, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
 
-        return time != null && entity.level.getGameTime() - time > this.pathfindingAttentionSpan;
+        return time != null && entity.level().getGameTime() - time > this.pathfindingAttentionSpan;
     }
 }

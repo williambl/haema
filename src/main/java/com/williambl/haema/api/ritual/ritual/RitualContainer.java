@@ -52,6 +52,6 @@ public class RitualContainer {
     }
 
     public ServerLevel level() {
-        return (ServerLevel) this.player.level;
+        return (ServerLevel) this.player.level();
     }
 }

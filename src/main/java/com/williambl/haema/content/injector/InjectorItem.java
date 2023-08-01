@@ -49,7 +49,7 @@ public class InjectorItem extends Item {
     }
 
     private InjectionResult tryInject(LivingEntity entity) {
-        if (entity.getLevel().isClientSide()) {
+        if (entity.level().isClientSide()) {
             return InjectionResult.NOTHING;
         }
 
@@ -67,7 +67,7 @@ public class InjectorItem extends Item {
             return InjectionResult.NOTHING;
         }
 
-        var source = entity.getLevel().registryAccess().registry(VampirismSource.REGISTRY_KEY)
+        var source = entity.level().registryAccess().registry(VampirismSource.REGISTRY_KEY)
                 .flatMap(r -> r.getOptional(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR));
         if (source.isEmpty()) {
             return InjectionResult.NOTHING;

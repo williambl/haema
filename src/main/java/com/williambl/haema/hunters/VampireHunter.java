@@ -198,14 +198,14 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
 
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
-        if (!this.getLevel().isClientSide() && this.getMainHandItem().isEmpty() && !VampireApi.isVampire(player)) {
+        if (!this.level().isClientSide() && this.getMainHandItem().isEmpty() && !VampireApi.isVampire(player)) {
             var stack = player.getMainHandItem();
             if (stack.getItem() instanceof VampireHunterContractItem && VampireHunterContractItem.isFulfilled(stack)) {
                 var taken = stack.split(1);
                 this.setItemSlot(EquipmentSlot.MAINHAND, taken);
                 return InteractionResult.SUCCESS;
             } else if (this.canGiveContract) {
-                player.addItem(VampireHunterContractItem.create(this.getLevel()));
+                player.addItem(VampireHunterContractItem.create(this.level()));
                 this.canGiveContract = false;
                 return InteractionResult.SUCCESS;
             }
@@ -301,7 +301,7 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
 
     @Override
     public void shootCrossbowProjectile(LivingEntity livingEntity, ItemStack itemStack, Projectile projectile, float multishotSpray) {
-        var projectileToUse = this.getLevel().getCurrentDifficultyAt(this.blockPosition()).isHarderThan(Difficulty.EASY.getId()+this.random.nextFloat()*2) ?
+        var projectileToUse = this.level().getCurrentDifficultyAt(this.blockPosition()).isHarderThan(Difficulty.EASY.getId()+this.random.nextFloat()*2) ?
                 ProjectileUtil.getMobArrow(this, PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), Potions.WEAKNESS), 1) :
                 projectile;
         if (this.getTarget() != null) {
@@ -321,7 +321,7 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
     // ai stuff
 
     protected void initMemories(@Nullable UUID leader) {
-        GlobalPos home = GlobalPos.of(this.getLevel().dimension(), this.blockPosition());
+        GlobalPos home = GlobalPos.of(this.level().dimension(), this.blockPosition());
         BrainUtils.setMemory(this, MemoryModuleType.HOME, home);
         BrainUtils.setMemory(this, HaemaHunters.HunterMemoryModuleTypes.LEADER, leader);
     }
@@ -333,7 +333,7 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
 
     protected double sqrDistanceToLeader(Vec3 pos) {
         @Nullable UUID leaderUUID = BrainUtils.getMemory(this, HaemaHunters.HunterMemoryModuleTypes.LEADER);
-        if (leaderUUID == null || !(this.getLevel() instanceof ServerLevel sLevel)) {
+        if (leaderUUID == null || !(this.level() instanceof ServerLevel sLevel)) {
             return -1;
         }
         @Nullable Entity leader = sLevel.getEntity(leaderUUID);
