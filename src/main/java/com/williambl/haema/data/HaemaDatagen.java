@@ -33,6 +33,7 @@ import com.williambl.haema.vampire.ability.powers.AttributeVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.EffectVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.HealingVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.damage_modification.DamageModificationAbilityPower;
+import com.williambl.haema.vampire.ability.powers.drinking.DrinkingAbilityPower;
 import com.williambl.haema.vampire.ability.powers.vision.VampireVisionVampireAbilityPower;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
@@ -287,6 +288,9 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             for (int i = 0; i < 3; i++) {
                 vampiricStrengthAbilities.add(this.createStrengthAbility(entries, i+1, vampiricStrengthAbilities));
             }
+            var drinkingAbility = this.createDrinkingAbility(entries);
+            defaultAbilties.add(drinkingAbility);
+
             defaultAbilties.addAll(vampiricStrengthAbilities);
 
 
@@ -592,6 +596,18 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
                                     NumberDFunctions.COMPARISON.factory().apply(ContextArg.NUMBER_A.arg(HaemaDFunctions.BLOOD.factory().apply(ContextArg.ENTITY.arg())), ContextArg.NUMBER_B.arg(NumberDFunctions.CONSTANT.factory().apply(10.0)), Comparison.GREATER_THAN_OR_EQUAL))))));
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("strength/"+level));
             entries.add(key, strengthAbility);
+            return key;
+        }
+
+        private ResourceKey<VampireAbility> createDrinkingAbility(Entries entries) {
+            var drinkingAbility = new VampireAbility(true, DPredicates.CONSTANT.factory().apply(true), Set.of(), Set.of(), Set.of(), List.of(
+                    new DrinkingAbilityPower(
+                            NumberDFunctions.CONSTANT.factory().apply(10.0),
+                            NumberDFunctions.CONSTANT.factory().apply((double) BloodApi.bloodUnitsToDroplets(1)),
+                            DPredicates.CONSTANT.factory().apply(true),
+                            List.of())));
+            var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("drinking"));
+            entries.add(key, drinkingAbility);
             return key;
         }
 
