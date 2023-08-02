@@ -4,6 +4,7 @@ import com.williambl.haema.client.client.content.HaemaContentClient;
 import com.williambl.haema.client.hunters.HaemaHuntersClient;
 import com.williambl.haema.client.ritual.HaemaRitualsClient;
 import com.williambl.haema.client.vampire.HaemaVampiresClient;
+import com.williambl.haema.client.vampire_mobs.HaemaVampireMobsClient;
 import com.williambl.haema.hunters.HaemaHunters;
 import net.fabricmc.api.ClientModInitializer;
 
@@ -14,5 +15,6 @@ public class HaemaClient implements ClientModInitializer {
         HaemaContentClient.init();
         HaemaRitualsClient.init();
         HaemaHuntersClient.init();
+        HaemaVampireMobsClient.init();
     }
 }

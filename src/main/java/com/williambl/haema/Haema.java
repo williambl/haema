@@ -5,6 +5,7 @@ import com.williambl.haema.content.HaemaContent;
 import com.williambl.haema.hunters.HaemaHunters;
 import com.williambl.haema.ritual.HaemaRituals;
 import com.williambl.haema.vampire.HaemaVampires;
+import com.williambl.haema.vampire_mobs.HaemaVampireMobs;
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer;
 import net.fabricmc.api.ModInitializer;
@@ -42,6 +43,7 @@ public class Haema implements ModInitializer, EntityComponentInitializer {
         HaemaContent.init();
         HaemaRituals.init();
         HaemaHunters.init();
+        HaemaVampireMobs.init();
         CommandRegistrationCallback.EVENT.register(HaemaCommand::register);
         HaemaDFunctions.init();
     }
