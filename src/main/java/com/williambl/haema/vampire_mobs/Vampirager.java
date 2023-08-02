@@ -2,7 +2,6 @@ package com.williambl.haema.vampire_mobs;
 
 import com.williambl.haema.Haema;
 import com.williambl.haema.api.content.blood.BloodApi;
-import com.williambl.haema.api.vampire.VampireApi;
 import com.williambl.haema.api.vampire.VampireComponent;
 import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.hunters.VampireHunter;
@@ -88,7 +87,7 @@ public class Vampirager extends Monster implements SmartBrainOwner<Vampirager> {
                 new FirstApplicableBehaviour<>(
                         new TargetOrRetaliate<>(),
                         new InvalidateDrinkTarget<>(),
-                        new DrinkFromDrinkTarget<>(),
+                        new DrinkFromDrinkTarget<>(0),
                         new SetWalkTargetToDrinkTarget<>(),
                         new SetDrinkTarget<>(),
                         new SetPlayerLookTarget<>(),
@@ -104,7 +103,7 @@ public class Vampirager extends Monster implements SmartBrainOwner<Vampirager> {
                 new InvalidateAttackTarget<>(),
                 new SetWalkTargetToAttackTarget<>(),
                 new FirstApplicableBehaviour<>(
-                        new DrinkFromAttackTarget<>(),
+                        new DrinkFromAttackTarget<>(0),
                         new SpawnReinforcements<>(),
                         new AnimatableMeleeAttack<>(0).whenStarting(entity -> this.setAggressive(true)).whenStarting(entity -> this.setAggressive(false))));
     }
