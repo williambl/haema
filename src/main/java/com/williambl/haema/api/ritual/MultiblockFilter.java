@@ -2,10 +2,11 @@ package com.williambl.haema.api.ritual;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.williambl.dfunc.api.DFunction;
-import com.williambl.dfunc.api.context.DFContext;
-import com.williambl.haema.HaemaDFunctions;
+import com.williambl.dfunc.api.DFunctions;
 import com.williambl.haema.HaemaUtil;
+import com.williambl.vampilang.lang.EvaluationContext;
+import com.williambl.vampilang.lang.VExpression;
+import com.williambl.vampilang.stdlib.StandardVTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 
@@ -25,18 +26,18 @@ import java.util.function.Function;
  * @param overallPredicate  the predicate that must be true overall for the multiblock to be identified
  * @param focusPosFilterSpace the position of the focus in the filter space (indices into pattern)
  */
-public record MultiblockFilter(char[][][] pattern, char focusCharacter, Map<Character, DFunction<Boolean>> predicates, DFunction<Boolean> overallPredicate, BlockPos focusPosFilterSpace) {
+public record MultiblockFilter(char[][][] pattern, char focusCharacter, Map<Character, VExpression> predicates, VExpression overallPredicate, BlockPos focusPosFilterSpace) {
     public static final Codec<MultiblockFilter> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.listOf().listOf().xmap(
                     l -> l.stream().map(l2 -> l2.stream().map(String::toCharArray).toArray(char[][]::new)).toArray(char[][][]::new),
                     l -> Arrays.stream(l).map(l2 -> Arrays.stream(l2).map(String::new).toList()).toList()
             ).comapFlatMap(HaemaUtil::ensureIsCuboid, Function.identity()).fieldOf("pattern").forGetter(MultiblockFilter::pattern),
             HaemaUtil.CHARACTER_CODEC.fieldOf("focus").forGetter(MultiblockFilter::focusCharacter),
-            Codec.unboundedMap(HaemaUtil.CHARACTER_CODEC, DFunction.PREDICATE.codec().comapFlatMap(HaemaUtil.verifyDFunction(HaemaDFunctions.BLOCK_IN_WORLD), Function.identity())).fieldOf("predicates").forGetter(MultiblockFilter::predicates),
-            DFunction.PREDICATE.codec().comapFlatMap(HaemaUtil.verifyDFunction(HaemaDFunctions.BLOCK_IN_WORLD), Function.identity()).fieldOf("overall_predicate").forGetter(MultiblockFilter::overallPredicate)
+            Codec.unboundedMap(HaemaUtil.CHARACTER_CODEC, DFunctions.resolvedExpressionCodec(StandardVTypes.BOOLEAN, DFunctions.BLOCK_IN_WORLD)).fieldOf("predicates").forGetter(MultiblockFilter::predicates),
+            DFunctions.resolvedExpressionCodec(StandardVTypes.BOOLEAN, DFunctions.BLOCK_IN_WORLD).fieldOf("overall_predicate").forGetter(MultiblockFilter::overallPredicate)
     ).apply(instance, MultiblockFilter::new));
 
-    public MultiblockFilter(char[][][] pattern, char focusCharacter, Map<Character, DFunction<Boolean>> predicates, DFunction<Boolean> overallPredicate) {
+    public MultiblockFilter(char[][][] pattern, char focusCharacter, Map<Character, VExpression> predicates, VExpression overallPredicate) {
         this(pattern, focusCharacter, predicates, overallPredicate, focusPos(pattern, focusCharacter));
     }
 
@@ -65,7 +66,7 @@ public record MultiblockFilter(char[][][] pattern, char focusCharacter, Map<Char
         );
     }
 
-    public boolean matches(int checkXFocusSpace, int checkYFocusSpace, int checkZFocusSpace, DFContext blockInWorldDFContext) {
+    public boolean matches(int checkXFocusSpace, int checkYFocusSpace, int checkZFocusSpace, EvaluationContext blockInWorldDFContext) {
         int checkXFilterSpace = checkXFocusSpace + this.focusPosFilterSpace.getX();
         int checkYFilterSpace = checkYFocusSpace + this.focusPosFilterSpace.getY();
         int checkZFilterSpace = checkZFocusSpace + this.focusPosFilterSpace.getZ();
@@ -90,6 +91,6 @@ public record MultiblockFilter(char[][][] pattern, char focusCharacter, Map<Char
             return true;
         }
 
-        return this.predicates.get(c).apply(blockInWorldDFContext);
+        return DFunctions.evaluate(this.predicates.get(c), blockInWorldDFContext);
     }
 }

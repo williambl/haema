@@ -1,24 +1,20 @@
 package com.williambl.haema.vampire.ability.powers;
 
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.williambl.dfunc.api.DFunction;
-import com.williambl.dfunc.api.context.DFContext;
-import com.williambl.dfunc.api.context.DFContextSpec;
-import com.williambl.dfunc.api.functions.NumberDFunctions;
-import com.williambl.haema.HaemaUtil;
+import com.williambl.dfunc.api.DFunctions;
 import com.williambl.haema.api.vampire.VampireComponent;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
+import com.williambl.vampilang.lang.VExpression;
+import com.williambl.vampilang.stdlib.StandardVTypes;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.entity.LivingEntity;
 
-import java.util.function.Function;
-
-public record HealingVampireAbilityPower(DFunction<Boolean> predicate, DFunction<Double> amountToHeal, DFunction<Double> bloodUsage) implements VampireAbilityPower {
+public record HealingVampireAbilityPower(VExpression predicate, VExpression amountToHeal, VExpression bloodUsage) implements VampireAbilityPower {
     public static final KeyDispatchDataCodec<HealingVampireAbilityPower> CODEC = KeyDispatchDataCodec.of(RecordCodecBuilder.create(instance -> instance.group(
-            DFunction.PREDICATE.codec().comapFlatMap(HaemaUtil.verifyDFunction(DFContextSpec.ENTITY), Function.identity()).fieldOf("predicate").forGetter(HealingVampireAbilityPower::predicate),
-            DFunction.NUMBER_FUNCTION.codec().optionalFieldOf("amount_to_heal", NumberDFunctions.CONSTANT.factory().apply(1.0)).forGetter(HealingVampireAbilityPower::amountToHeal),
-            DFunction.NUMBER_FUNCTION.codec().optionalFieldOf("blood_usage", NumberDFunctions.CONSTANT.factory().apply(1.0)).forGetter(HealingVampireAbilityPower::bloodUsage)
+            DFunctions.resolvedExpressionCodec(StandardVTypes.BOOLEAN, DFunctions.ENTITY).fieldOf("predicate").forGetter(HealingVampireAbilityPower::predicate),
+            DFunctions.resolvedExpressionCodec(StandardVTypes.NUMBER, DFunctions.ENTITY).optionalFieldOf("amount_to_heal", VExpression.value(StandardVTypes.NUMBER, (double) 1.0)).forGetter(HealingVampireAbilityPower::amountToHeal),
+            DFunctions.resolvedExpressionCodec(StandardVTypes.NUMBER, DFunctions.ENTITY).optionalFieldOf("blood_usage", VExpression.value(StandardVTypes.NUMBER, (double) 1.0)).forGetter(HealingVampireAbilityPower::bloodUsage)
     ).apply(instance, HealingVampireAbilityPower::new)));
 
     @Override
@@ -31,7 +27,7 @@ public record HealingVampireAbilityPower(DFunction<Boolean> predicate, DFunction
             return;
         }
 
-        if (!this.predicate().apply(DFContext.entity(entity))) {
+        if (!DFunctions.<Boolean>evaluate(this.predicate(), DFunctions.createEntityContext(entity))) {
             return;
         }
 
@@ -44,8 +40,8 @@ public record HealingVampireAbilityPower(DFunction<Boolean> predicate, DFunction
 
     private void heal(LivingEntity entity) {
         var vampireComponent = entity.getComponent(VampireComponent.KEY);
-        vampireComponent.setBlood(vampireComponent.getBlood() - this.bloodUsage().apply(DFContext.entity(entity)));
-        entity.heal(this.amountToHeal().apply(DFContext.entity(entity)).floatValue());
+        vampireComponent.setBlood(vampireComponent.getBlood() - DFunctions.<Double>evaluate(this.bloodUsage(), DFunctions.createEntityContext(entity)));
+        entity.heal(DFunctions.<Double>evaluate(this.amountToHeal(), DFunctions.createEntityContext(entity)).floatValue());
     }
 
     @Override

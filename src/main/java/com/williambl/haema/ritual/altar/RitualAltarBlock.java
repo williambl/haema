@@ -1,5 +1,6 @@
 package com.williambl.haema.ritual.altar;
 
+import com.williambl.dfunc.api.DFunctions;
 import com.williambl.haema.HaemaDFunctions;
 import com.williambl.haema.api.ritual.RitualArae;
 import com.williambl.haema.api.ritual.ritual.Ritual;
@@ -55,7 +56,7 @@ public class RitualAltarBlock extends BaseEntityBlock {
         return Ritual.findRituals(
                 level.registryAccess(),
                 RightClickRitualTrigger.class,
-                trigger -> trigger.predicate().apply(HaemaDFunctions.entityInteractWithBlock(player, itemHeld, blockInWorld)),
+                trigger -> DFunctions.evaluate(trigger.predicate(), DFunctions.createEntityInteractWithBlockContext(player, itemHeld, blockInWorld)),
                 container)
                 .findFirst()
                 .map(r -> {

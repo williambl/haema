@@ -1,6 +1,6 @@
 package com.williambl.haema.vampire;
 
-import com.williambl.dfunc.api.context.DFContext;
+import com.williambl.dfunc.api.DFunctions;
 import com.williambl.haema.Haema;
 import com.williambl.haema.api.vampire.VampireComponent;
 import com.williambl.haema.api.vampire.VampirismSource;
@@ -46,7 +46,7 @@ public class EntityVampireComponent implements VampireComponent {
             return false;
         }
 
-        if (!source.canConvert().apply(DFContext.entity(this.entity))) {
+        if (!DFunctions.<Boolean>evaluate(source.canConvert(), DFunctions.createEntityContext(this.entity))) {
             return false;
         }
 
@@ -71,7 +71,7 @@ public class EntityVampireComponent implements VampireComponent {
             return false;
         }
 
-        if (!source.canCure().apply(DFContext.entity(this.entity))) {
+        if (!DFunctions.<Boolean>evaluate(source.canCure(), DFunctions.createEntityContext(this.entity))) {
             return false;
         }
 

@@ -15,6 +15,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -29,6 +30,7 @@ public class Haema implements ModInitializer, EntityComponentInitializer {
             .displayItems((itemDisplayParameters, output) -> {
                 output.acceptAll(BuiltInRegistries.ITEM.holders().filter(r -> r.key().location().getNamespace().equals(MODID)).map(Holder.Reference::value).map(Item::getDefaultInstance).toList());
             })
+                    .title(Component.translatable("itemGroup.haema.haema"))
             .build());
 
     public static final boolean HOMESTUCK_MODE = FabricLoader.getInstance().isDevelopmentEnvironment();

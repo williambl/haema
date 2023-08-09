@@ -1,5 +1,6 @@
 package com.williambl.haema.ritual.altar;
 
+import com.williambl.dfunc.api.DFunctions;
 import com.williambl.haema.HaemaDFunctions;
 import com.williambl.haema.api.ritual.RitualArae;
 import com.williambl.haema.ritual.HaemaRituals;
@@ -83,7 +84,7 @@ public class RitualAltarBlockEntity extends BlockEntity implements SyncedBlockEn
                     posWorldSpace.set(focusPosWorldSpace);
                     posWorldSpace.move(xFocusSpace, yFocusSpace, zFocusSpace);
                     var blockInWorld = new BlockInWorld(this.level, posWorldSpace, true);
-                    var dfcontext = HaemaDFunctions.blockInWorldFast(blockInWorld);
+                    var dfcontext = DFunctions.createBlockInWorldContext(blockInWorld);
                     for (var iter = possibleAraes.iterator(); iter.hasNext();) {
                         var arae = iter.next();
                         if (!arae.arae().multiblock().matches(xFocusSpace, yFocusSpace, zFocusSpace, dfcontext)) {

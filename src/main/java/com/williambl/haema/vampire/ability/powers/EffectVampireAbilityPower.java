@@ -2,14 +2,11 @@ package com.williambl.haema.vampire.ability.powers;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.williambl.dfunc.api.DFunction;
-import com.williambl.dfunc.api.context.DFContext;
-import com.williambl.dfunc.api.context.DFContextSpec;
-import com.williambl.dfunc.api.functions.DPredicates;
-import com.williambl.dfunc.api.functions.NumberDFunctions;
-import com.williambl.haema.HaemaUtil;
+import com.williambl.dfunc.api.DFunctions;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
+import com.williambl.vampilang.lang.VExpression;
+import com.williambl.vampilang.stdlib.StandardVTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.effect.MobEffect;
@@ -19,7 +16,6 @@ import net.minecraft.world.entity.LivingEntity;
 
 import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 
 public record EffectVampireAbilityPower(Set<Data> effects) implements VampireAbilityPower {
     public static final KeyDispatchDataCodec<EffectVampireAbilityPower> CODEC = KeyDispatchDataCodec.of(Data.CODEC.listOf().fieldOf("effects")
@@ -36,7 +32,7 @@ public record EffectVampireAbilityPower(Set<Data> effects) implements VampireAbi
         }
 
         for (var effect : this.effects) {
-            if (effect.predicate().apply(DFContext.entity(entity))) {
+            if (DFunctions.evaluate(effect.predicate(), DFunctions.createEntityContext(entity))) {
                 entity.addEffect(effect.createInstance(entity));
             }
         }
@@ -54,19 +50,19 @@ public record EffectVampireAbilityPower(Set<Data> effects) implements VampireAbi
         return CODEC;
     }
 
-    public record Data(MobEffect effect, DFunction<Double> amplifier, DFunction<Double> duration, DFunction<Boolean> ambient, DFunction<Boolean> showParticles, DFunction<Boolean> showIcon, DFunction<Boolean> predicate) {
+    public record Data(MobEffect effect, VExpression amplifier, VExpression duration, VExpression ambient, VExpression showParticles, VExpression showIcon, VExpression predicate) {
         private static final Codec<Data> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 BuiltInRegistries.MOB_EFFECT.byNameCodec().fieldOf("effect").forGetter(Data::effect),
-                DFunction.NUMBER_FUNCTION.codec().comapFlatMap(HaemaUtil.verifyDFunction(DFContextSpec.ENTITY), Function.identity()).optionalFieldOf("amplifier", NumberDFunctions.CONSTANT.factory().apply(0.)).forGetter(Data::amplifier),
-                DFunction.NUMBER_FUNCTION.codec().comapFlatMap(HaemaUtil.verifyDFunction(DFContextSpec.ENTITY), Function.identity()).optionalFieldOf("duration", NumberDFunctions.CONSTANT.factory().apply(0.)).forGetter(Data::duration),
-                DFunction.PREDICATE.codec().comapFlatMap(HaemaUtil.verifyDFunction(DFContextSpec.ENTITY), Function.identity()).optionalFieldOf("ambient", DPredicates.CONSTANT.factory().apply(false)).forGetter(Data::ambient),
-                DFunction.PREDICATE.codec().comapFlatMap(HaemaUtil.verifyDFunction(DFContextSpec.ENTITY), Function.identity()).optionalFieldOf("show_particles", DPredicates.CONSTANT.factory().apply(true)).forGetter(Data::showParticles),
-                DFunction.PREDICATE.codec().comapFlatMap(HaemaUtil.verifyDFunction(DFContextSpec.ENTITY), Function.identity()).optionalFieldOf("show_icon", DPredicates.CONSTANT.factory().apply(true)).forGetter(Data::showIcon),
-                DFunction.PREDICATE.codec().comapFlatMap(HaemaUtil.verifyDFunction(DFContextSpec.ENTITY), Function.identity()).fieldOf("predicate").forGetter(Data::predicate)
+                DFunctions.resolvedExpressionCodec(StandardVTypes.NUMBER, DFunctions.ENTITY).optionalFieldOf("amplifier", VExpression.value(StandardVTypes.NUMBER, 0.)).forGetter(Data::amplifier),
+                DFunctions.resolvedExpressionCodec(StandardVTypes.NUMBER, DFunctions.ENTITY).optionalFieldOf("duration", VExpression.value(StandardVTypes.NUMBER, (double) 0.)).forGetter(Data::duration),
+                DFunctions.resolvedExpressionCodec(StandardVTypes.BOOLEAN, DFunctions.ENTITY).optionalFieldOf("ambient", VExpression.value(StandardVTypes.BOOLEAN, false)).forGetter(Data::ambient),
+                DFunctions.resolvedExpressionCodec(StandardVTypes.BOOLEAN, DFunctions.ENTITY).optionalFieldOf("show_particles", VExpression.value(StandardVTypes.BOOLEAN, true)).forGetter(Data::showParticles),
+                DFunctions.resolvedExpressionCodec(StandardVTypes.BOOLEAN, DFunctions.ENTITY).optionalFieldOf("show_icon", VExpression.value(StandardVTypes.BOOLEAN, true)).forGetter(Data::showIcon),
+                DFunctions.resolvedExpressionCodec(StandardVTypes.BOOLEAN, DFunctions.ENTITY).fieldOf("predicate").forGetter(Data::predicate)
         ).apply(instance, Data::new));
 
         private MobEffectInstance createInstance(Entity entity) {
-            return new MobEffectInstance(this.effect, this.duration.apply(DFContext.entity(entity)).intValue(), this.amplifier.apply(DFContext.entity(entity)).intValue(), this.ambient.apply(DFContext.entity(entity)), this.showParticles.apply(DFContext.entity(entity)), this.showIcon.apply(DFContext.entity(entity)));
+            return new MobEffectInstance(this.effect, DFunctions.<Double>evaluate(this.duration, DFunctions.createEntityContext(entity)).intValue(), DFunctions.<Double>evaluate(this.amplifier, DFunctions.createEntityContext(entity)).intValue(), DFunctions.evaluate(this.ambient, DFunctions.createEntityContext(entity)), DFunctions.evaluate(this.showParticles, DFunctions.createEntityContext(entity)), DFunctions.evaluate(this.showIcon, DFunctions.createEntityContext(entity)));
         }
     }
 }

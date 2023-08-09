@@ -1,16 +1,13 @@
 package com.williambl.haema.vampire_mobs;
 
 import com.mojang.datafixers.util.Pair;
-import com.williambl.dfunc.api.context.DFContext;
+import com.williambl.dfunc.api.DFunctions;
 import com.williambl.haema.api.vampire.ability.VampireAbilitiesComponent;
-import com.williambl.haema.vampire.HaemaVampires;
 import com.williambl.haema.vampire.ability.powers.dash.DashAbilityPower;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
-import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
 
@@ -40,7 +37,7 @@ public class DashToWalkTarget<E extends PathfinderMob> extends ExtendedBehaviour
         }
 
         this.powers = abilities.getPowersOfClass(DashAbilityPower.class).stream()
-                .filter(d -> d.canDash().apply(DFContext.entity(entity))).toList();
+                .filter(d -> DFunctions.evaluate(d.canDash(), DFunctions.createEntityContext(entity))).toList();
         if (this.powers.isEmpty()) {
             return false;
         }

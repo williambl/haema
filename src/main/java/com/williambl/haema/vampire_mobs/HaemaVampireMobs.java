@@ -2,7 +2,6 @@ package com.williambl.haema.vampire_mobs;
 
 import com.williambl.haema.api.vampire.VampirismSource;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
-import net.fabricmc.fabric.impl.object.builder.FabricEntityType;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;

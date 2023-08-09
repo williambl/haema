@@ -1,7 +1,6 @@
 package com.williambl.haema.client.vampire_mobs;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.williambl.haema.hunters.VampireHunter;
 import com.williambl.haema.vampire_mobs.Vampirager;
 import net.minecraft.client.model.AnimationUtils;
 import net.minecraft.client.model.ArmedModel;

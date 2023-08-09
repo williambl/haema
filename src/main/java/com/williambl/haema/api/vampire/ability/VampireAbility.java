@@ -2,15 +2,14 @@ package com.williambl.haema.api.vampire.ability;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.williambl.dfunc.api.DFunction;
-import com.williambl.dfunc.api.context.DFContextSpec;
-import com.williambl.haema.HaemaUtil;
+import com.williambl.dfunc.api.DFunctions;
+import com.williambl.vampilang.lang.VExpression;
+import com.williambl.vampilang.stdlib.StandardVTypes;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 
 import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 
 import static com.williambl.haema.Haema.id;
 
@@ -28,7 +27,7 @@ import static com.williambl.haema.Haema.id;
  * @param powers            the powers that are granted when this ability is applied
  */
 public record VampireAbility(boolean enabled,
-                             DFunction<Boolean> canPlayerModify,
+                             VExpression canPlayerModify,
                              Set<ResourceKey<VampireAbility>> prerequisites,
                              Set<ResourceKey<VampireAbility>> conflicts,
                              Set<ResourceKey<VampireAbility>> supercedes, //TODO do something with this
@@ -38,7 +37,7 @@ public record VampireAbility(boolean enabled,
 
     public static final Codec<VampireAbility> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.BOOL.fieldOf("enabled").forGetter(VampireAbility::enabled),
-            DFunction.PREDICATE.codec().comapFlatMap(HaemaUtil.verifyDFunction(DFContextSpec.ENTITY), Function.identity()).fieldOf("can_player_modify").forGetter(VampireAbility::canPlayerModify),
+            DFunctions.resolvedExpressionCodec(StandardVTypes.BOOLEAN, DFunctions.ENTITY).fieldOf("can_player_modify").forGetter(VampireAbility::canPlayerModify),
             ResourceKey.codec(REGISTRY_KEY).listOf().fieldOf("prerequisites").xmap(Set::copyOf, List::copyOf).forGetter(VampireAbility::prerequisites),
             ResourceKey.codec(REGISTRY_KEY).listOf().fieldOf("conflicts").xmap(Set::copyOf, List::copyOf).forGetter(VampireAbility::conflicts),
             ResourceKey.codec(REGISTRY_KEY).listOf().fieldOf("supercedes").xmap(Set::copyOf, List::copyOf).forGetter(VampireAbility::supercedes),

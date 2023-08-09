@@ -4,15 +4,14 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
-import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
 import net.tslat.smartbrainlib.util.BrainUtils;
 
 import java.util.List;
-import java.util.function.*;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class SwitchWeapons<E extends LivingEntity> extends ExtendedBehaviour<E> {
     public SwitchWeapons(BiFunction<E, LivingEntity, Predicate<ItemStack>> weaponForTarget, Consumer<Predicate<ItemStack>> switchToWeapon, Predicate<Predicate<ItemStack>> canUseWeapon) {

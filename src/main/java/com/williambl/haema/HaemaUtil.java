@@ -2,8 +2,6 @@ package com.williambl.haema;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import com.williambl.dfunc.api.DFunction;
-import com.williambl.dfunc.api.context.DFContextSpec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -32,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class HaemaUtil {
@@ -114,10 +111,6 @@ public class HaemaUtil {
         }
 
         return InteractionResult.sidedSuccess(level.isClientSide);
-    }
-
-    public static <T extends DFunction<?>> Function<T, DataResult<T>> verifyDFunction(DFContextSpec spec) {
-        return t -> spec.satisfies(t.getSpec()) ? DataResult.success(t) : DataResult.error(() -> "DFunction spec %s is not satisfied by %s".formatted(spec, t.getSpec()));
     }
 
     public static DataResult<char[][][]> ensureIsCuboid(char[][][] toCheck) {

@@ -1,21 +1,20 @@
 package com.williambl.haema.vampire.ability.powers.damage_modification;
 
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.williambl.dfunc.api.DFunction;
+import com.williambl.dfunc.api.DFunctions;
 import com.williambl.haema.HaemaDFunctions;
-import com.williambl.haema.HaemaUtil;
 import com.williambl.haema.api.vampire.ability.VampireAbilitiesComponent;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
+import com.williambl.vampilang.lang.VExpression;
+import com.williambl.vampilang.stdlib.StandardVTypes;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.entity.LivingEntity;
 
-import java.util.function.Function;
-
-public record DamageModificationAbilityPower(DFunction<Double> damageModificationFunction, DFunction<Boolean> canDamageKillFunction) implements VampireAbilityPower {
+public record DamageModificationAbilityPower(VExpression damageModificationFunction, VExpression canDamageKillFunction) implements VampireAbilityPower {
     public static final KeyDispatchDataCodec<DamageModificationAbilityPower> CODEC = KeyDispatchDataCodec.of(RecordCodecBuilder.create(instance -> instance.group(
-            DFunction.NUMBER_FUNCTION.codec().comapFlatMap(HaemaUtil.verifyDFunction(HaemaDFunctions.ENTITY_DAMAGE_WITH_WEAPON), Function.identity()).fieldOf("damage_modification").forGetter(DamageModificationAbilityPower::damageModificationFunction),
-            DFunction.PREDICATE.codec().comapFlatMap(HaemaUtil.verifyDFunction(HaemaDFunctions.ENTITY_DAMAGE_WITH_WEAPON), Function.identity()).fieldOf("can_damage_kill").forGetter(DamageModificationAbilityPower::canDamageKillFunction)
+            DFunctions.resolvedExpressionCodec(StandardVTypes.NUMBER, HaemaDFunctions.ENTITY_DAMAGE_WITH_WEAPON).fieldOf("damage_modification").forGetter(DamageModificationAbilityPower::damageModificationFunction),
+            DFunctions.resolvedExpressionCodec(StandardVTypes.BOOLEAN, HaemaDFunctions.ENTITY_DAMAGE_WITH_WEAPON).fieldOf("can_damage_kill").forGetter(DamageModificationAbilityPower::canDamageKillFunction)
     ).apply(instance, DamageModificationAbilityPower::new)));
 
     @Override
@@ -42,7 +41,7 @@ public record DamageModificationAbilityPower(DFunction<Double> damageModificatio
             if (component != null) {
                 var context = HaemaDFunctions.entityDamageWithWeapon(entity, source, amount, ((ExtendedDamageSource)source).weapon());
                 for (var power : component.getPowersOfClass(DamageModificationAbilityPower.class)) {
-                    workingAmount = power.damageModificationFunction.apply(context).floatValue();
+                    workingAmount = DFunctions.<Double>evaluate(power.damageModificationFunction, context).floatValue();
                 }
             }
 
@@ -54,7 +53,7 @@ public record DamageModificationAbilityPower(DFunction<Double> damageModificatio
             if (component != null) {
                 var context = HaemaDFunctions.entityDamageWithWeapon(entity, source, amount, ((ExtendedDamageSource)source).weapon());
                 for (var power : component.getPowersOfClass(DamageModificationAbilityPower.class)) {
-                    if (!power.canDamageKillFunction.apply(context)) {
+                    if (!DFunctions.<Boolean>evaluate(power.canDamageKillFunction, context)) {
                         entity.setHealth(1.0f);
                         return true;
                     }

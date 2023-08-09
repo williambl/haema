@@ -3,12 +3,11 @@ package com.williambl.haema.api.ritual.ritual;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.williambl.dfunc.api.DFunction;
-import com.williambl.dfunc.api.context.DFContext;
-import com.williambl.dfunc.api.context.DFContextSpec;
-import com.williambl.dfunc.api.functions.DPredicates;
+import com.williambl.dfunc.api.DFunctions;
 import com.williambl.haema.HaemaUtil;
 import com.williambl.haema.api.ritual.RitualArae;
+import com.williambl.vampilang.lang.VExpression;
+import com.williambl.vampilang.stdlib.StandardVTypes;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -24,18 +23,16 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static com.williambl.haema.Haema.id;
 
-//TODO FUCK THIS, MAKE IT NOT A RECIPE, FUCK RECIPES, ALL MY HOMIES HATE RECIPES
 public record Ritual(
         TagKey<Fluid> fluid,
         List<Ingredient> ingredients,
         HolderSet<RitualArae> acceptableAraes,
-        DFunction<Boolean> canPlayerUse,
+        VExpression canPlayerUse,
         List<RitualAction> actions,
         RitualTrigger trigger
 ) {
@@ -45,13 +42,13 @@ public record Ritual(
             TagKey.codec(Registries.FLUID).fieldOf("fluid").forGetter(Ritual::fluid),
             MoreCodecs.INGREDIENT.listOf().fieldOf("ingredients").forGetter(Ritual::ingredients),
             RegistryCodecs.homogeneousList(RitualArae.REGISTRY_KEY).fieldOf("acceptable_araes").forGetter(Ritual::acceptableAraes),
-            DFunction.PREDICATE.codec().comapFlatMap(HaemaUtil.verifyDFunction(DFContextSpec.ENTITY), Function.identity()).fieldOf("can_player_use").forGetter(Ritual::canPlayerUse),
+            DFunctions.resolvedExpressionCodec(StandardVTypes.BOOLEAN, DFunctions.ENTITY).fieldOf("can_player_use").forGetter(Ritual::canPlayerUse),
             RitualAction.ACTION_CODEC.listOf().fieldOf("actions").forGetter(Ritual::actions),
             RitualTrigger.TRIGGER_CODEC.fieldOf("trigger").forGetter(Ritual::trigger)
     ).apply(instance, Ritual::new));
 
     public boolean matches(RitualContainer container, RegistryAccess registries) {
-        return this.canPlayerUse().apply(DFContext.entity(container.player()))
+        return DFunctions.<Boolean>evaluate(this.canPlayerUse(), DFunctions.createEntityContext(container.player()))
                 && this.isAraeAcceptable(container.arae(), registries.registryOrThrow(RitualArae.REGISTRY_KEY))
                 && HaemaUtil.allMatchOne(container.itemsCopy(), this.ingredients()) != null
                 && container.fluid().is(this.fluid());
@@ -84,7 +81,7 @@ public record Ritual(
         private final HolderLookup.Provider registries;
         private final List<Ingredient> ingredients = new ArrayList<>();
         private final List<RitualAction> actions = new ArrayList<>();
-        private DFunction<Boolean> canPlayerUse = DPredicates.CONSTANT.factory().apply(true);
+        private VExpression canPlayerUse = VExpression.value(StandardVTypes.BOOLEAN, true);
         private TagKey<Fluid> fluid = FluidTags.WATER;
         private Either<TagKey<RitualArae>, List<ResourceKey<RitualArae>>> acceptableAraes = null;
         private RitualTrigger trigger = null;
@@ -118,7 +115,7 @@ public record Ritual(
             return this;
         }
 
-        public Builder canPlayerUse(DFunction<Boolean> dfunction) {
+        public Builder canPlayerUse(VExpression dfunction) {
             this.canPlayerUse = dfunction;
             return this;
         }
