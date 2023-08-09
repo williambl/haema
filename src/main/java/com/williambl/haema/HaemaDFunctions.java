@@ -1,5 +1,6 @@
 package com.williambl.haema;
 
+import com.williambl.dfunc.api.DFunctions;
 import com.williambl.dfunc.api.DTypes;
 import com.williambl.dfunc.api.functions.EntityDFunctions;
 import com.williambl.haema.api.vampire.VampireComponent;
@@ -41,5 +42,10 @@ public final class HaemaDFunctions {
     public static final VFunctionDefinition PREVENT_BURN_EVENT = EntityDFunctions.createFromPredicate(id("prevent_burn_event").toString(),
             (e) -> e instanceof LivingEntity l && VampireBurnEvents.PREVENT.invoker().shouldPreventVampireBurn(l));
 
-    static void init() {}
+    static void init() {
+        DFunctions.ENV.registerFunction(BLOOD);
+        DFunctions.ENV.registerFunction(MAX_BLOOD);
+        DFunctions.ENV.registerFunction(TRIGGER_BURN_EVENT);
+        DFunctions.ENV.registerFunction(PREVENT_BURN_EVENT);
+    }
 }
