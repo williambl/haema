@@ -49,7 +49,6 @@ public class VampiragerRenderer extends MobRenderer<Vampirager, VampiragerRender
         private final ModelPart root;
         private final ModelPart head;
         private final ModelPart hat;
-        private final ModelPart arms;
         private final ModelPart leftLeg;
         private final ModelPart rightLeg;
         private final ModelPart rightAttackingArm;
@@ -59,7 +58,6 @@ public class VampiragerRenderer extends MobRenderer<Vampirager, VampiragerRender
             this.root = root;
             this.head = root.getChild(PartNames.HEAD);
             this.hat = this.head.getChild(PartNames.HAT);
-            this.arms = root.getChild(PartNames.ARMS);
             this.leftLeg = root.getChild(PartNames.LEFT_LEG);
             this.rightLeg = root.getChild(PartNames.RIGHT_LEG);
             this.rightAttackingArm = root.getChild(PartNames.RIGHT_ARM);
@@ -89,9 +87,6 @@ public class VampiragerRenderer extends MobRenderer<Vampirager, VampiragerRender
         public void setupAnim(Vampirager entity, float f, float g, float h, float i, float j) {
             this.head.yRot = i * 0.017453292f;
             this.head.xRot = j * 0.017453292f;
-            this.arms.y = 3.0f;
-            this.arms.z = -1.0f;
-            this.arms.xRot = -0.75f;
             if (this.riding) {
                 this.rightAttackingArm.xRot = -0.62831855f;
                 this.rightAttackingArm.yRot = 0.0f;
