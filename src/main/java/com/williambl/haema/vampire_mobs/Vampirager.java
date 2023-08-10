@@ -1,21 +1,33 @@
 package com.williambl.haema.vampire_mobs;
 
+import com.google.common.collect.Lists;
 import com.williambl.haema.Haema;
 import com.williambl.haema.api.content.blood.BloodApi;
 import com.williambl.haema.api.vampire.VampireComponent;
 import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.hunters.VampireHunter;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.core.GlobalPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.DebugEntityNameGenerator;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.Nameable;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.behavior.BehaviorControl;
+import net.minecraft.world.entity.ai.behavior.BlockPosTracker;
+import net.minecraft.world.entity.ai.behavior.EntityTracker;
+import net.minecraft.world.entity.ai.memory.ExpirableValue;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.ai.memory.WalkTarget;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.npc.AbstractVillager;
+import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
@@ -32,16 +44,14 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.move.FloatToSurfaceOfFl
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.target.InvalidateAttackTarget;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetPlayerLookTarget;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetRandomLookTarget;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.target.TargetOrRetaliate;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.target.*;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
+import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.*;
 
 public class Vampirager extends Monster implements SmartBrainOwner<Vampirager> {
     protected Vampirager(EntityType<? extends Monster> entityType, Level level) {
@@ -80,6 +90,7 @@ public class Vampirager extends Monster implements SmartBrainOwner<Vampirager> {
     public List<ExtendedSensor<Vampirager>> getSensors() {
         return ObjectArrayList.of(
                 new NearbyPlayersSensor<>(),
+                new HurtBySensor<>(),
                 new NearbyLivingEntitySensor<Vampirager>()
                         .setPredicate((target, entity) -> target != entity && (target instanceof VampireHunter || target instanceof AbstractVillager || BloodApi.getBloodQuality(target).isPresent())));
     }
@@ -87,7 +98,7 @@ public class Vampirager extends Monster implements SmartBrainOwner<Vampirager> {
     @Override
     public BrainActivityGroup<Vampirager> getCoreTasks() {
         return BrainActivityGroup.coreTasks(
-            new FloatToSurfaceOfFluid<>(),
+                new FloatToSurfaceOfFluid<>(),
                 new AvoidSun<>(),
                 new EscapeSun<>().cooldownFor($ -> 20),
                 new LookAtTarget<>(),
@@ -99,7 +110,7 @@ public class Vampirager extends Monster implements SmartBrainOwner<Vampirager> {
     public BrainActivityGroup<Vampirager> getIdleTasks() {
         return BrainActivityGroup.idleTasks(
                 new FirstApplicableBehaviour<>(
-                        new TargetOrRetaliate<>(),
+                        new SetRetaliateTarget<>(),
                         new InvalidateDrinkTarget<>(),
                         new DrinkFromDrinkTarget<>(0),
                         new SetWalkTargetToDrinkTarget<>(),

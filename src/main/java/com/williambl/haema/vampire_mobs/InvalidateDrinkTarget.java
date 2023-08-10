@@ -1,7 +1,9 @@
 package com.williambl.haema.vampire_mobs;
 
 import com.mojang.datafixers.util.Pair;
+import com.williambl.haema.api.vampire.VampireComponent;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
@@ -54,17 +56,24 @@ public class InvalidateDrinkTarget<E extends LivingEntity> extends ExtendedBehav
     }
 
     @Override
-    protected void start(E entity) {
+    protected boolean checkExtraStartConditions(ServerLevel level, E entity) {
         LivingEntity target = BrainUtils.getMemory(entity, HaemaVampireMobs.VampireMobMemoryModuleTypes.BLOOD_DRINKING_TARGET);
 
         if (target == null) {
-            return;
+            return false;
         }
 
-        if (this.isTargetInvalid(entity, target) || !this.canAttack(entity, target) ||
-                this.isTiredOfPathing(entity) || this.customPredicate.applyAsBoolean(entity, target)) {
-            BrainUtils.clearMemory(entity, HaemaVampireMobs.VampireMobMemoryModuleTypes.BLOOD_DRINKING_TARGET);
+        if (VampireComponent.KEY.get(entity).getBlood() >= VampireComponent.MAX_BLOOD) {
+            return true;
         }
+
+        return this.isTargetInvalid(entity, target) || !this.canAttack(entity, target) ||
+                this.isTiredOfPathing(entity) || this.customPredicate.applyAsBoolean(entity, target);
+    }
+
+    @Override
+    protected void start(E entity) {
+        BrainUtils.clearMemory(entity, HaemaVampireMobs.VampireMobMemoryModuleTypes.BLOOD_DRINKING_TARGET);
     }
 
     protected boolean isTargetInvalid(E entity, LivingEntity target) {

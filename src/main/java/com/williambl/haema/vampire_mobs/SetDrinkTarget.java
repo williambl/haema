@@ -2,6 +2,7 @@ package com.williambl.haema.vampire_mobs;
 
 import com.mojang.datafixers.util.Pair;
 import com.williambl.haema.api.content.blood.BloodApi;
+import com.williambl.haema.api.vampire.VampireComponent;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
@@ -29,6 +30,10 @@ public class SetDrinkTarget<E extends Mob> extends ExtendedBehaviour<E> {
 
     @Override
     protected boolean checkExtraStartConditions(ServerLevel level, E entity) {
+        if (VampireComponent.KEY.get(entity).getBlood() >= VampireComponent.MAX_BLOOD) {
+            return false;
+        }
+
         var nearby = BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES);
         if (nearby != null) {
             this.toTarget = nearby.findClosest(this.canAttackPredicate).orElse(null);
