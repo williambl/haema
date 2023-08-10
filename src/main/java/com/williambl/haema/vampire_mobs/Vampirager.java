@@ -58,6 +58,11 @@ public class Vampirager extends Monster implements SmartBrainOwner<Vampirager> {
     }
 
     @Override
+    protected void customServerAiStep() {
+        this.tickBrain(this);
+    }
+
+    @Override
     protected Brain.Provider<?> brainProvider() {
         return new SmartBrainProvider<>(this);
     }
