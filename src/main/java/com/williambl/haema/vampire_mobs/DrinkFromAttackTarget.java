@@ -26,7 +26,7 @@ public class DrinkFromAttackTarget<E extends Mob> extends DrinkFromTarget<E> {
     }
 
     @Override
-    protected List<Pair<MemoryModuleType<?>, MemoryStatus>> createMemoryRequirements() {
+    protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
         return MEMORY_REQUIREMENTS;
     }
 }

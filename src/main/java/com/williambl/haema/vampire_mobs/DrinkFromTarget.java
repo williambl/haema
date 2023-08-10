@@ -15,13 +15,11 @@ import net.tslat.smartbrainlib.api.core.behaviour.DelayedBehaviour;
 import java.util.List;
 
 public abstract class DrinkFromTarget<E extends Mob> extends DelayedBehaviour<E> {
-    private final List<Pair<MemoryModuleType<?>, MemoryStatus>> memoryRequirements;
     private List<DrinkingAbilityPower> drinkingPowers;
     private LivingEntity target;
 
     public DrinkFromTarget(int delayTicks) {
         super(delayTicks);
-        this.memoryRequirements = this.createMemoryRequirements();
     }
 
     @Override
@@ -43,12 +41,6 @@ public abstract class DrinkFromTarget<E extends Mob> extends DelayedBehaviour<E>
     }
 
     protected abstract LivingEntity getTarget(ServerLevel level, E entity);
-    protected abstract List<Pair<MemoryModuleType<?>, MemoryStatus>> createMemoryRequirements();
-
-    @Override
-    protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
-        return this.memoryRequirements;
-    }
 
     @Override
     protected void doDelayedAction(E entity) {
