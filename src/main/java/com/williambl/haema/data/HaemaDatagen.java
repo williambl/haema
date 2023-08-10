@@ -35,6 +35,7 @@ import com.williambl.haema.vampire.ability.powers.AttributeVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.EffectVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.HealingVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.damage_modification.DamageModificationAbilityPower;
+import com.williambl.haema.vampire.ability.powers.dash.DashAbilityPower;
 import com.williambl.haema.vampire.ability.powers.drinking.DrinkingAbilityPower;
 import com.williambl.haema.vampire.ability.powers.vision.VampireVisionVampireAbilityPower;
 import com.williambl.haema.vampire_mobs.HaemaVampireMobs;
@@ -247,7 +248,8 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         @Override
         protected void addTags(HolderLookup.Provider arg) {
             this.getOrCreateTagBuilder(BloodApi.getEntityTag(BloodQuality.GOOD))
-                    .add(EntityType.PLAYER);
+                    .add(EntityType.PLAYER)
+                    .add(EntityType.VILLAGER);
         }
     }
 
@@ -297,15 +299,19 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             for (int i = 0; i < 3; i++) {
                 vampiricStrengthAbilities.add(this.createStrengthAbility(entries, i+1, vampiricStrengthAbilities));
             }
+            defaultAbilties.addAll(vampiricStrengthAbilities);
             var drinkingAbility = this.createDrinkingAbility(entries);
             defaultAbilties.add(drinkingAbility);
-
-            defaultAbilties.addAll(vampiricStrengthAbilities);
+            var dashAbilities = new ArrayList<ResourceKey<VampireAbility>>();
+            for (int i = 0; i < 3; i++) {
+                dashAbilities.add(this.createDashAbility(entries, i+1, dashAbilities));
+            }
+            defaultAbilties.addAll(dashAbilities);
 
 
             entries.add(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR, HaemaVampires.VampirismSources.COMMAND), defaultAbilties, VExpression.value(StandardVTypes.BOOLEAN, false), VExpression.value(StandardVTypes.BOOLEAN, false))); //TODO
             entries.add(HaemaVampires.VampirismSources.COMMAND, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of(), VExpression.value(StandardVTypes.BOOLEAN, true), VExpression.value(StandardVTypes.BOOLEAN, true)));
-            entries.add(HaemaVampireMobs.VampireMobVampirismSources.VAMPIRAGER_SPAWN, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of(healingAbility, damageModificationAbility, drinkingAbility), VExpression.value(StandardVTypes.BOOLEAN, true), VExpression.value(StandardVTypes.BOOLEAN, false)));
+            entries.add(HaemaVampireMobs.VampireMobVampirismSources.VAMPIRAGER_SPAWN, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of(healingAbility, damageModificationAbility, drinkingAbility, sunlightSicknessAbility, dashAbilities.get(2)), VExpression.value(StandardVTypes.BOOLEAN, true), VExpression.value(StandardVTypes.BOOLEAN, false)));
 
             entries.add(ResourceKey.create(RitualArae.REGISTRY_KEY, id("basic")), new RitualArae(new MultiblockFilter(
                     new char[][][]{
@@ -608,6 +614,21 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
                             List.of())));
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("drinking"));
             entries.add(key, drinkingAbility);
+            return key;
+        }
+
+        private ResourceKey<VampireAbility> createDashAbility(Entries entries, int level, Collection<ResourceKey<VampireAbility>> before) {
+            int cooldown = 10 * level;
+            var dashAbility = new VampireAbility(true, VExpression.value(StandardVTypes.BOOLEAN, true), Set.copyOf(before), Set.of(), Set.copyOf(before), List.of(
+                new DashAbilityPower(
+                        VExpression.value(StandardVTypes.NUMBER, (double) cooldown),
+                        VExpression.functionApplication(StandardVFunctions.GREATER_THAN_OR_EQUAL, Map.of(
+                                "a", VExpression.functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", VExpression.variable("entity"))),
+                                "b", VExpression.value(StandardVTypes.NUMBER, 18.0)
+                        )),
+                        List.of("z"))));
+            var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("dash/"+level));
+            entries.add(key, dashAbility);
             return key;
         }
 
