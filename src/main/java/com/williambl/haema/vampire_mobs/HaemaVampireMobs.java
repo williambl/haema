@@ -1,6 +1,13 @@
 package com.williambl.haema.vampire_mobs;
 
+import com.williambl.haema.api.vampire.VampireComponent;
 import com.williambl.haema.api.vampire.VampirismSource;
+import com.williambl.haema.api.vampire.ability.VampireAbilitiesComponent;
+import com.williambl.haema.vampire.EntityVampireAbilitiesComponent;
+import com.williambl.haema.vampire.EntityVampireComponent;
+import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
+import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -19,6 +26,11 @@ public class HaemaVampireMobs {
         VampireMobEntityTypes.init();
         VampireMobMemoryModuleTypes.init();
         VampireMobMemoryModuleTypes.init();
+    }
+
+    public static void initEntityComponents(EntityComponentFactoryRegistry registry) {
+        registry.registerFor(Vampirager.class, VampireComponent.KEY, EntityVampireComponent::new);
+        registry.registerFor(Vampirager.class, VampireAbilitiesComponent.KEY, EntityVampireAbilitiesComponent::new);
     }
 
     public static class VampireMobEntityTypes {

@@ -53,5 +53,6 @@ public class Haema implements ModInitializer, EntityComponentInitializer {
     @Override
     public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
         HaemaVampires.initEntityComponents(registry);
+        HaemaVampireMobs.initEntityComponents(registry);
     }
 }

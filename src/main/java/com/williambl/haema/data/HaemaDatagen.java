@@ -37,6 +37,7 @@ import com.williambl.haema.vampire.ability.powers.HealingVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.damage_modification.DamageModificationAbilityPower;
 import com.williambl.haema.vampire.ability.powers.drinking.DrinkingAbilityPower;
 import com.williambl.haema.vampire.ability.powers.vision.VampireVisionVampireAbilityPower;
+import com.williambl.haema.vampire_mobs.HaemaVampireMobs;
 import com.williambl.vampilang.lang.VExpression;
 import com.williambl.vampilang.lang.VValue;
 import com.williambl.vampilang.stdlib.ArithmeticVFunctions;
@@ -304,6 +305,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
 
             entries.add(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR, HaemaVampires.VampirismSources.COMMAND), defaultAbilties, VExpression.value(StandardVTypes.BOOLEAN, false), VExpression.value(StandardVTypes.BOOLEAN, false))); //TODO
             entries.add(HaemaVampires.VampirismSources.COMMAND, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of(), VExpression.value(StandardVTypes.BOOLEAN, true), VExpression.value(StandardVTypes.BOOLEAN, true)));
+            entries.add(HaemaVampireMobs.VampireMobVampirismSources.VAMPIRAGER_SPAWN, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of(healingAbility, damageModificationAbility, drinkingAbility), VExpression.value(StandardVTypes.BOOLEAN, true), VExpression.value(StandardVTypes.BOOLEAN, false)));
 
             entries.add(ResourceKey.create(RitualArae.REGISTRY_KEY, id("basic")), new RitualArae(new MultiblockFilter(
                     new char[][][]{
