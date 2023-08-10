@@ -13,8 +13,8 @@ import net.minecraft.world.entity.LivingEntity;
 
 public record DamageModificationAbilityPower(VExpression damageModificationFunction, VExpression canDamageKillFunction) implements VampireAbilityPower {
     public static final KeyDispatchDataCodec<DamageModificationAbilityPower> CODEC = KeyDispatchDataCodec.of(RecordCodecBuilder.create(instance -> instance.group(
-            DFunctions.resolvedExpressionCodec(StandardVTypes.NUMBER, HaemaDFunctions.ENTITY_DAMAGE_WITH_WEAPON).fieldOf("damage_modification").forGetter(DamageModificationAbilityPower::damageModificationFunction),
-            DFunctions.resolvedExpressionCodec(StandardVTypes.BOOLEAN, HaemaDFunctions.ENTITY_DAMAGE_WITH_WEAPON).fieldOf("can_damage_kill").forGetter(DamageModificationAbilityPower::canDamageKillFunction)
+            DFunctions.resolvedExpressionCodec(StandardVTypes.NUMBER, DFunctions.ENTITY_DAMAGE_WITH_WEAPON).fieldOf("damage_modification").forGetter(DamageModificationAbilityPower::damageModificationFunction),
+            DFunctions.resolvedExpressionCodec(StandardVTypes.BOOLEAN, DFunctions.ENTITY_DAMAGE_WITH_WEAPON).fieldOf("can_damage_kill").forGetter(DamageModificationAbilityPower::canDamageKillFunction)
     ).apply(instance, DamageModificationAbilityPower::new)));
 
     @Override
@@ -39,7 +39,7 @@ public record DamageModificationAbilityPower(VExpression damageModificationFunct
             var component = VampireAbilitiesComponent.KEY.getNullable(entity);
             float workingAmount = amount;
             if (component != null) {
-                var context = HaemaDFunctions.entityDamageWithWeapon(entity, source, amount, ((ExtendedDamageSource)source).weapon());
+                var context = DFunctions.entityDamageWithWeapon(entity, source, amount, ((ExtendedDamageSource)source).weapon());
                 for (var power : component.getPowersOfClass(DamageModificationAbilityPower.class)) {
                     workingAmount = DFunctions.<Double>evaluate(power.damageModificationFunction, context).floatValue();
                 }
@@ -51,7 +51,7 @@ public record DamageModificationAbilityPower(VExpression damageModificationFunct
         CheatDeathCallback.EVENT.register((source, amount, entity) -> {
             var component = VampireAbilitiesComponent.KEY.getNullable(entity);
             if (component != null) {
-                var context = HaemaDFunctions.entityDamageWithWeapon(entity, source, amount, ((ExtendedDamageSource)source).weapon());
+                var context = DFunctions.entityDamageWithWeapon(entity, source, amount, ((ExtendedDamageSource)source).weapon());
                 for (var power : component.getPowersOfClass(DamageModificationAbilityPower.class)) {
                     if (!DFunctions.<Boolean>evaluate(power.canDamageKillFunction, context)) {
                         entity.setHealth(1.0f);

@@ -19,20 +19,6 @@ import java.util.Map;
 import static com.williambl.haema.Haema.id;
 
 public final class HaemaDFunctions {
-    public static final EvaluationContext.Spec ENTITY_DAMAGE_WITH_WEAPON = new EvaluationContext.Spec(Map.of("entity", DTypes.ENTITY, "level", DTypes.LEVEL, "damage_source", DTypes.DAMAGE_SOURCE, "damage_amount", StandardVTypes.NUMBER, "attacker", DTypes.ENTITY, "direct_attacker", DTypes.ENTITY, "weapon", DTypes.ITEM_STACK));
-
-    public static EvaluationContext entityDamageWithWeapon(Entity entity, DamageSource source, float amount, ItemStack weapon) {
-        return EvaluationContext.builder(ENTITY_DAMAGE_WITH_WEAPON)
-                .addVariable("entity", new VValue(DTypes.ENTITY, entity))
-                .addVariable("level", new VValue(DTypes.LEVEL, entity.level()))
-                .addVariable("damage_source", new VValue(DTypes.DAMAGE_SOURCE, source))
-                .addVariable("damage_amount", new VValue(StandardVTypes.NUMBER, (double) amount))
-                .addVariable("attacker", new VValue(DTypes.ENTITY, source.getEntity()))
-                .addVariable("direct_attacker", new VValue(DTypes.ENTITY, source.getDirectEntity()))
-                .addVariable("weapon", new VValue(DTypes.ITEM_STACK, weapon))
-                .build();
-    }
-
     public static final VFunctionDefinition BLOOD = EntityDFunctions.createSimpleNumber(id("blood").toString(), e -> VampireComponent.KEY.maybeGet(e).map(VampireComponent::getBlood).orElse(0.0));
     public static final VFunctionDefinition MAX_BLOOD = EntityDFunctions.createSimpleNumber(id("max_blood").toString(), e -> VampireComponent.MAX_BLOOD);
 
