@@ -12,6 +12,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.Brain;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.level.Level;
@@ -44,6 +46,13 @@ import java.util.List;
 public class Vampirager extends Monster implements SmartBrainOwner<Vampirager> {
     protected Vampirager(EntityType<? extends Monster> entityType, Level level) {
         super(entityType, level);
+    }
+
+    public static AttributeSupplier.Builder createVampiragerAttributes() {
+        return createMonsterAttributes()
+                .add(Attributes.MAX_HEALTH, 30.0)
+                .add(Attributes.MOVEMENT_SPEED, 0.35)
+                .add(Attributes.FOLLOW_RANGE, 32.0);
     }
 
     @Nullable
@@ -98,7 +107,7 @@ public class Vampirager extends Monster implements SmartBrainOwner<Vampirager> {
                         new SetPlayerLookTarget<>(),
                         new SetRandomLookTarget<>()),
                 new OneRandomBehaviour<>(
-                        new SetRandomWalkTarget<>().speedModifier(1),
+                        new SetRandomWalkTarget<>().speedModifier(0.5f),
                         new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))));
     }
 
@@ -108,7 +117,7 @@ public class Vampirager extends Monster implements SmartBrainOwner<Vampirager> {
                 new InvalidateAttackTarget<>(),
                 new SetWalkTargetToAttackTarget<>(),
                 new FirstApplicableBehaviour<>(
-                        new DrinkFromAttackTarget<>(0),
+                        new DrinkFromAttackTarget<>(0).cooldownFor($ -> 20),
                         //new SpawnReinforcements<>(), //TODO implement vampiric zombies
                         new AnimatableMeleeAttack<>(0).whenStarting(entity -> this.setAggressive(true)).whenStarting(entity -> this.setAggressive(false))));
     }

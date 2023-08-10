@@ -24,7 +24,9 @@ public class HaemaVampireMobs {
     public static class VampireMobEntityTypes {
         public static final EntityType<Vampirager> VAMPIRAGER = Registry.register(BuiltInRegistries.ENTITY_TYPE, id("vampirager"), FabricEntityTypeBuilder.createMob().spawnGroup(MobCategory.MONSTER).entityFactory(Vampirager::new).dimensions(EntityDimensions.fixed(0.6f, 1.95f)).spawnRestriction(SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules).build());
 
-        private static void init() {}
+        private static void init() {
+            FabricDefaultAttributeRegistry.register(VAMPIRAGER, Vampirager.createVampiragerAttributes());
+        }
     }
 
     public static class VampireMobVampirismSources {
