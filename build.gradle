@@ -201,6 +201,11 @@ dependencies {
         exclude group: "net.fabricmc.fabric-api"
     }
 
+    // Actions
+    modImplementation include("com.williambl.actions:actions:${project.actions_version}") {
+        exclude group: "net.fabricmc.fabric-api"
+    }
+
     // Reach Entity Attributes
     include modImplementation("com.jamieswhiteshirt:reach-entity-attributes:${project.rea_version}") {
         exclude group: "net.fabricmc.fabric-api"

@@ -2,6 +2,8 @@ package com.williambl.haema.data;
 
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
 import com.mojang.datafixers.util.Function3;
+import com.williambl.actions.Actions;
+import com.williambl.dfunc.api.DFunctions;
 import com.williambl.dfunc.api.DTypes;
 import com.williambl.dfunc.api.functions.BlockInWorldDFunctions;
 import com.williambl.dfunc.api.functions.EntityDFunctions;
@@ -40,12 +42,10 @@ import com.williambl.haema.vampire.ability.powers.drinking.DrinkingAbilityPower;
 import com.williambl.haema.vampire.ability.powers.vision.VampireVisionVampireAbilityPower;
 import com.williambl.haema.vampire_mobs.HaemaVampireMobs;
 import com.williambl.vampilang.lang.VExpression;
-import com.williambl.vampilang.lang.VValue;
 import com.williambl.vampilang.stdlib.ArithmeticVFunctions;
 import com.williambl.vampilang.stdlib.LogicVFunctions;
 import com.williambl.vampilang.stdlib.StandardVFunctions;
 import com.williambl.vampilang.stdlib.StandardVTypes;
-import io.github.apace100.apoli.util.Comparison;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -96,7 +96,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 import static com.williambl.haema.Haema.id;
@@ -619,13 +618,24 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
 
         private ResourceKey<VampireAbility> createDashAbility(Entries entries, int level, Collection<ResourceKey<VampireAbility>> before) {
             int cooldown = 10 * level;
+            var cooldownId = id("dash");
             var dashAbility = new VampireAbility(true, VExpression.value(StandardVTypes.BOOLEAN, true), Set.copyOf(before), Set.of(), Set.copyOf(before), List.of(
-                new DashAbilityPower(
-                        VExpression.value(StandardVTypes.NUMBER, (double) cooldown),
-                        VExpression.functionApplication(StandardVFunctions.GREATER_THAN_OR_EQUAL, Map.of(
-                                "a", VExpression.functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", VExpression.variable("entity"))),
-                                "b", VExpression.value(StandardVTypes.NUMBER, 18.0)
-                        )),
+                    new DashAbilityPower(
+                            VExpression.functionApplication(LogicVFunctions.AND, Map.of(
+                                    "operands", VExpression.list(List.of(
+                                            VExpression.functionApplication(StandardVFunctions.LESS_THAN_OR_EQUAL, Map.of(
+                                                    "a", VExpression.functionApplication(Actions.GET_COOLDOWN, Map.of("entity", VExpression.variable("entity"), "cooldown_id", VExpression.value(DTypes.RESOURCE_LOCATION, cooldownId))),
+                                                    "b", VExpression.value(StandardVTypes.NUMBER, 0.0)
+                                            )),
+                                            VExpression.functionApplication(StandardVFunctions.GREATER_THAN_OR_EQUAL, Map.of(
+                                                    "a", VExpression.functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", VExpression.variable("entity"))),
+                                                    "b", VExpression.value(StandardVTypes.NUMBER, 18.0)
+                                            )))))),
+                        VExpression.list(List.of(
+                                VExpression.object(Actions.name(Actions.SET_COOLDOWN), Map.of(
+                                        "entity", VExpression.variable("entity"),
+                                        "cooldown_id", VExpression.value(DTypes.RESOURCE_LOCATION, cooldownId),
+                                        "length", VExpression.value(StandardVTypes.NUMBER, (double) cooldown))))),
                         List.of("z"))));
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("dash/"+level));
             entries.add(key, dashAbility);

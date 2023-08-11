@@ -3,10 +3,14 @@ package com.williambl.haema.vampire.ability.powers.dash;
 import com.mojang.brigadier.Command;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.williambl.actions.Action;
+import com.williambl.actions.Actions;
 import com.williambl.dfunc.api.DFunctions;
+import com.williambl.haema.api.vampire.ability.VampireAbilitiesComponent;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
 import com.williambl.vampilang.lang.VExpression;
+import com.williambl.vampilang.lang.VValue;
 import com.williambl.vampilang.stdlib.StandardVTypes;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.core.Direction;
@@ -22,10 +26,10 @@ import java.util.List;
 
 import static net.minecraft.commands.Commands.literal;
 
-public record DashAbilityPower(VExpression cooldown, VExpression canDash, List<String> keybinds) implements VampireAbilityPower {
+public record DashAbilityPower(VExpression canDash, VExpression onDash, List<String> keybinds) implements VampireAbilityPower {
     public static final KeyDispatchDataCodec<DashAbilityPower> CODEC = KeyDispatchDataCodec.of(RecordCodecBuilder.create(instance -> instance.group(
-            DFunctions.resolvedExpressionCodec(StandardVTypes.NUMBER, DFunctions.ENTITY).fieldOf("cooldown").forGetter(DashAbilityPower::cooldown),
             DFunctions.resolvedExpressionCodec(StandardVTypes.BOOLEAN, DFunctions.ENTITY).fieldOf("can_dash").forGetter(DashAbilityPower::canDash),
+            DFunctions.resolvedExpressionCodec(StandardVTypes.LIST.with(0, Actions.ACTION_TYPE.get()), DFunctions.ENTITY).fieldOf("on_dash").forGetter(DashAbilityPower::onDash),
             Codec.STRING.listOf().fieldOf("keybinds").forGetter(DashAbilityPower::keybinds)
     ).apply(instance, DashAbilityPower::new)));
 
@@ -42,7 +46,8 @@ public record DashAbilityPower(VExpression cooldown, VExpression canDash, List<S
     }
 
     public void dash(LivingEntity entity) {
-        if (!DFunctions.<Boolean>evaluate(this.canDash(), DFunctions.createEntityContext(entity))) {
+        var ctx = DFunctions.createEntityContext(entity);
+        if (!DFunctions.<Boolean>evaluate(this.canDash(), ctx)) {
             return;
         }
 
@@ -51,8 +56,7 @@ public record DashAbilityPower(VExpression cooldown, VExpression canDash, List<S
             return;
         }
 
-        //TODO effects
-
+        DFunctions.<List<VValue>>evaluate(this.onDash(), ctx).stream().map(VValue::<Action>getUnchecked).forEach(Action::runAction);
         entity.teleportTo(target.x, target.y, target.z);
     }
 
@@ -94,8 +98,8 @@ public record DashAbilityPower(VExpression cooldown, VExpression canDash, List<S
             dispatcher.register(literal("dash")
                     .executes(context -> {
                         var player = context.getSource().getPlayerOrException();
-                        var power = new DashAbilityPower(VExpression.value(StandardVTypes.NUMBER, (double) 0.0), VExpression.value(StandardVTypes.BOOLEAN, true), List.of());
-                        power.dash(player);
+                        var power = VampireAbilitiesComponent.KEY.get(player).getPowersOfClass(DashAbilityPower.class).stream().findFirst();
+                        power.ifPresent(dashAbilityPower -> dashAbilityPower.dash(player));
                         return Command.SINGLE_SUCCESS;
                     }));
         });
