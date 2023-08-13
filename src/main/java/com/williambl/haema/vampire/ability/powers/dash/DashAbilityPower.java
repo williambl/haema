@@ -61,12 +61,13 @@ public record DashAbilityPower(VExpression canDash, VExpression onDash, List<Str
     }
 
     public void dashWithTarget(LivingEntity entity, Vec3 target) {
-        if (!DFunctions.<Boolean>evaluate(this.canDash(), DFunctions.createEntityContext(entity))) {
+        var ctx = DFunctions.createEntityContext(entity);
+
+        if (!DFunctions.<Boolean>evaluate(this.canDash(), ctx)) {
             return;
         }
 
-        //TODO effects
-
+        DFunctions.<List<VValue>>evaluate(this.onDash(), ctx).stream().map(VValue::<Action>getUnchecked).forEach(Action::runAction);
         entity.teleportTo(target.x, target.y, target.z);
     }
 

@@ -15,6 +15,7 @@ import com.williambl.haema.vampire.ability.powers.HealingVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.damage_modification.DamageModificationAbilityPower;
 import com.williambl.haema.vampire.ability.powers.dash.DashAbilityPower;
 import com.williambl.haema.vampire.ability.powers.drinking.DrinkingAbilityPower;
+import com.williambl.haema.vampire.ability.powers.drinking.DrinkingPacket;
 import com.williambl.haema.vampire.ability.powers.sunlight_sickness.SunlightSicknessEffect;
 import com.williambl.haema.vampire.ability.powers.vampiric_weakness.VampiricWeaknessEffect;
 import com.williambl.haema.vampire.ability.powers.vision.VampireVisionVampireAbilityPower;
@@ -24,6 +25,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.gamerule.v1.CustomGameRuleCategory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
+import net.fabricmc.fabric.api.networking.v1.PacketType;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -43,6 +45,7 @@ public class HaemaVampires {
                 Haema.LOGGER.info("Vampire ability: {}\nContents: {}", holder.key().location(), holder.value());
             });
         });
+        VampirePackets.init();
         VampireMobEffects.init();
         VampireAbilityPowers.init();
         VampirismSources.init();
@@ -53,6 +56,14 @@ public class HaemaVampires {
     public static void initEntityComponents(EntityComponentFactoryRegistry registry) {
         registry.registerForPlayers(VampireComponent.KEY, EntityVampireComponent::new, RespawnCopyStrategy.CHARACTER);
         registry.registerForPlayers(VampireAbilitiesComponent.KEY, EntityVampireAbilitiesComponent::new, RespawnCopyStrategy.CHARACTER);
+    }
+
+    public static class VampirePackets {
+        public static final PacketType<DrinkingPacket> DRINKING = PacketType.create(id("drinking"), DrinkingPacket::new);
+
+        public static void init() {
+            DrinkingPacket.init();
+        }
     }
 
     public static class VampireAbilityPowers {
@@ -69,6 +80,7 @@ public class HaemaVampires {
         private static void init() {
             DamageModificationAbilityPower.init();
             DashAbilityPower.init();
+            DrinkingAbilityPower.init();
         }
     }
 

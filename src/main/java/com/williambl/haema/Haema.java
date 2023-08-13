@@ -23,6 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Haema implements ModInitializer, EntityComponentInitializer {
+    public static HaemaClientHandler CLIENT_HANDLER = HaemaClientHandler.DUMMY;
+
     public static final Logger LOGGER = LoggerFactory.getLogger("Haema");
     public static final String MODID = "haema";
     public static final Holder.Reference<CreativeModeTab> TAB = Registry.registerForHolder(BuiltInRegistries.CREATIVE_MODE_TAB, id("haema"), FabricItemGroup.builder()
