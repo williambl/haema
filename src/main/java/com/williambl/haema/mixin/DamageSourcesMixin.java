@@ -6,6 +6,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageSources;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -21,17 +22,17 @@ import java.util.function.Supplier;
 
 import static com.williambl.haema.HaemaKt.id;
 
-@Mixin(DamageSource.class)
-public class DamageSourceMixin {
+@Mixin(DamageSources.class)
+public class DamageSourcesMixin {
     private static final Supplier<TagKey<Item>> vampireEffectiveWeaponsTag = Suppliers.memoize(() -> TagKey.of(RegistryKeys.ITEM, id("vampire_weapons")));
 
-    @Inject(method = "player", at = @At("RETURN"))
-    private static void addVampireEffectiveSources(PlayerEntity attacker, CallbackInfoReturnable<DamageSource> cir) {
+    @Inject(method = "playerAttack", at = @At("RETURN"))
+    private void addVampireEffectiveSources(PlayerEntity attacker, CallbackInfoReturnable<DamageSource> cir) {
         setEffective(attacker, cir);
     }
 
-    @Inject(method = "mob", at = @At("TAIL"))
-    private static void addVampireEffectiveSourcesMob(LivingEntity attacker, CallbackInfoReturnable<DamageSource> cir) {
+    @Inject(method = "mobAttack", at = @At("RETURN"))
+    private void addVampireEffectiveSourcesMob(LivingEntity attacker, CallbackInfoReturnable<DamageSource> cir) {
         setEffective(attacker, cir);
     }
 

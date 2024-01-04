@@ -1,14 +1,13 @@
 package com.williambl.haema.compat.modmenu
 
-import com.mojang.blaze3d.systems.RenderSystem
 import com.williambl.haema.id
+import com.williambl.haema.util.drawCenteredText
 import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.DrawableHelper
+import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.client.gui.widget.ButtonWidget.PressAction
 import net.minecraft.client.util.InputUtil
-import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.text.ClickEvent
 import net.minecraft.text.MutableText
 import net.minecraft.text.Style
@@ -89,12 +88,11 @@ class HaemaGameplayConfigScreen(private val parent: Screen?) : Screen(Text.liter
         }.dimensions(width/2+10, 180, 200, 20).build())
     }
 
-    override fun render(matrices: MatrixStack?, mouseX: Int, mouseY: Int, delta: Float) {
-        renderBackground(matrices)
-        super.render(matrices, mouseX, mouseY, delta)
-        RenderSystem.setShaderTexture(0, icon)
-        DrawableHelper.drawTexture(
-            matrices,
+    override fun render(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {
+        renderBackground(context)
+        super.render(context, mouseX, mouseY, delta)
+        context.drawTexture(
+            icon,
             width/2-20,
             20,
             0f,
@@ -105,16 +103,16 @@ class HaemaGameplayConfigScreen(private val parent: Screen?) : Screen(Text.liter
             40
         )
         if (isShowingMore) {
-            DrawableHelper.drawCenteredText(matrices, textRenderer, extratexts[0], width / 2, 80, 0xffffff)
-            DrawableHelper.drawCenteredText(matrices, textRenderer, extratexts[1], width / 2, 90, 0xffffff)
-            DrawableHelper.drawCenteredText(matrices, textRenderer, extratexts[2], width / 2, 100, 0xffffff)
-            DrawableHelper.drawCenteredText(matrices, textRenderer, extratexts[3], width / 2, 110, 0xffffff)
-            DrawableHelper.drawCenteredText(matrices, textRenderer, extratexts[4], width / 2, 130, 0xffffff)
-            DrawableHelper.drawCenteredText(matrices, textRenderer, extratexts[5], width / 2, 150, 0xffffff)
+            context.drawCenteredText(textRenderer, extratexts[0], width / 2, 80, 0xffffff)
+            context.drawCenteredText(textRenderer, extratexts[1], width / 2, 90, 0xffffff)
+            context.drawCenteredText(textRenderer, extratexts[2], width / 2, 100, 0xffffff)
+            context.drawCenteredText(textRenderer, extratexts[3], width / 2, 110, 0xffffff)
+            context.drawCenteredText(textRenderer, extratexts[4], width / 2, 130, 0xffffff)
+            context.drawCenteredText(textRenderer, extratexts[5], width / 2, 150, 0xffffff)
         } else {
-            DrawableHelper.drawCenteredText(matrices, textRenderer, texts[0], width / 2, 80, if (isDoingAnim) Color.HSBtoRGB(currentHue.toFloat(), 0.8f, 0.8f) else 0xffffff)
-            DrawableHelper.drawCenteredText(matrices, textRenderer, texts[1], width / 2, 120, 0xffffff)
-            DrawableHelper.drawCenteredText(matrices, textRenderer, texts[2], width / 2, 135, 0xffffff)
+            context.drawCenteredText(textRenderer, texts[0], width / 2, 80, if (isDoingAnim) Color.HSBtoRGB(currentHue.toFloat(), 0.8f, 0.8f) else 0xffffff)
+            context.drawCenteredText(textRenderer, texts[1], width / 2, 120, 0xffffff)
+            context.drawCenteredText(textRenderer, texts[2], width / 2, 135, 0xffffff)
         }
     }
 

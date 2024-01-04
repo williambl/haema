@@ -5,7 +5,7 @@ import com.williambl.haema.ability.AbilityModule
 import com.williambl.haema.ability.VampireAbility
 import com.williambl.haema.api.BloodChangeEvents
 import com.williambl.haema.api.BloodDrinkingEvents
-import com.williambl.haema.damagesource.BloodLossDamageSource
+import com.williambl.haema.damagesource.bloodLoss
 import com.williambl.haema.effect.SunlightSicknessEffect
 import com.williambl.haema.effect.VampiricWeaknessEffect
 import com.williambl.haema.id
@@ -257,7 +257,7 @@ class EntityVampireComponent
         if (entity.isVampire) {
             entity.vampireComponent.removeBlood(amount)
         } else {
-            entity.damage(BloodLossDamageSource.instance, 1f)
+            entity.damage(entity.damageSources.bloodLoss(), 1f)
         }
         this.entity.playSound(SoundEvents.ENTITY_GENERIC_DRINK, 1f, 1f)
         val towards = this.entity.pos.subtract(entity.pos).normalize().multiply(0.1)

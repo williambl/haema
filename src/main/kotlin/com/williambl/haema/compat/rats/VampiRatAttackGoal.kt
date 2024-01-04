@@ -1,8 +1,10 @@
+// TODO: No rats version for 1.20.1 yet
+/*
 package com.williambl.haema.compat.rats
 
 import com.williambl.haema.component.EntityVampireComponent
 import com.williambl.haema.convert
-import com.williambl.haema.damagesource.BloodLossDamageSource
+import com.williambl.haema.damagesource.bloodLoss
 import com.williambl.haema.effect.VampiricStrengthEffect
 import com.williambl.haema.isVampirable
 import com.williambl.haema.isVampire
@@ -35,7 +37,7 @@ class VampiRatAttackGoal(private val actor: RatEntity, speed: Double, pauseWhenM
         if (target == null) return
 
         resetCooldown()
-        target.damage(BloodLossDamageSource.instance, 0.4f)
+        target.damage(target.damageSources.bloodLoss(), 0.4f)
 
         (actor.world as ServerWorld).spawnParticles(
             DustParticleEffect.DEFAULT,
@@ -62,3 +64,4 @@ class VampiRatAttackGoal(private val actor: RatEntity, speed: Double, pauseWhenM
         }
     }
 }
+*/

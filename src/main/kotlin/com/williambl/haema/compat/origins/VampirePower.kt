@@ -61,7 +61,7 @@ class VampirePower(type: PowerType<*>?, entity: LivingEntity) : ModifyPlayerSpaw
                 Haema.LOGGER.warn("Could not spawn Vampire entity away from sunlight.")
             }
             if (serverPlayer.server.currentPlayerCount == 1) {
-                serverPlayer.getWorld().timeOfDay = 13000
+                serverPlayer.serverWorld.timeOfDay = 13000
             }
         }
     }

@@ -1,6 +1,6 @@
 package com.williambl.haema.drip
 
-import net.minecraft.entity.EquipmentSlot
+import net.minecraft.item.ArmorItem
 import net.minecraft.item.ArmorMaterial
 import net.minecraft.item.ArmorMaterials
 import net.minecraft.item.Items
@@ -8,9 +8,9 @@ import net.minecraft.recipe.Ingredient
 import net.minecraft.sound.SoundEvent
 
 object VampireClothingMaterial: ArmorMaterial {
-    override fun getDurability(slot: EquipmentSlot?): Int = ArmorMaterials.CHAIN.getDurability(slot)
+    override fun getDurability(type: ArmorItem.Type?): Int = ArmorMaterials.CHAIN.getDurability(type)
 
-    override fun getProtectionAmount(slot: EquipmentSlot?): Int = ArmorMaterials.LEATHER.getProtectionAmount(slot)
+    override fun getProtection(type: ArmorItem.Type?): Int = ArmorMaterials.LEATHER.getProtection(type)
 
     override fun getEnchantability(): Int = ArmorMaterials.CHAIN.enchantability
 

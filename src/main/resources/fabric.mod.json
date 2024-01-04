@@ -27,6 +27,7 @@
       {"adapter": "kotlin", "value": "com.williambl.haema.ritual.RitualModule"},
       {"adapter": "kotlin", "value": "com.williambl.haema.hunter.VampireHunterModule"},
       {"adapter": "kotlin", "value": "com.williambl.haema.effect.EffectsModule"},
+      {"adapter": "kotlin", "value": "com.williambl.haema.damagetype.DamageTypeModule"},
       {"adapter": "kotlin", "value": "com.williambl.haema.damagesource.DamageSourceModule"},
       {"adapter": "kotlin", "value": "com.williambl.haema.criteria.CriteriaModule"},
       {"adapter": "kotlin", "value": "com.williambl.haema.blood.BloodModule"},
@@ -78,7 +79,7 @@
     "cardinal-components-entity": "*",
     "pehkui": "*",
     "geckolib": "*",
-    "minecraft": ">=1.19.3"
+    "minecraft": ">=1.20.1"
   },
   "suggests": {
     "origins": ">=0.4.7"

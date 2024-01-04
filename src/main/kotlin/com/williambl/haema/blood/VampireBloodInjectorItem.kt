@@ -2,7 +2,7 @@ package com.williambl.haema.blood
 
 import com.williambl.haema.convert
 import com.williambl.haema.criteria.VampireConversionFailureCriterion
-import com.williambl.haema.damagesource.IncompatibleBloodDamageSource
+import com.williambl.haema.damagesource.incompatibleBlood
 import com.williambl.haema.isVampire
 import com.williambl.haema.util.HaemaGameRules
 import com.williambl.haema.vampireComponent
@@ -55,7 +55,7 @@ class VampireBloodInjectorItem(settings: Settings?) : Item(settings) {
 
             user.addStatusEffect(StatusEffectInstance(StatusEffects.WITHER, 3000))
             user.addStatusEffect(StatusEffectInstance(StatusEffects.NAUSEA, 100))
-            user.damage(IncompatibleBloodDamageSource.instance, 20f)
+            user.damage(user.damageSources.incompatibleBlood(), 20f)
             return true
         }
 

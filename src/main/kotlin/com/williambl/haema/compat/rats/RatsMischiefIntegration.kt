@@ -1,3 +1,5 @@
+// TODO: No rats version for 1.20.1 yet
+/*
 package com.williambl.haema.compat.rats
 
 import com.williambl.haema.ability.component.invisibility.EntityInvisibilityAbilityComponent
@@ -40,3 +42,4 @@ fun registerRatVampireComponent(registry: EntityComponentFactoryRegistry) {
     registry.registerFor(RatEntity::class.java, InvisibilityAbilityComponent.entityKey, ::EntityInvisibilityAbilityComponent)
     registry.registerFor(RatEntity::class.java, StrengthAbilityComponent.entityKey, ::EntityStrengthAbilityComponent)
 }
+*/

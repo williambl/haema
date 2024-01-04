@@ -5,7 +5,7 @@ import com.williambl.haema.id
 import net.minecraft.advancement.criterion.AbstractCriterion
 import net.minecraft.advancement.criterion.AbstractCriterionConditions
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer
-import net.minecraft.predicate.entity.EntityPredicate
+import net.minecraft.predicate.entity.LootContextPredicate
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 
@@ -15,7 +15,7 @@ object StoreBloodCriterion: AbstractCriterion<StoreBloodCriterion.Conditions>() 
 
     override fun conditionsFromJson(
         obj: JsonObject,
-        playerPredicate: EntityPredicate.Extended,
+        playerPredicate: LootContextPredicate,
         predicateDeserializer: AdvancementEntityPredicateDeserializer
     ): Conditions = Conditions(playerPredicate)
 
@@ -23,5 +23,5 @@ object StoreBloodCriterion: AbstractCriterion<StoreBloodCriterion.Conditions>() 
         this.trigger(player) { true }
     }
 
-    class Conditions(playerPredicate: EntityPredicate.Extended): AbstractCriterionConditions(id, playerPredicate)
+    class Conditions(playerPredicate: LootContextPredicate): AbstractCriterionConditions(id, playerPredicate)
 }

@@ -1,60 +1,46 @@
 package com.williambl.haema.mixin.client;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.llamalad7.mixinextras.injector.WrapWithCondition;
 import com.williambl.haema.VampirableKt;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static com.williambl.haema.HaemaKt.id;
 
 @Mixin(InGameHud.class)
-public class InGameHudMixin extends DrawableHelper {
+public class InGameHudMixin {
     @Shadow @Final private MinecraftClient client;
 
+    @Unique
     private static final Identifier EMPTY_BLOOD_ICON = id("textures/gui/blood_empty.png");
+
+    @Unique
     private static final Identifier FULL_BLOOD_ICON = id("textures/gui/blood_full.png");
+
+    @Unique
     private static final Identifier HALF_BLOOD_ICON = id("textures/gui/blood_half.png");
 
-    @Redirect(
-            method = "renderStatusBars",
-            slice = @Slice(
-                    from = @At(
-                            value = "INVOKE_ASSIGN",
-                            target = "Lnet/minecraft/client/gui/hud/InGameHud;getHeartCount(Lnet/minecraft/entity/LivingEntity;)I"
-                    ),
-                    to = @At(
-                            value = "INVOKE",
-                            target = "Lnet/minecraft/entity/player/PlayerEntity;getAir()I"
-                    )
-            ),
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/client/gui/hud/InGameHud;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V"
-            )
-    )
-    void showVampireBloodIcons(InGameHud inGameHud, MatrixStack matrices, int x, int y, int u, int v, int width, int height) {
+    @Unique
+    private boolean showVampireBloodIcon(DrawContext context, Identifier texture, int x, int y, int width, int height) {
         PlayerEntity player = client.player;
         if (VampirableKt.isVampire(player)) {
-            drawTexture(matrices, x, y, 0, 0, width, height, 9, 9);
-            RenderSystem.setShaderTexture(0, GUI_ICONS_TEXTURE);
+            context.drawTexture(texture, x, y, 0, 0, width, height, 9, 9);
+            return false;
         } else {
-            inGameHud.drawTexture(matrices, x, y, u, v, width, height);
+            return true;
         }
     }
 
-    @Inject(
+    @WrapWithCondition(
             method = "renderStatusBars",
             slice = @Slice(
                     from = @At(
@@ -68,42 +54,15 @@ public class InGameHudMixin extends DrawableHelper {
             ),
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/gui/hud/InGameHud;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V",
+                    target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V",
                     ordinal = 0
             )
     )
-    void switchToEmptyBloodIcon(MatrixStack matrixStack, CallbackInfo ci) {
-        PlayerEntity player = client.player;
-        if (VampirableKt.isVampire(player)) {
-            RenderSystem.setShaderTexture(0, EMPTY_BLOOD_ICON);
-        }
-    }
-    @Inject(
-            method = "renderStatusBars",
-            slice = @Slice(
-                    from = @At(
-                            value = "INVOKE_ASSIGN",
-                            target = "Lnet/minecraft/client/gui/hud/InGameHud;getHeartCount(Lnet/minecraft/entity/LivingEntity;)I"
-                    ),
-                    to = @At(
-                            value = "INVOKE",
-                            target = "Lnet/minecraft/entity/player/PlayerEntity;getAir()I"
-                    )
-            ),
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/client/gui/hud/InGameHud;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V",
-                    ordinal = 2
-            )
-    )
-    void switchToHalfBloodIcon(MatrixStack matrixStack, CallbackInfo ci) {
-        PlayerEntity player = client.player;
-        if (VampirableKt.isVampire(player)) {
-            RenderSystem.setShaderTexture(0, HALF_BLOOD_ICON);
-        }
+    boolean showVampireEmptyBloodIcon(DrawContext context, Identifier texture, int x, int y, int u, int v, int width, int height) {
+        return showVampireBloodIcon(context, EMPTY_BLOOD_ICON, x, y, width, height);
     }
 
-    @Inject(
+    @WrapWithCondition(
             method = "renderStatusBars",
             slice = @Slice(
                     from = @At(
@@ -117,14 +76,33 @@ public class InGameHudMixin extends DrawableHelper {
             ),
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/gui/hud/InGameHud;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V",
+                    target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V",
                     ordinal = 1
             )
     )
-    void switchToFullBloodIcon(MatrixStack matrixStack, CallbackInfo ci) {
-        PlayerEntity player = client.player;
-        if (VampirableKt.isVampire(player)) {
-            RenderSystem.setShaderTexture(0, FULL_BLOOD_ICON);
-        }
+    boolean showVampireHalfBloodIcon(DrawContext context, Identifier texture, int x, int y, int u, int v, int width, int height) {
+        return showVampireBloodIcon(context, HALF_BLOOD_ICON, x, y, width, height);
+    }
+
+    @WrapWithCondition(
+            method = "renderStatusBars",
+            slice = @Slice(
+                    from = @At(
+                            value = "INVOKE_ASSIGN",
+                            target = "Lnet/minecraft/client/gui/hud/InGameHud;getHeartCount(Lnet/minecraft/entity/LivingEntity;)I"
+                    ),
+                    to = @At(
+                            value = "INVOKE",
+                            target = "Lnet/minecraft/entity/player/PlayerEntity;getAir()I"
+                    )
+            ),
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V",
+                    ordinal = 2
+            )
+    )
+    boolean showVampireFullBloodIcon(DrawContext context, Identifier texture, int x, int y, int u, int v, int width, int height) {
+        return showVampireBloodIcon(context, FULL_BLOOD_ICON, x, y, width, height);
     }
 }

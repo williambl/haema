@@ -7,10 +7,9 @@ import com.williambl.haema.api.AbilityVisibilityEvent
 import com.williambl.haema.ritual.RitualTableScreenHandler
 import net.minecraft.advancement.AdvancementFrame
 import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.DrawableHelper
+import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.advancement.AdvancementObtainedStatus
 import net.minecraft.client.gui.screen.ingame.HandledScreen
-import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
@@ -30,44 +29,43 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
     private var panX = 117 / 2.0
     private var panY = 56 / 2.0
 
-    override fun drawBackground(matrices: MatrixStack?, delta: Float, mouseX: Int, mouseY: Int) {}
+    override fun drawBackground(context: DrawContext, delta: Float, mouseX: Int, mouseY: Int) {}
 
-    override fun render(matrices: MatrixStack, mouseX: Int, mouseY: Int, delta: Float) {
+    override fun render(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {
         val xBase = (width - 252) / 2
         val yBase = (height - 140) / 2
 
-        renderWindow(matrices, xBase, yBase)
-        renderWindowBorder(matrices, xBase, yBase)
-        renderWidgetTooltip(matrices, xBase, yBase, mouseX, mouseY)
+        renderWindow(context, xBase, yBase)
+        renderWindowBorder(context, xBase, yBase)
+        renderWidgetTooltip(context, xBase, yBase, mouseX, mouseY)
     }
 
-    private fun renderWindow(matrices: MatrixStack, xBase: Int, yBase: Int) {
-        matrices.push()
+    private fun renderWindow(context: DrawContext, xBase: Int, yBase: Int) {
+        context.matrices.push()
         RenderSystem.enableDepthTest()
-        matrices.translate(((xBase + 9).toDouble()), ((yBase + 18).toDouble()), 950.0)
+        context.matrices.translate(((xBase + 9).toDouble()), ((yBase + 18).toDouble()), 950.0)
         RenderSystem.colorMask(false, false, false, false)
-        fill(matrices, 4680, 2260, -4680, -2260, -16777216)
+        context.fill(4680, 2260, -4680, -2260, -16777216)
         RenderSystem.colorMask(true, true, true, true)
-        matrices.translate(0.0, 0.0, -950.0)
+        context.matrices.translate(0.0, 0.0, -950.0)
         RenderSystem.depthFunc(518)
-        fill(matrices, 234, 113, 0, 0, -16777216)
+        context.fill(234, 113, 0, 0, -16777216)
         RenderSystem.depthFunc(515)
         val identifier = Identifier("minecraft:textures/gui/advancements/backgrounds/stone.png")
-        RenderSystem.setShaderTexture(0, identifier)
 
         val k = panX.toInt() % 16
         val l = panY.toInt() % 16
 
         for (m in -1..15) {
             for (n in -1..8) {
-                drawTexture(matrices, k + 16 * m, l + 16 * n, 0.0f, 0.0f, 16, 16, 16, 16)
+                context.drawTexture(identifier, k + 16 * m, l + 16 * n, 0.0f, 0.0f, 16, 16, 16, 16)
             }
         }
 
         widgets.forEachIndexed { i, widgets ->
             widgets.second.forEachIndexed { j, widget ->
                 widget.render(
-                    matrices,
+                    context,
                     (panX + 3 + i * 30).toInt(),
                     (panY + 3 + j * 30).toInt(),
                     xBase,
@@ -79,27 +77,25 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
         }
 
         RenderSystem.depthFunc(518)
-        matrices.translate(0.0, 0.0, -950.0)
+        context.matrices.translate(0.0, 0.0, -950.0)
         RenderSystem.colorMask(false, false, false, false)
-        fill(matrices, 4680, 2260, -4680, -2260, -16777216)
+        context.fill(4680, 2260, -4680, -2260, -16777216)
         RenderSystem.colorMask(true, true, true, true)
-        matrices.translate(0.0, 0.0, 950.0)
+        context.matrices.translate(0.0, 0.0, 950.0)
         RenderSystem.depthFunc(515)
         RenderSystem.disableDepthTest()
-        matrices.pop()
+        context.matrices.pop()
     }
 
-    private fun renderWindowBorder(matrices: MatrixStack, xBase: Int, yBase: Int) {
-        matrices.push()
+    private fun renderWindowBorder(context: DrawContext, xBase: Int, yBase: Int) {
+        context.matrices.push()
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
         RenderSystem.enableBlend()
-        RenderSystem.setShaderTexture(0, WINDOW_TEXTURE)
-        drawTexture(matrices, xBase, yBase, 0, 0, 252, 140)
+        context.drawTexture(WINDOW_TEXTURE, xBase, yBase, 0, 0, 252, 140)
 
         val pointsRemaining = handler.getProperty(0)
-        drawTextWithShadow(
-            matrices,
-            client!!.textRenderer,
+        context.drawTextWithShadow(
+            this.textRenderer,
             Text.literal("Ability Points remaining: ")
                 .append(
                     Text.literal(pointsRemaining.toString())
@@ -109,15 +105,16 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
             yBase + 6,
             0xffffff
         )
-        matrices.pop()
+        context.matrices.pop()
     }
 
-    private fun renderWidgetTooltip(matrices: MatrixStack, xBase: Int, yBase: Int, mouseX: Int, mouseY: Int) {
+    private fun renderWidgetTooltip(context: DrawContext, xBase: Int, yBase: Int, mouseX: Int, mouseY: Int) {
         val widget = getWidgetHovered(xBase, yBase, mouseX, mouseY)
 
         if (widget != null) {
-            renderTooltip(
-                matrices, listOf(
+            context.drawTooltip(
+                this.textRenderer,
+                listOf(
                     Text.translatable("ability.${widget.abilityIds.first.namespace}.${widget.abilityIds.first.path}").append(" ${widget.level}")
                         .formatted(Formatting.BOLD).formatted(Formatting.UNDERLINE),
                     Text.translatable("ability.${widget.abilityIds.first.namespace}.${widget.abilityIds.first.path}.description")
@@ -169,7 +166,7 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
 
     override fun close() {
         super.close()
-        handler.close(handler.inv.player)
+        handler.onClosed(handler.inv.player)
     }
 
     private fun getWidgetHovered(xBase: Int, yBase: Int, mouseX: Int, mouseY: Int): AbilityWidget? {
@@ -184,9 +181,9 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
         return null
     }
 
-    class AbilityWidget(val abilityIds: Pair<Identifier, Int>, val ability: VampireAbility, val level: Int): DrawableHelper() {
+    class AbilityWidget(val abilityIds: Pair<Identifier, Int>, val ability: VampireAbility, val level: Int) {
         fun render(
-            matrices: MatrixStack,
+            context: DrawContext,
             x: Int,
             y: Int,
             xBase: Int,
@@ -194,9 +191,8 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
             client: MinecraftClient,
             levelAchieved: Int
         ) {
-            RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE)
-            drawTexture(
-                matrices,
+            context.drawTexture(
+                WIDGETS_TEXTURE,
                 x,
                 y,
                 if (level == ability.maxLevel)
@@ -214,7 +210,7 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
                 26
             )
 
-            client.itemRenderer.renderInGui(
+            context.drawItem(
                 ability.iconItem,
                 x + xBase + 13,
                 y + yBase + 22

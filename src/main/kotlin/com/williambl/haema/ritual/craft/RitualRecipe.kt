@@ -20,6 +20,7 @@ import net.minecraft.recipe.Ingredient
 import net.minecraft.recipe.Recipe
 import net.minecraft.recipe.RecipeSerializer
 import net.minecraft.recipe.RecipeType
+import net.minecraft.registry.DynamicRegistryManager
 import net.minecraft.registry.Registries
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
@@ -68,7 +69,7 @@ class RitualRecipe(
         return matches(inv)
     }
 
-    override fun craft(inv: RitualInventory): ItemStack {
+    override fun craft(inv: RitualInventory, registryManager: DynamicRegistryManager): ItemStack? {
         if (!matches(inv)) {
             return ItemStack.EMPTY
         }
@@ -127,7 +128,7 @@ class RitualRecipe(
 
     override fun fits(width: Int, height: Int): Boolean = true
 
-    override fun getOutput(): ItemStack = ItemStack.EMPTY
+    override fun getOutput(registryManager: DynamicRegistryManager): ItemStack? = ItemStack.EMPTY
 
     override fun getId(): Identifier = id
 

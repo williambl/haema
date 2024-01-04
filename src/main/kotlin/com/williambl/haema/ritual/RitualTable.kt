@@ -57,7 +57,7 @@ class RitualTable(settings: Settings) : HorizontalFacingBlock(settings) {
 
             (world as ServerWorld).server.recipeManager.listAllOfType(RitualModule.RITUAL_RECIPE_TYPE)
                 .firstOrNull { it.matches(inventory) }
-                ?.craft(inventory) ?: return ActionResult.PASS
+                ?.craft(inventory, world.registryManager) ?: return ActionResult.PASS
 
             UseRitualCriterion.trigger(player as ServerPlayerEntity)
         }
@@ -114,7 +114,7 @@ class RitualTable(settings: Settings) : HorizontalFacingBlock(settings) {
         builder.add(FACING)
     }
 
-    override fun getPlacementState(ctx: ItemPlacementContext): BlockState = defaultState.with(FACING, ctx.playerFacing.opposite)
+    override fun getPlacementState(ctx: ItemPlacementContext): BlockState = defaultState.with(FACING, ctx.horizontalPlayerFacing.opposite)
 
     private fun spawnParticles(world: World, pos: BlockPos, speed: Double, showExtras: Boolean, level: Int) {
         world.addParticle(
@@ -232,7 +232,7 @@ class RitualTable(settings: Settings) : HorizontalFacingBlock(settings) {
     }
 
     companion object {
-        val instance: RitualTable by lazy { RitualTable(Settings.of(Material.METAL)) }
+        val instance: RitualTable by lazy { RitualTable(Settings.copy(Blocks.IRON_BLOCK)) }
 
         val shape: VoxelShape = createCuboidShape(0.0, 0.0, 0.0, 16.0, 12.0, 16.0)
 
