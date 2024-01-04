@@ -1,6 +1,7 @@
 package com.williambl.haema.component
 
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes
+import com.williambl.haema.Haema
 import com.williambl.haema.ability.AbilityModule
 import com.williambl.haema.ability.VampireAbility
 import com.williambl.haema.api.BloodChangeEvents
@@ -124,10 +125,14 @@ class EntityVampireComponent
     @Suppress("UNCHECKED_CAST")
     override fun writeSyncPacket(buf: PacketByteBuf, recipient: ServerPlayerEntity) {
         val propsAndDels = EntityVampireComponent::class.memberProperties
+            .asSequence()
+            // Filter to mutable properties to work around Kotlin Reflect failing to load LivingEntity when trying to set accessible on the "entity" property.
+            .filterIsInstance<KMutableProperty1<EntityVampireComponent, *>>()
             .map { it.isAccessible = true; it }
             .map { it to it.getDelegate(this) }
             .filter { (_, del) -> del is SyncedProperty<*> }
             .map { (prop, del) -> prop to del as SyncedProperty<*> }
+            .toList()
 
         buf.writeVarInt(propsAndDels.size)
 
