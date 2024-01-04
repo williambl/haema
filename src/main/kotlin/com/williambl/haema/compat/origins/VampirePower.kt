@@ -20,7 +20,7 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 
 
-class VampirePower(type: PowerType<*>?, entity: LivingEntity) : ModifyPlayerSpawnPower(type, entity, null, 1.0f, null, null, null, null) {
+class VampirePower(type: PowerType<*>?, entity: LivingEntity?) : ModifyPlayerSpawnPower(type, entity, null, 1.0f, null, null, null, null) {
     override fun onAdded() {
         if (entity.isVampirable()) {
             (entity).isVampire = true
