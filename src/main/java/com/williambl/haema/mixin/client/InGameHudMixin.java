@@ -80,8 +80,8 @@ public class InGameHudMixin {
                     ordinal = 1
             )
     )
-    boolean showVampireHalfBloodIcon(DrawContext context, Identifier texture, int x, int y, int u, int v, int width, int height) {
-        return showVampireBloodIcon(context, HALF_BLOOD_ICON, x, y, width, height);
+    boolean showVampireFullBloodIcon(DrawContext context, Identifier texture, int x, int y, int u, int v, int width, int height) {
+        return showVampireBloodIcon(context, FULL_BLOOD_ICON, x, y, width, height);
     }
 
     @WrapWithCondition(
@@ -102,7 +102,7 @@ public class InGameHudMixin {
                     ordinal = 2
             )
     )
-    boolean showVampireFullBloodIcon(DrawContext context, Identifier texture, int x, int y, int u, int v, int width, int height) {
-        return showVampireBloodIcon(context, FULL_BLOOD_ICON, x, y, width, height);
+    boolean showVampireHalfBloodIcon(DrawContext context, Identifier texture, int x, int y, int u, int v, int width, int height) {
+        return showVampireBloodIcon(context, HALF_BLOOD_ICON, x, y, width, height);
     }
 }
