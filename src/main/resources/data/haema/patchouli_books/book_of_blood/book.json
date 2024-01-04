@@ -7,5 +7,6 @@
   "dont_generate_book": true,
   "custom_book_item": "haema:book_of_blood",
   "i18n": true,
+  "use_resource_pack": true,
   "version": 2
 }
