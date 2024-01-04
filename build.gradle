@@ -181,8 +181,8 @@ dependencies {
     /// INCLUDED
     ///
 
-    // Mixin Extras
-    include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:0.2.2")))
+    // MixinExtras
+    include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:${project.mixinextras_version}")))
 
     // Satin
     modImplementation include("org.ladysnake:satin:${project.satin_version}") {
