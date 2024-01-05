@@ -177,12 +177,12 @@ dependencies {
         exclude group: "net.fabricmc.fabric-api"
     }
 
+    // MixinExtras (already included in Fabric Loader)
+    implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:${project.mixinextras_version}"))
+
     ///
     /// INCLUDED
     ///
-
-    // MixinExtras
-    include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:${project.mixinextras_version}")))
 
     // Satin
     modImplementation include("org.ladysnake:satin:${project.satin_version}") {
