@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "haema:blood_loss",
+    "haema:incompatible_blood",
+    "haema:sunlight"
+  ]
+}
