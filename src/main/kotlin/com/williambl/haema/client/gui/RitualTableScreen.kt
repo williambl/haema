@@ -6,7 +6,6 @@ import com.williambl.haema.ability.VampireAbility
 import com.williambl.haema.api.AbilityVisibilityEvent
 import com.williambl.haema.ritual.RitualTableScreenHandler
 import net.minecraft.advancement.AdvancementFrame
-import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.advancement.AdvancementObtainedStatus
 import net.minecraft.client.gui.screen.ingame.HandledScreen
@@ -14,10 +13,12 @@ import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
+import kotlin.math.max
 
 class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInventory, title: Text) :
     HandledScreen<RitualTableScreenHandler>(handler, inventory, title) {
 
+    private val BACKGROUND_TEXTURE = Identifier("minecraft:textures/gui/advancements/backgrounds/stone.png");
     private val widgets = AbilityModule.ABILITY_REGISTRY.entrySet.asSequence()
         .filterNot { it.value == AbilityModule.NONE }
         .filter { AbilityVisibilityEvent.EVENT.invoker().onVisibilityTest(inventory.player, it.value).orElse(it.value.isVisible(inventory.player)) }
@@ -26,8 +27,10 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
 
     private var movingTab = false
 
-    private var panX = 117 / 2.0
-    private var panY = 56 / 2.0
+    // There is 4 px padding between widgets and 3 px around the widgets.
+    // Widgets are 26x26 pixels so the 30 includes 4 pixes of padding at the end, which is why we also subtract 1.
+    private var panX = max(234 - (3 + 30 * widgets.size - 1), 0) / 2.0
+    private var panY = max(113 - (3 + 30 * widgets.maxOf { it.second.size } - 1), 0) / 2.0
 
     override fun drawBackground(context: DrawContext, delta: Float, mouseX: Int, mouseY: Int) {}
 
@@ -41,24 +44,19 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
     }
 
     private fun renderWindow(context: DrawContext, xBase: Int, yBase: Int) {
+        val xWin = xBase + 9
+        val yWin = yBase + 18
+
+        context.enableScissor(xWin, yWin, xWin + 234, yWin + 113)
         context.matrices.push()
-        RenderSystem.enableDepthTest()
-        context.matrices.translate(((xBase + 9).toDouble()), ((yBase + 18).toDouble()), 950.0)
-        RenderSystem.colorMask(false, false, false, false)
-        context.fill(4680, 2260, -4680, -2260, -16777216)
-        RenderSystem.colorMask(true, true, true, true)
-        context.matrices.translate(0.0, 0.0, -950.0)
-        RenderSystem.depthFunc(518)
-        context.fill(234, 113, 0, 0, -16777216)
-        RenderSystem.depthFunc(515)
-        val identifier = Identifier("minecraft:textures/gui/advancements/backgrounds/stone.png")
+        context.matrices.translate(xWin.toFloat(), yWin.toFloat(), 0.0f)
 
         val k = panX.toInt() % 16
         val l = panY.toInt() % 16
 
         for (m in -1..15) {
             for (n in -1..8) {
-                context.drawTexture(identifier, k + 16 * m, l + 16 * n, 0.0f, 0.0f, 16, 16, 16, 16)
+                context.drawTexture(BACKGROUND_TEXTURE, k + 16 * m, l + 16 * n, 0.0f, 0.0f, 16, 16, 16, 16)
             }
         }
 
@@ -68,23 +66,13 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
                     context,
                     (panX + 3 + i * 30).toInt(),
                     (panY + 3 + j * 30).toInt(),
-                    xBase,
-                    yBase,
-                    client!!,
                     handler.getProperty(widgets.first.second)
                 )
             }
         }
 
-        RenderSystem.depthFunc(518)
-        context.matrices.translate(0.0, 0.0, -950.0)
-        RenderSystem.colorMask(false, false, false, false)
-        context.fill(4680, 2260, -4680, -2260, -16777216)
-        RenderSystem.colorMask(true, true, true, true)
-        context.matrices.translate(0.0, 0.0, 950.0)
-        RenderSystem.depthFunc(515)
-        RenderSystem.disableDepthTest()
         context.matrices.pop()
+        context.disableScissor()
     }
 
     private fun renderWindowBorder(context: DrawContext, xBase: Int, yBase: Int) {
@@ -170,12 +158,21 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
     }
 
     private fun getWidgetHovered(xBase: Int, yBase: Int, mouseX: Int, mouseY: Int): AbilityWidget? {
-        for (i in widgets.indices) for (j in widgets[i].second.indices) {
-            x = xBase + panX.toInt() + 15 + i * 30
-            y = yBase + panY.toInt() + 20 + j * 30
+        val xWin = xBase + 9
+        val yWin = yBase + 18
 
-            if (mouseX in x..x+22 && mouseY in y..y+26) {
-                return widgets[i].second[j]
+        widgets.forEachIndexed { i, widgets ->
+            widgets.second.forEachIndexed { j, widget ->
+                // Widgets below max level are not as wide.
+                val wShrink = if (widget.level < widget.ability.maxLevel) 2 else 0
+                val xMin = xWin + panX.toInt() + 3 + i * 30 + wShrink
+                val yMin = yWin + panY.toInt() + 3 + j * 30
+                val xMax = xMin + 25 - wShrink * 2
+                val yMax = yMin + 25
+
+                if (mouseX in xMin..xMax && mouseY in yMin..yMax) {
+                    return widget
+                }
             }
         }
         return null
@@ -186,9 +183,6 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
             context: DrawContext,
             x: Int,
             y: Int,
-            xBase: Int,
-            yBase: Int,
-            client: MinecraftClient,
             levelAchieved: Int
         ) {
             context.drawTexture(
@@ -210,10 +204,10 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
                 26
             )
 
-            context.drawItem(
+            context.drawItemWithoutEntity(
                 ability.iconItem,
-                x + xBase + 13,
-                y + yBase + 22
+                x + 5,
+                y + 5
             )
         }
     }
