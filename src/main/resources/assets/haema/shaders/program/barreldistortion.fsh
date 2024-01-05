@@ -3,10 +3,6 @@
 uniform sampler2D DiffuseSampler;
 
 in vec2 texCoord;
-in vec2 oneTexel;
-
-uniform vec2 InSize;
-uniform vec2 OutSize;
 
 // positive values give barrel distortion, negative give pincushion
 uniform float DistortAmount;
