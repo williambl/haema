@@ -20,7 +20,7 @@ import software.bernie.geckolib.util.GeckoLibUtil
 import java.util.function.Consumer
 import java.util.function.Supplier
 
-class VampireClothingItem(materialIn: ArmorMaterial, slot: EquipmentSlot, builder: Settings) : ArmorItem(materialIn, slot, builder), GeoItem {
+class VampireClothingItem(materialIn: ArmorMaterial, type: Type, builder: Settings) : ArmorItem(materialIn, type, builder), GeoItem {
     private val factory = GeckoLibUtil.createInstanceCache(this)
     private val renderProvider = GeoItem.makeRenderer(this)
 

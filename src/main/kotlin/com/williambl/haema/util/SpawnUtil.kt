@@ -36,7 +36,7 @@ fun getSpawn(player: PlayerEntity): Pair<ServerWorld, BlockPos>? {
         candidates = candidates.sortedBy { it.distanceTo(Vec3d.ofCenter(regularSpawn)) }.filter { it.y >= avgY }.toMutableList()
         return if (candidates.isNotEmpty()) {
             Haema.LOGGER.info("Found a vampire-safe spawn, ${candidates.first().distanceTo(Vec3d.ofCenter(regularSpawn))} blocks from regular spawn.")
-            Pair(world, BlockPos(candidates.first()))
+            Pair(world, BlockPos.ofFloored(candidates.first()))
         } else {
             Haema.LOGGER.warn("Could not find a vampire-safe spawn in range $range of $regularSpawn.")
             null

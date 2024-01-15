@@ -20,7 +20,7 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 
 
-class VampirePower(type: PowerType<*>?, entity: LivingEntity) : ModifyPlayerSpawnPower(type, entity, null, 1.0f, null, null, null, null) {
+class VampirePower(type: PowerType<*>?, entity: LivingEntity?) : ModifyPlayerSpawnPower(type, entity, null, 1.0f, null, null, null, null) {
     override fun onAdded() {
         if (entity.isVampirable()) {
             (entity).isVampire = true
@@ -61,7 +61,7 @@ class VampirePower(type: PowerType<*>?, entity: LivingEntity) : ModifyPlayerSpaw
                 Haema.LOGGER.warn("Could not spawn Vampire entity away from sunlight.")
             }
             if (serverPlayer.server.currentPlayerCount == 1) {
-                serverPlayer.getWorld().timeOfDay = 13000
+                serverPlayer.serverWorld.timeOfDay = 13000
             }
         }
     }

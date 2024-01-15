@@ -43,8 +43,9 @@ repositories {
     }
     maven {
         name = "Ladysnake Libs"
-        url = 'https://ladysnake.jfrog.io/artifactory/mods'
+        url = 'https://maven.ladysnake.org/releases'
         content {
+            includeGroup "org.ladysnake"
             includeGroup "io.github.ladysnake"
             includeGroupByRegex "io\\.github\\.onyxstudios.*"
             includeGroupByRegex "dev\\.onyxstudios.*"
@@ -170,18 +171,21 @@ dependencies {
     modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
 
     // GeckoLib
-    modImplementation("software.bernie.geckolib:geckolib-fabric-1.19.3:${project.geckolib_version}") {
+    modImplementation("software.bernie.geckolib:geckolib-fabric-1.20.1:${project.geckolib_version}") {
         exclude group: "com.eliotlash.mclib"
         exclude group: "com.eliotlash.molang"
         exclude group: "net.fabricmc.fabric-api"
     }
+
+    // MixinExtras (already included in Fabric Loader)
+    implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:${project.mixinextras_version}"))
 
     ///
     /// INCLUDED
     ///
 
     // Satin
-    modImplementation include("io.github.ladysnake:satin:${project.satin_version}") {
+    modImplementation include("org.ladysnake:satin:${project.satin_version}") {
         exclude group: "net.fabricmc.fabric-api"
     }
 
@@ -233,25 +237,26 @@ dependencies {
     }
 
     // EMI
-    modCompileOnly("dev.emi:emi:${project.emi_version}") {
+    modCompileOnly("dev.emi:emi-fabric:${project.emi_version}") {
         exclude group: "net.fabricmc.fabric_api"
         exclude group: "null"
         transitive = false
     }
 
     // Origins
-    modCompileOnly("com.github.apace100:origins-fabric:${project.origins_version}") {
+    modCompileOnly("com.github.apace100:origins-fabric:v${project.origins_version}") {
         exclude module: "modmenu"
         exclude group: "io.github.OnyxStudios.Cardinal-Components-API"
         exclude group: "net.fabricmc.fabric-api"
     }
 
     // Rat's Mischief
-    modCompileOnly("io.github.ladysnake:Rats-Mischief:${project.rats_version}") {
-        exclude group: "com.eliotlash.mclib"
-        exclude group: "com.eliotlash.molang"
-        exclude group: "net.fabricmc.fabric-api"
-    }
+    // No version for 1.20.1 yet
+//    modCompileOnly("io.github.ladysnake:Rats-Mischief:${project.rats_version}") {
+//        exclude group: "com.eliotlash.mclib"
+//        exclude group: "com.eliotlash.molang"
+//        exclude group: "net.fabricmc.fabric-api"
+//    }
 
     // Bewitchment
     modCompileOnly("curse.maven:bewitchment-394915:${project.bewitchment_version}") {
@@ -260,7 +265,7 @@ dependencies {
     }
 
     // Flan
-    modCompileOnly("io.github.flemmli97:flan:${project.flan_version}:fabric-api") {
+    modCompileOnly("io.github.flemmli97:flan:${project.flan_version}-fabric:api") {
         exclude group: "net.fabricmc.fabric-api"
         transitive = false
     }

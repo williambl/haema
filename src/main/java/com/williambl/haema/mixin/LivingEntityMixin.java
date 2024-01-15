@@ -3,14 +3,15 @@ package com.williambl.haema.mixin;
 import com.williambl.haema.VampirableKt;
 import com.williambl.haema.ability.AbilityModule;
 import com.williambl.haema.criteria.VampireHunterTriggerCriterion;
-import com.williambl.haema.damagesource.BloodLossDamageSource;
 import com.williambl.haema.damagesource.DamageSourceModule;
+import com.williambl.haema.damagetype.DamageTypeModule;
 import com.williambl.haema.hunter.VampireHunterSpawner;
 import com.williambl.haema.util.HaemaGameRules;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -47,7 +48,7 @@ public abstract class LivingEntityMixin extends Entity {
         //noinspection ConstantConditions
         if (((Object) this) instanceof PlayerEntity && VampirableKt.isVampire((LivingEntity) (Object) this)
                 && source != null && VampirableKt.getAbilityLevel((LivingEntity) (Object) this, AbilityModule.INSTANCE.getIMMORTALITY()) > 0) {
-            if (this.getHealth() <= 0 && DamageSourceModule.INSTANCE.isEffectiveAgainstVampires(source, this.world)) {
+            if (this.getHealth() <= 0 && DamageSourceModule.INSTANCE.isEffectiveAgainstVampires(source, this.getWorld())) {
                 VampirableKt.getVampireComponent((LivingEntity) (Object) this).setAbsoluteBlood(0.0);
                 VampirableKt.setKilled((LivingEntity) (Object) this, true);
             }
@@ -59,7 +60,7 @@ public abstract class LivingEntityMixin extends Entity {
         //noinspection ConstantConditions
         if (((Object) this) instanceof PlayerEntity && VampirableKt.isVampire((LivingEntity) (Object) this)
                 && source != null && (VampirableKt.getAbilityLevel((LivingEntity) (Object) this, AbilityModule.INSTANCE.getIMMORTALITY()) > 0)) {
-            if (!(this.getHealth() <= 0 && DamageSourceModule.INSTANCE.isEffectiveAgainstVampires(source, this.world))) {
+            if (!(this.getHealth() <= 0 && DamageSourceModule.INSTANCE.isEffectiveAgainstVampires(source, this.getWorld()))) {
                 cir.setReturnValue(true);
             }
         }
@@ -70,22 +71,23 @@ public abstract class LivingEntityMixin extends Entity {
             argsOnly = true
     )
     float haema$tweakDamageIfVampire(float amount, DamageSource source) {
-        float result = VampirableKt.isVampire((LivingEntity) (Object) this) && DamageSourceModule.INSTANCE.isEffectiveAgainstVampires(source, world) ?
+        float result = VampirableKt.isVampire((LivingEntity) (Object) this) && DamageSourceModule.INSTANCE.isEffectiveAgainstVampires(source, this.getWorld()) ?
                 amount * 1.25f
                 : amount;
 
-        return Float.isFinite(result) && source != DamageSource.OUT_OF_WORLD ? result : amount;
+        return Float.isFinite(result) && !source.isOf(DamageTypes.OUT_OF_WORLD) ? result : amount;
     }
 
 
     @Redirect(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isSleeping()Z"))
     boolean dontWakeForFeeding(LivingEntity livingEntity) {
-        return livingEntity.isSleeping() && currentSource != BloodLossDamageSource.Companion.getInstance();
+        return livingEntity.isSleeping() && !currentSource.isOf(DamageTypeModule.BLOOD_LOSS);
     }
 
     @Inject(method = "onDeath", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setPose(Lnet/minecraft/entity/EntityPose;)V"))
     void alertVampireHuntersToDeath(DamageSource source, CallbackInfo ci) {
-        if (source == BloodLossDamageSource.Companion.getInstance() && world instanceof ServerWorld) {
+        World world = this.getWorld();
+        if (source.isOf(DamageTypeModule.BLOOD_LOSS) && world instanceof ServerWorld) {
             ((ServerWorld) world).spawnParticles(new DustParticleEffect(DustParticleEffect.RED, 3.0f), getX(), getY()+1, getZ(), 30, 1.0, 1.0, 1.0, 0.1);
 
             if (random.nextDouble() < world.getGameRules().get(HaemaGameRules.INSTANCE.getVampireHunterNoticeChance()).get()) {

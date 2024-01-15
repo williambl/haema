@@ -1,13 +1,12 @@
 package com.williambl.haema.compat.modmenu
 
-import com.mojang.blaze3d.systems.RenderSystem
 import com.williambl.haema.client.config.HaemaConfig
 import com.williambl.haema.id
+import com.williambl.haema.util.drawCenteredText
 import me.shedaniel.autoconfig.AutoConfig
-import net.minecraft.client.gui.DrawableHelper
+import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.widget.ButtonWidget
-import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 
@@ -28,12 +27,11 @@ class HaemaMainConfigScreen(private val parent: Screen?) : Screen(Text.literal("
         }.dimensions(width / 2 - 100, 180, 200, 20).build())
     }
 
-    override fun render(matrices: MatrixStack?, mouseX: Int, mouseY: Int, delta: Float) {
-        renderBackground(matrices)
-        super.render(matrices, mouseX, mouseY, delta)
-        RenderSystem.setShaderTexture(0, icon)
-        DrawableHelper.drawTexture(
-                matrices,
+    override fun render(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {
+        renderBackground(context)
+        super.render(context, mouseX, mouseY, delta)
+        context.drawTexture(
+                icon,
                 width / 2 - 20,
                 20,
                 0f,
@@ -43,7 +41,7 @@ class HaemaMainConfigScreen(private val parent: Screen?) : Screen(Text.literal("
                 40,
                 40
         )
-        DrawableHelper.drawCenteredText(matrices, textRenderer, Text.translatable("gui.haema.title").formatted(Formatting.UNDERLINE), width / 2, 75, 0xffffff)
+        context.drawCenteredText(textRenderer, Text.translatable("gui.haema.title").formatted(Formatting.UNDERLINE), width / 2, 75, 0xffffff)
     }
 
     override fun close() {

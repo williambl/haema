@@ -1,6 +1,6 @@
 package com.williambl.haema.effect
 
-import com.williambl.haema.damagesource.SunlightDamageSource
+import com.williambl.haema.damagesource.sunlight
 import com.williambl.haema.isVampire
 import com.williambl.haema.vampireComponent
 import net.minecraft.entity.LivingEntity
@@ -30,7 +30,7 @@ class SunlightSicknessEffect(type: StatusEffectCategory?, color: Int) : StatusEf
         }
 
         if (entity.age % 10 == 0) {
-            entity.damage(SunlightDamageSource.instance, 0.5f)
+            entity.damage(entity.damageSources.sunlight(), 0.5f)
             if (entity.isVampire) {
                 (entity.vampireComponent).removeBlood(0.25)
             }

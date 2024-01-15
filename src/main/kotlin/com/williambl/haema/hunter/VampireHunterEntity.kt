@@ -3,7 +3,6 @@ package com.williambl.haema.hunter
 import com.williambl.haema.id
 import com.williambl.haema.isVampire
 import com.williambl.haema.util.contains
-import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags
 import net.minecraft.block.entity.BannerPattern
 import net.minecraft.block.entity.BannerPatterns
 import net.minecraft.command.argument.EntityAnchorArgumentType
@@ -24,13 +23,14 @@ import net.minecraft.entity.projectile.ProjectileEntity
 import net.minecraft.entity.projectile.ProjectileUtil
 import net.minecraft.inventory.SimpleInventory
 import net.minecraft.item.*
-import net.minecraft.loot.context.LootContext
+import net.minecraft.loot.context.LootContextParameterSet
 import net.minecraft.loot.context.LootContextParameters
 import net.minecraft.loot.context.LootContextTypes
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtList
 import net.minecraft.potion.PotionUtil
 import net.minecraft.potion.Potions
+import net.minecraft.registry.tag.ItemTags
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
@@ -158,9 +158,9 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
             if (isHolding { it is VampireHunterContract } ) {
                 val stack = mainHandStack
                 if (stack.isContractFulfilled()) {
-                    world?.server?.lootManager?.getTable(paymentLootTable)?.generateLoot(
-                        LootContext.Builder(world as ServerWorld)
-                            .parameter(LootContextParameters.THIS_ENTITY, this).random(world.random)
+                    world?.server?.lootManager?.getLootTable(paymentLootTable)?.generateLoot(
+                        LootContextParameterSet.Builder(world as ServerWorld)
+                            .add(LootContextParameters.THIS_ENTITY, this)
                             .build(LootContextTypes.BARTER)
                     )?.forEach { dropStack(it) }
                     equipStack(EquipmentSlot.MAINHAND, ItemStack.EMPTY)
@@ -235,9 +235,9 @@ class VampireHunterEntity(entityType: EntityType<out VampireHunterEntity>?, worl
             val stack = player.mainHandStack
             if (stack.item is VampireHunterContract && stack.isContractFulfilled()) {
                 player.inventory.removeOne(stack)
-                world?.server?.lootManager?.getTable(paymentLootTable)?.generateLoot(
-                    LootContext.Builder(world as ServerWorld)
-                        .parameter(LootContextParameters.THIS_ENTITY, this).random(world.random)
+                world?.server?.lootManager?.getLootTable(paymentLootTable)?.generateLoot(
+                    LootContextParameterSet.Builder(world as ServerWorld)
+                        .add(LootContextParameters.THIS_ENTITY, this)
                         .build(LootContextTypes.BARTER)
                 )?.forEach { player.giveItemStack(it) }
             } else if (!hasGivenContract) {
@@ -364,7 +364,7 @@ class VampireHunterMeleeAttackGoal(private val actor: VampireHunterEntity, speed
         return value
     }
 
-    private fun isSword(item: ItemStack) = item.isIn(ConventionalItemTags.SWORDS)
+    private fun isSword(item: ItemStack) = item.isIn(ItemTags.SWORDS)
 }
 
 class VampireHunterOnHorseAttackGoal(private val actor: VampireHunterEntity, speed: Double, range: Float) : VampireHunterCrossbowAttackGoal(

@@ -5,17 +5,16 @@ import com.williambl.haema.client.HaemaClient
 import com.williambl.haema.client.config.HudPlacement
 import com.williambl.haema.isVampire
 import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.DrawableHelper
-import net.minecraft.client.util.math.MatrixStack
+import net.minecraft.client.gui.DrawContext
 import net.minecraft.text.MutableText
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 
-object VampireHud : DrawableHelper() {
-    fun render(matrixStack: MatrixStack, @Suppress("UNUSED_PARAMETER") tickDelta: Float) {
+object VampireHud {
+    fun render(context: DrawContext, tickDelta: Float) {
         if (HaemaClient.config.vampireHudPlacement == HudPlacement.NONE) return
 
-        matrixStack.push()
+        context.matrices.push()
 
         val mc = MinecraftClient.getInstance()
         val width = mc.window.scaledWidth
@@ -29,16 +28,15 @@ object VampireHud : DrawableHelper() {
         val texts = VampireHudAddTextEvent.EVENT.invoker().addText(player, ::createText)
 
         texts.forEachIndexed { index, text ->
-            drawCenteredText(
-                    matrixStack,
+            context.drawCenteredTextWithShadow(
                     MinecraftClient.getInstance().textRenderer,
                     text,
                     HaemaClient.config.vampireHudPlacement.x(width, textRenderer.getWidth(text)),
-                    HaemaClient.config.vampireHudPlacement.y(height,index),
+                    HaemaClient.config.vampireHudPlacement.y(height, index),
                     0xffffff
             )
         }
-        matrixStack.pop()
+        context.matrices.pop()
     }
 
     private fun createText(key: MutableText, available: Boolean, description: Text): Text {

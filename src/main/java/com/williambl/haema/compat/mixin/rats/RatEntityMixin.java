@@ -1,3 +1,5 @@
+// TODO: No rats version for 1.20.1 yet (make sure to add back to haema_compat.mixins.json)
+/*
 package com.williambl.haema.compat.mixin.rats;
 
 import com.williambl.haema.VampirableKt;
@@ -93,3 +95,4 @@ public abstract class RatEntityMixin extends TameableEntity {
         return false;
     }
 }
+*/

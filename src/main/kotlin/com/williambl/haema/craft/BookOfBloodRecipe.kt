@@ -1,6 +1,6 @@
 package com.williambl.haema.craft
 
-import net.minecraft.inventory.CraftingInventory
+import net.minecraft.inventory.RecipeInputInventory
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.potion.PotionUtil
@@ -9,6 +9,7 @@ import net.minecraft.recipe.RecipeSerializer
 import net.minecraft.recipe.SpecialCraftingRecipe
 import net.minecraft.recipe.SpecialRecipeSerializer
 import net.minecraft.recipe.book.CraftingRecipeCategory
+import net.minecraft.registry.DynamicRegistryManager
 import net.minecraft.registry.Registries
 import net.minecraft.util.Identifier
 
@@ -17,7 +18,7 @@ import net.minecraft.world.World
 class BookOfBloodRecipe(id: Identifier, cat: CraftingRecipeCategory) : SpecialCraftingRecipe(id, cat) {
     val resultStack = ItemStack(Registries.ITEM[Identifier("haema:book_of_blood")])
 
-    override fun craft(inv: CraftingInventory): ItemStack {
+    override fun craft(inv: RecipeInputInventory, registryManager: DynamicRegistryManager): ItemStack {
         var foundBook = false
         var foundPotion = false
         for (i in 0 until inv.size()) {
@@ -47,7 +48,7 @@ class BookOfBloodRecipe(id: Identifier, cat: CraftingRecipeCategory) : SpecialCr
 
     override fun getSerializer(): RecipeSerializer<*> = Serializer
 
-    override fun matches(inv: CraftingInventory, world: World?): Boolean {
+    override fun matches(inv: RecipeInputInventory, world: World): Boolean {
         var foundBook = false
         var foundPotion = false
         for (i in 0 until inv.size()) {

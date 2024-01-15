@@ -1,11 +1,12 @@
 package com.williambl.haema.component
 
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes
+import com.williambl.haema.Haema
 import com.williambl.haema.ability.AbilityModule
 import com.williambl.haema.ability.VampireAbility
 import com.williambl.haema.api.BloodChangeEvents
 import com.williambl.haema.api.BloodDrinkingEvents
-import com.williambl.haema.damagesource.BloodLossDamageSource
+import com.williambl.haema.damagesource.bloodLoss
 import com.williambl.haema.effect.SunlightSicknessEffect
 import com.williambl.haema.effect.VampiricWeaknessEffect
 import com.williambl.haema.id
@@ -124,10 +125,14 @@ class EntityVampireComponent
     @Suppress("UNCHECKED_CAST")
     override fun writeSyncPacket(buf: PacketByteBuf, recipient: ServerPlayerEntity) {
         val propsAndDels = EntityVampireComponent::class.memberProperties
+            .asSequence()
+            // Filter to mutable properties to work around Kotlin Reflect failing to load LivingEntity when trying to set accessible on the "entity" property.
+            .filterIsInstance<KMutableProperty1<EntityVampireComponent, *>>()
             .map { it.isAccessible = true; it }
             .map { it to it.getDelegate(this) }
             .filter { (_, del) -> del is SyncedProperty<*> }
             .map { (prop, del) -> prop to del as SyncedProperty<*> }
+            .toList()
 
         buf.writeVarInt(propsAndDels.size)
 
@@ -257,7 +262,7 @@ class EntityVampireComponent
         if (entity.isVampire) {
             entity.vampireComponent.removeBlood(amount)
         } else {
-            entity.damage(BloodLossDamageSource.instance, 1f)
+            entity.damage(entity.damageSources.bloodLoss(), 1f)
         }
         this.entity.playSound(SoundEvents.ENTITY_GENERIC_DRINK, 1f, 1f)
         val towards = this.entity.pos.subtract(entity.pos).normalize().multiply(0.1)

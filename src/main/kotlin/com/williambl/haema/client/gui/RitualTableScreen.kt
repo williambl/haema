@@ -6,19 +6,19 @@ import com.williambl.haema.ability.VampireAbility
 import com.williambl.haema.api.AbilityVisibilityEvent
 import com.williambl.haema.ritual.RitualTableScreenHandler
 import net.minecraft.advancement.AdvancementFrame
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.DrawableHelper
+import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.advancement.AdvancementObtainedStatus
 import net.minecraft.client.gui.screen.ingame.HandledScreen
-import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
+import kotlin.math.max
 
 class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInventory, title: Text) :
     HandledScreen<RitualTableScreenHandler>(handler, inventory, title) {
 
+    private val BACKGROUND_TEXTURE = Identifier("minecraft:textures/gui/advancements/backgrounds/stone.png");
     private val widgets = AbilityModule.ABILITY_REGISTRY.entrySet.asSequence()
         .filterNot { it.value == AbilityModule.NONE }
         .filter { AbilityVisibilityEvent.EVENT.invoker().onVisibilityTest(inventory.player, it.value).orElse(it.value.isVisible(inventory.player)) }
@@ -27,79 +27,63 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
 
     private var movingTab = false
 
-    private var panX = 117 / 2.0
-    private var panY = 56 / 2.0
+    // There is 4 px padding between widgets and 3 px around the widgets.
+    // Widgets are 26x26 pixels so the 30 includes 4 pixes of padding at the end, which is why we also subtract 1.
+    private var panX = max(234 - (3 + 30 * widgets.size - 1), 0) / 2.0
+    private var panY = max(113 - (3 + 30 * widgets.maxOf { it.second.size } - 1), 0) / 2.0
 
-    override fun drawBackground(matrices: MatrixStack?, delta: Float, mouseX: Int, mouseY: Int) {}
+    override fun drawBackground(context: DrawContext, delta: Float, mouseX: Int, mouseY: Int) {}
 
-    override fun render(matrices: MatrixStack, mouseX: Int, mouseY: Int, delta: Float) {
+    override fun render(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {
         val xBase = (width - 252) / 2
         val yBase = (height - 140) / 2
 
-        renderWindow(matrices, xBase, yBase)
-        renderWindowBorder(matrices, xBase, yBase)
-        renderWidgetTooltip(matrices, xBase, yBase, mouseX, mouseY)
+        renderWindow(context, xBase, yBase)
+        renderWindowBorder(context, xBase, yBase)
+        renderWidgetTooltip(context, xBase, yBase, mouseX, mouseY)
     }
 
-    private fun renderWindow(matrices: MatrixStack, xBase: Int, yBase: Int) {
-        matrices.push()
-        RenderSystem.enableDepthTest()
-        matrices.translate(((xBase + 9).toDouble()), ((yBase + 18).toDouble()), 950.0)
-        RenderSystem.colorMask(false, false, false, false)
-        fill(matrices, 4680, 2260, -4680, -2260, -16777216)
-        RenderSystem.colorMask(true, true, true, true)
-        matrices.translate(0.0, 0.0, -950.0)
-        RenderSystem.depthFunc(518)
-        fill(matrices, 234, 113, 0, 0, -16777216)
-        RenderSystem.depthFunc(515)
-        val identifier = Identifier("minecraft:textures/gui/advancements/backgrounds/stone.png")
-        RenderSystem.setShaderTexture(0, identifier)
+    private fun renderWindow(context: DrawContext, xBase: Int, yBase: Int) {
+        val xWin = xBase + 9
+        val yWin = yBase + 18
+
+        context.enableScissor(xWin, yWin, xWin + 234, yWin + 113)
+        context.matrices.push()
+        context.matrices.translate(xWin.toFloat(), yWin.toFloat(), 0.0f)
 
         val k = panX.toInt() % 16
         val l = panY.toInt() % 16
 
         for (m in -1..15) {
             for (n in -1..8) {
-                drawTexture(matrices, k + 16 * m, l + 16 * n, 0.0f, 0.0f, 16, 16, 16, 16)
+                context.drawTexture(BACKGROUND_TEXTURE, k + 16 * m, l + 16 * n, 0.0f, 0.0f, 16, 16, 16, 16)
             }
         }
 
         widgets.forEachIndexed { i, widgets ->
             widgets.second.forEachIndexed { j, widget ->
                 widget.render(
-                    matrices,
+                    context,
                     (panX + 3 + i * 30).toInt(),
                     (panY + 3 + j * 30).toInt(),
-                    xBase,
-                    yBase,
-                    client!!,
                     handler.getProperty(widgets.first.second)
                 )
             }
         }
 
-        RenderSystem.depthFunc(518)
-        matrices.translate(0.0, 0.0, -950.0)
-        RenderSystem.colorMask(false, false, false, false)
-        fill(matrices, 4680, 2260, -4680, -2260, -16777216)
-        RenderSystem.colorMask(true, true, true, true)
-        matrices.translate(0.0, 0.0, 950.0)
-        RenderSystem.depthFunc(515)
-        RenderSystem.disableDepthTest()
-        matrices.pop()
+        context.matrices.pop()
+        context.disableScissor()
     }
 
-    private fun renderWindowBorder(matrices: MatrixStack, xBase: Int, yBase: Int) {
-        matrices.push()
+    private fun renderWindowBorder(context: DrawContext, xBase: Int, yBase: Int) {
+        context.matrices.push()
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
         RenderSystem.enableBlend()
-        RenderSystem.setShaderTexture(0, WINDOW_TEXTURE)
-        drawTexture(matrices, xBase, yBase, 0, 0, 252, 140)
+        context.drawTexture(WINDOW_TEXTURE, xBase, yBase, 0, 0, 252, 140)
 
         val pointsRemaining = handler.getProperty(0)
-        drawTextWithShadow(
-            matrices,
-            client!!.textRenderer,
+        context.drawTextWithShadow(
+            this.textRenderer,
             Text.literal("Ability Points remaining: ")
                 .append(
                     Text.literal(pointsRemaining.toString())
@@ -109,15 +93,16 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
             yBase + 6,
             0xffffff
         )
-        matrices.pop()
+        context.matrices.pop()
     }
 
-    private fun renderWidgetTooltip(matrices: MatrixStack, xBase: Int, yBase: Int, mouseX: Int, mouseY: Int) {
+    private fun renderWidgetTooltip(context: DrawContext, xBase: Int, yBase: Int, mouseX: Int, mouseY: Int) {
         val widget = getWidgetHovered(xBase, yBase, mouseX, mouseY)
 
         if (widget != null) {
-            renderTooltip(
-                matrices, listOf(
+            context.drawTooltip(
+                this.textRenderer,
+                listOf(
                     Text.translatable("ability.${widget.abilityIds.first.namespace}.${widget.abilityIds.first.path}").append(" ${widget.level}")
                         .formatted(Formatting.BOLD).formatted(Formatting.UNDERLINE),
                     Text.translatable("ability.${widget.abilityIds.first.namespace}.${widget.abilityIds.first.path}.description")
@@ -169,34 +154,39 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
 
     override fun close() {
         super.close()
-        handler.close(handler.inv.player)
+        handler.onClosed(handler.inv.player)
     }
 
     private fun getWidgetHovered(xBase: Int, yBase: Int, mouseX: Int, mouseY: Int): AbilityWidget? {
-        for (i in widgets.indices) for (j in widgets[i].second.indices) {
-            x = xBase + panX.toInt() + 15 + i * 30
-            y = yBase + panY.toInt() + 20 + j * 30
+        val xWin = xBase + 9
+        val yWin = yBase + 18
 
-            if (mouseX in x..x+22 && mouseY in y..y+26) {
-                return widgets[i].second[j]
+        widgets.forEachIndexed { i, widgets ->
+            widgets.second.forEachIndexed { j, widget ->
+                // Widgets below max level are not as wide.
+                val wShrink = if (widget.level < widget.ability.maxLevel) 2 else 0
+                val xMin = xWin + panX.toInt() + 3 + i * 30 + wShrink
+                val yMin = yWin + panY.toInt() + 3 + j * 30
+                val xMax = xMin + 25 - wShrink * 2
+                val yMax = yMin + 25
+
+                if (mouseX in xMin..xMax && mouseY in yMin..yMax) {
+                    return widget
+                }
             }
         }
         return null
     }
 
-    class AbilityWidget(val abilityIds: Pair<Identifier, Int>, val ability: VampireAbility, val level: Int): DrawableHelper() {
+    class AbilityWidget(val abilityIds: Pair<Identifier, Int>, val ability: VampireAbility, val level: Int) {
         fun render(
-            matrices: MatrixStack,
+            context: DrawContext,
             x: Int,
             y: Int,
-            xBase: Int,
-            yBase: Int,
-            client: MinecraftClient,
             levelAchieved: Int
         ) {
-            RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE)
-            drawTexture(
-                matrices,
+            context.drawTexture(
+                WIDGETS_TEXTURE,
                 x,
                 y,
                 if (level == ability.maxLevel)
@@ -214,10 +204,10 @@ class RitualTableScreen(handler: RitualTableScreenHandler, inventory: PlayerInve
                 26
             )
 
-            client.itemRenderer.renderInGui(
+            context.drawItemWithoutEntity(
                 ability.iconItem,
-                x + xBase + 13,
-                y + yBase + 22
+                x + 5,
+                y + 5
             )
         }
     }

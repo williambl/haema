@@ -56,7 +56,8 @@ public abstract class PlayerEntityMixin extends LivingEntity {
             setHealth(0.0f);
         }
         if (VampirableKt.isVampire(this) && !isDead()) {
-            if (!this.world.isClient
+            World world = this.getWorld();
+            if (!world.isClient
                     && VampireBurningEvents.INSTANCE.getTRIGGER().invoker().willVampireBurn((PlayerEntity) (Object) this, world).get()
                     && VampireBurningEvents.INSTANCE.getVETO().invoker().willVampireBurn((PlayerEntity) (Object) this, world).get()
             ) {

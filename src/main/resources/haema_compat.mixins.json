@@ -4,11 +4,9 @@
   "compatibilityLevel": "JAVA_16",
   "mixins": [
     "bewitchment.BWDamageSourcesMixin",
-    "bewitchment.VampireEntityMixin",
-    "rats.RatEntityMixin"
+    "bewitchment.VampireEntityMixin"
   ],
   "client": [
-    "rats.client.RatEntityModelMixin"
   ],
   "server": [
   ],

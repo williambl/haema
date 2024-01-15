@@ -7,7 +7,7 @@ import com.williambl.haema.id
 import net.minecraft.advancement.criterion.AbstractCriterion
 import net.minecraft.advancement.criterion.AbstractCriterionConditions
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer
-import net.minecraft.predicate.entity.EntityPredicate
+import net.minecraft.predicate.entity.LootContextPredicate
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 
@@ -17,7 +17,7 @@ object AbilityChangeCriterion: AbstractCriterion<AbilityChangeCriterion.Conditio
 
     override fun conditionsFromJson(
         obj: JsonObject,
-        playerPredicate: EntityPredicate.Extended,
+        playerPredicate: LootContextPredicate,
         predicateDeserializer: AdvancementEntityPredicateDeserializer
     ): Conditions = Conditions(playerPredicate, (obj["ability"] as String?)?.let { Identifier(it) }, (obj["level"] as Int?))
 
@@ -25,7 +25,7 @@ object AbilityChangeCriterion: AbstractCriterion<AbilityChangeCriterion.Conditio
         this.trigger(player) { it.matches(ability, level) }
     }
 
-    class Conditions(playerPredicate: EntityPredicate.Extended, private val abilityId: Identifier?, private val level: Int?):
+    class Conditions(playerPredicate: LootContextPredicate, private val abilityId: Identifier?, private val level: Int?):
         AbstractCriterionConditions(id, playerPredicate) {
             fun matches(ability: VampireAbility, abilityLevel: Int): Boolean {
                 var result = true

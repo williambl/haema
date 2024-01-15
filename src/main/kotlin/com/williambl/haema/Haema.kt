@@ -38,6 +38,7 @@ import net.minecraft.item.Item
 import net.minecraft.item.ItemGroup
 import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
+import net.minecraft.registry.RegistryKey
 import net.minecraft.registry.RegistryKeys
 import net.minecraft.registry.tag.TagKey
 import net.minecraft.server.command.CommandManager.argument
@@ -50,7 +51,6 @@ import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.Box
-
 import net.minecraft.village.VillageGossipType
 import net.minecraft.world.World
 import org.apache.logging.log4j.LogManager
@@ -60,9 +60,6 @@ fun id(path: String): Identifier = Identifier("haema", path)
 
 object Haema: ModInitializer, EntityComponentInitializer {
     val LOGGER: Logger = LogManager.getLogger("Haema")
-    val ITEM_GROUP: ItemGroup = FabricItemGroup.builder(id("items"))
-        .icon { BloodModule.VAMPIRE_BLOOD.defaultStack }
-        .build()
     val BOOK_OF_BLOOD: BookOfBloodItem = Registry.register(
         Registries.ITEM,
         id("book_of_blood"),
@@ -170,7 +167,17 @@ object Haema: ModInitializer, EntityComponentInitializer {
             BookOfBloodRecipe.Serializer
         )
 
-        ItemGroupEvents.modifyEntriesEvent(ITEM_GROUP).register { entries ->
+        val itemGroup = RegistryKey.of(Registries.ITEM_GROUP.key, id("items"))
+        Registry.register(
+            Registries.ITEM_GROUP,
+            itemGroup,
+            FabricItemGroup.builder()
+                .displayName(Text.translatable("itemGroup.haema.items"))
+                .icon { BloodModule.VAMPIRE_BLOOD.defaultStack }
+                .build()
+        )
+
+        ItemGroupEvents.modifyEntriesEvent(itemGroup).register { entries ->
             Registries.ITEM.streamEntries()
                 .filter { it.registryKey().value.namespace == "haema" }
                 .forEach { entries.add(it.value()) }
@@ -209,7 +216,7 @@ object Haema: ModInitializer, EntityComponentInitializer {
 
                             val blood = target.vampireComponent.blood
 
-                            context.source.sendFeedback(Text.translatable("command.haema.blood.get.feedback", target.name, blood), false)
+                            context.source.sendFeedback({Text.translatable("command.haema.blood.get.feedback", target.name, blood)}, false)
                             return@executes blood.toInt()
                         }))
                         .then(literal("set").then(argument("targets", EntityArgumentType.entities()).then(argument("value", DoubleArgumentType.doubleArg(0.0, 20.0)).executes { context ->
@@ -221,7 +228,7 @@ object Haema: ModInitializer, EntityComponentInitializer {
                                     context.source.sendError(Text.translatable("command.haema.error.not_vampire", target.name))
                                 } else {
                                     target.vampireComponent.absoluteBlood = value
-                                    context.source.sendFeedback(Text.translatable("command.haema.blood.set.feedback", target.name, target.vampireComponent.blood), true)
+                                    context.source.sendFeedback({Text.translatable("command.haema.blood.set.feedback", target.name, target.vampireComponent.blood)}, true)
                                 }
                             }
 
@@ -236,7 +243,7 @@ object Haema: ModInitializer, EntityComponentInitializer {
                                     context.source.sendError(Text.translatable("command.haema.error.not_vampire", target.name))
                                 } else {
                                     target.vampireComponent.addBlood(value)
-                                    context.source.sendFeedback(Text.translatable("command.haema.blood.set.feedback", target.name, target.vampireComponent.blood), true)
+                                    context.source.sendFeedback({Text.translatable("command.haema.blood.set.feedback", target.name, target.vampireComponent.blood)}, true)
                                 }
                             }
 
@@ -251,7 +258,7 @@ object Haema: ModInitializer, EntityComponentInitializer {
                                     context.source.sendError(Text.translatable("command.haema.error.not_vampire", target.name))
                                 } else {
                                     target.vampireComponent.removeBlood(value)
-                                    context.source.sendFeedback(Text.translatable("command.haema.blood.set.feedback", target.name, target.vampireComponent.blood), true)
+                                    context.source.sendFeedback({Text.translatable("command.haema.blood.set.feedback", target.name, target.vampireComponent.blood)}, true)
                                 }
                             }
 
@@ -263,9 +270,9 @@ object Haema: ModInitializer, EntityComponentInitializer {
                         .then(literal("get").then(argument("targets", EntityArgumentType.players()).executes {  context ->
                             EntityArgumentType.getPlayers(context, "targets").forEach {
                                 if ((it).isVampire) {
-                                    context.source.sendFeedback(it.name.copy().append(" has abilities:"), false)
+                                    context.source.sendFeedback({it.name.copy().append(" has abilities:")}, false)
                                     AbilityModule.ABILITY_REGISTRY.entrySet.forEach { (key, ability) ->
-                                        context.source.sendFeedback(Text.translatable("ability.${key.value.namespace}.${key.value.path}").append(": ${it.getAbilityLevel(ability)}"), false)
+                                        context.source.sendFeedback({Text.translatable("ability.${key.value.namespace}.${key.value.path}").append(": ${it.getAbilityLevel(ability)}")}, false)
                                     }
                                 }
                             }
@@ -286,9 +293,9 @@ object Haema: ModInitializer, EntityComponentInitializer {
                         .then(literal("get").then(argument("targets", EntityArgumentType.players()).executes { context ->
                             EntityArgumentType.getPlayers(context, "targets").forEach {
                                 if ((it).isVampire) {
-                                    context.source.sendFeedback(it.name.copy().append(" has used rituals:"), false)
+                                    context.source.sendFeedback({it.name.copy().append(" has used rituals:")}, false)
                                     VampireComponent.entityKey.get(it).ritualsUsed.forEach { ritual ->
-                                        context.source.sendFeedback(Text.of(ritual.toString()), false)
+                                        context.source.sendFeedback({Text.of(ritual.toString())}, false)
                                     }
                                 }
                             }
