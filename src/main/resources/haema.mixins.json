@@ -5,7 +5,7 @@
   "mixins": [
     "registry.RegistryDataLoaderMixin",
     "registry.RegistrySynchronizationMixin",
-    "ritual.altar.ChunkMapMixin",
+    "ritual.altar.PlayerChunkSenderMixin",
     "ritual.altar.ServerLevelMixin",
     "vampire.ability.powers.damage_modification.DamageSourceMixin",
     "vampire.ability.powers.damage_modification.LivingEntityMixin"

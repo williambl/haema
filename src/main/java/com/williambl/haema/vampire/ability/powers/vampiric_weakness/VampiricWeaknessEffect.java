@@ -42,15 +42,7 @@ public class VampiricWeaknessEffect extends MobEffect {
     }
 
     @Override
-    public boolean isDurationEffectTick(int duration, int amplifier) {
+    public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
         return false;
-    }
-
-    @Override
-    public void addAttributeModifiers(@NotNull LivingEntity entity, @NotNull AttributeMap attributes, int amplifier) {
-        super.addAttributeModifiers(entity, attributes, amplifier);
-        if (entity.getHealth() >= entity.getMaxHealth()) {
-            entity.setHealth(entity.getMaxHealth());
-        }
     }
 }

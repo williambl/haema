@@ -32,7 +32,7 @@ public class HaemaRituals {
     }
 
     public static class RitualBlocks {
-        public static RitualAltarBlock RITUAL_ALTAR = HaemaUtil.registerWithItem(id("ritual_altar"), new RitualAltarBlock(BlockBehaviour.Properties.copy(Blocks.POLISHED_BLACKSTONE_BRICK_SLAB)), new Item.Properties());
+        public static RitualAltarBlock RITUAL_ALTAR = HaemaUtil.registerWithItem(id("ritual_altar"), new RitualAltarBlock(BlockBehaviour.Properties.ofLegacyCopy(Blocks.POLISHED_BLACKSTONE_BRICK_SLAB)), new Item.Properties());
 
         public static void init() {}
     }

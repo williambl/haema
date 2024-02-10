@@ -20,7 +20,7 @@ public class IncompatibleBloodEffect extends MobEffect {
     @Override
     public void applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
         if (entity instanceof Player p && p.isCreative()) {
-            this.removeAttributeModifiers(entity, entity.getAttributes(), amplifier);
+            this.removeAttributeModifiers(entity.getAttributes());
             return;
         }
 
@@ -34,7 +34,7 @@ public class IncompatibleBloodEffect extends MobEffect {
         }
 
         int maxModifier = attr.getModifiers().stream()
-                .map(AttributeModifier::getName)
+                .map(m -> m.name)
                 .filter(m -> m.contains(ATTRIBUTE_MODIFIER_NAME) && isInteger(""+m.charAt(m.length()-1), 16))
                 .mapToInt(m -> Integer.parseInt(""+m.charAt(m.length()-1), 16))
                 .max()
@@ -52,17 +52,12 @@ public class IncompatibleBloodEffect extends MobEffect {
     }
 
     @Override
-    public boolean isDurationEffectTick(int duration, int amplifier) {
+    public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
         int k = 40 >> amplifier;
         if (k > 0) {
             return duration % k == 0;
         } else {
             return true;
         }
-    }
-
-    @Override
-    public void removeAttributeModifiers(LivingEntity livingEntity, AttributeMap attributeMap, int i) {
-        super.removeAttributeModifiers(livingEntity, attributeMap, i);
     }
 }

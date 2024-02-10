@@ -1,8 +1,12 @@
 package com.williambl.haema.content.injector;
 
 import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.williambl.haema.api.content.blood.BloodQuality;
 import com.williambl.haema.content.HaemaContent;
 import com.williambl.haema.content.blood.BloodFluid;
+import com.williambl.haema.vampire.HaemaVampires;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
@@ -11,15 +15,22 @@ import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementRequirements;
+import net.minecraft.advancements.AdvancementRewards;
+import net.minecraft.advancements.Criterion;
+import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.data.recipes.CraftingRecipeBuilder;
-import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeBuilder;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
@@ -30,16 +41,17 @@ import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
-@SuppressWarnings("UnstableApiUsage")
 public class BloodFillingRecipe extends CustomRecipe {
     private final long amountNeeded;
     private final Ingredient empty;
 
-    public BloodFillingRecipe(ResourceLocation resourceLocation, CraftingBookCategory craftingBookCategory, long amountNeeded, Ingredient empty) {
-        super(resourceLocation, craftingBookCategory);
+    public BloodFillingRecipe(CraftingBookCategory craftingBookCategory, long amountNeeded, Ingredient empty) {
+        super(craftingBookCategory);
         this.amountNeeded = amountNeeded;
         this.empty = empty;
     }
@@ -146,17 +158,20 @@ public class BloodFillingRecipe extends CustomRecipe {
     }
 
     // why can't they use a codec for the JSON stuff :(
-    public static class Builder extends CraftingRecipeBuilder {
-        final RecipeSerializer<?> serializer;
-        long amountNeeded = HaemaContent.ContentConstants.INJECTOR_CAPACITY_DROPLETS;
-        Ingredient empty = Ingredient.EMPTY;
+    public static class Builder implements RecipeBuilder {
+        private long amountNeeded = HaemaContent.ContentConstants.INJECTOR_CAPACITY_DROPLETS;
+        private Ingredient empty = Ingredient.EMPTY;
 
-        public Builder(RecipeSerializer<?> recipeSerializer) {
-            this.serializer = recipeSerializer;
+        private final Map<String, Criterion<?>> criteria = new LinkedHashMap();
+        @Nullable
+        private String group;
+        private CraftingBookCategory category;
+
+        private Builder() {
         }
 
         public static Builder create() {
-            return new Builder(HaemaContent.ContentRecipes.BLOOD_FILLING_SERIALIZER);
+            return new Builder();
         }
 
         public Builder amountNeeded(long amountNeeded) {
@@ -169,55 +184,55 @@ public class BloodFillingRecipe extends CustomRecipe {
             return this;
         }
 
-        public void save(Consumer<FinishedRecipe> consumer, ResourceLocation id) {
-            consumer.accept(new CraftingRecipeBuilder.CraftingResult(CraftingBookCategory.MISC) {
-                @Override
-                public void serializeRecipeData(JsonObject jsonObject) {
-                    super.serializeRecipeData(jsonObject);
-                    jsonObject.addProperty("amount_needed", Builder.this.amountNeeded);
-                    jsonObject.add("empty", Builder.this.empty.toJson());
-                }
+        @Override
+        public void save(RecipeOutput consumer, ResourceLocation id) {
+            Advancement.Builder builder = consumer.advancement().addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(AdvancementRequirements.Strategy.OR);
+            this.criteria.forEach(builder::addCriterion);
+            consumer.accept(id, new BloodFillingRecipe(this.category, this.amountNeeded, this.empty), builder.build(id.withPrefix("recipes/" + this.category.getSerializedName() + "/")));
+        }
 
-                @Override
-                public RecipeSerializer<?> getType() {
-                    return Builder.this.serializer;
-                }
+        @Override
+        public BloodFillingRecipe.Builder unlockedBy(String string, Criterion<?> criterion) {
+            this.criteria.put(string, criterion);
+            return this;
+        }
 
-                @Override
-                public ResourceLocation getId() {
-                    return id;
-                }
+        @Override
+        public BloodFillingRecipe.Builder group(@Nullable String string) {
+            this.group = string;
+            return this;
+        }
 
-                @Nullable
-                @Override
-                public JsonObject serializeAdvancement() {
-                    return null;
-                }
 
-                @Override
-                public ResourceLocation getAdvancementId() {
-                    return new ResourceLocation("");
-                }
-            });
+        public BloodFillingRecipe.Builder category(CraftingBookCategory category) {
+            this.category = category;
+            return this;
+        }
+
+        @Override
+        public Item getResult() {
+            return HaemaContent.ContentItems.INJECTORS.get(BloodQuality.GOOD);
         }
     }
 
     public static class Serializer implements RecipeSerializer<BloodFillingRecipe> {
+        private static final Codec<BloodFillingRecipe> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                CraftingBookCategory.CODEC.fieldOf("category").forGetter(CustomRecipe::category),
+                Codec.LONG.fieldOf("amount_needed").forGetter(r -> r.amountNeeded),
+                Ingredient.CODEC_NONEMPTY.fieldOf("empty").forGetter(r -> r.empty)
+        ).apply(instance, BloodFillingRecipe::new));
+
         @Override
-        public BloodFillingRecipe fromJson(ResourceLocation resourceLocation, JsonObject jsonObject) {
-            CraftingBookCategory craftingBookCategory = CraftingBookCategory.CODEC
-                    .byName(GsonHelper.getAsString(jsonObject, "category", null), CraftingBookCategory.MISC);
-            long amountNeeded = GsonHelper.getAsLong(jsonObject, "amount_needed");
-            Ingredient empty = Ingredient.fromJson(GsonHelper.getAsJsonObject(jsonObject, "empty"));
-            return new BloodFillingRecipe(resourceLocation, craftingBookCategory, amountNeeded, empty);
+        public Codec<BloodFillingRecipe> codec() {
+            return CODEC;
         }
 
         @Override
-        public BloodFillingRecipe fromNetwork(ResourceLocation resourceLocation, FriendlyByteBuf friendlyByteBuf) {
+        public BloodFillingRecipe fromNetwork(FriendlyByteBuf friendlyByteBuf) {
             CraftingBookCategory craftingBookCategory = friendlyByteBuf.readEnum(CraftingBookCategory.class);
             long amountNeeded = friendlyByteBuf.readVarLong();
             Ingredient empty = Ingredient.fromNetwork(friendlyByteBuf);
-            return new BloodFillingRecipe(resourceLocation, craftingBookCategory, amountNeeded, empty);
+            return new BloodFillingRecipe(craftingBookCategory, amountNeeded, empty);
         }
 
         @Override

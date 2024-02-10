@@ -62,7 +62,7 @@ import net.minecraft.data.models.blockstates.PropertyDispatch;
 import net.minecraft.data.models.blockstates.Variant;
 import net.minecraft.data.models.blockstates.VariantProperties;
 import net.minecraft.data.models.model.*;
-import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
@@ -732,7 +732,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         }
 
         @Override
-        public void buildRecipes(Consumer<FinishedRecipe> exporter) {
+        public void buildRecipes(RecipeOutput exporter) {
             BloodFillingRecipe.Builder.create()
                     .empty(Ingredient.of(HaemaContent.ContentItems.EMPTY_INJECTOR))
                     .save(exporter, id("injector_filling"));

@@ -1,5 +1,6 @@
 package com.williambl.haema.ritual.altar;
 
+import com.mojang.serialization.MapCodec;
 import com.williambl.dfunc.api.DFunctions;
 import com.williambl.haema.HaemaDFunctions;
 import com.williambl.haema.api.ritual.RitualArae;
@@ -13,6 +14,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.BellBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -23,8 +25,15 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 public class RitualAltarBlock extends BaseEntityBlock {
+    public static final MapCodec<RitualAltarBlock> CODEC = simpleCodec(RitualAltarBlock::new);
+
     public RitualAltarBlock(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
     }
 
     @Override

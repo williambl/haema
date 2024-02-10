@@ -39,7 +39,7 @@ public record AttributeVampireAbilityPower(Set<Data> modifiers) implements Vampi
 
             boolean predValue = DFunctions.evaluate(modifier.predicate(), DFunctions.createEntityContext(entity));
             if (attr.hasModifier(modifier.modifier()) && !predValue) {
-                attr.removeModifier(modifier.modifier());
+                attr.removeModifier(modifier.modifier().getId());
             } else if (!attr.hasModifier(modifier.modifier()) && predValue) {
                 attr.addTransientModifier(modifier.modifier());
             }
@@ -53,7 +53,7 @@ public record AttributeVampireAbilityPower(Set<Data> modifiers) implements Vampi
             if (attr == null) {
                 continue;
             }
-            attr.removeModifier(modifier.modifier());
+            attr.removeModifier(modifier.modifier().getId());
         }
     }
 

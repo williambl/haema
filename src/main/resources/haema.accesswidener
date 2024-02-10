@@ -5,3 +5,4 @@ accessible      method  net/minecraft/client/renderer/RenderType                
 accessible      class   net/minecraft/client/renderer/RenderType$CompositeRenderType
 accessible      class   net/minecraft/client/renderer/RenderType$CompositeState
 accessible      field   com/mojang/blaze3d/pipeline/RenderTarget                        clearChannels   [F
+accessible      field   net/minecraft/world/entity/ai/attributes/AttributeModifier name Ljava/lang/String;
