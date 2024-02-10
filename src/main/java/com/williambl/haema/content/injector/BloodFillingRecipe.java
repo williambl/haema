@@ -148,7 +148,7 @@ public class BloodFillingRecipe extends CustomRecipe {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return null;
+        return HaemaContent.ContentRecipes.BLOOD_FILLING_SERIALIZER;
     }
 
     private record CraftResult(boolean matches, ItemStack result, NonNullList<ItemStack> remainder) {
@@ -165,7 +165,7 @@ public class BloodFillingRecipe extends CustomRecipe {
         private final Map<String, Criterion<?>> criteria = new LinkedHashMap();
         @Nullable
         private String group;
-        private CraftingBookCategory category;
+        private CraftingBookCategory category = CraftingBookCategory.MISC;
 
         private Builder() {
         }
