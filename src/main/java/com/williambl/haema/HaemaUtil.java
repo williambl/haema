@@ -2,6 +2,10 @@ package com.williambl.haema;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -9,6 +13,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -170,5 +175,34 @@ public class HaemaUtil {
         }
 
         return removed;
+    }
+
+    // from fabric-api's FluidStorageUtil
+    public static boolean moveFluid(Storage<FluidVariant> from, Storage<FluidVariant> to) {
+        for (StorageView<FluidVariant> view : from) {
+            if (view.isResourceBlank()) continue;
+            FluidVariant resource = view.getResource();
+            long maxExtracted;
+
+            // check how much can be extracted
+            try (Transaction extractionTestTransaction = Transaction.openOuter()) {
+                maxExtracted = view.extract(resource, Long.MAX_VALUE, extractionTestTransaction);
+                extractionTestTransaction.abort();
+            }
+
+            try (Transaction transferTransaction = Transaction.openOuter()) {
+                // check how much can be inserted
+                long accepted = to.insert(resource, maxExtracted, transferTransaction);
+
+                // extract it, or rollback if the amounts don't match
+                if (accepted > 0 && view.extract(resource, accepted, transferTransaction) == accepted) {
+                    transferTransaction.commit();
+
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

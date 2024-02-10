@@ -1,16 +1,27 @@
 package com.williambl.haema.api.content.blood;
 
+import com.mojang.datafixers.util.Pair;
 import com.williambl.haema.content.HaemaContent;
 import com.williambl.haema.content.blood.BloodFluid;
+import net.fabricmc.fabric.api.lookup.v1.entity.EntityApiLookup;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
 import java.util.Optional;
 
+import static com.williambl.haema.Haema.id;
+
 public class BloodApi {
+    public static final EntityApiLookup<Storage<FluidVariant>, Void> ENTITY_BLOOD_STORAGE =
+            EntityApiLookup.get(id("blood_storage"), Storage.asClass(), Void.class);
+
     public static TagKey<EntityType<?>> getEntityTag(BloodQuality quality) {
         return HaemaContent.ContentTags.ENTITY_BLOOD_QUALITY_TAGS.get(quality);
     }
@@ -55,17 +66,25 @@ public class BloodApi {
         return EntityBloodQualityCallback.EVENT.invoker().getBloodQuality(entity, result).getObject();
     }
 
-    public static Fluid extractBlood(Entity entity, long amountInDroplets) {
+    public static Optional<Storage<FluidVariant>> getBloodStorage(Entity entity) {
+        return Optional.ofNullable(ENTITY_BLOOD_STORAGE.find(entity, null));
+    }
+
+    public static Pair<Fluid, Long> extractBlood(Entity entity, long amountInDroplets) {
         var quality = getBloodQuality(entity);
         if (quality.isEmpty()) {
-            return Fluids.EMPTY;
+            return Pair.of(Fluids.EMPTY, 0L);
         }
 
-        boolean extracted = EntityBloodExtractionCallback.EVENT.invoker().extractBlood(entity, quality.get(), amountInDroplets);
-        if (!extracted) {
-            return Fluids.EMPTY;
+        var fluid = getFluid(quality.get());
+        var storage = ENTITY_BLOOD_STORAGE.find(entity, null);
+        if (storage == null) {
+            return Pair.of(Fluids.EMPTY, 0L);
         }
-
-        return getFluid(quality.get());
+        try (Transaction tx = Transaction.openOuter()) {
+            var res = Pair.of(fluid, storage.extract(FluidVariant.of(fluid), amountInDroplets, tx));
+            tx.commit();
+            return res;
+        }
     }
 }

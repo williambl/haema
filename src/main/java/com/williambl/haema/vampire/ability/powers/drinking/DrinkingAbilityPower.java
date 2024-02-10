@@ -8,14 +8,18 @@ import com.williambl.actions.Actions;
 import com.williambl.dfunc.api.DFunctions;
 import com.williambl.haema.Haema;
 import com.williambl.haema.HaemaClientHandler;
+import com.williambl.haema.HaemaUtil;
 import com.williambl.haema.api.content.blood.BloodApi;
 import com.williambl.haema.api.vampire.VampireComponent;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
 import com.williambl.haema.api.vampire.ability.powers.drinking.EntityDrinkTargetCallback;
+import com.williambl.haema.content.blood.VampireBackedBloodStorage;
 import com.williambl.vampilang.lang.VExpression;
 import com.williambl.vampilang.lang.VValue;
 import com.williambl.vampilang.stdlib.StandardVTypes;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -65,8 +69,8 @@ public record DrinkingAbilityPower(VExpression amountToDrink, VExpression canDri
         }
 
         long amountDroplets = DFunctions.<Double>evaluate(this.amountToDrink(), ctx).longValue();
-        var bloodFluid = BloodApi.extractBlood(target, amountDroplets);
-        if (bloodFluid.isSame(Fluids.EMPTY)) {
+        var bloodStorage = BloodApi.getBloodStorage(target);
+        if (bloodStorage.isEmpty()) {
             return false;
         }
 
@@ -75,9 +79,21 @@ public record DrinkingAbilityPower(VExpression amountToDrink, VExpression canDri
             return false;
         }
 
-        DFunctions.<List<VValue>>evaluate(this.onDrink(), ctx).stream().map(VValue::<Action>getUnchecked).forEach(Action::runAction);
-        vampireComponent.addBlood(BloodApi.dropletsToBloodUnits(amountDroplets));
-        return true;
+        var vampireStorage = new VampireBackedBloodStorage(vampireComponent, bloodQuality.get());
+
+        try (var tx = Transaction.openOuter()) {
+            var fluid = FluidVariant.of(BloodApi.getFluid(bloodQuality.get()));
+            long inserted = vampireStorage.insert(fluid, amountDroplets, tx);
+            long extracted = bloodStorage.get().extract(fluid, inserted, tx);
+            if (inserted > 0 && extracted == inserted) {
+                DFunctions.<List<VValue>>evaluate(this.onDrink(), ctx).stream().map(VValue::<Action>getUnchecked).forEach(Action::runAction);
+                tx.commit();
+                return true;
+            } else {
+                tx.abort();
+                return false;
+            }
+        }
     }
 
     @Override

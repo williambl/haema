@@ -3,7 +3,7 @@ package com.williambl.haema.content;
 import com.williambl.haema.HaemaUtil;
 import com.williambl.haema.api.content.blood.BloodApi;
 import com.williambl.haema.api.content.blood.BloodQuality;
-import com.williambl.haema.api.content.blood.EntityBloodExtractionCallback;
+import com.williambl.haema.api.content.blood.EntityBloodStorageCallback;
 import com.williambl.haema.api.content.blood.EntityBloodQualityCallback;
 import com.williambl.haema.api.vampire.VampireComponent;
 import com.williambl.haema.api.vampire.VampirismSource;
@@ -74,23 +74,19 @@ public class HaemaContent {
                         quality -> Registry.register(BuiltInRegistries.FLUID, id("%s_blood".formatted(quality.getSerializedName())), new BloodFluid.Source(quality)))));
 
         public static void init() {
-            EntityBloodExtractionCallback.EVENT.register(EntityBloodExtractionCallback.DEFAULT_TAKE_DAMAGE, (entity, quality, amount) -> {
+            BloodApi.ENTITY_BLOOD_STORAGE.registerFallback((e, $) -> EntityBloodStorageCallback.EVENT.invoker().findStorage(e));
+            EntityBloodStorageCallback.EVENT.register(EntityBloodStorageCallback.DEFAULT_HEALTH_BACKED, entity -> {
                 if (entity instanceof LivingEntity living) {
-                    if (living.getHealth() > BloodApi.dropletsToBloodUnits(amount)) {
-                        living.hurt(living.damageSources().magic(), (float) BloodApi.dropletsToBloodUnits(amount)); //TODO custom damage source
-                        return true;
-                    }
+                    return BloodApi.getBloodQuality(entity).map(q -> new EntityHealthBackedBloodStorage(living, q))
+                            .orElse(null);
                 }
 
-                return false;
+                return null;
             });
-            EntityBloodExtractionCallback.EVENT.register(EntityBloodExtractionCallback.VAMPIRE_REMOVE_BLOOD, (entity, quality, amount) -> VampireComponent.KEY.maybeGet(entity)
+            EntityBloodStorageCallback.EVENT.register(EntityBloodStorageCallback.VAMPIRE_BLOOD_BACKED, entity -> VampireComponent.KEY.maybeGet(entity)
                     .filter(VampireComponent::isVampire)
-                    .filter(c -> c.getBlood() >= BloodApi.dropletsToBloodUnits(amount))
-                    .map(c -> {
-                        c.removeBlood(BloodApi.dropletsToBloodUnits(amount));
-                        return true;
-                    }).orElse(false));
+                    .flatMap(c -> BloodApi.getBloodQuality(entity).map(q -> new VampireBackedBloodStorage(c, q)))
+                    .orElse(null));
             EntityBloodQualityCallback.EVENT.register((entity, original) -> {
                 if (VampireComponent.KEY.maybeGet(entity).filter(VampireComponent::isVampire).isPresent()) {
                     return InteractionResultHolder.success(Optional.of(BloodQuality.EXCELLENT));
