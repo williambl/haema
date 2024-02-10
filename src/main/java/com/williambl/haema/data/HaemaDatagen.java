@@ -65,6 +65,7 @@ import net.minecraft.data.models.model.*;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageType;
@@ -618,6 +619,13 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
                                             VExpression.functionApplication(ItemStackDFunctions.ITEM_IS_EMPTY, Map.of(
                                                     "item", VExpression.functionApplication(EntityDFunctions.MAIN_HAND_ITEM, Map.of("entity", VExpression.variable("entity"))))))))),
                             VExpression.list(List.of(
+                                    VExpression.object(Actions.name(Actions.PLAY_SOUND), Map.of(
+                                            "level", VExpression.variable("level"),
+                                            "sound_event", VExpression.value(DTypes.SOUND_EVENT, SoundEvents.GENERIC_DRINK),
+                                            "position", VExpression.functionApplication(EntityDFunctions.POSITION, Map.of("entity", VExpression.variable("entity"))),
+                                            "pitch", VExpression.value(StandardVTypes.NUMBER, 1.0),
+                                            "volume", VExpression.value(StandardVTypes.NUMBER, 1.0)
+                                    )),
                                 VExpression.object(Actions.name(Actions.SET_COOLDOWN), Map.of(
                                         "entity", VExpression.variable("entity"),
                                         "cooldown_id", VExpression.value(DTypes.RESOURCE_LOCATION, cooldownId),
