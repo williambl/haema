@@ -43,15 +43,6 @@ public record DrinkingAbilityPower(VExpression amountToDrink, VExpression canDri
 
     @Override
     public void tick(LivingEntity entity, VampireAbility source) {
-        if (entity instanceof Player p && p.isLocalPlayer()) { //todo 'tick keybinds' method which only runs localplayer + runs before vanilla keybinds
-            var handler = Haema.CLIENT_HANDLER;
-            if (this.keybinds().stream().allMatch(handler::isKeybindPressed)) {
-                this.keybinds().forEach(handler::consumeKeybind);
-                EntityDrinkTargetCallback.EVENT.invoker().getTarget(entity).ifPresent(target -> {
-                    handler.send(new DrinkingPacket(target));
-                });
-            }
-        }
     }
 
     @Override

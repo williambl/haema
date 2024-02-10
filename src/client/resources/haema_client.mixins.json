@@ -6,6 +6,7 @@
     "KeyMappingAccessor"
   ],
   "client": [
+    "vampire.ability.powers.MinecraftMixin"
   ],
   "server": [
   ],
