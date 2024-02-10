@@ -8,14 +8,12 @@ import com.williambl.haema.api.vampire.ability.VampireAbilitiesComponent;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
 import com.williambl.haema.vampire.ability.abilities.strength.VampiricStrengthEffect;
-import com.williambl.haema.vampire.ability.powers.AttributeVampireAbilityPower;
-import com.williambl.haema.vampire.ability.powers.DummyVampireAbilityPower;
-import com.williambl.haema.vampire.ability.powers.EffectVampireAbilityPower;
-import com.williambl.haema.vampire.ability.powers.HealingVampireAbilityPower;
+import com.williambl.haema.vampire.ability.powers.*;
 import com.williambl.haema.vampire.ability.powers.damage_modification.DamageModificationAbilityPower;
 import com.williambl.haema.vampire.ability.powers.dash.DashAbilityPower;
 import com.williambl.haema.vampire.ability.powers.drinking.DrinkingAbilityPower;
 import com.williambl.haema.vampire.ability.powers.drinking.DrinkingPacket;
+import com.williambl.haema.vampire.ability.powers.hungerbar.ModifyHungerBarAbilityPower;
 import com.williambl.haema.vampire.ability.powers.sunlight_sickness.SunlightSicknessEffect;
 import com.williambl.haema.vampire.ability.powers.vampiric_weakness.VampiricWeaknessEffect;
 import com.williambl.haema.vampire.ability.powers.vision.VampireVisionVampireAbilityPower;
@@ -76,6 +74,7 @@ public class HaemaVampires {
         public static final Codec<VampireVisionVampireAbilityPower> VAMPIRE_VISION_VAMPIRE_ABILITY_POWER_CODEC = Registry.register(VampireAbilityPower.REGISTRY, id("vampire_vision"), VampireVisionVampireAbilityPower.CODEC.codec());
         public static final Codec<DashAbilityPower> DASH_ABILITY_POWER_CODEC = Registry.register(VampireAbilityPower.REGISTRY, id("dash"), DashAbilityPower.CODEC.codec());
         public static final Codec<DrinkingAbilityPower> DRINKING_ABILITY_POWER_CODEC = Registry.register(VampireAbilityPower.REGISTRY, id("drinking"), DrinkingAbilityPower.CODEC.codec());
+        public static final Codec<ModifyHungerBarAbilityPower> MODIFY_HUNGER_BAR_ABILITY_POWER_CODEC = Registry.register(VampireAbilityPower.REGISTRY, id("modify_hunger_bar"), ModifyHungerBarAbilityPower.CODEC.codec());
 
         private static void init() {
             DamageModificationAbilityPower.init();

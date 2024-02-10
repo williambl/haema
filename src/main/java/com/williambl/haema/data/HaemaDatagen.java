@@ -39,6 +39,7 @@ import com.williambl.haema.vampire.ability.powers.HealingVampireAbilityPower;
 import com.williambl.haema.vampire.ability.powers.damage_modification.DamageModificationAbilityPower;
 import com.williambl.haema.vampire.ability.powers.dash.DashAbilityPower;
 import com.williambl.haema.vampire.ability.powers.drinking.DrinkingAbilityPower;
+import com.williambl.haema.vampire.ability.powers.hungerbar.ModifyHungerBarAbilityPower;
 import com.williambl.haema.vampire.ability.powers.vision.VampireVisionVampireAbilityPower;
 import com.williambl.haema.vampire_mobs.HaemaVampireMobs;
 import com.williambl.vampilang.lang.VExpression;
@@ -101,6 +102,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static com.williambl.haema.Haema.id;
+import static com.williambl.vampilang.lang.VExpression.*;
 
 public class HaemaDatagen implements DataGeneratorEntrypoint {
     @Override
@@ -303,6 +305,8 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             defaultAbilties.addAll(vampiricStrengthAbilities);
             var drinkingAbility = this.createDrinkingAbility(entries);
             defaultAbilties.add(drinkingAbility);
+            var modifyHungerBarAbility = this.createModifyHungerBarAbility(entries);
+            defaultAbilties.add(modifyHungerBarAbility);
             var dashAbilities = new ArrayList<ResourceKey<VampireAbility>>();
             for (int i = 0; i < 3; i++) {
                 dashAbilities.add(this.createDashAbility(entries, i+1, dashAbilities));
@@ -310,9 +314,9 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             defaultAbilties.addAll(dashAbilities);
 
 
-            entries.add(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR, HaemaVampires.VampirismSources.COMMAND), defaultAbilties, VExpression.value(StandardVTypes.BOOLEAN, false), VExpression.value(StandardVTypes.BOOLEAN, false))); //TODO
-            entries.add(HaemaVampires.VampirismSources.COMMAND, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of(), VExpression.value(StandardVTypes.BOOLEAN, true), VExpression.value(StandardVTypes.BOOLEAN, true)));
-            entries.add(HaemaVampireMobs.VampireMobVampirismSources.VAMPIRAGER_SPAWN, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of(healingAbility, damageModificationAbility, drinkingAbility, sunlightSicknessAbility, dashAbilities.get(2)), VExpression.value(StandardVTypes.BOOLEAN, true), VExpression.value(StandardVTypes.BOOLEAN, false)));
+            entries.add(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR, HaemaVampires.VampirismSources.COMMAND), defaultAbilties, value(StandardVTypes.BOOLEAN, false), value(StandardVTypes.BOOLEAN, false))); //TODO
+            entries.add(HaemaVampires.VampirismSources.COMMAND, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of(), value(StandardVTypes.BOOLEAN, true), value(StandardVTypes.BOOLEAN, true)));
+            entries.add(HaemaVampireMobs.VampireMobVampirismSources.VAMPIRAGER_SPAWN, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of(healingAbility, damageModificationAbility, drinkingAbility, sunlightSicknessAbility, dashAbilities.get(2)), value(StandardVTypes.BOOLEAN, true), value(StandardVTypes.BOOLEAN, false)));
 
             entries.add(ResourceKey.create(RitualArae.REGISTRY_KEY, id("basic")), new RitualArae(new MultiblockFilter(
                     new char[][][]{
@@ -340,10 +344,10 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
                     },
                     'r',
                     Map.of(
-                            'c', VExpression.functionApplication(BlockInWorldDFunctions.WORLDGEN_PREDICATE, Map.of("predicate", VExpression.value(DTypes.BLOCK_WORLDGEN_PREDICATE, BlockPredicate.matchesBlocks(Blocks.CRIMSON_PLANKS)), "block", VExpression.variable("block"))),
-                            'C', VExpression.functionApplication(BlockInWorldDFunctions.WORLDGEN_PREDICATE, Map.of("predicate", VExpression.value(DTypes.BLOCK_WORLDGEN_PREDICATE, BlockPredicate.matchesBlocks(Blocks.CANDLE)), "block", VExpression.variable("block"))),
-                            'r', VExpression.functionApplication(BlockInWorldDFunctions.WORLDGEN_PREDICATE, Map.of("predicate", VExpression.value(DTypes.BLOCK_WORLDGEN_PREDICATE, BlockPredicate.matchesBlocks(HaemaRituals.RitualBlocks.RITUAL_ALTAR)), "block", VExpression.variable("block")))),
-                    VExpression.value(StandardVTypes.BOOLEAN, true)
+                            'c', functionApplication(BlockInWorldDFunctions.WORLDGEN_PREDICATE, Map.of("predicate", value(DTypes.BLOCK_WORLDGEN_PREDICATE, BlockPredicate.matchesBlocks(Blocks.CRIMSON_PLANKS)), "block", variable("block"))),
+                            'C', functionApplication(BlockInWorldDFunctions.WORLDGEN_PREDICATE, Map.of("predicate", value(DTypes.BLOCK_WORLDGEN_PREDICATE, BlockPredicate.matchesBlocks(Blocks.CANDLE)), "block", variable("block"))),
+                            'r', functionApplication(BlockInWorldDFunctions.WORLDGEN_PREDICATE, Map.of("predicate", value(DTypes.BLOCK_WORLDGEN_PREDICATE, BlockPredicate.matchesBlocks(HaemaRituals.RitualBlocks.RITUAL_ALTAR)), "block", variable("block")))),
+                    value(StandardVTypes.BOOLEAN, true)
             ),
                     Set.of(' '),
                     List.of(new ParticlesToCentreAraeModule(20, ParticleTypes.FLAME, List.of(
@@ -411,15 +415,15 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
                     },
                     'r',
                     Map.of(
-                            'c', VExpression.functionApplication(BlockInWorldDFunctions.WORLDGEN_PREDICATE, Map.of("predicate", VExpression.value(DTypes.BLOCK_WORLDGEN_PREDICATE, BlockPredicate.matchesBlocks(Blocks.CRIMSON_NYLIUM)), "block", VExpression.variable("block"))),
-                            'C', VExpression.functionApplication(BlockInWorldDFunctions.WORLDGEN_PREDICATE, Map.of("predicate", VExpression.value(DTypes.BLOCK_WORLDGEN_PREDICATE, BlockPredicate.matchesBlocks(Blocks.CRIMSON_STEM)), "block", VExpression.variable("block"))),
+                            'c', functionApplication(BlockInWorldDFunctions.WORLDGEN_PREDICATE, Map.of("predicate", value(DTypes.BLOCK_WORLDGEN_PREDICATE, BlockPredicate.matchesBlocks(Blocks.CRIMSON_NYLIUM)), "block", variable("block"))),
+                            'C', functionApplication(BlockInWorldDFunctions.WORLDGEN_PREDICATE, Map.of("predicate", value(DTypes.BLOCK_WORLDGEN_PREDICATE, BlockPredicate.matchesBlocks(Blocks.CRIMSON_STEM)), "block", variable("block"))),
                             //TODO this doesn't work due to a null-handling bug in jsonops i think? hmmm
                             //'C', BlockInWorldDFunctions.ADVANCEMENT_PREDICATE.factory().apply(net.minecraft.advancements.critereon.BlockPredicate.Builder.block().of(Blocks.CRIMSON_STEM).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(BlockStateProperties.AXIS, Direction.Axis.Y).build()).build(), ContextArg.BLOCK.arg()),
-                            'r', VExpression.functionApplication(BlockInWorldDFunctions.WORLDGEN_PREDICATE, Map.of("predicate",VExpression.value(DTypes.BLOCK_WORLDGEN_PREDICATE, BlockPredicate.matchesBlocks(HaemaRituals.RitualBlocks.RITUAL_ALTAR)), "block", VExpression.variable("block"))),
-                            'F', VExpression.functionApplication(BlockInWorldDFunctions.WORLDGEN_PREDICATE, Map.of("predicate",VExpression.value(DTypes.BLOCK_WORLDGEN_PREDICATE, BlockPredicate.matchesBlocks(Blocks.SOUL_CAMPFIRE)), "block", VExpression.variable("block"))),
+                            'r', functionApplication(BlockInWorldDFunctions.WORLDGEN_PREDICATE, Map.of("predicate", value(DTypes.BLOCK_WORLDGEN_PREDICATE, BlockPredicate.matchesBlocks(HaemaRituals.RitualBlocks.RITUAL_ALTAR)), "block", variable("block"))),
+                            'F', functionApplication(BlockInWorldDFunctions.WORLDGEN_PREDICATE, Map.of("predicate", value(DTypes.BLOCK_WORLDGEN_PREDICATE, BlockPredicate.matchesBlocks(Blocks.SOUL_CAMPFIRE)), "block", variable("block"))),
                             //'F', BlockInWorldDFunctions.ADVANCEMENT_PREDICATE.factory().apply(net.minecraft.advancements.critereon.BlockPredicate.Builder.block().of(Blocks.SOUL_CAMPFIRE).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(BlockStateProperties.LIT, true).build()).build(), ContextArg.BLOCK.arg()),
-                            '_', VExpression.value(StandardVTypes.BOOLEAN, true)),
-                    VExpression.value(StandardVTypes.BOOLEAN, true)),
+                            '_', value(StandardVTypes.BOOLEAN, true)),
+                    value(StandardVTypes.BOOLEAN, true)),
                     Set.of('_'),
                     List.of(new ParticlesToCentreAraeModule(60, ParticleTypes.SOUL_FIRE_FLAME, List.of(
                             new Vec3(3.5, 4.25, 3.5),
@@ -431,7 +435,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             Ritual.Builder.ritual(registries)
                     .fluid(BloodApi.getFluidTagMinimumQuality(BloodQuality.MIDDLING))
                     .acceptableAraes(bloodAltar.unwrapKey().orElseThrow())
-                    .trigger(new RightClickRitualTrigger(VExpression.value(StandardVTypes.BOOLEAN, true)))
+                    .trigger(new RightClickRitualTrigger(value(StandardVTypes.BOOLEAN, true)))
                     .ingredient(Ingredient.of(Items.PORKCHOP))
                     .ingredient(Ingredient.of(Items.PORKCHOP))
                     .ingredient(Ingredient.of(Items.PORKCHOP))
@@ -444,48 +448,48 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         }
 
         private ResourceKey<VampireAbility> createHealingAbility(Entries entries) {
-            var healingAbility = new VampireAbility(true, VExpression.value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(
-                    new HealingVampireAbilityPower(VExpression.functionApplication(LogicVFunctions.AND, Map.of("operands", VExpression.list(List.of(
-                            VExpression.functionApplication(LevelDFunctions.BOOLEAN_GAME_RULE, Map.of("rule", VExpression.value(StandardVTypes.STRING, "naturalRegeneration"), "level", VExpression.variable("level"))),
-                            VExpression.functionApplication(LogicVFunctions.NOT, Map.of("operand", VExpression.functionApplication(EntityDFunctions.DEAD_OR_DYING, Map.of("entity", VExpression.variable("entity"))))),
-                            VExpression.functionApplication(StandardVFunctions.EQUALS, Map.of("a", (VExpression.functionApplication(ArithmeticVFunctions.MODULO, Map.of("a", (VExpression.functionApplication(EntityDFunctions.AGE, Map.of("entity", VExpression.variable("entity")))), "b", (VExpression.value(StandardVTypes.NUMBER, 20.0))))), "b", (VExpression.value(StandardVTypes.NUMBER, 0.)))),
-                            VExpression.functionApplication(LogicVFunctions.NOT, Map.of("operand", VExpression.functionApplication(EntityDFunctions.HAS_EFFECT, Map.of("effect", VExpression.value(DTypes.MOB_EFFECT, HaemaVampires.VampireMobEffects.SUNLIGHT_SICKNESS), "entity", VExpression.variable("entity"))))),
-                            VExpression.functionApplication(StandardVFunctions.LESS_THAN, Map.of("a", (VExpression.functionApplication(EntityDFunctions.HEALTH, Map.of("entity", VExpression.variable("entity")))), "b", (VExpression.functionApplication(EntityDFunctions.ATTRIBUTE, Map.of("attribute", VExpression.value(DTypes.ATTRIBUTE, Attributes.MAX_HEALTH), "entity", VExpression.variable("entity")))))),
-                            VExpression.functionApplication(LogicVFunctions.OR, Map.of("operands", VExpression.list(List.of(
-                                    VExpression.functionApplication(LogicVFunctions.AND, Map.of("operands", VExpression.list(List.of(
-                                            VExpression.functionApplication(StandardVFunctions.GREATER_THAN_OR_EQUAL, Map.of("a", (VExpression.functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", VExpression.variable("entity")))), "b", (VExpression.value(StandardVTypes.NUMBER, 19.0)))),
-                                            VExpression.functionApplication(StandardVFunctions.LESS_THAN, Map.of("a", (VExpression.functionApplication(ArithmeticVFunctions.SUBTRACT, Map.of("a", (VExpression.functionApplication(EntityDFunctions.HEALTH, Map.of("entity", VExpression.variable("entity")))), "b", (VExpression.functionApplication(EntityDFunctions.ATTRIBUTE_BASE, Map.of("attribute", VExpression.value(DTypes.ATTRIBUTE, Attributes.MAX_HEALTH), "entity", VExpression.variable("entity"))))))), "b", (VExpression.value(StandardVTypes.NUMBER, 20.0))))
+            var healingAbility = new VampireAbility(true, value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(
+                    new HealingVampireAbilityPower(functionApplication(LogicVFunctions.AND, Map.of("operands", list(List.of(
+                            functionApplication(LevelDFunctions.BOOLEAN_GAME_RULE, Map.of("rule", value(StandardVTypes.STRING, "naturalRegeneration"), "level", variable("level"))),
+                            functionApplication(LogicVFunctions.NOT, Map.of("operand", functionApplication(EntityDFunctions.DEAD_OR_DYING, Map.of("entity", variable("entity"))))),
+                            functionApplication(StandardVFunctions.EQUALS, Map.of("a", (functionApplication(ArithmeticVFunctions.MODULO, Map.of("a", (functionApplication(EntityDFunctions.AGE, Map.of("entity", variable("entity")))), "b", (value(StandardVTypes.NUMBER, 20.0))))), "b", (value(StandardVTypes.NUMBER, 0.)))),
+                            functionApplication(LogicVFunctions.NOT, Map.of("operand", functionApplication(EntityDFunctions.HAS_EFFECT, Map.of("effect", value(DTypes.MOB_EFFECT, HaemaVampires.VampireMobEffects.SUNLIGHT_SICKNESS), "entity", variable("entity"))))),
+                            functionApplication(StandardVFunctions.LESS_THAN, Map.of("a", (functionApplication(EntityDFunctions.HEALTH, Map.of("entity", variable("entity")))), "b", (functionApplication(EntityDFunctions.ATTRIBUTE, Map.of("attribute", value(DTypes.ATTRIBUTE, Attributes.MAX_HEALTH), "entity", variable("entity")))))),
+                            functionApplication(LogicVFunctions.OR, Map.of("operands", list(List.of(
+                                    functionApplication(LogicVFunctions.AND, Map.of("operands", list(List.of(
+                                            functionApplication(StandardVFunctions.GREATER_THAN_OR_EQUAL, Map.of("a", (functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", variable("entity")))), "b", (value(StandardVTypes.NUMBER, 19.0)))),
+                                            functionApplication(StandardVFunctions.LESS_THAN, Map.of("a", (functionApplication(ArithmeticVFunctions.SUBTRACT, Map.of("a", (functionApplication(EntityDFunctions.HEALTH, Map.of("entity", variable("entity")))), "b", (functionApplication(EntityDFunctions.ATTRIBUTE_BASE, Map.of("attribute", value(DTypes.ATTRIBUTE, Attributes.MAX_HEALTH), "entity", variable("entity"))))))), "b", (value(StandardVTypes.NUMBER, 20.0))))
                                     )))),
-                                    VExpression.functionApplication(LogicVFunctions.AND, Map.of("operands", VExpression.list(List.of(
-                                            VExpression.functionApplication(StandardVFunctions.GREATER_THAN_OR_EQUAL, Map.of("a", (VExpression.functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", VExpression.variable("entity")))), "b", (VExpression.value(StandardVTypes.NUMBER, 14.0)))),
-                                            VExpression.functionApplication(StandardVFunctions.LESS_THAN, Map.of("a", (VExpression.functionApplication(ArithmeticVFunctions.SUBTRACT, Map.of("a", (VExpression.functionApplication(EntityDFunctions.HEALTH, Map.of("entity", VExpression.variable("entity")))), "b", (VExpression.functionApplication(EntityDFunctions.ATTRIBUTE_BASE, Map.of("attribute", VExpression.value(DTypes.ATTRIBUTE, Attributes.MAX_HEALTH), "entity", VExpression.variable("entity"))))))), "b", (VExpression.value(StandardVTypes.NUMBER, 10.0))))
+                                    functionApplication(LogicVFunctions.AND, Map.of("operands", list(List.of(
+                                            functionApplication(StandardVFunctions.GREATER_THAN_OR_EQUAL, Map.of("a", (functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", variable("entity")))), "b", (value(StandardVTypes.NUMBER, 14.0)))),
+                                            functionApplication(StandardVFunctions.LESS_THAN, Map.of("a", (functionApplication(ArithmeticVFunctions.SUBTRACT, Map.of("a", (functionApplication(EntityDFunctions.HEALTH, Map.of("entity", variable("entity")))), "b", (functionApplication(EntityDFunctions.ATTRIBUTE_BASE, Map.of("attribute", value(DTypes.ATTRIBUTE, Attributes.MAX_HEALTH), "entity", variable("entity"))))))), "b", (value(StandardVTypes.NUMBER, 10.0))))
                                     )))),
-                                    VExpression.functionApplication(LogicVFunctions.AND, Map.of("operands", VExpression.list(List.of(
-                                            VExpression.functionApplication(StandardVFunctions.GREATER_THAN_OR_EQUAL, Map.of("a", (VExpression.functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", VExpression.variable("entity")))), "b", (VExpression.value(StandardVTypes.NUMBER, 10.0)))),
-                                            VExpression.functionApplication(StandardVFunctions.LESS_THAN, Map.of("a", (VExpression.functionApplication(ArithmeticVFunctions.SUBTRACT, Map.of("a", (VExpression.functionApplication(EntityDFunctions.HEALTH, Map.of("entity", VExpression.variable("entity")))), "b", (VExpression.functionApplication(EntityDFunctions.ATTRIBUTE_BASE, Map.of("attribute", VExpression.value(DTypes.ATTRIBUTE, Attributes.MAX_HEALTH), "entity", VExpression.variable("entity"))))))), "b", (VExpression.value(StandardVTypes.NUMBER, 6.0))))
+                                    functionApplication(LogicVFunctions.AND, Map.of("operands", list(List.of(
+                                            functionApplication(StandardVFunctions.GREATER_THAN_OR_EQUAL, Map.of("a", (functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", variable("entity")))), "b", (value(StandardVTypes.NUMBER, 10.0)))),
+                                            functionApplication(StandardVFunctions.LESS_THAN, Map.of("a", (functionApplication(ArithmeticVFunctions.SUBTRACT, Map.of("a", (functionApplication(EntityDFunctions.HEALTH, Map.of("entity", variable("entity")))), "b", (functionApplication(EntityDFunctions.ATTRIBUTE_BASE, Map.of("attribute", value(DTypes.ATTRIBUTE, Attributes.MAX_HEALTH), "entity", variable("entity"))))))), "b", (value(StandardVTypes.NUMBER, 6.0))))
                                     )))),
-                                    VExpression.functionApplication(LogicVFunctions.AND, Map.of("operands", VExpression.list(List.of(
-                                            VExpression.functionApplication(StandardVFunctions.GREATER_THAN_OR_EQUAL, Map.of("a", (VExpression.functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", VExpression.variable("entity")))), "b", (VExpression.value(StandardVTypes.NUMBER, 8.0)))),
-                                            VExpression.functionApplication(StandardVFunctions.LESS_THAN, Map.of("a", (VExpression.functionApplication(ArithmeticVFunctions.SUBTRACT, Map.of("a", (VExpression.functionApplication(EntityDFunctions.HEALTH, Map.of("entity", VExpression.variable("entity")))), "b", (VExpression.functionApplication(EntityDFunctions.ATTRIBUTE_BASE, Map.of("attribute", VExpression.value(DTypes.ATTRIBUTE, Attributes.MAX_HEALTH), "entity", VExpression.variable("entity"))))))), "b", (VExpression.value(StandardVTypes.NUMBER, 0.0))))
+                                    functionApplication(LogicVFunctions.AND, Map.of("operands", list(List.of(
+                                            functionApplication(StandardVFunctions.GREATER_THAN_OR_EQUAL, Map.of("a", (functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", variable("entity")))), "b", (value(StandardVTypes.NUMBER, 8.0)))),
+                                            functionApplication(StandardVFunctions.LESS_THAN, Map.of("a", (functionApplication(ArithmeticVFunctions.SUBTRACT, Map.of("a", (functionApplication(EntityDFunctions.HEALTH, Map.of("entity", variable("entity")))), "b", (functionApplication(EntityDFunctions.ATTRIBUTE_BASE, Map.of("attribute", value(DTypes.ATTRIBUTE, Attributes.MAX_HEALTH), "entity", variable("entity"))))))), "b", (value(StandardVTypes.NUMBER, 0.0))))
                                     )))))))))))),
-                            VExpression.value(StandardVTypes.NUMBER, 1.0),
-                            VExpression.functionApplication(ArithmeticVFunctions.POLYNOMIAL, Map.of("coefficients", VExpression.list(List.of(VExpression.value(StandardVTypes.NUMBER, 1.05), VExpression.value(StandardVTypes.NUMBER, 0.0), VExpression.value(StandardVTypes.NUMBER, -1.0))), "input", (VExpression.functionApplication(ArithmeticVFunctions.DIVIDE, Map.of("a", (VExpression.functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", VExpression.variable("entity")))), "b", (VExpression.functionApplication(HaemaDFunctions.MAX_BLOOD, Map.of("entity", VExpression.variable("entity"))))))))))));
+                            value(StandardVTypes.NUMBER, 1.0),
+                            functionApplication(ArithmeticVFunctions.POLYNOMIAL, Map.of("coefficients", list(List.of(value(StandardVTypes.NUMBER, 1.05), value(StandardVTypes.NUMBER, 0.0), value(StandardVTypes.NUMBER, -1.0))), "input", (functionApplication(ArithmeticVFunctions.DIVIDE, Map.of("a", (functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", variable("entity")))), "b", (functionApplication(HaemaDFunctions.MAX_BLOOD, Map.of("entity", variable("entity"))))))))))));
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("healing"));
             entries.add(key, healingAbility);
             return key;
         }
 
         private ResourceKey<VampireAbility> createReachAbility(Entries entries) {
-            var reachAbility = new VampireAbility(true, VExpression.value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(new AttributeVampireAbilityPower(Set.of(
+            var reachAbility = new VampireAbility(true, value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(new AttributeVampireAbilityPower(Set.of(
                     new AttributeVampireAbilityPower.Data(
                             ReachEntityAttributes.REACH,
                             new AttributeModifier(UUID.fromString("0eb4fc5f-71d5-4440-b517-bcc18e1df6f4"), "Vampire Reach bonus", 2.0, AttributeModifier.Operation.ADDITION),
-                            VExpression.functionApplication(StandardVFunctions.GREATER_THAN_OR_EQUAL, Map.of("a", (VExpression.functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", VExpression.variable("entity")))), "b", (VExpression.value(StandardVTypes.NUMBER, 6.0))))
+                            functionApplication(StandardVFunctions.GREATER_THAN_OR_EQUAL, Map.of("a", (functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", variable("entity")))), "b", (value(StandardVTypes.NUMBER, 6.0))))
                     ),
                     new AttributeVampireAbilityPower.Data(
                             ReachEntityAttributes.ATTACK_RANGE,
                             new AttributeModifier(UUID.fromString("3267a46b-2b48-429f-a3a8-439aa87a876d"), "Vampire Attack Range bonus", 2.0, AttributeModifier.Operation.ADDITION),
-                            VExpression.functionApplication(StandardVFunctions.GREATER_THAN_OR_EQUAL, Map.of("a", (VExpression.functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", VExpression.variable("entity")))), "b", (VExpression.value(StandardVTypes.NUMBER, 6.0))))
+                            functionApplication(StandardVFunctions.GREATER_THAN_OR_EQUAL, Map.of("a", (functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", variable("entity")))), "b", (value(StandardVTypes.NUMBER, 6.0))))
                     )
             ))));
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("reach"));
@@ -494,11 +498,11 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         }
 
         private ResourceKey<VampireAbility> createHealthBoostAbility(Entries entries) {
-            var healthBoostAbility = new VampireAbility(true, VExpression.value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(new AttributeVampireAbilityPower(Set.of(
+            var healthBoostAbility = new VampireAbility(true, value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(new AttributeVampireAbilityPower(Set.of(
                     new AttributeVampireAbilityPower.Data(
                             Attributes.MAX_HEALTH,
                             new AttributeModifier(UUID.fromString("858a6a28-5092-49ea-a94e-eb74db018a92"), "Vampire Max Health bonus", 1.0, AttributeModifier.Operation.MULTIPLY_BASE),
-                            VExpression.functionApplication(StandardVFunctions.GREATER_THAN_OR_EQUAL, Map.of("a", (VExpression.functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", VExpression.variable("entity")))), "b", (VExpression.value(StandardVTypes.NUMBER, 6.0))))
+                            functionApplication(StandardVFunctions.GREATER_THAN_OR_EQUAL, Map.of("a", (functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", variable("entity")))), "b", (value(StandardVTypes.NUMBER, 6.0))))
                     )
             ))));
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("health_boost"));
@@ -507,24 +511,24 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         }
 
         private ResourceKey<VampireAbility> createSunlightSicknessAbility(Entries entries) {
-            var sunlightSicknessAbility = new VampireAbility(true, VExpression.value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(new EffectVampireAbilityPower(Set.of(
+            var sunlightSicknessAbility = new VampireAbility(true, value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(new EffectVampireAbilityPower(Set.of(
                     new EffectVampireAbilityPower.Data(
                             HaemaVampires.VampireMobEffects.SUNLIGHT_SICKNESS,
-                            VExpression.value(StandardVTypes.NUMBER, 0.0),
-                            VExpression.value(StandardVTypes.NUMBER, 10.0),
-                            VExpression.value(StandardVTypes.BOOLEAN, false),
-                            VExpression.value(StandardVTypes.BOOLEAN, true),
-                            VExpression.value(StandardVTypes.BOOLEAN, true),
-                            VExpression.functionApplication(LogicVFunctions.AND, Map.of("operands", VExpression.list(List.of(
-                                    VExpression.functionApplication(LevelDFunctions.BOOLEAN_GAME_RULE, Map.of("rule", VExpression.value(StandardVTypes.STRING, HaemaVampires.VampireGameRules.VAMPIRES_BURN.getId()), "level", VExpression.variable("level"))),
-                                    VExpression.functionApplication(EntityDFunctions.IS_SURVIVAL_LIKE, Map.of("entity", VExpression.variable("entity"))),
-                                    VExpression.functionApplication(LogicVFunctions.OR, Map.of("operands", VExpression.list(List.of(
-                                            VExpression.functionApplication(LogicVFunctions.AND, Map.of("operands", VExpression.list(List.of(
-                                                    VExpression.functionApplication(EntityDFunctions.CAN_SEE_SKY, Map.of("entity", VExpression.variable("entity"))),
-                                                    VExpression.functionApplication(LevelDFunctions.IS_DAY, Map.of("level", VExpression.variable("level"))),
-                                                    VExpression.functionApplication(LogicVFunctions.NOT, Map.of("operand", VExpression.functionApplication(LevelDFunctions.IS_RAINING, Map.of("level", VExpression.variable("level"))))))))),
-                                            VExpression.functionApplication(HaemaDFunctions.TRIGGER_BURN_EVENT, Map.of("entity", VExpression.variable("entity"))))))),
-                                    VExpression.functionApplication(LogicVFunctions.NOT, Map.of("operand", VExpression.functionApplication(HaemaDFunctions.PREVENT_BURN_EVENT, Map.of("entity", VExpression.variable("entity"))))))))))))));
+                            value(StandardVTypes.NUMBER, 0.0),
+                            value(StandardVTypes.NUMBER, 10.0),
+                            value(StandardVTypes.BOOLEAN, false),
+                            value(StandardVTypes.BOOLEAN, true),
+                            value(StandardVTypes.BOOLEAN, true),
+                            functionApplication(LogicVFunctions.AND, Map.of("operands", list(List.of(
+                                    functionApplication(LevelDFunctions.BOOLEAN_GAME_RULE, Map.of("rule", value(StandardVTypes.STRING, HaemaVampires.VampireGameRules.VAMPIRES_BURN.getId()), "level", variable("level"))),
+                                    functionApplication(EntityDFunctions.IS_SURVIVAL_LIKE, Map.of("entity", variable("entity"))),
+                                    functionApplication(LogicVFunctions.OR, Map.of("operands", list(List.of(
+                                            functionApplication(LogicVFunctions.AND, Map.of("operands", list(List.of(
+                                                    functionApplication(EntityDFunctions.CAN_SEE_SKY, Map.of("entity", variable("entity"))),
+                                                    functionApplication(LevelDFunctions.IS_DAY, Map.of("level", variable("level"))),
+                                                    functionApplication(LogicVFunctions.NOT, Map.of("operand", functionApplication(LevelDFunctions.IS_RAINING, Map.of("level", variable("level"))))))))),
+                                            functionApplication(HaemaDFunctions.TRIGGER_BURN_EVENT, Map.of("entity", variable("entity"))))))),
+                                    functionApplication(LogicVFunctions.NOT, Map.of("operand", functionApplication(HaemaDFunctions.PREVENT_BURN_EVENT, Map.of("entity", variable("entity"))))))))))))));
 
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("sunlight_sickness"));
             entries.add(key, sunlightSicknessAbility);
@@ -532,15 +536,15 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         }
 
         private ResourceKey<VampireAbility> createVampiricWeaknessAbility(Entries entries) {
-            var vampiricWeaknessAbility = new VampireAbility(true, VExpression.value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(new EffectVampireAbilityPower(Set.of(
+            var vampiricWeaknessAbility = new VampireAbility(true, value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(new EffectVampireAbilityPower(Set.of(
                     new EffectVampireAbilityPower.Data(
                             HaemaVampires.VampireMobEffects.VAMPIRIC_WEAKNESS,
-                            VExpression.functionApplication(ArithmeticVFunctions.SUBTRACT, Map.of("a", (VExpression.value(StandardVTypes.NUMBER, 3.0)), "b", (VExpression.functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", VExpression.variable("entity")))))),
-                            VExpression.value(StandardVTypes.NUMBER, 5.0),
-                            VExpression.value(StandardVTypes.BOOLEAN, false),
-                            VExpression.value(StandardVTypes.BOOLEAN, true),
-                            VExpression.value(StandardVTypes.BOOLEAN, true),
-                            VExpression.functionApplication(StandardVFunctions.LESS_THAN_OR_EQUAL, Map.of("a", (VExpression.functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", VExpression.variable("entity")))), "b", (VExpression.value(StandardVTypes.NUMBER, 3.0)))))))));
+                            functionApplication(ArithmeticVFunctions.SUBTRACT, Map.of("a", (value(StandardVTypes.NUMBER, 3.0)), "b", (functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", variable("entity")))))),
+                            value(StandardVTypes.NUMBER, 5.0),
+                            value(StandardVTypes.BOOLEAN, false),
+                            value(StandardVTypes.BOOLEAN, true),
+                            value(StandardVTypes.BOOLEAN, true),
+                            functionApplication(StandardVFunctions.LESS_THAN_OR_EQUAL, Map.of("a", (functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", variable("entity")))), "b", (value(StandardVTypes.NUMBER, 3.0)))))))));
 
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("vampiric_weakness"));
             entries.add(key, vampiricWeaknessAbility);
@@ -548,20 +552,20 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         }
 
         private ResourceKey<VampireAbility> createDamageModificationAbility(Entries entries) {
-            var damageModificationAbility = new VampireAbility(true, VExpression.value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(new DamageModificationAbilityPower(
-                    VExpression.functionApplication(ArithmeticVFunctions.MULTIPLY, Map.of(
-                            "a", VExpression.variable("damage_amount"),
-                            "b", VExpression.functionApplication(ArithmeticVFunctions.MAX, Map.of("a", (
-                                    VExpression.functionApplication(StandardVFunctions.IF_ELSE, Map.of(
-                                            "a", (VExpression.value(StandardVTypes.NUMBER, 1.25)),
-                                            "b", (VExpression.value(StandardVTypes.NUMBER, 1.0)),
-                                            "predicate", VExpression.functionApplication(LogicVFunctions.OR, Map.of("operands", VExpression.list(List.of(
-                                                    VExpression.functionApplication(ItemStackDFunctions.TAG, Map.of("tag", VExpression.value(DTypes.TAG.with(0, DTypes.DAMAGE_SOURCE), HaemaVampires.VampireTags.VAMPIRE_EFFECTIVE_DAMAGE), "input", VExpression.variable("damage_source"))),
-                                                    VExpression.functionApplication(ItemStackDFunctions.TAG, Map.of("tag", VExpression.value(DTypes.TAG.with(0, DTypes.ITEM_STACK), HaemaVampires.VampireTags.VAMPIRE_EFFECTIVE_WEAPONS), "input", VExpression.variable("weapon")))))))))),
-                            "b", VExpression.functionApplication(ItemStackDFunctions.ENCHANTMENT_LEVEL, Map.of("enchantment", VExpression.value(DTypes.ENCHANTMENT, Enchantments.SMITE), "item", VExpression.variable("weapon"))))))),
-                    VExpression.functionApplication(LogicVFunctions.OR, Map.of("operands", VExpression.list(List.of(VExpression.functionApplication(StandardVFunctions.GREATER_THAN, Map.of("a", (VExpression.functionApplication(ItemStackDFunctions.ENCHANTMENT_LEVEL, Map.of("enchantment", VExpression.value(DTypes.ENCHANTMENT, Enchantments.SMITE), "item", VExpression.variable("weapon")))), "b", (VExpression.value(StandardVTypes.NUMBER, 0.0)))),
-                            VExpression.functionApplication(ItemStackDFunctions.TAG, Map.of("tag", VExpression.value(DTypes.TAG.with(0, DTypes.DAMAGE_SOURCE), HaemaVampires.VampireTags.VAMPIRE_EFFECTIVE_DAMAGE), "input", VExpression.variable("damage_source"))),
-                            VExpression.functionApplication(ItemStackDFunctions.TAG, Map.of("tag", VExpression.value(DTypes.TAG.with(0, DTypes.ITEM_STACK), HaemaVampires.VampireTags.VAMPIRE_EFFECTIVE_WEAPONS), "input", VExpression.variable("weapon"))))))))));
+            var damageModificationAbility = new VampireAbility(true, value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(new DamageModificationAbilityPower(
+                    functionApplication(ArithmeticVFunctions.MULTIPLY, Map.of(
+                            "a", variable("damage_amount"),
+                            "b", functionApplication(ArithmeticVFunctions.MAX, Map.of("a", (
+                                    functionApplication(StandardVFunctions.IF_ELSE, Map.of(
+                                            "a", (value(StandardVTypes.NUMBER, 1.25)),
+                                            "b", (value(StandardVTypes.NUMBER, 1.0)),
+                                            "predicate", functionApplication(LogicVFunctions.OR, Map.of("operands", list(List.of(
+                                                    functionApplication(ItemStackDFunctions.TAG, Map.of("tag", value(DTypes.TAG.with(0, DTypes.DAMAGE_SOURCE), HaemaVampires.VampireTags.VAMPIRE_EFFECTIVE_DAMAGE), "input", variable("damage_source"))),
+                                                    functionApplication(ItemStackDFunctions.TAG, Map.of("tag", value(DTypes.TAG.with(0, DTypes.ITEM_STACK), HaemaVampires.VampireTags.VAMPIRE_EFFECTIVE_WEAPONS), "input", variable("weapon")))))))))),
+                            "b", functionApplication(ItemStackDFunctions.ENCHANTMENT_LEVEL, Map.of("enchantment", value(DTypes.ENCHANTMENT, Enchantments.SMITE), "item", variable("weapon"))))))),
+                    functionApplication(LogicVFunctions.OR, Map.of("operands", list(List.of(functionApplication(StandardVFunctions.GREATER_THAN, Map.of("a", (functionApplication(ItemStackDFunctions.ENCHANTMENT_LEVEL, Map.of("enchantment", value(DTypes.ENCHANTMENT, Enchantments.SMITE), "item", variable("weapon")))), "b", (value(StandardVTypes.NUMBER, 0.0)))),
+                            functionApplication(ItemStackDFunctions.TAG, Map.of("tag", value(DTypes.TAG.with(0, DTypes.DAMAGE_SOURCE), HaemaVampires.VampireTags.VAMPIRE_EFFECTIVE_DAMAGE), "input", variable("damage_source"))),
+                            functionApplication(ItemStackDFunctions.TAG, Map.of("tag", value(DTypes.TAG.with(0, DTypes.ITEM_STACK), HaemaVampires.VampireTags.VAMPIRE_EFFECTIVE_WEAPONS), "input", variable("weapon"))))))))));
 
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("damage_modification"));
             entries.add(key, damageModificationAbility);
@@ -569,7 +573,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         }
 
         private ResourceKey<VampireAbility> createVampireVisionAbility(Entries entries) {
-            var vampireVisionAbility = new VampireAbility(true, VExpression.value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(
+            var vampireVisionAbility = new VampireAbility(true, value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(
                     new VampireVisionVampireAbilityPower()));
 
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("vampire_vision"));
@@ -581,26 +585,26 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         private ResourceKey<VampireAbility> createStrengthAbility(Entries entries, int level, Collection<ResourceKey<VampireAbility>> before) {
             //TODO fix match so we can use that
             Function3<Double, Double, VExpression, VExpression> ifElseCreator = (blood, amplifier, elze) ->
-                    VExpression.functionApplication(StandardVFunctions.IF_ELSE, Map.of(
+                    functionApplication(StandardVFunctions.IF_ELSE, Map.of(
                             "predicate",
-                            VExpression.functionApplication(StandardVFunctions.GREATER_THAN_OR_EQUAL, Map.of(
-                                            "a", VExpression.functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", VExpression.variable("entity"))),
-                                            "b", VExpression.value(StandardVTypes.NUMBER, blood))),
-                            "a", VExpression.value(StandardVTypes.NUMBER, amplifier),
+                            functionApplication(StandardVFunctions.GREATER_THAN_OR_EQUAL, Map.of(
+                                            "a", functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", variable("entity"))),
+                                            "b", value(StandardVTypes.NUMBER, blood))),
+                            "a", value(StandardVTypes.NUMBER, amplifier),
                             "b", elze));
-            var a = VExpression.value(StandardVTypes.NUMBER, 0.0);
+            var a = value(StandardVTypes.NUMBER, 0.0);
             var b = ifElseCreator.apply(14.0, 1.0, a);
             var c = ifElseCreator.apply(19.0, 2.0, b);
-            var strengthAbility = new VampireAbility(true, VExpression.value(StandardVTypes.BOOLEAN, true), Set.copyOf(before), Set.of(), Set.copyOf(before), List.of(
+            var strengthAbility = new VampireAbility(true, value(StandardVTypes.BOOLEAN, true), Set.copyOf(before), Set.of(), Set.copyOf(before), List.of(
                     new EffectVampireAbilityPower(Set.of(
                             new EffectVampireAbilityPower.Data(
                                     HaemaVampires.VampireMobEffects.VAMPIRIC_STRENGTH,
                                     c,
-                                    VExpression.value(StandardVTypes.NUMBER, 40.0),
-                                    VExpression.value(StandardVTypes.BOOLEAN, false),
-                                    VExpression.value(StandardVTypes.BOOLEAN, true),
-                                    VExpression.value(StandardVTypes.BOOLEAN, true),
-                                    VExpression.functionApplication(StandardVFunctions.GREATER_THAN_OR_EQUAL, Map.of("a", VExpression.functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", VExpression.variable("entity"))), "b", VExpression.value(StandardVTypes.NUMBER, 10.0))))))));
+                                    value(StandardVTypes.NUMBER, 40.0),
+                                    value(StandardVTypes.BOOLEAN, false),
+                                    value(StandardVTypes.BOOLEAN, true),
+                                    value(StandardVTypes.BOOLEAN, true),
+                                    functionApplication(StandardVFunctions.GREATER_THAN_OR_EQUAL, Map.of("a", functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", variable("entity"))), "b", value(StandardVTypes.NUMBER, 10.0))))))));
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("strength/"+level));
             entries.add(key, strengthAbility);
             return key;
@@ -608,28 +612,28 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
 
         private ResourceKey<VampireAbility> createDrinkingAbility(Entries entries) {
             var cooldownId = id("drinking");
-            var drinkingAbility = new VampireAbility(true, VExpression.value(StandardVTypes.BOOLEAN, true), Set.of(), Set.of(), Set.of(), List.of(
+            var drinkingAbility = new VampireAbility(true, value(StandardVTypes.BOOLEAN, true), Set.of(), Set.of(), Set.of(), List.of(
                     new DrinkingAbilityPower(
-                            VExpression.value(StandardVTypes.NUMBER, (double) BloodApi.bloodUnitsToDroplets(1)),
-                            VExpression.functionApplication(LogicVFunctions.AND, Map.of(
-                                    "operands", VExpression.list(List.of(
-                                            VExpression.functionApplication(StandardVFunctions.LESS_THAN_OR_EQUAL, Map.of(
-                                                    "a", VExpression.functionApplication(Actions.GET_COOLDOWN, Map.of("entity", VExpression.variable("entity"), "cooldown_id", VExpression.value(DTypes.RESOURCE_LOCATION, cooldownId))),
-                                                    "b", VExpression.value(StandardVTypes.NUMBER, 0.0))),
-                                            VExpression.functionApplication(ItemStackDFunctions.ITEM_IS_EMPTY, Map.of(
-                                                    "item", VExpression.functionApplication(EntityDFunctions.MAIN_HAND_ITEM, Map.of("entity", VExpression.variable("entity"))))))))),
-                            VExpression.list(List.of(
-                                    VExpression.object(Actions.name(Actions.PLAY_SOUND), Map.of(
-                                            "level", VExpression.variable("level"),
-                                            "sound_event", VExpression.value(DTypes.SOUND_EVENT, SoundEvents.GENERIC_DRINK),
-                                            "position", VExpression.functionApplication(EntityDFunctions.POSITION, Map.of("entity", VExpression.variable("entity"))),
-                                            "pitch", VExpression.value(StandardVTypes.NUMBER, 1.0),
-                                            "volume", VExpression.value(StandardVTypes.NUMBER, 1.0)
+                            value(StandardVTypes.NUMBER, (double) BloodApi.bloodUnitsToDroplets(1)),
+                            functionApplication(LogicVFunctions.AND, Map.of(
+                                    "operands", list(List.of(
+                                            functionApplication(StandardVFunctions.LESS_THAN_OR_EQUAL, Map.of(
+                                                    "a", functionApplication(Actions.GET_COOLDOWN, Map.of("entity", variable("entity"), "cooldown_id", value(DTypes.RESOURCE_LOCATION, cooldownId))),
+                                                    "b", value(StandardVTypes.NUMBER, 0.0))),
+                                            functionApplication(ItemStackDFunctions.ITEM_IS_EMPTY, Map.of(
+                                                    "item", functionApplication(EntityDFunctions.MAIN_HAND_ITEM, Map.of("entity", variable("entity"))))))))),
+                            list(List.of(
+                                    object(Actions.name(Actions.PLAY_SOUND), Map.of(
+                                            "level", variable("level"),
+                                            "sound_event", value(DTypes.SOUND_EVENT, SoundEvents.GENERIC_DRINK),
+                                            "position", functionApplication(EntityDFunctions.POSITION, Map.of("entity", variable("entity"))),
+                                            "pitch", value(StandardVTypes.NUMBER, 1.0),
+                                            "volume", value(StandardVTypes.NUMBER, 1.0)
                                     )),
-                                VExpression.object(Actions.name(Actions.SET_COOLDOWN), Map.of(
-                                        "entity", VExpression.variable("entity"),
-                                        "cooldown_id", VExpression.value(DTypes.RESOURCE_LOCATION, cooldownId),
-                                        "length", VExpression.value(StandardVTypes.NUMBER, 10.0))))),
+                                object(Actions.name(Actions.SET_COOLDOWN), Map.of(
+                                        "entity", variable("entity"),
+                                        "cooldown_id", value(DTypes.RESOURCE_LOCATION, cooldownId),
+                                        "length", value(StandardVTypes.NUMBER, 10.0))))),
                             List.of(
                                     "key.sneak",
                                     "key.use"))));
@@ -638,26 +642,47 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             return key;
         }
 
+        private ResourceKey<VampireAbility> createModifyHungerBarAbility(Entries entries) {
+            var drinkingAbility = new VampireAbility(true, value(StandardVTypes.BOOLEAN, true), Set.of(), Set.of(), Set.of(), List.of(
+                    new ModifyHungerBarAbilityPower(
+                            id("hud/blood_full"),
+                            id("hud/blood_half"),
+                            id("hud/blood_empty"),
+                            id("hud/blood_full"),
+                            id("hud/blood_half"),
+                            id("hud/blood_empty"),
+                            functionApplication(ArithmeticVFunctions.MULTIPLY, Map.of(
+                                    "a", functionApplication(ArithmeticVFunctions.DIVIDE, Map.of(
+                                            "a", functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", variable("entity"))),
+                                            "b", functionApplication(HaemaDFunctions.MAX_BLOOD, Map.of("entity", variable("entity")))
+                                    )),
+                                    "b", value(StandardVTypes.NUMBER, 20.0)
+                            )))));
+            var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("modify_hunger_bar"));
+            entries.add(key, drinkingAbility);
+            return key;
+        }
+
         private ResourceKey<VampireAbility> createDashAbility(Entries entries, int level, Collection<ResourceKey<VampireAbility>> before) {
             int cooldown = 10 * level;
             var cooldownId = id("dash");
-            var dashAbility = new VampireAbility(true, VExpression.value(StandardVTypes.BOOLEAN, true), Set.copyOf(before), Set.of(), Set.copyOf(before), List.of(
+            var dashAbility = new VampireAbility(true, value(StandardVTypes.BOOLEAN, true), Set.copyOf(before), Set.of(), Set.copyOf(before), List.of(
                     new DashAbilityPower(
-                            VExpression.functionApplication(LogicVFunctions.AND, Map.of(
-                                    "operands", VExpression.list(List.of(
-                                            VExpression.functionApplication(StandardVFunctions.LESS_THAN_OR_EQUAL, Map.of(
-                                                    "a", VExpression.functionApplication(Actions.GET_COOLDOWN, Map.of("entity", VExpression.variable("entity"), "cooldown_id", VExpression.value(DTypes.RESOURCE_LOCATION, cooldownId))),
-                                                    "b", VExpression.value(StandardVTypes.NUMBER, 0.0)
+                            functionApplication(LogicVFunctions.AND, Map.of(
+                                    "operands", list(List.of(
+                                            functionApplication(StandardVFunctions.LESS_THAN_OR_EQUAL, Map.of(
+                                                    "a", functionApplication(Actions.GET_COOLDOWN, Map.of("entity", variable("entity"), "cooldown_id", value(DTypes.RESOURCE_LOCATION, cooldownId))),
+                                                    "b", value(StandardVTypes.NUMBER, 0.0)
                                             )),
-                                            VExpression.functionApplication(StandardVFunctions.GREATER_THAN_OR_EQUAL, Map.of(
-                                                    "a", VExpression.functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", VExpression.variable("entity"))),
-                                                    "b", VExpression.value(StandardVTypes.NUMBER, 18.0)
+                                            functionApplication(StandardVFunctions.GREATER_THAN_OR_EQUAL, Map.of(
+                                                    "a", functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", variable("entity"))),
+                                                    "b", value(StandardVTypes.NUMBER, 18.0)
                                             )))))),
-                        VExpression.list(List.of(
-                                VExpression.object(Actions.name(Actions.SET_COOLDOWN), Map.of(
-                                        "entity", VExpression.variable("entity"),
-                                        "cooldown_id", VExpression.value(DTypes.RESOURCE_LOCATION, cooldownId),
-                                        "length", VExpression.value(StandardVTypes.NUMBER, (double) cooldown))))),
+                        list(List.of(
+                                object(Actions.name(Actions.SET_COOLDOWN), Map.of(
+                                        "entity", variable("entity"),
+                                        "cooldown_id", value(DTypes.RESOURCE_LOCATION, cooldownId),
+                                        "length", value(StandardVTypes.NUMBER, (double) cooldown))))),
                         List.of("z"))));
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("dash/"+level));
             entries.add(key, dashAbility);

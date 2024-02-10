@@ -6,7 +6,8 @@
     "KeyMappingAccessor"
   ],
   "client": [
-    "vampire.ability.powers.MinecraftMixin"
+    "vampire.ability.powers.MinecraftMixin",
+    "vampire.ability.powers.hungerbar.InGameHudMixin"
   ],
   "server": [
   ],
