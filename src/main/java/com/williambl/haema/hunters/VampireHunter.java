@@ -376,7 +376,7 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
     public BrainActivityGroup<VampireHunter> getIdleTasks() {
         return BrainActivityGroup.idleTasks(
                 new FirstApplicableBehaviour<>(
-                        new TargetOrRetaliate<>().attackablePredicate(VampireApi::isVampire).alertAlliesWhen(($, $$) -> true),
+                        new TargetOrRetaliate<>().attackablePredicate(e -> this.canAttack(e) && VampireApi.isVampire(e)).alertAlliesWhen(($, $$) -> true),
                         new StopHoldingWeapon<>(i -> this.isMeleeWeapon(i) || this.isCrossbow(i), this::stopHolding),
                         new GiveContractRewards<>(20, PAYMENT_LOOT_TABLE),
                         new GoToLeaderIfFar<>(),
