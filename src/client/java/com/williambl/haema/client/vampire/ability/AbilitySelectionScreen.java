@@ -52,20 +52,16 @@ public class AbilitySelectionScreen extends Screen {
         super.render(guiGraphics, i, j, f);
         int centerX = this.width/2;
         int centerY = this.height/2;
-        AbilityOption closestAbility = null;
-        double closestSqrDist = Double.MAX_VALUE;
         for (AbilityOption ability : this.abilityOptions) {
             int x = ability.x + centerX;
             int y = ability.y + centerY;
             guiGraphics.drawCenteredString(this.font, ability.name, x, y, 0xffffff);
-            double dist = Math.pow(i - x, 2.0) + Math.pow(j - y, 2.0);
-            if (dist < closestSqrDist) {
-                closestSqrDist = dist;
-                closestAbility = ability;
-            }
         }
 
-        if (closestAbility != null) {
+        if (!this.abilityOptions.isEmpty()) {
+            double mouseTheta = Math.atan2(j - centerY, i - centerX) + Math.PI;
+            double sector = (mouseTheta / (Math.PI * 2.0) * this.abilityOptions.size());
+            var closestAbility = this.abilityOptions.get(Math.floorMod(((int) sector) - 1, this.abilityOptions.size()));
             this.setTooltipForNextRenderPass(closestAbility.name);
         }
     }
