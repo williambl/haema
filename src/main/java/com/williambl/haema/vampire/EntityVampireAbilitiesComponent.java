@@ -11,6 +11,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,8 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponent {
-    private final LinkedHashSet<Holder.Reference<VampireAbility>> abilities = new LinkedHashSet<>();
-    private final LinkedHashSet<Holder.Reference<VampireAbility>> enabledAbilities = new LinkedHashSet<>();
+    private final ArrayList<Holder.Reference<VampireAbility>> abilities = new ArrayList<>();
+    private final ArrayList<Holder.Reference<VampireAbility>> enabledAbilities = new ArrayList<>();
     private final HashMap<Class<? extends VampireAbilityPower>, List<VampireAbilityPower>> powers = new HashMap<>();
     private final LivingEntity entity;
     private @Nullable Holder.Reference<VampireAbility> activeAbility;
@@ -51,14 +52,17 @@ public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponen
 
     @Override
     public boolean addAbility(Holder<VampireAbility> ability) {
+        if (!(ability instanceof Holder.Reference<VampireAbility> ref)) {
+            return false;
+        }
+
+        if (this.abilities.contains(ability)) {
+            return false;
+        }
         if (ability.value().conflicts().stream().anyMatch(c -> this.abilities.stream().anyMatch(h -> h.key() == c))) {
             return false;
         }
         if (!ability.value().prerequisites().stream().allMatch(c -> this.abilities.stream().anyMatch(h -> h.key() == c))) {
-            return false;
-        }
-
-        if (!(ability instanceof Holder.Reference<VampireAbility> ref)) {
             return false;
         }
 
@@ -71,6 +75,9 @@ public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponen
                 this.powers.computeIfAbsent(power.getClass(), k -> new ArrayList<>()).add(power);
             }
         }
+
+        this.recalculateEnabledAbilities(true);
+        KEY.sync(this.entity);
 
         return true;
     }
@@ -91,7 +98,8 @@ public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponen
             this.activeAbility = null;
         }
 
-        this.recalculateEnabledAbilities();
+        this.recalculateEnabledAbilities(true);
+        KEY.sync(this.entity);
 
         return true;
     }
@@ -137,6 +145,7 @@ public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponen
                     .stream()
                     .filter(Holder.Reference.class::isInstance)
                     .<Holder.Reference<VampireAbility>>map(Holder.Reference.class::cast)
+                    .distinct()
                     .toList();
             this.abilities.addAll(abilities);
             for (var ability : this.abilities) {
@@ -154,7 +163,8 @@ public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponen
                         .ifPresent(a -> this.activeAbility = a);
             }
         }
-        this.recalculateEnabledAbilities();
+
+        this.recalculateEnabledAbilities(false);
     }
 
     @Override
@@ -170,7 +180,26 @@ public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponen
         }
     }
 
-    //TODO make the sync packet less heavy if possible
+    @Override
+    public void writeSyncPacket(FriendlyByteBuf buf, ServerPlayer recipient) {
+        buf.writeCollection(this.abilities, (b, h) -> b.writeResourceKey(h.key()));
+        buf.writeOptional(Optional.ofNullable(this.activeAbility), (b, h) -> b.writeVarInt(this.abilities.indexOf(h)));
+        buf.writeCollection(this.enabledAbilities, (b, h) -> b.writeVarInt(this.abilities.indexOf(h)));
+    }
+
+    @Override
+    public void applySyncPacket(FriendlyByteBuf buf) {
+        var registries = this.entity.level().registryAccess();
+        var sourceRegistry = registries.registryOrThrow(VampireAbility.REGISTRY_KEY);
+        this.abilities.clear();
+        this.abilities.addAll(buf.readList(b -> sourceRegistry.getHolder(b.readResourceKey(sourceRegistry.key())))
+                .stream()
+                .filter(Optional::isPresent)
+                .map(Optional::get).toList());
+        this.activeAbility = buf.readOptional(b -> this.abilities.get(b.readVarInt())).orElse(null);
+        this.enabledAbilities.clear();
+        this.enabledAbilities.addAll(buf.readList(b -> this.abilities.get(b.readVarInt())));
+    }
 
     @Override
     public boolean shouldSyncWith(ServerPlayer player) {
@@ -185,7 +214,7 @@ public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponen
         }
     }
 
-    private void recalculateEnabledAbilities() {
+    private void recalculateEnabledAbilities(boolean runRemoveAndAdd) {
         this.enabledAbilities.addAll(this.abilities);
         for (var ability : this.abilities) {
             for (var superceded : ability.value().supercedes()) {
@@ -195,14 +224,16 @@ public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponen
         for (var ability : this.abilities) {
             if (!this.enabledAbilities.contains(ability)) {
                 for (var power : ability.value().powers()) {
-                    if (this.powers.computeIfAbsent(power.getClass(), k -> new ArrayList<>()).remove(power)) {
+                    if (this.powers.computeIfAbsent(power.getClass(), k -> new ArrayList<>()).remove(power) && runRemoveAndAdd) {
                         power.remove(this.entity, ability.value());
                     }
                 }
             } else {
                 for (var power : ability.value().powers()) {
                     if (!this.powers.computeIfAbsent(power.getClass(), k -> new ArrayList<>()).contains(power)) {
-                        power.apply(this.entity, ability.value());
+                        if (runRemoveAndAdd) {
+                            power.apply(this.entity, ability.value());
+                        }
                         this.powers.get(power.getClass()).add(power);
                     }
                 }
