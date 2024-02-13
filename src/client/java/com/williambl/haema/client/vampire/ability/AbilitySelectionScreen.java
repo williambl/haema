@@ -60,15 +60,15 @@ public class AbilitySelectionScreen extends Screen {
             int x = ability.x + centerX;
             int y = ability.y + centerY;
             ability.ability().icon().accept(
-                    icon -> guiGraphics.blit(icon.resourceLocation(), x-icon.xSize(), y-icon.ySize(), 0, 0, icon.xSize(), icon.ySize(), icon.xSize(), icon.ySize()),
-                    item -> guiGraphics.renderFakeItem(item, x-16, y-16));
+                    icon -> guiGraphics.blit(icon.resourceLocation(), x-icon.xSize()/2, y-icon.ySize()/2, 0, 0, icon.xSize(), icon.ySize(), icon.xSize(), icon.ySize()),
+                    item -> guiGraphics.renderFakeItem(item, x-8, y-8));
         }
 
 
         if (!this.abilityOptions.isEmpty()) {
             double mouseTheta = Math.atan2(mouseY - centerY, mouseX - centerX) + Math.PI;
             double sector = (mouseTheta / (Math.PI * 2.0) * this.abilityOptions.size());
-            var closestAbility = this.abilityOptions.get(Math.floorMod(((int) sector) - 1, this.abilityOptions.size()));
+            var closestAbility = this.abilityOptions.get(Math.floorMod(((int) sector) - this.abilityOptions.size()/2, this.abilityOptions.size()));
             this.setTooltipForNextRenderPass(closestAbility.name);
 
             guiGraphics.drawManaged(() -> {
