@@ -25,7 +25,8 @@ public class MinecraftMixin {
             at = @At(value = "FIELD", opcode = Opcodes.GETFIELD, target = "Lnet/minecraft/client/Options;keyAttack:Lnet/minecraft/client/KeyMapping;"))
     private void haema$triggerPowerKeybinds(CallbackInfo ci) {
         assert this.player != null; // we know it's not null here
-        var abilities = this.player.getComponent(VampireAbilitiesComponent.KEY).getAbilities();
-        VampireAbilityPowerTickKeybindsCallback.invokeAll(abilities, this.player);
+        var component = this.player.getComponent(VampireAbilitiesComponent.KEY);
+        var abilities = component.getAbilities();
+        VampireAbilityPowerTickKeybindsCallback.invokeAll(abilities, this.player, component.getActiveAbility().orElse(null));
     }
 }

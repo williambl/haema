@@ -7,6 +7,7 @@ import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import dev.onyxstudios.cca.api.v3.component.tick.CommonTickingComponent;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static com.williambl.haema.Haema.id;
@@ -16,6 +17,8 @@ public interface VampireAbilitiesComponent extends Component, CommonTickingCompo
     void addAbility(VampireAbility ability);
     void removeAbility(VampireAbility ability);
     boolean hasAbility(VampireAbility ability);
+    boolean setActiveAbility(VampireAbility ability);
+    Optional<VampireAbility> getActiveAbility();
     <T extends VampireAbilityPower> List<T> getPowersOfClass(Class<T> clazz);
 
     ComponentKey<VampireAbilitiesComponent> KEY = ComponentRegistry.getOrCreate(id("vampire_abilities"), VampireAbilitiesComponent.class);

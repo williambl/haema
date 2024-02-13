@@ -15,7 +15,7 @@ public record DummyVampireAbilityPower(ResourceLocation powerName) implements Va
     }
 
     @Override
-    public void tick(LivingEntity entity, VampireAbility source) {
+    public void tick(LivingEntity entity, VampireAbility source, boolean isActive) {
     }
 
     @Override

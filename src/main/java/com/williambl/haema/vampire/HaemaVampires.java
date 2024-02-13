@@ -7,6 +7,7 @@ import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.api.vampire.ability.VampireAbilitiesComponent;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
+import com.williambl.haema.vampire.ability.SetActiveAbilityPacket;
 import com.williambl.haema.vampire.ability.abilities.strength.VampiricStrengthEffect;
 import com.williambl.haema.vampire.ability.powers.*;
 import com.williambl.haema.vampire.ability.powers.damage_modification.DamageModificationAbilityPower;
@@ -23,6 +24,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.gamerule.v1.CustomGameRuleCategory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
+import net.fabricmc.fabric.api.networking.v1.FabricPacket;
 import net.fabricmc.fabric.api.networking.v1.PacketType;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -58,9 +60,11 @@ public class HaemaVampires {
 
     public static class VampirePackets {
         public static final PacketType<DrinkingPacket> DRINKING = PacketType.create(id("drinking"), DrinkingPacket::new);
+        public static final PacketType<SetActiveAbilityPacket> SET_ACTIVE_ABILITY = PacketType.create(id("set_active_ability"), SetActiveAbilityPacket::new);
 
         public static void init() {
             DrinkingPacket.init();
+            SetActiveAbilityPacket.init();
         }
     }
 

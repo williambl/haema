@@ -5,6 +5,7 @@ import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.player.LocalPlayer;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,26 +19,26 @@ public interface VampireAbilityPowerTickKeybindsCallback<T extends VampireAbilit
         @SuppressWarnings("unchecked") Event<VampireAbilityPowerTickKeybindsCallback<T>> event
                 = (Event<VampireAbilityPowerTickKeybindsCallback<T>>) EVENTS.computeIfAbsent(powerClass,
                 $ -> EventFactory.<VampireAbilityPowerTickKeybindsCallback<T>>createArrayBacked(VampireAbilityPowerTickKeybindsCallback.class,
-                        callbacks -> (p, e, s) -> {
+                        callbacks -> (p, e, s, a) -> {
                             for (var c : callbacks) {
-                                c.tickKeybinds(powerClass.cast(p), e, s);
+                                c.tickKeybinds(powerClass.cast(p), e, s, a);
                             }
                         }));
         return event;
     }
 
-    static void invokeAll(Set<VampireAbility> abilities, LocalPlayer player) {
+    static void invokeAll(Set<VampireAbility> abilities, LocalPlayer player, @Nullable VampireAbility active) {
         for (var ability : abilities) {
             for (var power : ability.powers()) {
                 @SuppressWarnings("unchecked")
                 Event<VampireAbilityPowerTickKeybindsCallback<VampireAbilityPower>> event =
                         (Event<VampireAbilityPowerTickKeybindsCallback<VampireAbilityPower>>) EVENTS.get(power.getClass());
                 if (event != null) {
-                    event.invoker().tickKeybinds(power, player, ability);
+                    event.invoker().tickKeybinds(power, player, ability, ability == active);
                 }
             }
         }
     }
 
-    void tickKeybinds(T power, LocalPlayer entity, VampireAbility source);
+    void tickKeybinds(T power, LocalPlayer entity, VampireAbility ability, boolean isAbilityActive);
 }

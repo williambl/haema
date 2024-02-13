@@ -2,7 +2,6 @@ package com.williambl.haema.vampire.ability.powers.damage_modification;
 
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.williambl.dfunc.api.DFunctions;
-import com.williambl.haema.HaemaDFunctions;
 import com.williambl.haema.api.vampire.ability.VampireAbilitiesComponent;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
@@ -22,7 +21,7 @@ public record DamageModificationAbilityPower(VExpression damageModificationFunct
     }
 
     @Override
-    public void tick(LivingEntity entity, VampireAbility source) {
+    public void tick(LivingEntity entity, VampireAbility source, boolean isActive) {
     }
 
     @Override

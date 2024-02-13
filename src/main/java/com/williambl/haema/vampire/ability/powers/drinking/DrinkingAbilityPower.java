@@ -6,9 +6,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.williambl.actions.Action;
 import com.williambl.actions.Actions;
 import com.williambl.dfunc.api.DFunctions;
-import com.williambl.haema.Haema;
-import com.williambl.haema.HaemaClientHandler;
-import com.williambl.haema.HaemaUtil;
 import com.williambl.haema.api.content.blood.BloodApi;
 import com.williambl.haema.api.vampire.VampireComponent;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
@@ -23,11 +20,7 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 
 import java.util.List;
@@ -46,7 +39,7 @@ public record DrinkingAbilityPower(VExpression amountToDrink, VExpression canDri
     }
 
     @Override
-    public void tick(LivingEntity entity, VampireAbility source) {
+    public void tick(LivingEntity entity, VampireAbility source, boolean isActive) {
     }
 
     @Override

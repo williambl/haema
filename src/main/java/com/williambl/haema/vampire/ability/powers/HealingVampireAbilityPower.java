@@ -22,7 +22,7 @@ public record HealingVampireAbilityPower(VExpression predicate, VExpression amou
     }
 
     @Override
-    public void tick(LivingEntity entity, VampireAbility source) {
+    public void tick(LivingEntity entity, VampireAbility source, boolean isActive) {
         if (entity.level().isClientSide()) {
             return;
         }

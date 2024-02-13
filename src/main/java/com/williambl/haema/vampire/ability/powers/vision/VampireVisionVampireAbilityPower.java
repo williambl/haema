@@ -14,7 +14,7 @@ public record VampireVisionVampireAbilityPower() implements VampireAbilityPower 
     }
 
     @Override
-    public void tick(LivingEntity entity, VampireAbility source) {
+    public void tick(LivingEntity entity, VampireAbility source, boolean isActive) {
     }
 
     @Override

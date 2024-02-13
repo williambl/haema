@@ -38,7 +38,7 @@ public record DashAbilityPower(VExpression canDash, VExpression onDash, List<Str
     }
 
     @Override
-    public void tick(LivingEntity entity, VampireAbility source) {
+    public void tick(LivingEntity entity, VampireAbility source, boolean isActive) {
     }
 
     @Override
