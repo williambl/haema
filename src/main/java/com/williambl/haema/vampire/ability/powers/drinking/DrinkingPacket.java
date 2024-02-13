@@ -33,7 +33,7 @@ public record DrinkingPacket(int target) implements FabricPacket {
             if (target != null) {
                 // findFirst short circuits, but complains if we don't put it into a variable lol
                 var ignored = VampireAbilitiesComponent.KEY.maybeGet(player).stream()
-                        .flatMap(c -> c.getPowersOfClass(DrinkingAbilityPower.class).stream())
+                        .flatMap(c -> c.getEnabledPowersOfClass(DrinkingAbilityPower.class).stream())
                         .filter(p -> p.tryDrink(player, target))
                         .findFirst();
             }

@@ -26,7 +26,7 @@ public class MinecraftMixin {
     private void haema$triggerPowerKeybinds(CallbackInfo ci) {
         assert this.player != null; // we know it's not null here
         var component = this.player.getComponent(VampireAbilitiesComponent.KEY);
-        var abilities = component.getAbilities();
+        var abilities = component.getEnabledAbilities();
         VampireAbilityPowerTickKeybindsCallback.invokeAll(abilities, this.player, component.getActiveAbility().orElse(null));
     }
 }

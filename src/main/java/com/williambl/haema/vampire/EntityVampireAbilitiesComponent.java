@@ -4,10 +4,10 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.williambl.haema.Haema;
-import com.williambl.haema.HaemaUtil;
 import com.williambl.haema.api.vampire.ability.VampireAbilitiesComponent;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -20,10 +20,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponent {
-    private final LinkedHashSet<VampireAbility> abilities = new LinkedHashSet<>();
+    private final LinkedHashSet<Holder.Reference<VampireAbility>> abilities = new LinkedHashSet<>();
+    private final LinkedHashSet<Holder.Reference<VampireAbility>> enabledAbilities = new LinkedHashSet<>();
     private final HashMap<Class<? extends VampireAbilityPower>, List<VampireAbilityPower>> powers = new HashMap<>();
     private final LivingEntity entity;
-    private @Nullable VampireAbility activeAbility;
+    private @Nullable Holder.Reference<VampireAbility> activeAbility;
     
     private static final String ABILITIES_KEY = "abilities";
     private static final String ACTIVE_ABILITY_KEY = "active_ability";
@@ -34,45 +35,81 @@ public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponen
     }
 
     @Override
-    public Set<VampireAbility> getAbilities() {
+    public Set<Holder.Reference<VampireAbility>> getAbilities() {
         return Set.copyOf(this.abilities);
     }
 
     @Override
-    public void addAbility(VampireAbility ability) {
-        this.abilities.add(ability);
-        for (var power : ability.powers()) {
-            power.apply(entity, ability);
-            this.powers.computeIfAbsent(power.getClass(), k -> new ArrayList<>()).add(power);
-        }
+    public Set<Holder.Reference<VampireAbility>> getEnabledAbilities() {
+        return Set.copyOf(this.enabledAbilities);
     }
 
     @Override
-    public void removeAbility(VampireAbility ability) {
+    public boolean isAbilityEnabled(Holder<VampireAbility> ability) {
+        return ability instanceof Holder.Reference<VampireAbility> ref && this.enabledAbilities.contains(ref);
+    }
+
+    @Override
+    public boolean addAbility(Holder<VampireAbility> ability) {
+        if (ability.value().conflicts().stream().anyMatch(c -> this.abilities.stream().anyMatch(h -> h.key() == c))) {
+            return false;
+        }
+        if (!ability.value().prerequisites().stream().allMatch(c -> this.abilities.stream().anyMatch(h -> h.key() == c))) {
+            return false;
+        }
+
+        if (!(ability instanceof Holder.Reference<VampireAbility> ref)) {
+            return false;
+        }
+
+        boolean isSuperceded = this.abilities.stream().anyMatch(h -> h.value().supercedes().stream().anyMatch(r -> r == ref.key()));
+
+        this.abilities.add(ref);
+        for (var power : ability.value().powers()) {
+            if (!isSuperceded) {
+                power.apply(this.entity, ability.value());
+                this.powers.computeIfAbsent(power.getClass(), k -> new ArrayList<>()).add(power);
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean removeAbility(Holder<VampireAbility> ability) {
+        if (!(ability instanceof Holder.Reference<VampireAbility> ref)) {
+            return false;
+        }
+
         this.abilities.remove(ability);
-        for (var power : ability.powers()) {
-            power.remove(entity, ability);
-            this.powers.computeIfAbsent(power.getClass(), k -> new ArrayList<>()).remove(power);
+        for (var power : ability.value().powers()) {
+            if (this.powers.computeIfAbsent(power.getClass(), k -> new ArrayList<>()).remove(power)) {
+                power.remove(this.entity, ability.value());
+            }
         }
         if (ability == this.activeAbility) {
             this.activeAbility = null;
         }
+
+        this.recalculateEnabledAbilities();
+
+        return true;
     }
 
     @Override
-    public boolean hasAbility(VampireAbility ability) {
-        return this.abilities.contains(ability);
+    public boolean hasAbility(Holder<VampireAbility> ability) {
+        return ability instanceof Holder.Reference<VampireAbility> ref && this.abilities.contains(ref);
     }
 
     @Override
-    public <T extends VampireAbilityPower> List<T> getPowersOfClass(Class<T> clazz) {
+    public <T extends VampireAbilityPower> List<T> getEnabledPowersOfClass(Class<T> clazz) {
         return this.powers.getOrDefault(clazz, List.of()).stream().map(clazz::cast).toList();
     }
 
     @Override
-    public boolean setActiveAbility(VampireAbility ability) {
-        if (ability == null || this.abilities.contains(ability)) {
-            this.activeAbility = ability;
+    public boolean setActiveAbility(Holder<VampireAbility> ability) {
+        if (ability instanceof Holder.Reference<VampireAbility> ref && this.abilities.contains(ref)) {
+            this.activeAbility = ref;
             return true;
         }
 
@@ -80,7 +117,7 @@ public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponen
     }
 
     @Override
-    public Optional<VampireAbility> getActiveAbility() {
+    public Optional<Holder<VampireAbility>> getActiveAbility() {
         return Optional.ofNullable(this.activeAbility);
     }
 
@@ -89,68 +126,86 @@ public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponen
         var registries = this.entity.level().registryAccess();
         var sourceRegistry = registries.registryOrThrow(VampireAbility.REGISTRY_KEY);
         this.abilities.clear();
+        this.enabledAbilities.clear();
         this.powers.clear();
         this.activeAbility = null;
         if (tag.contains(ABILITIES_KEY)) {
-            var abilities = ABILITIES_CODEC.decode(NbtOps.INSTANCE, tag.get(ABILITIES_KEY))
+            var abilities = sourceRegistry.holderByNameCodec().listOf().decode(NbtOps.INSTANCE, tag.get(ABILITIES_KEY))
                     .resultOrPartial(e -> Haema.LOGGER.warn("Error decoding Vampire Abilities for entity {}: {}", this.entity.getScoreboardName(), e))
                     .map(Pair::getFirst)
                     .orElseGet(List::of)
                     .stream()
-                    .filter(HaemaUtil.checkInRegistry(sourceRegistry, "Vampire Ability {} does not exist, skipping"))
-                    .map(sourceRegistry::get)
+                    .filter(Holder.Reference.class::isInstance)
+                    .<Holder.Reference<VampireAbility>>map(Holder.Reference.class::cast)
                     .toList();
             this.abilities.addAll(abilities);
             for (var ability : this.abilities) {
-                for (var power : ability.powers()) {
+                for (var power : ability.value().powers()) {
                     this.powers.computeIfAbsent(power.getClass(), k -> new ArrayList<>()).add(power);
                 }
             }
             if (tag.contains(ACTIVE_ABILITY_KEY, Tag.TAG_STRING)) {
                 ResourceLocation.read(tag.getString(ACTIVE_ABILITY_KEY))
-                        .flatMap(resLoc -> sourceRegistry.getOptional(resLoc)
+                        .flatMap(resLoc -> sourceRegistry.getHolder(ResourceKey.create(sourceRegistry.key(), resLoc))
                                 .map(DataResult::success)
                                 .orElseGet(() -> DataResult.error(() -> "Active vampire ability %s does not exist".formatted(resLoc))))
-                        .flatMap(a -> this.abilities.contains(a) ? DataResult.success(a) : DataResult.error(() -> "Active vampire ability %s is not on vampire %s".formatted(sourceRegistry.getKey(a), this.entity.getScoreboardName())))
+                        .flatMap(a -> this.abilities.contains(a) ? DataResult.success(a) : DataResult.error(() -> "Active vampire ability %s is not on vampire %s".formatted(a.key(), this.entity.getScoreboardName())))
                         .resultOrPartial(s -> Haema.LOGGER.warn("Error decoding Active Vampire Ability for entity {}: {}", this.entity.getScoreboardName(), s))
                         .ifPresent(a -> this.activeAbility = a);
             }
         }
+        this.recalculateEnabledAbilities();
     }
 
     @Override
     public void writeToNbt(CompoundTag tag) {
         var registries = this.entity.level().registryAccess();
         var sourceRegistry = registries.registryOrThrow(VampireAbility.REGISTRY_KEY);
-        var abilityKeys = this.abilities.stream()
-                .map(sourceRegistry::getResourceKey)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .toList();
-        ABILITIES_CODEC.encodeStart(NbtOps.INSTANCE, abilityKeys)
+        sourceRegistry.holderByNameCodec().listOf().encodeStart(NbtOps.INSTANCE, List.copyOf(this.abilities))
                 .resultOrPartial(e -> Haema.LOGGER.warn("Error encoding Vampire Abilities for entity {}: {}", this.entity.getScoreboardName(), e))
                 .ifPresent(t -> tag.put(ABILITIES_KEY, t));
         if (this.activeAbility != null) {
-            var key = sourceRegistry.getKey(this.activeAbility);
-            if (key == null) {
-                Haema.LOGGER.warn("Error encoding Active Vampire Ability for entity {}: key was null for ability {}", this.entity.getScoreboardName(), this.activeAbility);
-            } else {
-                tag.putString(ACTIVE_ABILITY_KEY, key.toString());
-            }
+            var key = this.activeAbility.key();
+            tag.putString(ACTIVE_ABILITY_KEY, key.toString());
         }
     }
 
     //TODO make the sync packet less heavy if possible
+
     @Override
     public boolean shouldSyncWith(ServerPlayer player) {
         return this.entity == player; //TODO check if necessary
     }
-
     @Override
     public void tick() {
+        for (var ability : this.enabledAbilities) {
+            for (var power : ability.value().powers()) {
+                power.tick(this.entity, ability.value(), ability == this.activeAbility);
+            }
+        }
+    }
+
+    private void recalculateEnabledAbilities() {
+        this.enabledAbilities.addAll(this.abilities);
         for (var ability : this.abilities) {
-            for (var power : ability.powers()) {
-                power.tick(this.entity, ability, ability == this.activeAbility);
+            for (var superceded : ability.value().supercedes()) {
+                this.enabledAbilities.removeIf(a -> a.key() == superceded);
+            }
+        }
+        for (var ability : this.abilities) {
+            if (!this.enabledAbilities.contains(ability)) {
+                for (var power : ability.value().powers()) {
+                    if (this.powers.computeIfAbsent(power.getClass(), k -> new ArrayList<>()).remove(power)) {
+                        power.remove(this.entity, ability.value());
+                    }
+                }
+            } else {
+                for (var power : ability.value().powers()) {
+                    if (!this.powers.computeIfAbsent(power.getClass(), k -> new ArrayList<>()).contains(power)) {
+                        power.apply(this.entity, ability.value());
+                        this.powers.get(power.getClass()).add(power);
+                    }
+                }
             }
         }
     }

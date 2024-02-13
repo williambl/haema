@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class EntityVampireComponent implements VampireComponent {
     private double blood;
@@ -55,9 +56,10 @@ public class EntityVampireComponent implements VampireComponent {
         if (abilityComponent != null) {
             var abilityRegistry = this.entity.level().registryAccess().registryOrThrow(VampireAbility.REGISTRY_KEY);
             source.grantedAbilities().stream()
-                    .map(abilityRegistry::get)
-                    .filter(Objects::nonNull)
-                    .filter(VampireAbility::enabled)
+                    .map(abilityRegistry::getHolder)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .filter(h -> h.value().enabled())
                     .forEach(abilityComponent::addAbility);
         }
         VampireComponent.KEY.sync(this.entity);

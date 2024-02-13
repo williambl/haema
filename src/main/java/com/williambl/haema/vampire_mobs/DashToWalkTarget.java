@@ -36,7 +36,7 @@ public class DashToWalkTarget<E extends PathfinderMob> extends ExtendedBehaviour
             return false;
         }
 
-        this.powers = abilities.getPowersOfClass(DashAbilityPower.class).stream()
+        this.powers = abilities.getEnabledPowersOfClass(DashAbilityPower.class).stream()
                 .filter(d -> DFunctions.evaluate(d.canDash(), DFunctions.createEntityContext(entity))).toList();
         if (this.powers.isEmpty()) {
             return false;

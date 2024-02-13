@@ -27,14 +27,13 @@ public class AbilitySelectionScreen extends Screen {
     protected void init() {
         super.init();
         if (this.minecraft != null && this.minecraft.player != null) {
-            var abilities = this.minecraft.player.getComponent(VampireAbilitiesComponent.KEY).getAbilities();
+            var abilities = this.minecraft.player.getComponent(VampireAbilitiesComponent.KEY).getEnabledAbilities();
             var rootsOfUnity = rootsOfUnity(abilities.size());
-            var registries = this.minecraft.player.level().registryAccess().registryOrThrow(VampireAbility.REGISTRY_KEY);
             this.abilityOptions = new ArrayList<>();
             for (var ability : abilities) {
                 int i = this.abilityOptions.size();
-                this.abilityOptions.add(new AbilityOption(ability,
-                        Component.translatable(Util.makeDescriptionId("vampire_ability", registries.getKey(ability))),
+                this.abilityOptions.add(new AbilityOption(ability.value(),
+                        Component.translatable(Util.makeDescriptionId("vampire_ability", ability.key().location())),
                         (int) (rootsOfUnity[i][0] * 50),
                         (int) (rootsOfUnity[i][1] * 50)));
             }

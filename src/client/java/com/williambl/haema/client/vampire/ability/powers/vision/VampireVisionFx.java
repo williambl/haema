@@ -40,7 +40,7 @@ public class VampireVisionFx implements ShaderEffectRenderCallback, ClientTickEv
         }
 
         var comp = VampireAbilitiesComponent.KEY.getNullable(cam);
-        if (comp != null && !comp.getPowersOfClass(VampireVisionVampireAbilityPower.class).isEmpty()) {
+        if (comp != null && !comp.getEnabledPowersOfClass(VampireVisionVampireAbilityPower.class).isEmpty()) {
             this.shader.render(tickDelta);
         }
     }
@@ -54,7 +54,7 @@ public class VampireVisionFx implements ShaderEffectRenderCallback, ClientTickEv
 
         var vampire = VampireComponent.KEY.getNullable(cam);
         var abilities = VampireAbilitiesComponent.KEY.getNullable(cam);
-        if (vampire == null || abilities == null || abilities.getPowersOfClass(VampireVisionVampireAbilityPower.class).isEmpty()) {
+        if (vampire == null || abilities == null || abilities.getEnabledPowersOfClass(VampireVisionVampireAbilityPower.class).isEmpty()) {
             return;
         }
 

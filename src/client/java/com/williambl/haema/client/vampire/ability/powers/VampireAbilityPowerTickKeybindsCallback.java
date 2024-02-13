@@ -5,7 +5,7 @@ import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.player.LocalPlayer;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.core.Holder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,14 +27,14 @@ public interface VampireAbilityPowerTickKeybindsCallback<T extends VampireAbilit
         return event;
     }
 
-    static void invokeAll(Set<VampireAbility> abilities, LocalPlayer player, @Nullable VampireAbility active) {
+    static void invokeAll(Set<Holder.Reference<VampireAbility>> abilities, LocalPlayer player, Holder<VampireAbility> active) {
         for (var ability : abilities) {
-            for (var power : ability.powers()) {
+            for (var power : ability.value().powers()) {
                 @SuppressWarnings("unchecked")
                 Event<VampireAbilityPowerTickKeybindsCallback<VampireAbilityPower>> event =
                         (Event<VampireAbilityPowerTickKeybindsCallback<VampireAbilityPower>>) EVENTS.get(power.getClass());
                 if (event != null) {
-                    event.invoker().tickKeybinds(power, player, ability, ability == active);
+                    event.invoker().tickKeybinds(power, player, ability.value(), ability == active);
                 }
             }
         }

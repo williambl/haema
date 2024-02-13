@@ -1,6 +1,5 @@
 package com.williambl.haema.vampire_mobs;
 
-import com.mojang.datafixers.util.Pair;
 import com.williambl.haema.api.vampire.ability.VampireAbilitiesComponent;
 import com.williambl.haema.vampire.ability.powers.drinking.DrinkingAbilityPower;
 import net.minecraft.server.level.ServerLevel;
@@ -8,8 +7,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.tslat.smartbrainlib.api.core.behaviour.DelayedBehaviour;
 
 import java.util.List;
@@ -36,7 +33,7 @@ public abstract class DrinkFromTarget<E extends Mob> extends DelayedBehaviour<E>
             return false;
         }
 
-        this.drinkingPowers = VampireAbilitiesComponent.KEY.maybeGet(entity).map(c -> c.getPowersOfClass(DrinkingAbilityPower.class)).orElse(List.of());
+        this.drinkingPowers = VampireAbilitiesComponent.KEY.maybeGet(entity).map(c -> c.getEnabledPowersOfClass(DrinkingAbilityPower.class)).orElse(List.of());
         return !this.drinkingPowers.isEmpty();
     }
 

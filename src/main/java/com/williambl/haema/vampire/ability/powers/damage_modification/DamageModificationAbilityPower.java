@@ -39,7 +39,7 @@ public record DamageModificationAbilityPower(VExpression damageModificationFunct
             float workingAmount = amount;
             if (component != null) {
                 var context = DFunctions.entityDamageWithWeapon(entity, source, amount, ((ExtendedDamageSource)source).weapon());
-                for (var power : component.getPowersOfClass(DamageModificationAbilityPower.class)) {
+                for (var power : component.getEnabledPowersOfClass(DamageModificationAbilityPower.class)) {
                     workingAmount = DFunctions.<Double>evaluate(power.damageModificationFunction, context).floatValue();
                 }
             }
@@ -51,7 +51,7 @@ public record DamageModificationAbilityPower(VExpression damageModificationFunct
             var component = VampireAbilitiesComponent.KEY.getNullable(entity);
             if (component != null) {
                 var context = DFunctions.entityDamageWithWeapon(entity, source, amount, ((ExtendedDamageSource)source).weapon());
-                for (var power : component.getPowersOfClass(DamageModificationAbilityPower.class)) {
+                for (var power : component.getEnabledPowersOfClass(DamageModificationAbilityPower.class)) {
                     if (!DFunctions.<Boolean>evaluate(power.canDamageKillFunction, context)) {
                         entity.setHealth(1.0f);
                         return true;

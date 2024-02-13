@@ -99,7 +99,7 @@ public record DashAbilityPower(VExpression canDash, VExpression onDash, List<Str
             dispatcher.register(literal("dash")
                     .executes(context -> {
                         var player = context.getSource().getPlayerOrException();
-                        var power = VampireAbilitiesComponent.KEY.get(player).getPowersOfClass(DashAbilityPower.class).stream().findFirst();
+                        var power = VampireAbilitiesComponent.KEY.get(player).getEnabledPowersOfClass(DashAbilityPower.class).stream().findFirst();
                         power.ifPresent(dashAbilityPower -> dashAbilityPower.dash(player));
                         return Command.SINGLE_SUCCESS;
                     }));

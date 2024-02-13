@@ -26,6 +26,7 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -249,12 +250,12 @@ public final class HaemaCommand {
 
     private static List<Component> abilityQueryMessage(Entity entity, Registry<VampireAbility> abilityRegistry) {
         List<Component> components = new ArrayList<>();
-        Set<VampireAbility> abilities = VampireAbilitiesComponent.KEY.maybeGet(entity).map(VampireAbilitiesComponent::getAbilities).orElseGet(Set::of);
+        Set<Holder.Reference<VampireAbility>> abilities = VampireAbilitiesComponent.KEY.maybeGet(entity).map(VampireAbilitiesComponent::getAbilities).orElseGet(Set::of);
         Component abilityCountText = (abilities.isEmpty() ? feedback(QUERY_NO_ABILITIES_LINE, entity.getDisplayName())
                 : feedback(QUERY_ABILITIES_LINE, entity.getDisplayName(), abilities.size()));
         components.add(abilityCountText);
         for (var ability : abilities) {
-            components.add(feedback(QUERY_ABILITY_LINE, ability(abilityRegistry.getKey(ability))));
+            components.add(feedback(QUERY_ABILITY_LINE, ability(ability.key().location())));
         }
 
         return components;
@@ -373,8 +374,8 @@ public final class HaemaCommand {
         var abilityId = ResourceLocationArgument.getId(ctx, "ability");
         boolean enabled = BoolArgumentType.getBool(ctx, "value");
         var registry = ctx.getSource().registryAccess().registryOrThrow(VampireAbility.REGISTRY_KEY);
-        var ability = registry.get(abilityId);
-        if (ability == null) {
+        var ability = registry.getHolder(ResourceKey.create(registry.key(), abilityId));
+        if (ability.isEmpty()) {
             throw NO_SUCH_ABILITY.create(abilityId);
         }
 
@@ -385,10 +386,10 @@ public final class HaemaCommand {
             }
 
             if (enabled) {
-                component.addAbility(ability);
+                component.addAbility(ability.get());
                 ctx.getSource().sendSuccess(() -> feedback(ABILITY_ADDED, entity.getDisplayName(), ability(abilityId)), true);
             } else {
-                component.removeAbility(ability);
+                component.removeAbility(ability.get());
                 ctx.getSource().sendSuccess(() -> feedback(ABILITY_REMOVED, entity.getDisplayName(), ability(abilityId)), true);
             }
         }

@@ -33,7 +33,7 @@ public record SetActiveAbilityPacket(Optional<ResourceKey<VampireAbility>> key) 
             var component = VampireAbilitiesComponent.KEY.get(player);
             var registry = player.level().registryAccess().registryOrThrow(VampireAbility.REGISTRY_KEY);
             if (packet.key().isPresent()) {
-                var ability = registry.getOptional(packet.key().get());
+                var ability = registry.getHolder(packet.key().get());
                 if (ability.isPresent()) {
                     if (!component.setActiveAbility(ability.get())) {
                         Haema.LOGGER.error("Could not set active ability {} on player {}", packet.key().get().location(), player.getScoreboardName());

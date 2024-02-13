@@ -104,7 +104,7 @@ public final class GlowEffectManager implements EntitiesPreRenderCallback, Shade
 
 		var vampire = VampireComponent.KEY.getNullable(cam);
 		var abilities = VampireAbilitiesComponent.KEY.getNullable(cam);
-		if (vampire == null || abilities == null || abilities.getPowersOfClass(VampireVisionVampireAbilityPower.class).isEmpty()) {
+		if (vampire == null || abilities == null || abilities.getEnabledPowersOfClass(VampireVisionVampireAbilityPower.class).isEmpty()) {
 			return;
 		}
 
