@@ -12,6 +12,7 @@ import com.williambl.dfunc.api.functions.LevelDFunctions;
 import com.williambl.haema.Haema;
 import com.williambl.haema.HaemaCommand;
 import com.williambl.haema.HaemaDFunctions;
+import com.williambl.haema.IconProvider;
 import com.williambl.haema.api.content.blood.BloodApi;
 import com.williambl.haema.api.content.blood.BloodQuality;
 import com.williambl.haema.api.ritual.MultiblockFilter;
@@ -448,7 +449,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         }
 
         private ResourceKey<VampireAbility> createHealingAbility(Entries entries) {
-            var healingAbility = new VampireAbility(true, value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(
+            var healingAbility = new VampireAbility(true, IconProvider.of(id("gui/sprites/hud/blood_full.png")), false, value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(
                     new HealingVampireAbilityPower(functionApplication(LogicVFunctions.AND, Map.of("operands", list(List.of(
                             functionApplication(LevelDFunctions.BOOLEAN_GAME_RULE, Map.of("rule", value(StandardVTypes.STRING, "naturalRegeneration"), "level", variable("level"))),
                             functionApplication(LogicVFunctions.NOT, Map.of("operand", functionApplication(EntityDFunctions.DEAD_OR_DYING, Map.of("entity", variable("entity"))))),
@@ -480,7 +481,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         }
 
         private ResourceKey<VampireAbility> createReachAbility(Entries entries) {
-            var reachAbility = new VampireAbility(true, value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(new AttributeVampireAbilityPower(Set.of(
+            var reachAbility = new VampireAbility(true, IconProvider.of(Items.FEATHER), false, value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(new AttributeVampireAbilityPower(Set.of(
                     new AttributeVampireAbilityPower.Data(
                             ReachEntityAttributes.REACH,
                             new AttributeModifier(UUID.fromString("0eb4fc5f-71d5-4440-b517-bcc18e1df6f4"), "Vampire Reach bonus", 2.0, AttributeModifier.Operation.ADDITION),
@@ -498,7 +499,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         }
 
         private ResourceKey<VampireAbility> createHealthBoostAbility(Entries entries) {
-            var healthBoostAbility = new VampireAbility(true, value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(new AttributeVampireAbilityPower(Set.of(
+            var healthBoostAbility = new VampireAbility(true, IconProvider.of(new ResourceLocation("mob_effect/health_boost.png")), false, value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(new AttributeVampireAbilityPower(Set.of(
                     new AttributeVampireAbilityPower.Data(
                             Attributes.MAX_HEALTH,
                             new AttributeModifier(UUID.fromString("858a6a28-5092-49ea-a94e-eb74db018a92"), "Vampire Max Health bonus", 1.0, AttributeModifier.Operation.MULTIPLY_BASE),
@@ -511,7 +512,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         }
 
         private ResourceKey<VampireAbility> createSunlightSicknessAbility(Entries entries) {
-            var sunlightSicknessAbility = new VampireAbility(true, value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(new EffectVampireAbilityPower(Set.of(
+            var sunlightSicknessAbility = new VampireAbility(true, IconProvider.of(id("mob_effect/sunlight_sickness.png")), false, value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(new EffectVampireAbilityPower(Set.of(
                     new EffectVampireAbilityPower.Data(
                             HaemaVampires.VampireMobEffects.SUNLIGHT_SICKNESS,
                             value(StandardVTypes.NUMBER, 0.0),
@@ -536,7 +537,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         }
 
         private ResourceKey<VampireAbility> createVampiricWeaknessAbility(Entries entries) {
-            var vampiricWeaknessAbility = new VampireAbility(true, value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(new EffectVampireAbilityPower(Set.of(
+            var vampiricWeaknessAbility = new VampireAbility(true, IconProvider.of(id("mob_effect/vampiric_weakness.png")), false, value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(new EffectVampireAbilityPower(Set.of(
                     new EffectVampireAbilityPower.Data(
                             HaemaVampires.VampireMobEffects.VAMPIRIC_WEAKNESS,
                             functionApplication(ArithmeticVFunctions.SUBTRACT, Map.of("a", (value(StandardVTypes.NUMBER, 3.0)), "b", (functionApplication(HaemaDFunctions.BLOOD, Map.of("entity", variable("entity")))))),
@@ -552,7 +553,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         }
 
         private ResourceKey<VampireAbility> createDamageModificationAbility(Entries entries) {
-            var damageModificationAbility = new VampireAbility(true, value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(new DamageModificationAbilityPower(
+            var damageModificationAbility = new VampireAbility(true, IconProvider.of(Items.WOODEN_SWORD), false, value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(new DamageModificationAbilityPower(
                     functionApplication(ArithmeticVFunctions.MULTIPLY, Map.of(
                             "a", variable("damage_amount"),
                             "b", functionApplication(ArithmeticVFunctions.MAX, Map.of("a", (
@@ -573,7 +574,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         }
 
         private ResourceKey<VampireAbility> createVampireVisionAbility(Entries entries) {
-            var vampireVisionAbility = new VampireAbility(true, value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(
+            var vampireVisionAbility = new VampireAbility(true, IconProvider.of(new ResourceLocation("mob_effect/night_vision.png")), false, value(StandardVTypes.BOOLEAN, false), Set.of(), Set.of(), Set.of(), List.of(
                     new VampireVisionVampireAbilityPower()));
 
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("vampire_vision"));
@@ -595,7 +596,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             var a = value(StandardVTypes.NUMBER, 0.0);
             var b = ifElseCreator.apply(14.0, 1.0, a);
             var c = ifElseCreator.apply(19.0, 2.0, b);
-            var strengthAbility = new VampireAbility(true, value(StandardVTypes.BOOLEAN, true), Set.copyOf(before), Set.of(), Set.copyOf(before), List.of(
+            var strengthAbility = new VampireAbility(true, IconProvider.of(Items.IRON_SWORD), false, value(StandardVTypes.BOOLEAN, true), Set.copyOf(before), Set.of(), Set.copyOf(before), List.of(
                     new EffectVampireAbilityPower(Set.of(
                             new EffectVampireAbilityPower.Data(
                                     HaemaVampires.VampireMobEffects.VAMPIRIC_STRENGTH,
@@ -612,7 +613,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
 
         private ResourceKey<VampireAbility> createDrinkingAbility(Entries entries) {
             var cooldownId = id("drinking");
-            var drinkingAbility = new VampireAbility(true, value(StandardVTypes.BOOLEAN, true), Set.of(), Set.of(), Set.of(), List.of(
+            var drinkingAbility = new VampireAbility(true, IconProvider.of(Items.POTION), false, value(StandardVTypes.BOOLEAN, true), Set.of(), Set.of(), Set.of(), List.of(
                     new DrinkingAbilityPower(
                             value(StandardVTypes.NUMBER, (double) BloodApi.bloodUnitsToDroplets(1)),
                             functionApplication(LogicVFunctions.AND, Map.of(
@@ -643,7 +644,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         }
 
         private ResourceKey<VampireAbility> createModifyHungerBarAbility(Entries entries) {
-            var drinkingAbility = new VampireAbility(true, value(StandardVTypes.BOOLEAN, true), Set.of(), Set.of(), Set.of(), List.of(
+            var drinkingAbility = new VampireAbility(true, IconProvider.of(Items.COOKED_BEEF), false, value(StandardVTypes.BOOLEAN, true), Set.of(), Set.of(), Set.of(), List.of(
                     new ModifyHungerBarAbilityPower(
                             id("hud/blood_full"),
                             id("hud/blood_half"),
@@ -666,7 +667,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         private ResourceKey<VampireAbility> createDashAbility(Entries entries, int level, Collection<ResourceKey<VampireAbility>> before) {
             int cooldown = 10 * level;
             var cooldownId = id("dash");
-            var dashAbility = new VampireAbility(true, value(StandardVTypes.BOOLEAN, true), Set.copyOf(before), Set.of(), Set.copyOf(before), List.of(
+            var dashAbility = new VampireAbility(true, IconProvider.of(Items.FEATHER), true, value(StandardVTypes.BOOLEAN, true), Set.copyOf(before), Set.of(), Set.copyOf(before), List.of(
                     new DashAbilityPower(
                             functionApplication(LogicVFunctions.AND, Map.of(
                                     "operands", list(List.of(
@@ -683,7 +684,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
                                         "entity", variable("entity"),
                                         "cooldown_id", value(DTypes.RESOURCE_LOCATION, cooldownId),
                                         "length", value(StandardVTypes.NUMBER, (double) cooldown))))),
-                        List.of("z"))));
+                        List.of("key.haema.primary_vampire_action"))));
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("dash/"+level));
             entries.add(key, dashAbility);
             return key;
