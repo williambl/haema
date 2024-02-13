@@ -55,7 +55,9 @@ public class AbilitySelectionScreen extends Screen {
         for (AbilityOption ability : this.abilityOptions) {
             int x = ability.x + centerX;
             int y = ability.y + centerY;
-            guiGraphics.drawCenteredString(this.font, ability.name, x, y, 0xffffff);
+            ability.ability().icon().accept(
+                    icon -> guiGraphics.blit(icon.resourceLocation(), x-icon.xSize(), y-icon.ySize(), 0, 0, icon.xSize(), icon.ySize(), icon.xSize(), icon.ySize()),
+                    item -> guiGraphics.renderFakeItem(item, x-16, y-16));
         }
 
         if (!this.abilityOptions.isEmpty()) {
