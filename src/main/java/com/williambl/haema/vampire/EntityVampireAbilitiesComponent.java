@@ -239,5 +239,9 @@ public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponen
                 }
             }
         }
+
+        if (!this.enabledAbilities.contains(this.activeAbility)) {
+            this.activeAbility = null;
+        }
     }
 }

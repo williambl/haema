@@ -3,22 +3,29 @@ package com.williambl.haema.client.vampire.ability;
 import com.williambl.haema.api.vampire.ability.VampireAbilitiesComponent;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.client.vampire.HaemaVampiresClient;
+import com.williambl.haema.vampire.ability.SetActiveAbilityPacket;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.Holder.Reference;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FastColor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class AbilitySelectionScreen extends Screen {
     private static final int OFFSET = 50;
     private static final int HIGHLIGHT_COLOUR = -2130706433;
     private List<AbilityOption> abilityOptions = List.of();
+    private @Nullable AbilityOption selectedOption = null;
+
     protected AbilitySelectionScreen(Component component) {
         super(component);
     }
@@ -31,11 +38,14 @@ public class AbilitySelectionScreen extends Screen {
             var rootsOfUnity = rootsOfUnity(abilities.size());
             this.abilityOptions = new ArrayList<>();
             for (var ability : abilities) {
+                if (!ability.value().canBeActive()) {
+                    continue;
+                }
                 int i = this.abilityOptions.size();
-                this.abilityOptions.add(new AbilityOption(ability.value(),
+                this.abilityOptions.add(new AbilityOption(ability,
                         Component.translatable(Util.makeDescriptionId("vampire_ability", ability.key().location())),
-                        (int) (rootsOfUnity[i][0] * 50),
-                        (int) (rootsOfUnity[i][1] * 50)));
+                        (int) (rootsOfUnity[i][0] * OFFSET),
+                        (int) (rootsOfUnity[i][1] * OFFSET)));
             }
         }
     }
@@ -45,6 +55,7 @@ public class AbilitySelectionScreen extends Screen {
         if (HaemaVampiresClient.Keybinds.SELECT_VAMPIRE_ABILITY.matches(i, j) && this.minecraft != null) {
             this.minecraft.setScreen(null);
             this.minecraft.mouseHandler.grabMouse();
+            ClientPlayNetworking.send(new SetActiveAbilityPacket(Optional.ofNullable(this.selectedOption).map(o -> o.ability().key())));
             return true;
         }
         return super.keyReleased(i, j, k);
@@ -55,10 +66,12 @@ public class AbilitySelectionScreen extends Screen {
         super.render(guiGraphics, mouseX, mouseY, tickDelta);
         int centerX = this.width/2;
         int centerY = this.height/2;
+        boolean onlyOneOption = this.abilityOptions.size() == 1;
+
         for (AbilityOption ability : this.abilityOptions) {
-            int x = ability.x + centerX;
-            int y = ability.y + centerY;
-            ability.ability().icon().accept(
+            int x = onlyOneOption ? centerX : ability.x + centerX;
+            int y = onlyOneOption ? centerY : ability.y + centerY;
+            ability.ability().value().icon().accept(
                     icon -> guiGraphics.blit(icon.resourceLocation(), x-icon.xSize()/2, y-icon.ySize()/2, 0, 0, icon.xSize(), icon.ySize(), icon.xSize(), icon.ySize()),
                     item -> guiGraphics.renderFakeItem(item, x-8, y-8));
         }
@@ -67,8 +80,8 @@ public class AbilitySelectionScreen extends Screen {
         if (!this.abilityOptions.isEmpty()) {
             double mouseTheta = Math.atan2(mouseY - centerY, mouseX - centerX) + Math.PI;
             double sector = (mouseTheta / (Math.PI * 2.0) * this.abilityOptions.size());
-            var closestAbility = this.abilityOptions.get(Math.floorMod(((int) sector) - this.abilityOptions.size()/2, this.abilityOptions.size()));
-            this.setTooltipForNextRenderPass(closestAbility.name);
+            this.selectedOption = this.abilityOptions.get(Math.floorMod(((int) sector) - this.abilityOptions.size()/2, this.abilityOptions.size()));
+            this.setTooltipForNextRenderPass(this.selectedOption.name);
 
             guiGraphics.drawManaged(() -> {
                 var vertexConsumer = guiGraphics.bufferSource().getBuffer(RenderType.gui());
@@ -81,17 +94,24 @@ public class AbilitySelectionScreen extends Screen {
                 float b = (float) FastColor.ARGB32.blue(HIGHLIGHT_COLOUR) / 255.0F;
 
                 float m = 100;
-                double minTheta = ((Math.floor(sector) / this.abilityOptions.size()) * Math.PI * 2.0) - Math.PI;
-                double maxTheta = ((Math.ceil(sector) / this.abilityOptions.size()) * Math.PI * 2.0) - Math.PI;
-                double length = Math.max(this.width, this.height);
-                int[] centre = new int[]{centerX, centerY};
-                int[] leftCorner = polarToCartesian(minTheta, length);
-                int[] rightCorner = polarToCartesian(maxTheta, length);
-                int[] farCorner = polarToCartesian(mouseTheta - Math.PI, length);
-                vertexConsumer.vertex(matrix4f, centre[0], centre[1], m).color(r, g, b, a).endVertex();
-                vertexConsumer.vertex(matrix4f, centre[0] + rightCorner[0], centre[1] + rightCorner[1], m).color(r, g, b, a).endVertex();
-                vertexConsumer.vertex(matrix4f, centre[0] + farCorner[0], centre[1] + farCorner[1], m).color(r, g, b, a).endVertex();
-                vertexConsumer.vertex(matrix4f, centre[0] + leftCorner[0], centre[1] + leftCorner[1], m).color(r, g, b, a).endVertex();
+                if (onlyOneOption) {
+                    vertexConsumer.vertex(matrix4f, 0, 0, m).color(r, g, b, a).endVertex();
+                    vertexConsumer.vertex(matrix4f, 0, this.height, m).color(r, g, b, a).endVertex();
+                    vertexConsumer.vertex(matrix4f, this.width, this.height, m).color(r, g, b, a).endVertex();
+                    vertexConsumer.vertex(matrix4f, this.width, 0, m).color(r, g, b, a).endVertex();
+                } else {
+                    double minTheta = ((Math.floor(sector) / this.abilityOptions.size()) * Math.PI * 2.0) - Math.PI;
+                    double maxTheta = ((Math.ceil(sector) / this.abilityOptions.size()) * Math.PI * 2.0) - Math.PI;
+                    double length = Math.max(this.width, this.height);
+                    int[] centre = new int[]{centerX, centerY};
+                    int[] leftCorner = polarToCartesian(minTheta, length);
+                    int[] rightCorner = polarToCartesian(maxTheta, length);
+                    int[] farCorner = polarToCartesian(mouseTheta - Math.PI, length);
+                    vertexConsumer.vertex(matrix4f, centre[0], centre[1], m).color(r, g, b, a).endVertex();
+                    vertexConsumer.vertex(matrix4f, centre[0] + rightCorner[0], centre[1] + rightCorner[1], m).color(r, g, b, a).endVertex();
+                    vertexConsumer.vertex(matrix4f, centre[0] + farCorner[0], centre[1] + farCorner[1], m).color(r, g, b, a).endVertex();
+                    vertexConsumer.vertex(matrix4f, centre[0] + leftCorner[0], centre[1] + leftCorner[1], m).color(r, g, b, a).endVertex();
+                }
             });
         }
     }
@@ -109,7 +129,7 @@ public class AbilitySelectionScreen extends Screen {
         return values;
     }
 
-    private record AbilityOption(VampireAbility ability, Component name, int x, int y) {
+    private record AbilityOption(Reference<VampireAbility> ability, Component name, int x, int y) {
 
     }
 }
