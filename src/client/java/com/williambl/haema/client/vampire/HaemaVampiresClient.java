@@ -12,7 +12,7 @@ import org.lwjgl.glfw.GLFW;
 public class HaemaVampiresClient {
     public static void init() {
         Keybinds.init();
-        new VampireVisionFx().init();
+        VampireVisionFx.init();
         GlowEffectManager.INSTANCE.init();
         DrinkingAbilityPowerClient.init();
         ModifyHungerBarAbilityPowerClient.init();

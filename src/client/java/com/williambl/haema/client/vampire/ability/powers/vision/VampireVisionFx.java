@@ -12,12 +12,17 @@ import net.minecraft.client.Minecraft;
 import static com.williambl.haema.Haema.id;
 
 public class VampireVisionFx implements ShaderEffectRenderCallback, ClientTickEvents.StartTick {
+    public static final VampireVisionFx INSTANCE = new VampireVisionFx();
+    public static void init() {
+        ShaderEffectRenderCallback.EVENT.register(INSTANCE);
+        ClientTickEvents.START_CLIENT_TICK.register(INSTANCE);
+    }
+
     private final ManagedShaderEffect shader = ShaderEffectManager.getInstance().manage(id("shaders/post/vampire_vision.json"));
 
-    public void init() {
-        ShaderEffectRenderCallback.EVENT.register(this);
-        ClientTickEvents.START_CLIENT_TICK.register(this);
-    }
+    private boolean isRenderingThisTick;
+
+    private float bloodLevel;
 
     public void setRed(float amount) {
         this.shader.setUniformValue("RedMatrix", amount, 0f, 0f);
@@ -30,8 +35,8 @@ public class VampireVisionFx implements ShaderEffectRenderCallback, ClientTickEv
     public void setSaturation(float amount) {
         this.shader.setUniformValue("Saturation", amount); //TODO config
     }
-    //TODO config
 
+    //TODO config
     @Override
     public void renderShaderEffects(float tickDelta) {
         var cam = Minecraft.getInstance().cameraEntity;
@@ -55,13 +60,24 @@ public class VampireVisionFx implements ShaderEffectRenderCallback, ClientTickEv
         var vampire = VampireComponent.KEY.getNullable(cam);
         var abilities = VampireAbilitiesComponent.KEY.getNullable(cam);
         if (vampire == null || abilities == null || abilities.getEnabledPowersOfClass(VampireVisionVampireAbilityPower.class).isEmpty()) {
+            this.isRenderingThisTick = false;
             return;
         }
 
-        float bloodLevel = (float) (vampire.getBlood() / VampireComponent.MAX_BLOOD);
+        this.isRenderingThisTick = true;
 
-        this.setSaturation(0.8f * bloodLevel);
-        this.setBrightnessAdjust(bloodLevel / 4f + 0.05f);
+        this.bloodLevel = (float) (vampire.getBlood() / VampireComponent.MAX_BLOOD);
+
+        this.setSaturation(0.8f * this.bloodLevel);
+        this.setBrightnessAdjust(this.bloodLevel / 4f + 0.05f);
         //TODO set red based on last fed
+    }
+
+    public boolean isRenderingThisTick() {
+        return this.isRenderingThisTick;
+    }
+
+    public float getBloodLevel() {
+        return this.bloodLevel;
     }
 }
