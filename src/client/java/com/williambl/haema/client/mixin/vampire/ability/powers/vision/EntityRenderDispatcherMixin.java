@@ -7,6 +7,7 @@ import com.williambl.haema.api.content.blood.BloodQuality;
 import com.williambl.haema.client.vampire.ability.powers.vision.AuraVertexConsumerProvider;
 import com.williambl.haema.client.vampire.ability.powers.vision.GlowEffectManager;
 import com.williambl.haema.client.vampire.ability.powers.vision.VampireVisionFx;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -25,7 +26,7 @@ public class EntityRenderDispatcherMixin {
         if (VampireVisionFx.INSTANCE.isRenderingThisTick()) {
             BloodApi.getBloodQuality(entity).ifPresent(q -> {
                 var auraBufferSource = new AuraVertexConsumerProvider(multiBufferSource, 255, 0, q == BloodQuality.PERFECT ? 255 : 0, (int) Math.min(255, q.multiplier * 255));
-                entityRenderer.render(entity, g, h, poseStack, auraBufferSource, i);
+                entityRenderer.render(entity, g, h, poseStack, auraBufferSource, LightTexture.FULL_BRIGHT);
             });
         }
     }
