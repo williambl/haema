@@ -8,7 +8,8 @@
     "ritual.altar.PlayerChunkSenderMixin",
     "ritual.altar.ServerLevelMixin",
     "vampire.ability.powers.damage_modification.DamageSourceMixin",
-    "vampire.ability.powers.damage_modification.LivingEntityMixin"
+    "vampire.ability.powers.damage_modification.LivingEntityMixin",
+    "vampire.ability.powers.sleep.ServerLevelMixin"
   ],
   "client": [
   ],

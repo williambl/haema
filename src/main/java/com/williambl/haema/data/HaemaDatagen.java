@@ -40,6 +40,7 @@ import com.williambl.haema.vampire.ability.powers.damage_modification.DamageModi
 import com.williambl.haema.vampire.ability.powers.dash.DashAbilityPower;
 import com.williambl.haema.vampire.ability.powers.drinking.DrinkingAbilityPower;
 import com.williambl.haema.vampire.ability.powers.hungerbar.ModifyHungerBarAbilityPower;
+import com.williambl.haema.vampire.ability.powers.sleep.SleepInDayAbilityPower;
 import com.williambl.haema.vampire.ability.powers.vision.VampireVisionVampireAbilityPower;
 import com.williambl.haema.vampire_mobs.HaemaVampireMobs;
 import com.williambl.vampilang.lang.VExpression;
@@ -317,6 +318,8 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
                 invisibilityAbilities.add(this.createInvisibilityAbility(entries, i+1, invisibilityAbilities));
             }
             defaultAbilties.addAll(invisibilityAbilities);
+            var sleepInDayAbility = this.createSleepInDayAbility(entries);
+            defaultAbilties.add(sleepInDayAbility);
 
 
             entries.add(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR, HaemaVampires.VampirismSources.COMMAND), defaultAbilties, value(StandardVTypes.BOOLEAN, false), value(StandardVTypes.BOOLEAN, false))); //TODO
@@ -711,6 +714,16 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             entries.add(key, invisibilityAbility);
             return key;
         }
+
+        private ResourceKey<VampireAbility> createSleepInDayAbility(Entries entries) {
+            var sleepInDayAbility = new VampireAbility(true, IconProvider.of(Items.RED_BED), false, value(StandardVTypes.BOOLEAN, true), Set.of(), Set.of(), Set.of(), List.of(
+                    new SleepInDayAbilityPower()
+            ));
+            var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("sleep_in_day"));
+            entries.add(key, sleepInDayAbility);
+            return key;
+        }
+
 
         @Override
         public String getName() {

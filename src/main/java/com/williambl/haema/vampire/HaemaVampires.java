@@ -15,6 +15,7 @@ import com.williambl.haema.vampire.ability.powers.dash.DashAbilityPower;
 import com.williambl.haema.vampire.ability.powers.drinking.DrinkingAbilityPower;
 import com.williambl.haema.vampire.ability.powers.drinking.DrinkingPacket;
 import com.williambl.haema.vampire.ability.powers.hungerbar.ModifyHungerBarAbilityPower;
+import com.williambl.haema.vampire.ability.powers.sleep.SleepInDayAbilityPower;
 import com.williambl.haema.vampire.ability.powers.sunlight_sickness.SunlightSicknessEffect;
 import com.williambl.haema.vampire.ability.powers.vampiric_weakness.VampiricWeaknessEffect;
 import com.williambl.haema.vampire.ability.powers.vision.VampireVisionVampireAbilityPower;
@@ -79,11 +80,13 @@ public class HaemaVampires {
         public static final Codec<DashAbilityPower> DASH_ABILITY_POWER_CODEC = Registry.register(VampireAbilityPower.REGISTRY, id("dash"), DashAbilityPower.CODEC.codec());
         public static final Codec<DrinkingAbilityPower> DRINKING_ABILITY_POWER_CODEC = Registry.register(VampireAbilityPower.REGISTRY, id("drinking"), DrinkingAbilityPower.CODEC.codec());
         public static final Codec<ModifyHungerBarAbilityPower> MODIFY_HUNGER_BAR_ABILITY_POWER_CODEC = Registry.register(VampireAbilityPower.REGISTRY, id("modify_hunger_bar"), ModifyHungerBarAbilityPower.CODEC.codec());
+        public static final Codec<SleepInDayAbilityPower> SLEEP_IN_DAY_ABILITY_POWER_CODEC = Registry.register(VampireAbilityPower.REGISTRY, id("sleep_in_day"), SleepInDayAbilityPower.CODEC.codec());
 
         private static void init() {
             DamageModificationAbilityPower.init();
             DashAbilityPower.init();
             DrinkingAbilityPower.init();
+            SleepInDayAbilityPower.init();
         }
     }
 
