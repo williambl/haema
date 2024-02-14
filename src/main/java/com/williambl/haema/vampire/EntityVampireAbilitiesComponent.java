@@ -199,6 +199,12 @@ public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponen
         this.activeAbility = buf.readOptional(b -> this.abilities.get(b.readVarInt())).orElse(null);
         this.enabledAbilities.clear();
         this.enabledAbilities.addAll(buf.readList(b -> this.abilities.get(b.readVarInt())));
+        this.powers.clear();
+        for (var ability : this.enabledAbilities) {
+            for (var power : ability.value().powers()) {
+                this.powers.computeIfAbsent(power.getClass(), k -> new ArrayList<>()).add(power);
+            }
+        }
     }
 
     @Override
@@ -215,6 +221,7 @@ public class EntityVampireAbilitiesComponent implements VampireAbilitiesComponen
     }
 
     private void recalculateEnabledAbilities(boolean runRemoveAndAdd) {
+        this.enabledAbilities.clear();
         this.enabledAbilities.addAll(this.abilities);
         for (var ability : this.abilities) {
             for (var superceded : ability.value().supercedes()) {
