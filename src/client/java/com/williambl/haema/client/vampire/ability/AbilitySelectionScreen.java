@@ -34,18 +34,19 @@ public class AbilitySelectionScreen extends Screen {
     protected void init() {
         super.init();
         if (this.minecraft != null && this.minecraft.player != null) {
-            var abilities = this.minecraft.player.getComponent(VampireAbilitiesComponent.KEY).getEnabledAbilities();
-            var rootsOfUnity = rootsOfUnity(abilities.size());
+            var abilities = this.minecraft.player.getComponent(VampireAbilitiesComponent.KEY).getEnabledAbilities().stream()
+                    .filter(a -> a.value().canBeActive())
+                    .toList();
+            double[] angles = getAngles(abilities.size());
+            double halfAngle = getAngle(abilities.size(), 1)/2;
             this.abilityOptions = new ArrayList<>();
             for (var ability : abilities) {
-                if (!ability.value().canBeActive()) {
-                    continue;
-                }
                 int i = this.abilityOptions.size();
+                int[] coords = polarToCartesian(angles[i] + halfAngle, OFFSET);
                 this.abilityOptions.add(new AbilityOption(ability,
                         Component.translatable(Util.makeDescriptionId("vampire_ability", ability.key().location())),
-                        (int) (rootsOfUnity[i][0] * OFFSET),
-                        (int) (rootsOfUnity[i][1] * OFFSET)));
+                        coords[0],
+                        coords[1]));
             }
         }
     }
@@ -69,7 +70,7 @@ public class AbilitySelectionScreen extends Screen {
         boolean onlyOneOption = this.abilityOptions.size() == 1;
 
         for (AbilityOption ability : this.abilityOptions) {
-            int x = onlyOneOption ? centerX : ability.x + centerX;
+            int x = onlyOneOption ? centerX : centerX - ability.x;
             int y = onlyOneOption ? centerY : ability.y + centerY;
             ability.ability().value().icon().accept(
                     icon -> guiGraphics.blit(icon.resourceLocation(), x-icon.xSize()/2, y-icon.ySize()/2, 0, 0, icon.xSize(), icon.ySize(), icon.xSize(), icon.ySize()),
@@ -78,9 +79,10 @@ public class AbilitySelectionScreen extends Screen {
 
 
         if (!this.abilityOptions.isEmpty()) {
-            double mouseTheta = Math.atan2(mouseY - centerY, mouseX - centerX) + Math.PI;
-            double sector = (mouseTheta / (Math.PI * 2.0) * this.abilityOptions.size());
-            this.selectedOption = this.abilityOptions.get(Math.floorMod(((int) sector) - this.abilityOptions.size()/2, this.abilityOptions.size()));
+            double rawMouseTheta = Math.atan2(mouseY - centerY, centerX - mouseX);
+            double positiveMouseTheta = rawMouseTheta < 0 ? rawMouseTheta + Math.PI*2 : rawMouseTheta;
+            double sector = (this.abilityOptions.size() * positiveMouseTheta / (Math.PI * 2.0));
+            this.selectedOption = this.abilityOptions.get((int) sector);
             this.setTooltipForNextRenderPass(this.selectedOption.name);
 
             guiGraphics.drawManaged(() -> {
@@ -100,17 +102,18 @@ public class AbilitySelectionScreen extends Screen {
                     vertexConsumer.vertex(matrix4f, this.width, this.height, m).color(r, g, b, a).endVertex();
                     vertexConsumer.vertex(matrix4f, this.width, 0, m).color(r, g, b, a).endVertex();
                 } else {
-                    double minTheta = ((Math.floor(sector) / this.abilityOptions.size()) * Math.PI * 2.0) - Math.PI;
-                    double maxTheta = ((Math.ceil(sector) / this.abilityOptions.size()) * Math.PI * 2.0) - Math.PI;
+                    double minTheta = getAngle(this.abilityOptions.size(), (int) Math.floor(sector));
+                    double maxTheta = getAngle(this.abilityOptions.size(), (int) Math.floor(sector) + 1);
+                    double avgTheta = (minTheta+maxTheta)/2.0;
                     double length = Math.max(this.width, this.height);
                     int[] centre = new int[]{centerX, centerY};
                     int[] leftCorner = polarToCartesian(minTheta, length);
                     int[] rightCorner = polarToCartesian(maxTheta, length);
-                    int[] farCorner = polarToCartesian(mouseTheta - Math.PI, length);
+                    int[] farCorner = polarToCartesian(avgTheta, length);
                     vertexConsumer.vertex(matrix4f, centre[0], centre[1], m).color(r, g, b, a).endVertex();
-                    vertexConsumer.vertex(matrix4f, centre[0] + rightCorner[0], centre[1] + rightCorner[1], m).color(r, g, b, a).endVertex();
-                    vertexConsumer.vertex(matrix4f, centre[0] + farCorner[0], centre[1] + farCorner[1], m).color(r, g, b, a).endVertex();
-                    vertexConsumer.vertex(matrix4f, centre[0] + leftCorner[0], centre[1] + leftCorner[1], m).color(r, g, b, a).endVertex();
+                    vertexConsumer.vertex(matrix4f, centre[0] - leftCorner[0], centre[1] + leftCorner[1], m).color(r, g, b, a).endVertex();
+                    vertexConsumer.vertex(matrix4f, centre[0] - farCorner[0], centre[1] + farCorner[1], m).color(r, g, b, a).endVertex();
+                    vertexConsumer.vertex(matrix4f, centre[0] - rightCorner[0], centre[1] + rightCorner[1], m).color(r, g, b, a).endVertex();
                 }
             });
         }
@@ -120,13 +123,17 @@ public class AbilitySelectionScreen extends Screen {
         return new int[]{(int) (Math.cos(theta) * r), (int) (Math.sin(theta) * r)};
     }
 
-    private static double[][] rootsOfUnity(int n) {
-        double[][] values = new double[n][];
+    private static double[] getAngles(int n) {
+        double[] values = new double[n];
         for (int k = 0; k < n; k++) {
-            values[k] = new double[]{Math.cos((2.0 * k * Math.PI) / (double) n), Math.sin((2.0 * k * Math.PI) / (double) n)};
+            values[k] = getAngle(n, k);
         }
 
         return values;
+    }
+
+    private static double getAngle(int n, int k) {
+        return k * 2.0 * Math.PI / n;
     }
 
     private record AbilityOption(Reference<VampireAbility> ability, Component name, int x, int y) {
