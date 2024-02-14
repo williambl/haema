@@ -3,7 +3,6 @@ package com.williambl.haema.data;
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
 import com.mojang.datafixers.util.Function3;
 import com.williambl.actions.Actions;
-import com.williambl.dfunc.api.DFunctions;
 import com.williambl.dfunc.api.DTypes;
 import com.williambl.dfunc.api.functions.BlockInWorldDFunctions;
 import com.williambl.dfunc.api.functions.EntityDFunctions;
@@ -76,7 +75,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -100,7 +98,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import static com.williambl.haema.Haema.id;
 import static com.williambl.vampilang.lang.VExpression.*;
@@ -313,6 +310,13 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
                 dashAbilities.add(this.createDashAbility(entries, i+1, dashAbilities));
             }
             defaultAbilties.addAll(dashAbilities);
+            var mistFormAbility = this.createMistFormAbility(entries);
+            defaultAbilties.add(mistFormAbility);
+            var invisibilityAbilities = new ArrayList<ResourceKey<VampireAbility>>();
+            for (int i = 0; i < 3; i++) {
+                invisibilityAbilities.add(this.createInvisibilityAbility(entries, i+1, invisibilityAbilities));
+            }
+            defaultAbilties.addAll(invisibilityAbilities);
 
 
             entries.add(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR, HaemaVampires.VampirismSources.COMMAND), defaultAbilties, value(StandardVTypes.BOOLEAN, false), value(StandardVTypes.BOOLEAN, false))); //TODO
@@ -687,6 +691,24 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
                         List.of("key.haema.primary_vampire_action"))));
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("dash/"+level));
             entries.add(key, dashAbility);
+            return key;
+        }
+
+        private ResourceKey<VampireAbility> createMistFormAbility(Entries entries) {
+            var mistFormAbility = new VampireAbility(true, IconProvider.of(id("textures/mob_effect/mist_form.png"), 11), true, value(StandardVTypes.BOOLEAN, true), Set.of(), Set.of(), Set.of(), List.of(
+                    /* TODO */
+            ));
+            var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("mist_form"));
+            entries.add(key, mistFormAbility);
+            return key;
+        }
+
+        private ResourceKey<VampireAbility> createInvisibilityAbility(Entries entries, int level, Collection<ResourceKey<VampireAbility>> before) {
+            var invisibilityAbility = new VampireAbility(true, IconProvider.of(new ResourceLocation("textures/mob_effect/invisibility.png")), true, value(StandardVTypes.BOOLEAN, true), Set.copyOf(before), Set.of(), Set.copyOf(before), List.of(
+                    /* TODO */
+            ));
+            var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("invisibility/"+level));
+            entries.add(key, invisibilityAbility);
             return key;
         }
 
