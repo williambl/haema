@@ -6,6 +6,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.williambl.actions.Action;
 import com.williambl.actions.Actions;
 import com.williambl.dfunc.api.DFunctions;
+import com.williambl.haema.Haema;
+import com.williambl.haema.HaemaUtil;
 import com.williambl.haema.api.vampire.ability.VampireAbilitiesComponent;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
@@ -13,6 +15,8 @@ import com.williambl.vampilang.lang.VExpression;
 import com.williambl.vampilang.lang.VValue;
 import com.williambl.vampilang.stdlib.StandardVTypes;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.Direction;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.entity.LivingEntity;
@@ -58,6 +62,7 @@ public record DashAbilityPower(VExpression canDash, VExpression onDash, List<Str
 
         DFunctions.<List<VValue>>evaluate(this.onDash(), ctx).stream().map(VValue::<Action>getUnchecked).forEach(Action::runAction);
         entity.teleportTo(target.x, target.y, target.z);
+        HaemaUtil.sendToTrackingIncludingMe(entity, new DashPacketS2C(entity.getId()));
     }
 
     public void dashWithTarget(LivingEntity entity, Vec3 target) {
@@ -69,6 +74,7 @@ public record DashAbilityPower(VExpression canDash, VExpression onDash, List<Str
 
         DFunctions.<List<VValue>>evaluate(this.onDash(), ctx).stream().map(VValue::<Action>getUnchecked).forEach(Action::runAction);
         entity.teleportTo(target.x, target.y, target.z);
+        HaemaUtil.sendToTrackingIncludingMe(entity, new DashPacketS2C(entity.getId()));
     }
 
     private @Nullable Vec3 raytraceForDash(LivingEntity entity) {

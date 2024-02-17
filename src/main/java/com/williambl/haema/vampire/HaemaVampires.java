@@ -13,6 +13,7 @@ import com.williambl.haema.vampire.ability.powers.*;
 import com.williambl.haema.vampire.ability.powers.damage_modification.DamageModificationAbilityPower;
 import com.williambl.haema.vampire.ability.powers.dash.DashAbilityPower;
 import com.williambl.haema.vampire.ability.powers.dash.DashPacketC2S;
+import com.williambl.haema.vampire.ability.powers.dash.DashPacketS2C;
 import com.williambl.haema.vampire.ability.powers.dash.EntityChargingDashComponent;
 import com.williambl.haema.vampire.ability.powers.drinking.DrinkingAbilityPower;
 import com.williambl.haema.vampire.ability.powers.drinking.DrinkingPacket;
@@ -66,6 +67,7 @@ public class HaemaVampires {
         public static final PacketType<DrinkingPacket> DRINKING = PacketType.create(id("drinking"), DrinkingPacket::new);
         public static final PacketType<SetActiveAbilityPacket> SET_ACTIVE_ABILITY = PacketType.create(id("set_active_ability"), SetActiveAbilityPacket::new);
         public static final PacketType<DashPacketC2S> DASH = PacketType.create(id("dash"), DashPacketC2S::new);
+        public static final PacketType<DashPacketS2C> DASH_FX = PacketType.create(id("dash_fx"), DashPacketS2C::new);
 
         public static void init() {
             DrinkingPacket.init();
@@ -95,7 +97,7 @@ public class HaemaVampires {
         }
 
         public static void initEntityComponents(EntityComponentFactoryRegistry registry) {
-            registry.registerForPlayers(EntityChargingDashComponent.KEY, p -> new EntityChargingDashComponent(), RespawnCopyStrategy.NEVER_COPY);
+            registry.registerForPlayers(EntityChargingDashComponent.KEY, EntityChargingDashComponent::new, RespawnCopyStrategy.NEVER_COPY);
         }
     }
 

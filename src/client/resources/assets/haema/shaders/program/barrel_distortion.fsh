@@ -34,5 +34,5 @@ void main() {
         accumulated += thisSample*(i/sampleCount)*(1.0+abs(sqDist * distortion));
     }
 
-    fragColor = vec4(accumulated.rgb, accumulated.a);
+    fragColor = accumulated;
 }

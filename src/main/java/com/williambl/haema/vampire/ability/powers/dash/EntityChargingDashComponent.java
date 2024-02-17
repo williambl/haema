@@ -11,7 +11,12 @@ import net.minecraft.server.level.ServerPlayer;
 import static com.williambl.haema.Haema.id;
 
 public class EntityChargingDashComponent implements Component, AutoSyncedComponent {
-    private boolean isChargingDash = true;
+    private final Object owner;
+    private boolean isChargingDash = false;
+
+    public EntityChargingDashComponent(Object owner) {
+        this.owner = owner;
+    }
 
     @Override
     public void readFromNbt(CompoundTag tag) {
@@ -39,6 +44,7 @@ public class EntityChargingDashComponent implements Component, AutoSyncedCompone
 
     public void setChargingDash(boolean chargingDash) {
         this.isChargingDash = chargingDash;
+        KEY.sync(this.owner);
     }
 
     public static final ComponentKey<EntityChargingDashComponent> KEY = ComponentRegistry.getOrCreate(id("charging_dash"), EntityChargingDashComponent.class);

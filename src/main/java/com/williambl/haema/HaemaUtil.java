@@ -2,6 +2,9 @@ package com.williambl.haema;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import net.fabricmc.fabric.api.networking.v1.FabricPacket;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
@@ -13,6 +16,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -206,5 +210,18 @@ public class HaemaUtil {
         }
 
         return false;
+    }
+
+    public static void sendToTrackingIncludingMe(Entity entity, FabricPacket packet) {
+        boolean wasSent = false; // PlayerLookup.tracking may include `entity` if it wants to, and we dont want to doublesend
+        for (ServerPlayer serverPlayer : PlayerLookup.tracking(entity)) {
+            if (serverPlayer == entity) {
+                wasSent = true;
+            }
+            ServerPlayNetworking.send(serverPlayer, packet);
+        }
+        if (!wasSent && entity instanceof ServerPlayer p) {
+            ServerPlayNetworking.send(p, packet);
+        }
     }
 }
