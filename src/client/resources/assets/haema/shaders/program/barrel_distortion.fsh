@@ -19,10 +19,20 @@ void main() {
 
     //Apply distortion
     float sqDist = (coord.x*coord.x) + (coord.y * coord.y);
-    coord = (coord * ( 1.0 + (sqDist * DistortAmount)));
 
-    //Transform so 0,0 is bottom left again
-    coord = (1.0 + (coord))/2.0;
+    int sampleCount = 3;
+    vec4 accumulated = vec4(0.0);
 
-    fragColor = texture(DiffuseSampler, coord);
+    for (int i = 1; i < 1 + sampleCount; i++) {
+        float distortion = DistortAmount * ((5+i)/6.);
+        vec2 distoredCoord = (coord * (1.0 + (sqDist * distortion)));
+
+        //Transform so 0,0 is bottom left again
+        distoredCoord = (1.0 + (distoredCoord))/2.0;
+
+        vec4 thisSample = texture(DiffuseSampler, distoredCoord);
+        accumulated += thisSample*(i/sampleCount)*(1.0+abs(sqDist * distortion));
+    }
+
+    fragColor = vec4(accumulated.rgb, accumulated.a);
 }

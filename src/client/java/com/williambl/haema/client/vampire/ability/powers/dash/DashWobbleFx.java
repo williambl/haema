@@ -65,7 +65,7 @@ public class DashWobbleFx implements ShaderEffectRenderCallback, ClientTickEvent
         this.isRenderingThisTick = true;
 
         if (DashAbilityPowerClient.pressedTicks > 0) {
-            this.setDistortAmount(Math.max(this.getDistortAmount() - 0.05f, -0.2f) + cam.level().getRandom().nextFloat()*0.001f);
+            this.setDistortAmount(Math.max(this.getDistortAmount() - 0.05f, -0.2f) + cam.level().getRandom().nextFloat()*0.03f);
         } else if (DashAbilityPowerClient.ticksSinceDashed <= 8) {
             this.setDistortAmount(DashAbilityPowerClient.ticksSinceDashed == 0 ? -1.4f : -0.25f + 0.25f * (float) Math.log(((DashAbilityPowerClient.ticksSinceDashed) / 3f)));
         } else if (this.distortAmount != 0) {
