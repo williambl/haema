@@ -4,20 +4,27 @@ import com.mojang.datafixers.util.Pair;
 import com.williambl.dfunc.api.DFunctions;
 import com.williambl.haema.api.vampire.ability.VampireAbilitiesComponent;
 import com.williambl.haema.vampire.ability.powers.dash.DashAbilityPower;
+import com.williambl.haema.vampire.ability.powers.dash.EntityChargingDashComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.phys.Vec3;
+import net.tslat.smartbrainlib.api.core.behaviour.DelayedBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
 
 import java.util.List;
 
-public class DashToWalkTarget<E extends PathfinderMob> extends ExtendedBehaviour<E> {
+public class DashToWalkTarget<E extends PathfinderMob> extends DelayedBehaviour<E> {
     private Vec3 nodePos;
+    private int nextNodeIdx = -1;
     private List<DashAbilityPower> powers;
     private double sqrMinDashDistance = 5*5;
     private double sqrMaxDashDistance = 16*16;
+
+    public DashToWalkTarget(int delayTicks) {
+        super(delayTicks);
+    }
 
     public DashToWalkTarget<E> minDistanceToDash(double distance) {
         this.sqrMinDashDistance = distance*distance;
@@ -51,6 +58,7 @@ public class DashToWalkTarget<E extends PathfinderMob> extends ExtendedBehaviour
         this.nodePos = null;
         for (int i = path.getNodeCount()-1; i >= 0; i--) {
             this.nodePos = path.getEntityPosAtNode(entity, i);
+            this.nextNodeIdx = i;
             double sqrDist = entity.distanceToSqr(this.nodePos);
             if (sqrDist < this.sqrMinDashDistance) {
                 this.nodePos = null;
@@ -63,6 +71,7 @@ public class DashToWalkTarget<E extends PathfinderMob> extends ExtendedBehaviour
 
             if (i == 0) {
                 this.nodePos = null;
+                this.nextNodeIdx = -1;
             }
         }
 
@@ -71,9 +80,20 @@ public class DashToWalkTarget<E extends PathfinderMob> extends ExtendedBehaviour
 
     @Override
     protected void start(E entity) {
+        EntityChargingDashComponent.KEY.maybeGet(entity).ifPresent(c -> c.setChargingDash(true));
+    }
+
+    @Override
+    protected void doDelayedAction(E entity) {
+        super.doDelayedAction(entity);
+        EntityChargingDashComponent.KEY.maybeGet(entity).ifPresent(c -> c.setChargingDash(false));
         this.powers.get(0).dashWithTarget(entity, this.nodePos);
         this.nodePos = null;
         this.powers = null;
+        var path = entity.getNavigation().getPath();
+        if (path != null && path.getNodeCount() > this.nextNodeIdx && this.nextNodeIdx > path.getNextNodeIndex()) {
+            path.setNextNodeIndex(this.nextNodeIdx);
+        }
     }
 
     @Override

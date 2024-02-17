@@ -5,6 +5,7 @@ import com.williambl.haema.api.vampire.VampirismSource;
 import com.williambl.haema.api.vampire.ability.VampireAbilitiesComponent;
 import com.williambl.haema.vampire.EntityVampireAbilitiesComponent;
 import com.williambl.haema.vampire.EntityVampireComponent;
+import com.williambl.haema.vampire.ability.powers.dash.EntityChargingDashComponent;
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -31,6 +32,7 @@ public class HaemaVampireMobs {
     public static void initEntityComponents(EntityComponentFactoryRegistry registry) {
         registry.registerFor(Vampirager.class, VampireComponent.KEY, EntityVampireComponent::new);
         registry.registerFor(Vampirager.class, VampireAbilitiesComponent.KEY, EntityVampireAbilitiesComponent::new);
+        registry.registerFor(Vampirager.class, EntityChargingDashComponent.KEY, EntityChargingDashComponent::new);
     }
 
     public static class VampireMobEntityTypes {

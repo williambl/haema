@@ -324,7 +324,7 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
 
             entries.add(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR, HaemaVampires.VampirismSources.COMMAND), defaultAbilties, value(StandardVTypes.BOOLEAN, false), value(StandardVTypes.BOOLEAN, false))); //TODO
             entries.add(HaemaVampires.VampirismSources.COMMAND, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of(), value(StandardVTypes.BOOLEAN, true), value(StandardVTypes.BOOLEAN, true)));
-            entries.add(HaemaVampireMobs.VampireMobVampirismSources.VAMPIRAGER_SPAWN, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of(healingAbility, damageModificationAbility, drinkingAbility, sunlightSicknessAbility, dashAbilities.get(2)), value(StandardVTypes.BOOLEAN, true), value(StandardVTypes.BOOLEAN, false)));
+            entries.add(HaemaVampireMobs.VampireMobVampirismSources.VAMPIRAGER_SPAWN, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of(healingAbility, damageModificationAbility, drinkingAbility, sunlightSicknessAbility, dashAbilities.get(0), dashAbilities.get(1), dashAbilities.get(2)), value(StandardVTypes.BOOLEAN, true), value(StandardVTypes.BOOLEAN, false)));
 
             entries.add(ResourceKey.create(RitualArae.REGISTRY_KEY, id("basic")), new RitualArae(new MultiblockFilter(
                     new char[][][]{
