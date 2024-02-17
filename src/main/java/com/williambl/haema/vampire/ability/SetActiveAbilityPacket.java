@@ -37,12 +37,15 @@ public record SetActiveAbilityPacket(Optional<ResourceKey<VampireAbility>> key) 
                 if (ability.isPresent()) {
                     if (!component.setActiveAbility(ability.get())) {
                         Haema.LOGGER.error("Could not set active ability {} on player {}", packet.key().get().location(), player.getScoreboardName());
+                    } else {
+                        VampireAbilitiesComponent.KEY.sync(player);
                     }
                 } else {
                     Haema.LOGGER.error("Processing packet to set active ability for player {}, could not find ability {}", player.getScoreboardName(), packet.key().get().location());
                 }
             } else {
                 component.setActiveAbility(null);
+                VampireAbilitiesComponent.KEY.sync(player);
             }
         });
     }

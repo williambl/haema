@@ -12,6 +12,7 @@ import com.williambl.haema.vampire.ability.abilities.strength.VampiricStrengthEf
 import com.williambl.haema.vampire.ability.powers.*;
 import com.williambl.haema.vampire.ability.powers.damage_modification.DamageModificationAbilityPower;
 import com.williambl.haema.vampire.ability.powers.dash.DashAbilityPower;
+import com.williambl.haema.vampire.ability.powers.dash.DashPacketC2S;
 import com.williambl.haema.vampire.ability.powers.dash.EntityChargingDashComponent;
 import com.williambl.haema.vampire.ability.powers.drinking.DrinkingAbilityPower;
 import com.williambl.haema.vampire.ability.powers.drinking.DrinkingPacket;
@@ -64,10 +65,12 @@ public class HaemaVampires {
     public static class VampirePackets {
         public static final PacketType<DrinkingPacket> DRINKING = PacketType.create(id("drinking"), DrinkingPacket::new);
         public static final PacketType<SetActiveAbilityPacket> SET_ACTIVE_ABILITY = PacketType.create(id("set_active_ability"), SetActiveAbilityPacket::new);
+        public static final PacketType<DashPacketC2S> DASH = PacketType.create(id("dash"), DashPacketC2S::new);
 
         public static void init() {
             DrinkingPacket.init();
             SetActiveAbilityPacket.init();
+            DashPacketC2S.init();
         }
     }
 
