@@ -74,6 +74,8 @@ public class DashWobbleFx implements ShaderEffectRenderCallback, ClientTickEvent
             } else {
                 this.setDistortAmount(this.getDistortAmount() - Math.copySign(0.1f, this.getDistortAmount()));
             }
+        } else {
+            this.setDistortAmount(this.getDistortAmount()); // sync distort and prev distort
         }
     }
 }
