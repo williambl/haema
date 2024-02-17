@@ -1,11 +1,15 @@
-package com.williambl.haema.client.vampire.ability.powers.vision;
+package com.williambl.haema.client.util.rendering;
 
 import com.mojang.blaze3d.vertex.DefaultedVertexConsumer;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.williambl.haema.client.vampire.ability.powers.vision.GlowEffectManager;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 /**
  * A {@link VertexConsumerProvider} which provides vertex consumers which render auras. It only renders for render layers
@@ -13,7 +17,9 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
  *
  * @see net.minecraft.client.render.OutlineVertexConsumerProvider
  */
-public final class AuraVertexConsumerProvider implements MultiBufferSource {
+public final class TransformedMultiBufferSource implements MultiBufferSource {
+    private final Supplier<RenderType> defaultRenderType;
+    private final UnaryOperator<RenderType> renderTypeTransformer;
     private final MultiBufferSource provider;
     private final int r;
     private final int g;
@@ -29,7 +35,9 @@ public final class AuraVertexConsumerProvider implements MultiBufferSource {
      * @param b         the aura's blue component
      * @param a         the aura's alpha component
      */
-    public AuraVertexConsumerProvider(MultiBufferSource provider, int r, int g, int b, int a) {
+    public TransformedMultiBufferSource(Supplier<RenderType> defaultRenderType, UnaryOperator<RenderType> renderTypeTransformer, MultiBufferSource provider, int r, int g, int b, int a) {
+        this.defaultRenderType = defaultRenderType;
+        this.renderTypeTransformer = renderTypeTransformer;
         this.provider = provider;
         this.r = r;
         this.g = g;
@@ -43,13 +51,13 @@ public final class AuraVertexConsumerProvider implements MultiBufferSource {
      * @return the vertex consumer
      */
     public VertexConsumer getBuffer() {
-        return new AuraVertexConsumer(provider.getBuffer(GlowEffectManager.getRenderType()), r, g, b, a);
+        return new AuraVertexConsumer(provider.getBuffer(this.defaultRenderType.get()), r, g, b, a);
     }
 
     @Override
     public VertexConsumer getBuffer(RenderType type) {
         if (type.outline().isPresent()) {
-            return new AuraVertexConsumer(provider.getBuffer(GlowEffectManager.getRenderType(type)), r, g, b, a);
+            return new AuraVertexConsumer(provider.getBuffer(this.renderTypeTransformer.apply(type)), r, g, b, a);
         } else {
             return new DummyVertexConsumer();
         }

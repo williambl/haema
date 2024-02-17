@@ -12,6 +12,7 @@ import com.williambl.haema.vampire.ability.abilities.strength.VampiricStrengthEf
 import com.williambl.haema.vampire.ability.powers.*;
 import com.williambl.haema.vampire.ability.powers.damage_modification.DamageModificationAbilityPower;
 import com.williambl.haema.vampire.ability.powers.dash.DashAbilityPower;
+import com.williambl.haema.vampire.ability.powers.dash.EntityChargingDashComponent;
 import com.williambl.haema.vampire.ability.powers.drinking.DrinkingAbilityPower;
 import com.williambl.haema.vampire.ability.powers.drinking.DrinkingPacket;
 import com.williambl.haema.vampire.ability.powers.hungerbar.ModifyHungerBarAbilityPower;
@@ -57,6 +58,7 @@ public class HaemaVampires {
     public static void initEntityComponents(EntityComponentFactoryRegistry registry) {
         registry.registerForPlayers(VampireComponent.KEY, EntityVampireComponent::new, RespawnCopyStrategy.CHARACTER);
         registry.registerForPlayers(VampireAbilitiesComponent.KEY, EntityVampireAbilitiesComponent::new, RespawnCopyStrategy.CHARACTER);
+        VampireAbilityPowers.initEntityComponents(registry);
     }
 
     public static class VampirePackets {
@@ -87,6 +89,10 @@ public class HaemaVampires {
             DashAbilityPower.init();
             DrinkingAbilityPower.init();
             SleepInDayAbilityPower.init();
+        }
+
+        public static void initEntityComponents(EntityComponentFactoryRegistry registry) {
+            registry.registerForPlayers(EntityChargingDashComponent.KEY, p -> new EntityChargingDashComponent(), RespawnCopyStrategy.NEVER_COPY);
         }
     }
 

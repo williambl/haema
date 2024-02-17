@@ -1,6 +1,7 @@
 package com.williambl.haema.client.vampire;
 
 import com.williambl.haema.client.vampire.ability.ActiveAbilitySelection;
+import com.williambl.haema.client.vampire.ability.powers.dash.DashShimmerEffectManager;
 import com.williambl.haema.client.vampire.ability.powers.drinking.DrinkingAbilityPowerClient;
 import com.williambl.haema.client.vampire.ability.powers.hungerbar.ModifyHungerBarAbilityPowerClient;
 import com.williambl.haema.client.vampire.ability.powers.vision.GlowEffectManager;
@@ -14,6 +15,7 @@ public class HaemaVampiresClient {
         Keybinds.init();
         VampireVisionFx.init();
         GlowEffectManager.INSTANCE.init();
+        DashShimmerEffectManager.INSTANCE.init();
         DrinkingAbilityPowerClient.init();
         ModifyHungerBarAbilityPowerClient.init();
         ActiveAbilitySelection.init();
