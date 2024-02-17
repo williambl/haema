@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "package": "com.williambl.haema.client.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "mixins": [
+    "KeyMappingAccessor"
+  ],
+  "client": [
+    "vampire.ability.powers.MinecraftMixin",
+    "vampire.ability.powers.dash.EntityRenderDispatcherMixin",
+    "vampire.ability.powers.hungerbar.InGameHudMixin",
+    "vampire.ability.powers.vision.EntityRenderDispatcherMixin"
+  ],
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

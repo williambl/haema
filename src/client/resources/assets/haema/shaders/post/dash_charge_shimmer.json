@@ -1,0 +1,59 @@
+{
+  "targets": [
+    "swap",
+    "swap2",
+    "shimmers"
+  ],
+  "passes": [
+    {
+      "name": "haema:cull_depth",
+      "intarget": "shimmers",
+      "outtarget": "swap",
+      "auxtargets": [
+        {
+          "name": "MainDepthSampler",
+          "id": "minecraft:main:depth"
+        },
+        {
+          "name": "DiffuseDepthSampler",
+          "id": "shimmers:depth"
+        }
+      ]
+    },
+    {
+      "name": "haema:blur",
+      "intarget": "swap",
+      "outtarget": "swap2",
+      "uniforms": [
+        {
+          "name": "BlurDir",
+          "values": [ 1.0, 0.0 ]
+        },
+        {
+          "name": "Radius",
+          "values": [ 5.0 ]
+        }
+      ]
+    },
+    {
+      "name": "haema:blur",
+      "intarget": "swap2",
+      "outtarget": "swap",
+      "uniforms": [
+        {
+          "name": "BlurDir",
+          "values": [ 0.0, 1.0 ]
+        },
+        {
+          "name": "Radius",
+          "values": [ 1.0 ]
+        }
+      ]
+    },
+    {
+      "name": "blit",
+      "intarget": "swap",
+      "outtarget": "shimmers"
+    }
+  ]
+}

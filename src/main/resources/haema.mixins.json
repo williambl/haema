@@ -3,22 +3,15 @@
   "package": "com.williambl.haema.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
-    "AbstractBlockStateMixin",
-    "DamageSourceMixin",
-    "EntityMixin",
-    "HungerManagerMixin",
-    "HurtBySensorMixin",
-    "LivingEntityMixin",
-    "MixinServerWorld",
-    "PlayerEntityMixin",
-    "ServerPlayerInteractionManagerMixin",
-    "ServerPlayNetworkHandlerMixin"
+    "registry.RegistryDataLoaderMixin",
+    "registry.RegistrySynchronizationMixin",
+    "ritual.altar.PlayerChunkSenderMixin",
+    "ritual.altar.ServerLevelMixin",
+    "vampire.ability.powers.damage_modification.DamageSourceMixin",
+    "vampire.ability.powers.damage_modification.LivingEntityMixin",
+    "vampire.ability.powers.sleep.ServerLevelMixin"
   ],
   "client": [
-    "client.AbstractClientPlayerEntityMixin",
-    "client.ClientPlayerInteractionManagerMixin",
-    "client.InGameHudMixin",
-    "client.LightmapTextureManagerMixin"
   ],
   "server": [
   ],

@@ -25,3 +25,5 @@ run
 libs
 
 changelog.md
+
+/src/main/generated/
