@@ -43,9 +43,11 @@ public class EntityRenderDispatcherMixin {
             var offset = entity.getLookAngle().scale(-Math.abs(0.3 * (Math.sin(time / 20) + Math.sin(time * Math.PI)))).scale(flashFactor);
             poseStack.pushPose();
             poseStack.translate(offset.x, offset.y, offset.z);
+            //noinspection MixinExtrasOperationParameters
             original.call(instance, entity, f, partialTick, poseStack, auraBufferSource, LightTexture.FULL_BRIGHT);
             poseStack.popPose();
         } else {
+            //noinspection MixinExtrasOperationParameters
             original.call(instance, entity, f, partialTick, poseStack, multiBufferSource, light);
         }
     }
