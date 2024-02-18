@@ -10,6 +10,7 @@ uniform vec2 OutSize;
 
 // positive values give barrel distortion, negative give pincushion
 uniform float DistortAmount;
+uniform vec4 ExtraDistort;
 
 out vec4 fragColor;
 
@@ -31,7 +32,8 @@ void main() {
         distoredCoord = (1.0 + (distoredCoord))/2.0;
 
         vec4 thisSample = texture(DiffuseSampler, distoredCoord);
-        accumulated += thisSample*(i/sampleCount)*(1.0+abs(sqDist * distortion));
+        float extraDistortFactor = abs(sqDist * distortion);
+        accumulated += thisSample*(i/sampleCount)*(1.0+ExtraDistort*extraDistortFactor);
     }
 
     fragColor = accumulated;
