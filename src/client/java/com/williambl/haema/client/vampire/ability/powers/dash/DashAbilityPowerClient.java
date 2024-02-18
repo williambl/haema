@@ -16,7 +16,7 @@ public class DashAbilityPowerClient {
     static int pressedTicks = 0;
     static int ticksSinceDashed = Integer.MAX_VALUE;
 
-    public static final int DASH_FLASH_TICKS = 4;
+    public static final int DASH_FLASH_TICKS = 10;
     public static Map<Entity, Integer> dashedEntities = new LinkedHashMap<>();
 
     public static void init() {
