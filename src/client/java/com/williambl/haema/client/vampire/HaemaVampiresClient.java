@@ -5,6 +5,7 @@ import com.williambl.haema.client.vampire.ability.powers.dash.DashAbilityPowerCl
 import com.williambl.haema.client.vampire.ability.powers.dash.DashShimmerEffectManager;
 import com.williambl.haema.client.vampire.ability.powers.drinking.DrinkingAbilityPowerClient;
 import com.williambl.haema.client.vampire.ability.powers.hungerbar.ModifyHungerBarAbilityPowerClient;
+import com.williambl.haema.client.vampire.ability.powers.reinforcements.SpawnReinforcementsAbilityPowerClient;
 import com.williambl.haema.client.vampire.ability.powers.vision.GlowEffectManager;
 import com.williambl.haema.client.vampire.ability.powers.vision.VampireVisionFx;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -20,6 +21,7 @@ public class HaemaVampiresClient {
         DrinkingAbilityPowerClient.init();
         ModifyHungerBarAbilityPowerClient.init();
         ActiveAbilitySelection.init();
+        SpawnReinforcementsAbilityPowerClient.init();
     }
 
     public static class Keybinds {

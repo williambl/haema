@@ -18,6 +18,8 @@ import com.williambl.haema.vampire.ability.powers.dash.EntityChargingDashCompone
 import com.williambl.haema.vampire.ability.powers.drinking.DrinkingAbilityPower;
 import com.williambl.haema.vampire.ability.powers.drinking.DrinkingPacket;
 import com.williambl.haema.vampire.ability.powers.hungerbar.ModifyHungerBarAbilityPower;
+import com.williambl.haema.vampire.ability.powers.reinforcements.SpawnReinforcementsAbilityPower;
+import com.williambl.haema.vampire.ability.powers.reinforcements.SpawnReinforcementsPacket;
 import com.williambl.haema.vampire.ability.powers.sleep.SleepInDayAbilityPower;
 import com.williambl.haema.vampire.ability.powers.sunlight_sickness.SunlightSicknessEffect;
 import com.williambl.haema.vampire.ability.powers.vampiric_weakness.VampiricWeaknessEffect;
@@ -68,11 +70,13 @@ public class HaemaVampires {
         public static final PacketType<SetActiveAbilityPacket> SET_ACTIVE_ABILITY = PacketType.create(id("set_active_ability"), SetActiveAbilityPacket::new);
         public static final PacketType<DashPacketC2S> DASH = PacketType.create(id("dash"), DashPacketC2S::new);
         public static final PacketType<DashPacketS2C> DASH_FX = PacketType.create(id("dash_fx"), DashPacketS2C::new);
+        public static final PacketType<SpawnReinforcementsPacket> SPAWN_REINFORCEMENTS = PacketType.create(id("spawn_reinforcements"), SpawnReinforcementsPacket::new);
 
         public static void init() {
             DrinkingPacket.init();
             SetActiveAbilityPacket.init();
             DashPacketC2S.init();
+            SpawnReinforcementsPacket.init();
         }
     }
 
@@ -88,6 +92,7 @@ public class HaemaVampires {
         public static final Codec<DrinkingAbilityPower> DRINKING_ABILITY_POWER_CODEC = Registry.register(VampireAbilityPower.REGISTRY, id("drinking"), DrinkingAbilityPower.CODEC.codec());
         public static final Codec<ModifyHungerBarAbilityPower> MODIFY_HUNGER_BAR_ABILITY_POWER_CODEC = Registry.register(VampireAbilityPower.REGISTRY, id("modify_hunger_bar"), ModifyHungerBarAbilityPower.CODEC.codec());
         public static final Codec<SleepInDayAbilityPower> SLEEP_IN_DAY_ABILITY_POWER_CODEC = Registry.register(VampireAbilityPower.REGISTRY, id("sleep_in_day"), SleepInDayAbilityPower.CODEC.codec());
+        public static final Codec<SpawnReinforcementsAbilityPower> SPAWN_REINFORCEMENTS_ABILITY_POWER_CODEC = Registry.register(VampireAbilityPower.REGISTRY, id("spawn_reinforcements"), SpawnReinforcementsAbilityPower.CODEC.codec());
 
         private static void init() {
             DamageModificationAbilityPower.init();

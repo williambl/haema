@@ -8,5 +8,6 @@ public class HaemaVampireMobsClient {
     public static void init() {
         EntityModelLayerRegistry.registerModelLayer(VampiragerRenderer.VampiragerModel.LAYER, VampiragerRenderer.VampiragerModel::createBodyLayer);
         EntityRendererRegistry.register(HaemaVampireMobs.VampireMobEntityTypes.VAMPIRAGER, VampiragerRenderer::new);
+        EntityRendererRegistry.register(HaemaVampireMobs.VampireMobEntityTypes.VAMPIRIC_ZOMBIE, VampiricZombieRenderer::new);
     }
 }

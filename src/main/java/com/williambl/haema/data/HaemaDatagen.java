@@ -40,6 +40,7 @@ import com.williambl.haema.vampire.ability.powers.damage_modification.DamageModi
 import com.williambl.haema.vampire.ability.powers.dash.DashAbilityPower;
 import com.williambl.haema.vampire.ability.powers.drinking.DrinkingAbilityPower;
 import com.williambl.haema.vampire.ability.powers.hungerbar.ModifyHungerBarAbilityPower;
+import com.williambl.haema.vampire.ability.powers.reinforcements.SpawnReinforcementsAbilityPower;
 import com.williambl.haema.vampire.ability.powers.sleep.SleepInDayAbilityPower;
 import com.williambl.haema.vampire.ability.powers.vision.VampireVisionVampireAbilityPower;
 import com.williambl.haema.vampire_mobs.HaemaVampireMobs;
@@ -320,11 +321,20 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             defaultAbilties.addAll(invisibilityAbilities);
             var sleepInDayAbility = this.createSleepInDayAbility(entries);
             defaultAbilties.add(sleepInDayAbility);
+            var spawnReinforcementsAbility = this.createSpawnReinforcementsAbility(entries);
 
 
             entries.add(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR, HaemaVampires.VampirismSources.COMMAND), defaultAbilties, value(StandardVTypes.BOOLEAN, false), value(StandardVTypes.BOOLEAN, false))); //TODO
             entries.add(HaemaVampires.VampirismSources.COMMAND, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of(), value(StandardVTypes.BOOLEAN, true), value(StandardVTypes.BOOLEAN, true)));
-            entries.add(HaemaVampireMobs.VampireMobVampirismSources.VAMPIRAGER_SPAWN, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of(healingAbility, damageModificationAbility, drinkingAbility, sunlightSicknessAbility, dashAbilities.get(0), dashAbilities.get(1), dashAbilities.get(2)), value(StandardVTypes.BOOLEAN, true), value(StandardVTypes.BOOLEAN, false)));
+            entries.add(HaemaVampireMobs.VampireMobVampirismSources.VAMPIRAGER_SPAWN, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of(healingAbility, damageModificationAbility, drinkingAbility, sunlightSicknessAbility, dashAbilities.get(0), dashAbilities.get(1), dashAbilities.get(2), spawnReinforcementsAbility), value(StandardVTypes.BOOLEAN, true), value(StandardVTypes.BOOLEAN, false)));
+            entries.add(HaemaVampireMobs.VampireMobVampirismSources.VAMPIRIC_ZOMBIE_SPAWN, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND),
+                    Set.of(healingAbility,
+                            damageModificationAbility,
+                            drinkingAbility,
+                            sunlightSicknessAbility,
+                            vampiricStrengthAbilities.get(0)),
+                    value(StandardVTypes.BOOLEAN, true),
+                    value(StandardVTypes.BOOLEAN, false)));
 
             entries.add(ResourceKey.create(RitualArae.REGISTRY_KEY, id("basic")), new RitualArae(new MultiblockFilter(
                     new char[][][]{
@@ -721,6 +731,30 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             ));
             var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("sleep_in_day"));
             entries.add(key, sleepInDayAbility);
+            return key;
+        }
+
+        private ResourceKey<VampireAbility> createSpawnReinforcementsAbility(Entries entries) {
+            var cooldownId = id("spawn_reinforcements");
+            var reinforcementsAbility = new VampireAbility(true, IconProvider.of(Items.ZOMBIE_HEAD), true, value(StandardVTypes.BOOLEAN, true), Set.of(), Set.of(), Set.of(), List.of(
+                    new SpawnReinforcementsAbilityPower(
+                            value(StandardVTypes.NUMBER, 3.0),
+                            functionApplication(LogicVFunctions.AND, Map.of(
+                                    "operands", list(List.of(
+                                            functionApplication(StandardVFunctions.LESS_THAN_OR_EQUAL, Map.of(
+                                                    "a", functionApplication(Actions.GET_COOLDOWN, Map.of("entity", variable("entity"), "cooldown_id", value(DTypes.RESOURCE_LOCATION, cooldownId))),
+                                                    "b", value(StandardVTypes.NUMBER, 0.0)))
+                                            )))),
+                            list(List.of(
+                                    object(Actions.name(Actions.SET_COOLDOWN), Map.of(
+                                            "entity", variable("entity"),
+                                            "cooldown_id", value(DTypes.RESOURCE_LOCATION, cooldownId),
+                                            "length", value(StandardVTypes.NUMBER, 100.0))))),
+                            list(),
+                            List.of(
+                                    "key.haema.primary_vampire_action"))));
+            var key = ResourceKey.create(VampireAbility.REGISTRY_KEY, id("spawn_reinforcements"));
+            entries.add(key, reinforcementsAbility);
             return key;
         }
 
