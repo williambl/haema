@@ -3,6 +3,7 @@ package com.williambl.haema.data;
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
 import com.mojang.datafixers.util.Function3;
 import com.williambl.actions.Actions;
+import com.williambl.dfunc.api.DFunctions;
 import com.williambl.dfunc.api.DTypes;
 import com.williambl.dfunc.api.functions.BlockInWorldDFunctions;
 import com.williambl.dfunc.api.functions.EntityDFunctions;
@@ -45,6 +46,7 @@ import com.williambl.haema.vampire.ability.powers.sleep.SleepInDayAbilityPower;
 import com.williambl.haema.vampire.ability.powers.vision.VampireVisionVampireAbilityPower;
 import com.williambl.haema.vampire_mobs.HaemaVampireMobs;
 import com.williambl.vampilang.lang.VExpression;
+import com.williambl.vampilang.lang.type.VType;
 import com.williambl.vampilang.stdlib.ArithmeticVFunctions;
 import com.williambl.vampilang.stdlib.LogicVFunctions;
 import com.williambl.vampilang.stdlib.StandardVFunctions;
@@ -73,6 +75,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -331,7 +334,14 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
             var spawnReinforcementsAbility = this.createSpawnReinforcementsAbility(entries);
 
 
-            entries.add(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR, HaemaVampires.VampirismSources.COMMAND), defaultAbilties, value(StandardVTypes.BOOLEAN, false), value(StandardVTypes.BOOLEAN, false))); //TODO
+            entries.add(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR, new VampirismSource(Set.of(HaemaContent.ContentVampirismSources.BLOOD_INJECTOR, HaemaVampires.VampirismSources.COMMAND),
+                    defaultAbilties,
+                    functionApplication(StandardVFunctions.GREATER_THAN, Map.of(
+                            "a", functionApplication(EntityDFunctions.EFFECT_AMPLIFIER, Map.of(
+                                    "entity", variable("entity"),
+                                    "effect", value(DTypes.MOB_EFFECT, MobEffects.DAMAGE_BOOST))),
+                            "b", value(StandardVTypes.NUMBER, 0.))),
+                    value(StandardVTypes.BOOLEAN, false))); //TODO
             entries.add(HaemaVampires.VampirismSources.COMMAND, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of(), value(StandardVTypes.BOOLEAN, true), value(StandardVTypes.BOOLEAN, true)));
             entries.add(HaemaVampireMobs.VampireMobVampirismSources.VAMPIRAGER_SPAWN, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND), Set.of(healingAbility, damageModificationAbility, drinkingAbility, sunlightSicknessAbility, dashAbilities.get(0), dashAbilities.get(1), dashAbilities.get(2), spawnReinforcementsAbility), value(StandardVTypes.BOOLEAN, true), value(StandardVTypes.BOOLEAN, false)));
             entries.add(HaemaVampireMobs.VampireMobVampirismSources.VAMPIRIC_ZOMBIE_SPAWN, new VampirismSource(Set.of(HaemaVampires.VampirismSources.COMMAND),
