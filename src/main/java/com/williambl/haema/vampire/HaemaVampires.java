@@ -122,11 +122,11 @@ public class HaemaVampires {
     }
 
     public static class VampireGameRules {
-        public static final CustomGameRuleCategory HAEMA_CATEGORY = new CustomGameRuleCategory(id("haema"), Component.translatable("gamerule.category.haema"));
-        public static final GameRules.Key<GameRules.BooleanValue> VAMPIRES_BURN = GameRuleRegistry.register(id("vampire_burning/enabled").toString(), HAEMA_CATEGORY, GameRuleFactory.createBooleanRule(true));
-        public static final GameRules.Key<GameRules.BooleanValue> ARMOUR_PROTECTS = GameRuleRegistry.register(id("vampire_burning/armour_protects_vampire_burning").toString(), HAEMA_CATEGORY, GameRuleFactory.createBooleanRule(true));
-        public static final GameRules.Key<GameRules.BooleanValue> NEED_FULL_ARMOUR_TO_PROTECT = GameRuleRegistry.register(id("vampire_burning/need_full_armour_to_protect").toString(), HAEMA_CATEGORY, GameRuleFactory.createBooleanRule(true));
-        public static final GameRules.Key<GameRules.BooleanValue> ARMOUR_DAMAGED_BY_BURNING = GameRuleRegistry.register(id("vampire_burning/damages_armour").toString(), HAEMA_CATEGORY, GameRuleFactory.createBooleanRule(true));
+        public static final CustomGameRuleCategory CATEGORY = new CustomGameRuleCategory(id("vampires"), Component.translatable("gamerule.category.vampires"));
+        public static final GameRules.Key<GameRules.BooleanValue> VAMPIRES_BURN = GameRuleRegistry.register(id("vampire_burning/enabled").toString(), CATEGORY, GameRuleFactory.createBooleanRule(true));
+        public static final GameRules.Key<GameRules.BooleanValue> ARMOUR_PROTECTS = GameRuleRegistry.register(id("vampire_burning/armour_protects_vampire_burning").toString(), CATEGORY, GameRuleFactory.createBooleanRule(true));
+        public static final GameRules.Key<GameRules.BooleanValue> NEED_FULL_ARMOUR_TO_PROTECT = GameRuleRegistry.register(id("vampire_burning/need_full_armour_to_protect").toString(), CATEGORY, GameRuleFactory.createBooleanRule(true));
+        public static final GameRules.Key<GameRules.BooleanValue> ARMOUR_DAMAGED_BY_BURNING = GameRuleRegistry.register(id("vampire_burning/damages_armour").toString(), CATEGORY, GameRuleFactory.createBooleanRule(true));
 
         private static void init() {}
     }

@@ -12,6 +12,7 @@ import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.monster.PatrollingMonster;
 import net.minecraft.world.level.CustomSpawner;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.NaturalSpawner;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -26,7 +27,10 @@ public class VampireHunterSpawner implements CustomSpawner {
         if (!spawnMonsters) {
             return 0;
         }
-        //TODO check gamerule
+
+        if (!level.getGameRules().getBoolean(HaemaHunters.HunterGameRules.PATROLS_ENABLED)) {
+            return 0;
+        }
 
         var random = level.getRandom();
         if (--this.ticksUntilNextSpawn > 0) {

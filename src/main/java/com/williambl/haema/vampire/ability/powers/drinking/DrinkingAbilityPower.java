@@ -11,6 +11,7 @@ import com.williambl.haema.api.vampire.VampireComponent;
 import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
 import com.williambl.haema.api.vampire.ability.powers.drinking.EntityDrinkTargetCallback;
+import com.williambl.haema.api.vampire.ability.powers.drinking.OnVampireDrinkCallback;
 import com.williambl.haema.content.blood.VampireBackedBloodStorage;
 import com.williambl.vampilang.lang.VExpression;
 import com.williambl.vampilang.lang.VValue;
@@ -79,8 +80,9 @@ public record DrinkingAbilityPower(VExpression amountToDrink, VExpression canDri
             long inserted = vampireStorage.insert(fluid, amountDroplets, tx);
             long extracted = bloodStorage.get().extract(fluid, inserted, tx);
             if (inserted > 0 && extracted == inserted) {
-                DFunctions.<List<VValue>>evaluate(this.onDrink(), ctx).stream().map(VValue::<Action>getUnchecked).forEach(Action::runAction);
                 tx.commit();
+                DFunctions.<List<VValue>>evaluate(this.onDrink(), ctx).stream().map(VValue::<Action>getUnchecked).forEach(Action::runAction);
+                OnVampireDrinkCallback.EVENT.invoker().onDrink(entity, target);
                 return true;
             } else {
                 tx.abort();
