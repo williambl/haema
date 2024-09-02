@@ -9,6 +9,7 @@ import com.williambl.haema.api.vampire.ability.VampireAbility;
 import com.williambl.haema.api.vampire.ability.VampireAbilityPower;
 import com.williambl.haema.vampire.ability.SetActiveAbilityPacket;
 import com.williambl.haema.vampire.ability.abilities.strength.VampiricStrengthEffect;
+import com.williambl.haema.vampire.ability.abilities.sunlight_sickness.SunlightSicknessArmourProtection;
 import com.williambl.haema.vampire.ability.powers.*;
 import com.williambl.haema.vampire.ability.powers.damage_modification.DamageModificationAbilityPower;
 import com.williambl.haema.vampire.ability.powers.dash.DashAbilityPower;
@@ -21,8 +22,8 @@ import com.williambl.haema.vampire.ability.powers.hungerbar.ModifyHungerBarAbili
 import com.williambl.haema.vampire.ability.powers.reinforcements.SpawnReinforcementsAbilityPower;
 import com.williambl.haema.vampire.ability.powers.reinforcements.SpawnReinforcementsPacket;
 import com.williambl.haema.vampire.ability.powers.sleep.SleepInDayAbilityPower;
-import com.williambl.haema.vampire.ability.powers.sunlight_sickness.SunlightSicknessEffect;
-import com.williambl.haema.vampire.ability.powers.vampiric_weakness.VampiricWeaknessEffect;
+import com.williambl.haema.vampire.ability.abilities.sunlight_sickness.SunlightSicknessEffect;
+import com.williambl.haema.vampire.ability.abilities.vampiric_weakness.VampiricWeaknessEffect;
 import com.williambl.haema.vampire.ability.powers.vision.VampireVisionVampireAbilityPower;
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy;
@@ -30,7 +31,6 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.gamerule.v1.CustomGameRuleCategory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
-import net.fabricmc.fabric.api.networking.v1.FabricPacket;
 import net.fabricmc.fabric.api.networking.v1.PacketType;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -57,6 +57,7 @@ public class HaemaVampires {
         VampirismSources.init();
         VampireGameRules.init();
         VampireTags.init();
+        SunlightSicknessArmourProtection.init();
     }
 
     public static void initEntityComponents(EntityComponentFactoryRegistry registry) {
@@ -122,7 +123,10 @@ public class HaemaVampires {
 
     public static class VampireGameRules {
         public static final CustomGameRuleCategory HAEMA_CATEGORY = new CustomGameRuleCategory(id("haema"), Component.translatable("gamerule.category.haema"));
-        public static final GameRules.Key<GameRules.BooleanValue> VAMPIRES_BURN = GameRuleRegistry.register(id("vampires_burn").toString(), HAEMA_CATEGORY, GameRuleFactory.createBooleanRule(true));
+        public static final GameRules.Key<GameRules.BooleanValue> VAMPIRES_BURN = GameRuleRegistry.register(id("vampire_burning/enabled").toString(), HAEMA_CATEGORY, GameRuleFactory.createBooleanRule(true));
+        public static final GameRules.Key<GameRules.BooleanValue> ARMOUR_PROTECTS = GameRuleRegistry.register(id("vampire_burning/armour_protects_vampire_burning").toString(), HAEMA_CATEGORY, GameRuleFactory.createBooleanRule(true));
+        public static final GameRules.Key<GameRules.BooleanValue> NEED_FULL_ARMOUR_TO_PROTECT = GameRuleRegistry.register(id("vampire_burning/need_full_armour_to_protect").toString(), HAEMA_CATEGORY, GameRuleFactory.createBooleanRule(true));
+        public static final GameRules.Key<GameRules.BooleanValue> ARMOUR_DAMAGED_BY_BURNING = GameRuleRegistry.register(id("vampire_burning/damages_armour").toString(), HAEMA_CATEGORY, GameRuleFactory.createBooleanRule(true));
 
         private static void init() {}
     }
@@ -130,6 +134,7 @@ public class HaemaVampires {
     public static class VampireTags {
         public static final TagKey<DamageType> VAMPIRE_EFFECTIVE_DAMAGE = TagKey.create(Registries.DAMAGE_TYPE, id("vampire_effective"));
         public static final TagKey<Item> VAMPIRE_EFFECTIVE_WEAPONS = TagKey.create(Registries.ITEM, id("vampire_effective_weapons"));
+        public static final TagKey<Item> VAMPIRE_PROTECTIVE_CLOTHING = TagKey.create(Registries.ITEM, id("vampire_protective_clothing"));
 
         private static void init() {}
     }

@@ -41,7 +41,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class HaemaUtil {
     public static final Codec<AttributeModifier> ATTRIBUTE_MODIFIER_CODEC = CompoundTag.CODEC.comapFlatMap(
@@ -222,6 +225,17 @@ public class HaemaUtil {
         }
         if (!wasSent && entity instanceof ServerPlayer p) {
             ServerPlayNetworking.send(p, packet);
+        }
+    }
+
+    public static <T> Stream<T> stream(Iterable<T> iterable) {
+        return StreamSupport.stream(iterable.spliterator(), false);
+    }
+
+    public static <T> void forEachIndexed(Iterable<T> iterable, BiConsumer<Integer, T> consumer) {
+        int i = 0;
+        for (T t : iterable) {
+            consumer.accept(i++, t);
         }
     }
 }

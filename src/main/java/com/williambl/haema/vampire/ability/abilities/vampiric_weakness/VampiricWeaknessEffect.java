@@ -1,4 +1,4 @@
-package com.williambl.haema.vampire.ability.powers.vampiric_weakness;
+package com.williambl.haema.vampire.ability.abilities.vampiric_weakness;
 
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;

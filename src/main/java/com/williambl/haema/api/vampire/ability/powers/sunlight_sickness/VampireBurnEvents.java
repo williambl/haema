@@ -17,7 +17,7 @@ public final class VampireBurnEvents {
         return false;
     });
 
-    public static final ResourceLocation PREVENT_PHASE_ARMOUR = id("armour"); //TODO use this
+    public static final ResourceLocation PREVENT_PHASE_ARMOUR = id("armour");
 
     public static final Event<PreventVampireBurn> PREVENT = EventFactory.createWithPhases(PreventVampireBurn.class, (listeners) -> (vampire) -> {
         for (PreventVampireBurn listener : listeners) {

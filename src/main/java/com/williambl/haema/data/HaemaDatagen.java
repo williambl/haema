@@ -201,6 +201,13 @@ public class HaemaDatagen implements DataGeneratorEntrypoint {
         @Override
         protected void addTags(HolderLookup.Provider arg) {
             this.tag(HaemaVampires.VampireTags.VAMPIRE_EFFECTIVE_WEAPONS).add(BuiltInRegistries.ITEM.getResourceKey(Items.WOODEN_SWORD).orElseThrow());
+            this.tag(HaemaVampires.VampireTags.VAMPIRE_PROTECTIVE_CLOTHING)
+                    .add(this.reverseLookup(Items.LEATHER_HELMET))
+                    .add(this.reverseLookup(Items.LEATHER_CHESTPLATE))
+                    .add(this.reverseLookup(Items.LEATHER_LEGGINGS))
+                    .add(this.reverseLookup(Items.LEATHER_BOOTS));
+            //todo add vampire armour
+            //todo add bewitchment/other stuff
         }
     }
 

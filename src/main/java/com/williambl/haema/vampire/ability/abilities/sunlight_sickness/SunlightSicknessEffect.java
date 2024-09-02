@@ -1,4 +1,4 @@
-package com.williambl.haema.vampire.ability.powers.sunlight_sickness;
+package com.williambl.haema.vampire.ability.abilities.sunlight_sickness;
 
 import com.williambl.haema.api.vampire.VampireComponent;
 import net.minecraft.core.particles.ParticleTypes;
