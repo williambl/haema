@@ -12,12 +12,15 @@ import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRe
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Unit;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.Heightmap;
 
 import java.util.Optional;
@@ -28,7 +31,9 @@ public class HaemaVampireMobs {
     public static void init() {
         VampireMobEntityTypes.init();
         VampireMobMemoryModuleTypes.init();
-        VampireMobMemoryModuleTypes.init();
+        VampireMobVampirismSources.init();
+        VampireMobTags.init();
+        VampiragerSpawning.init();
     }
 
     public static void initEntityComponents(EntityComponentFactoryRegistry registry) {
@@ -70,6 +75,12 @@ public class HaemaVampireMobs {
 
     public static class VampireMobMemoryModuleTypes {
         public static final MemoryModuleType<LivingEntity> BLOOD_DRINKING_TARGET = Registry.register(BuiltInRegistries.MEMORY_MODULE_TYPE, id("blood_drinking_target"), new MemoryModuleType<>(Optional.empty()));
+
+        private static void init() {}
+    }
+
+    public static class VampireMobTags {
+        public static final TagKey<Biome> WITHOUT_VAMPIRAGERS = TagKey.create(Registries.BIOME, id("without_vampiragers"));
 
         private static void init() {}
     }
