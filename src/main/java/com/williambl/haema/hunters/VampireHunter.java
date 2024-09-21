@@ -385,7 +385,7 @@ public class VampireHunter extends PatrollingMonster implements CrossbowAttackMo
                                 new SetPlayerLookTarget<>(),
                                 new SetRandomLookTarget<>(),
                                 new InteractWithOthers<>(e -> e instanceof AbstractVillager || e instanceof VampireHunter).speedModifier(0.5f),
-                                new SetRandomWalkTarget<VampireHunter>().speedModifier(0.5f).walkTargetPredicate((e, p) -> e.sqrDistanceToHome(p) < 4096 && e.sqrDistanceToLeader(p) < 400))
+                                new SetRandomWalkTarget<VampireHunter>().speedModifier(0.5f).walkTargetPredicate((e, p) -> p != null && e.sqrDistanceToHome(p) < 4096 && e.sqrDistanceToLeader(p) < 400))
                                 .cooldownFor(l -> l.getRandom().nextInt(40, 600))),
                 new Idle<>().runFor(e -> e.getRandom().nextInt(30, 60)));
     }
