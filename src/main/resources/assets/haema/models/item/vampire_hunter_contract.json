@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "minecraft:item/mojang_banner_pattern",
-    "layer1": "haema:item/contract_overlay"
-  }
-}

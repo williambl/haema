@@ -1,14 +1,13 @@
 plugins {
-    id 'fabric-loom' version '0.11-SNAPSHOT'
+    id 'fabric-loom' version '1.5-SNAPSHOT'
     id 'io.github.juuxel.loom-quiltflower' version '1.6.0'
     id 'maven-publish'
-    id "org.jetbrains.kotlin.jvm"
     id 'com.matthewprenger.cursegradle' version '1.4.0'
     id "com.modrinth.minotaur" version "2.+"
 }
 
-sourceCompatibility = JavaVersion.VERSION_16
-targetCompatibility = JavaVersion.VERSION_16
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
@@ -43,9 +42,9 @@ repositories {
     }
     maven {
         name = "Ladysnake Libs"
-        url = 'https://ladysnake.jfrog.io/artifactory/mods'
+        url = 'https://maven.ladysnake.org/releases/'
         content {
-            includeGroup "io.github.ladysnake"
+            includeGroup "org.ladysnake"
             includeGroupByRegex "io\\.github\\.onyxstudios.*"
             includeGroupByRegex "dev\\.onyxstudios.*"
         }
@@ -139,6 +138,20 @@ repositories {
         }
     }
     maven {
+        name = "Nucleoid"
+        url = "https://maven.nucleoid.xyz"
+        content {
+            includeGroup 'xyz.nucleoid'
+        }
+    }
+    maven {
+        name = "SmartBrainLib (SBL) Maven Repo"
+        url = "https://dl.cloudsmith.io/public/tslat/sbl/maven/"
+        content {
+            includeGroup "net.tslat.smartbrainlib"
+        }
+    }
+    maven {
         name = "CurseMaven"
         url "https://www.cursemaven.com"
         content {
@@ -155,7 +168,7 @@ repositories {
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     ///
@@ -166,116 +179,93 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}") {
     }
 
-    // Fabric Language Kotlin
-    modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
-
-    // GeckoLib
-    modImplementation("software.bernie.geckolib:geckolib-fabric-1.19.3:${project.geckolib_version}") {
-        exclude group: "com.eliotlash.mclib"
-        exclude group: "com.eliotlash.molang"
-        exclude group: "net.fabricmc.fabric-api"
-    }
-
     ///
     /// INCLUDED
     ///
 
-    // Satin
-    modImplementation include("io.github.ladysnake:satin:${project.satin_version}") {
+    // Apoli
+    /*modCompileOnly ("com.github.apace100:apoli:${project.apoli_version}") {
+        exclude group: "net.fabricmc.fabric-api"
+    }*/
+
+    // Cardinal Components
+    modImplementation include("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cc_version}") {
+        exclude group: "net.fabricmc.fabric-api"
+    }
+    modImplementation include("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${project.cc_version}") {
+        exclude group: "net.fabricmc.fabric-api"
+    }
+
+    // Data Functions
+    modImplementation include("com.williambl.dfunc:data-functions:${project.dfunc_version}") {
+        exclude group: "net.fabricmc.fabric-api"
+    }
+
+    // Actions
+    modImplementation include("com.williambl.actions:actions:${project.actions_version}") {
         exclude group: "net.fabricmc.fabric-api"
     }
 
     // Reach Entity Attributes
-    modImplementation include("com.jamieswhiteshirt:reach-entity-attributes:${project.rea_version}") {
+    include modImplementation("com.jamieswhiteshirt:reach-entity-attributes:${project.rea_version}") {
         exclude group: "net.fabricmc.fabric-api"
     }
 
-    // Patchouli
-    modImplementation include("vazkii.patchouli:Patchouli:${project.patchouli_version}") {
+    // Satin
+    modImplementation include("org.ladysnake:satin:${project.satin_version}") {
         exclude group: "net.fabricmc.fabric-api"
     }
 
-    // Cloth Config
-    modImplementation include("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
+    // More codecs
+    modImplementation include("xyz.nucleoid:more-codecs:${project.morecodecs_version}") {
         exclude group: "net.fabricmc.fabric-api"
     }
 
-    // CCA
-    modApi include("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cc_version}") {
+    // Smart Brain Lib
+    modImplementation include("net.tslat.smartbrainlib:SmartBrainLib-fabric-${project.minecraft_version}:${project.sbl_version}") {
         exclude group: "net.fabricmc.fabric-api"
     }
-    modApi include("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${project.cc_version}") {
-        exclude group: "net.fabricmc.fabric-api"
-    }
-
-    // LibCD
-    //include "io.github.cottonmc:LibCD:${project.libcd_version}"
-    //modRuntime "io.github.cottonmc:LibCD:${project.libcd_version}"
-
-    // Fabric Permissions API
-    modImplementation include("me.lucko:fabric-permissions-api:${project.fpa_version}") {
-        exclude group: "net.fabricmc.fabric-api"
-    }
-
-    // Pehkui
-    modImplementation include("com.github.Virtuoel:Pehkui:${project.pehkui_version}") {
-        exclude group: "net.fabricmc.fabric-api"
-    }
-
-    ///
-    /// SOFT DEPS
-    ///
-
-    // REI
-    modCompileOnly("me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}") {
-        exclude group: "net.fabricmc.fabric-api"
-        transitive = false
-    }
-
-    // EMI
-    modCompileOnly("dev.emi:emi:${project.emi_version}") {
-        exclude group: "net.fabricmc.fabric_api"
-        exclude group: "null"
-        transitive = false
-    }
-
-    // Origins
-    modCompileOnly("com.github.apace100:origins-fabric:${project.origins_version}") {
-        exclude module: "modmenu"
-        exclude group: "io.github.OnyxStudios.Cardinal-Components-API"
-        exclude group: "net.fabricmc.fabric-api"
-    }
-
-    // Rat's Mischief
-    modCompileOnly("io.github.ladysnake:Rats-Mischief:${project.rats_version}") {
-        exclude group: "com.eliotlash.mclib"
-        exclude group: "com.eliotlash.molang"
-        exclude group: "net.fabricmc.fabric-api"
-    }
-
-    // Bewitchment
-    modCompileOnly("curse.maven:bewitchment-394915:${project.bewitchment_version}") {
-        exclude group: "net.fabricmc.fabric-api"
-        transitive = false
-    }
-
-    // Flan
-    modCompileOnly("io.github.flemmli97:flan:${project.flan_version}:fabric-api") {
-        exclude group: "net.fabricmc.fabric-api"
-        transitive = false
-    }
-
-    // Appleskin
-    modCompileOnly("squeek.appleskin:appleskin-fabric:${project.appleskin_version}:api") {
-        exclude group: "net.fabricmc.fabric-api"
-        transitive = false
-    }
-
-    // ModMenu
-    modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}") {
+    modImplementation include("net.tslat.smartbrainlib:SmartBrainLib-common-${project.minecraft_version}:${project.sbl_version}") {
         exclude group: "net.fabricmc.fabric-api"
     }
 }
+
+loom {
+    splitEnvironmentSourceSets()
+
+    mods {
+        modid {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+    }
+    runs {
+        // This adds a new gradle task that runs the datagen API: "gradlew runDatagen"
+        datagen {
+            inherit server
+            name "Data Generation"
+            vmArg "-Dfabric-api.datagen"
+            vmArg "-Dfabric-api.datagen.output-dir=${file("src/main/generated")}"
+            vmArg "-Dfabric-api.datagen.modid=haema"
+
+            runDir "build/datagen"
+        }
+    }
+
+    accessWidenerPath = file("src/main/resources/haema.accesswidener")
+}
+
+// Add the generated resources to the main source set
+sourceSets {
+    main {
+        resources {
+            srcDirs += [
+                    'src/main/generated'
+            ]
+        }
+    }
+}
+
 
 processResources {
     inputs.property "version", project.version
@@ -285,21 +275,19 @@ processResources {
     }
 }
 
-// ensure that the encoding is set to UTF-8, no matter what the system default is
-// this fixes some edge cases with special characters not displaying correctly
-// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 17
 }
 
 java {
+    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+    // if it is present.
     // If you remove this line, sources will not be generated.
     withSourcesJar()
 }
 
 jar {
     from("LICENSE") {
-        // Make filename unique
         rename { "${it}_${project.archivesBaseName}"}
     }
 }
@@ -320,17 +308,6 @@ publishing {
                 basic(BasicAuthentication)
             }
         }
-    }
-}
-
-compileKotlin.kotlinOptions.jvmTarget = "16"
-
-/**
- * https://dev.to/williambl/mixins-kotlin-and-default-methods-why-they-don-t-work-together-417d
- */
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-    kotlinOptions {
-        freeCompilerArgs += '-Xjvm-default=all'
     }
 }
 
