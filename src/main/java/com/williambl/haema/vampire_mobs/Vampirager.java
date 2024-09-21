@@ -115,7 +115,7 @@ public class Vampirager extends Monster implements SmartBrainOwner<Vampirager> {
                         new DrinkFromDrinkTarget<>(0),
                         new SetWalkTargetToDrinkTarget<>(),
                         new SetDrinkTarget<>(),
-                        new SetPlayerLookTarget<>(),
+                        new SetPlayerLookTarget<>().predicate(p -> p.isAlive() && !p.isSpectator()),
                         new SetRandomLookTarget<>()),
                 new OneRandomBehaviour<>(
                         new SetRandomWalkTarget<>().speedModifier(0.5f),

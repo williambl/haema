@@ -2,6 +2,7 @@ package com.williambl.haema.vampire_mobs;
 
 import com.mojang.datafixers.util.Pair;
 import com.williambl.haema.api.content.blood.BloodApi;
+import com.williambl.haema.api.vampire.VampireApi;
 import com.williambl.haema.api.vampire.VampireComponent;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.server.level.ServerLevel;
@@ -20,7 +21,7 @@ public class SetDrinkTarget<E extends Mob> extends ExtendedBehaviour<E> {
     private static final List<Pair<MemoryModuleType<?>, MemoryStatus>> MEMORY_REQUIREMENTS
             = ObjectArrayList.of(Pair.of(HaemaVampireMobs.VampireMobMemoryModuleTypes.BLOOD_DRINKING_TARGET, MemoryStatus.VALUE_ABSENT));
 
-    protected Predicate<LivingEntity> canAttackPredicate = entity -> entity.isAlive() && BloodApi.getBloodQuality(entity).isPresent() && (!(entity instanceof Player player) || !player.isCreative());
+    protected Predicate<LivingEntity> canAttackPredicate = entity -> !VampireApi.isVampire(entity) && entity.isAlive() && BloodApi.getBloodQuality(entity).isPresent() && (!(entity instanceof Player player) || !player.isCreative());
     private LivingEntity toTarget = null;
 
     @Override
